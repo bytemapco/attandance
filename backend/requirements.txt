@@ -2,6 +2,7 @@
 # Smart Attendance System - Backend Dependencies
 # ============================================================
 # Core application requirements (Top-level dependencies)
+# All dependencies verified against PyPI latest stable releases
 # ============================================================
 
 # --- Web Framework & Server ---
@@ -14,6 +15,7 @@ websockets>=14.0
 # --- Data Validation & Settings ---
 pydantic>=2.10.0
 pydantic-settings>=2.7.0
+email-validator>=2.2.0
 
 # --- Database & Cache ---
 prisma>=0.15.0
@@ -29,21 +31,22 @@ cryptography>=44.0.0
 tensorflow>=2.16.1
 tf_keras>=2.16.0
 deepface>=0.0.93
-Werkzeug>=3.0.0
+werkzeug>=3.1.0
+huggingface-hub>=0.28.0
 opencv-python>=4.10.0.84
-numpy>=1.26.4
+numpy>=1.26.4,<2.0.0
 pandas>=2.2.0
 scikit-learn>=1.6.0
 pillow>=11.0.0
 
-# --- Notifications & Services ---
+# --- Notifications & Templates ---
 aiosmtplib>=3.0.0
+jinja2>=3.1.5
+
+# --- Storage & Cloud Services ---
 boto3>=1.35.0
 httpx>=0.28.0
 
-# --- Environment & Utils ---
+# --- Environment & Hot-Reload Runtime ---
 python-dotenv>=1.0.0
-pydantic-extra-types>=2.10.0
-email-validator>=2.2.0
 watchfiles>=1.0.0
-ruff>=0.9.0
