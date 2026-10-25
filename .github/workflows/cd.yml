@@ -90,7 +90,7 @@ jobs:
           # Deploy bundles and orchestrate with PM2
           ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=yes "$VPS_USER@$VPS_HOST" \
             "set -euo pipefail
-             export PATH=\"/home/jarvis/.local/bin:/home/linuxbrew/.linuxbrew/bin:\$PATH\"
+             export PATH=\"/home/jarvis/SharedDrive/bytemap/attandace/backend/venv/bin:/home/jarvis/.local/bin:/home/linuxbrew/.linuxbrew/bin:\$PATH\"
              cd /home/jarvis/SharedDrive/bytemap/attandace
 
              # Unpack frontend bundle
@@ -109,19 +109,19 @@ jobs:
              if [ ! -d backend/venv ]; then
                /usr/bin/python3.11 -m venv backend/venv
              fi
-             backend/venv/bin/pip install --upgrade pip
-             backend/venv/bin/pip install -r backend/requirements.txt
-             (cd backend && ./venv/bin/python -m prisma generate)
+             pip install --upgrade pip
+             pip install -r backend/requirements.txt
+             (cd backend && prisma generate)
 
              # Start or reload services via PM2
              pm2 startOrReload ecosystem.config.js --update-env
              pm2 save
 
              # Verify services are responding
-             echo 'Verifying service health...'
-             sleep 5
-             curl -fsS http://127.0.0.1:8011/health || { echo 'Backend health check failed'; pm2 logs smart-attendance-backend --lines 20 --nostream; exit 1; }
-             curl -fsS -I http://127.0.0.1:3011/ || { echo 'Frontend health check failed'; pm2 logs smart-attendance-frontend --lines 20 --nostream; exit 1; }
+             echo 'Waiting for services initialization...'
+             sleep 10
+             curl -fsS http://127.0.0.1:8011/health || { echo 'Backend health check failed'; pm2 logs smart-attendance-backend --lines 30 --nostream; exit 1; }
+             curl -fsS -I http://127.0.0.1:3011/ || { echo 'Frontend health check failed'; pm2 logs smart-attendance-frontend --lines 30 --nostream; exit 1; }
              pm2 list"
 
           rm -f ~/.ssh/deploy_key ~/.ssh/known_hosts
