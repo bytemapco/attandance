@@ -56,7 +56,7 @@ jobs:
 
       - name: Package Backend Bundle
         run: |
-          tar -czf backend-bundle.tar.gz --exclude='__pycache__' --exclude='*.pyc' -C backend app prisma requirements.txt
+          tar -czf backend-bundle.tar.gz --exclude='__pycache__' --exclude='*.pyc' -C backend app models prisma scripts main.py requirements.txt
 
       - name: Connect to Tailscale
         uses: tailscale/github-action@v4
