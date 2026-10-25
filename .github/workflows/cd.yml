@@ -107,7 +107,7 @@ jobs:
              /usr/local/bin/k3s kubectl apply -k .
              /usr/local/bin/k3s kubectl -n attendance set image deployment/backend backend='$BACKEND_IMAGE'
              /usr/local/bin/k3s kubectl -n attendance set image deployment/frontend frontend='$FRONTEND_IMAGE'
-             /usr/local/bin/k3s kubectl -n attendance rollout status deployment/backend --timeout=180s
-             /usr/local/bin/k3s kubectl -n attendance rollout status deployment/frontend --timeout=180s"
+             /usr/local/bin/k3s kubectl -n attendance rollout status deployment/backend --timeout=600s
+             /usr/local/bin/k3s kubectl -n attendance rollout status deployment/frontend --timeout=600s"
 
           rm -f ~/.ssh/deploy_key ~/.ssh/known_hosts
