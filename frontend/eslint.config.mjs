@@ -21,6 +21,7 @@ const eslintConfig = defineConfig([
     rules: {
       "react-hooks/set-state-in-effect": "off",
       "react-hooks/incompatible-library": "off",
+      "@next/next/no-location-assign-relative-destination": "off",
     },
   },
 ]);
