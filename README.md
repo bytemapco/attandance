@@ -42,7 +42,8 @@ To mark attendance, student selfie submissions undergo three automated verificat
 | **Frontend** | Next.js / React 19 | `16.2.6` | Tailwind CSS `4.x`, Recharts `3.8.1`, Zustand `5.0.13`, Leaflet Map `1.9.4`, Radix UI, Zod |
 | **Mobile** | Flutter SDK (Dart) | `^3.8.0` | Riverpod `^2.6.1`, Dio `^5.7.0`, Geolocator `^13.0.2`, Hive `^2.2.3`, QR Code Scanner |
 | **Database** | PostgreSQL | `15+` | `pgvector` extension for 128-dimensional biometric embeddings |
-| **Cache & Bus**| Redis Server | `7+` | Token denylist, token revocation, rate-limiting, and Pub/Sub notifications |
+| **Cache & Bus**| Redis Server / Valkey | `7+` | Token denylist, token revocation, rate-limiting, and Pub/Sub notifications |
+| **Object Storage**| AWS S3 / MinIO | S3 API | Secure storage for biometric verification artifacts and documents |
 
 ---
 
