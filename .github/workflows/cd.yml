@@ -71,6 +71,8 @@ jobs:
           SSH_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
           VPS_HOST: ${{ vars.VPS_HOST || '100.101.187.9' }}
           VPS_USER: ${{ vars.VPS_USER || 'jarvis' }}
+          PRODUCTION_BACKEND_ENV: ${{ secrets.PRODUCTION_BACKEND_ENV }}
+          PRODUCTION_FRONTEND_ENV: ${{ secrets.PRODUCTION_FRONTEND_ENV }}
         run: |
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
@@ -78,13 +80,27 @@ jobs:
           printf '%s\n' "$SSH_HOSTS" > ~/.ssh/known_hosts
           chmod 600 ~/.ssh/deploy_key ~/.ssh/known_hosts
 
+          # Prepare environment files locally for secure transfer
+          mkdir -p /tmp/deploy_envs
+          chmod 700 /tmp/deploy_envs
+          printf '%s\n' "$PRODUCTION_BACKEND_ENV" > /tmp/deploy_envs/backend.env
+          printf '%s\n' "$PRODUCTION_FRONTEND_ENV" > /tmp/deploy_envs/frontend.env
+          chmod 600 /tmp/deploy_envs/backend.env /tmp/deploy_envs/frontend.env
+
           # Ensure deployment directories exist
           ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=yes "$VPS_USER@$VPS_HOST" \
             "mkdir -p /home/jarvis/SharedDrive/bytemap/attandace/backend /home/jarvis/SharedDrive/bytemap/attandace/frontend"
 
+          # Securely transfer environment files
+          scp -i ~/.ssh/deploy_key -o StrictHostKeyChecking=yes \
+            /tmp/deploy_envs/backend.env "$VPS_USER@$VPS_HOST:/home/jarvis/SharedDrive/bytemap/attandace/backend/.env"
+          scp -i ~/.ssh/deploy_key -o StrictHostKeyChecking=yes \
+            /tmp/deploy_envs/frontend.env "$VPS_USER@$VPS_HOST:/home/jarvis/SharedDrive/bytemap/attandace/frontend/.env"
+          rm -rf /tmp/deploy_envs
+
           # Transfer deployment bundles and PM2 configuration
           scp -i ~/.ssh/deploy_key -o StrictHostKeyChecking=yes \
-            frontend-bundle.tar.gz backend-bundle.tar.gz ecosystem.config.js \
+            frontend-bundle.tar.gz backend-bundle.tar.gz ecosystem.config.cjs \
             "$VPS_USER@$VPS_HOST:/home/jarvis/SharedDrive/bytemap/attandace/"
 
           # Deploy bundles and orchestrate with PM2
@@ -93,6 +109,9 @@ jobs:
              export PATH=\"/home/jarvis/SharedDrive/bytemap/attandace/backend/venv/bin:/home/jarvis/.local/bin:/home/linuxbrew/.linuxbrew/bin:\$PATH\"
              cd /home/jarvis/SharedDrive/bytemap/attandace
 
+             # Set strict permissions on environment files
+             chmod 600 backend/.env frontend/.env
+
              # Unpack frontend bundle
              tar -xzf frontend-bundle.tar.gz -C frontend/
              rm -f frontend-bundle.tar.gz
@@ -100,10 +119,6 @@ jobs:
              # Unpack backend bundle
              tar -xzf backend-bundle.tar.gz -C backend/
              rm -f backend-bundle.tar.gz
-
-             # Symlink production .env to both backend and frontend roots
-             ln -sf /home/jarvis/SharedDrive/bytemap/attandace/.env /home/jarvis/SharedDrive/bytemap/attandace/backend/.env
-             ln -sf /home/jarvis/SharedDrive/bytemap/attandace/.env /home/jarvis/SharedDrive/bytemap/attandace/frontend/.env
 
              # Setup or update backend virtualenv
              if [ ! -d backend/venv ]; then
@@ -114,7 +129,7 @@ jobs:
              (cd backend && prisma generate && prisma db push --accept-data-loss)
 
              # Start or reload services via PM2
-             pm2 startOrReload ecosystem.config.js --update-env
+             pm2 startOrReload ecosystem.config.cjs --update-env
              pm2 save
 
              # Verify services are responding with retry tolerance for model loading
