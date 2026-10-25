@@ -95,15 +95,15 @@ jobs:
 
           # Copy k8s manifests to the project deployment directory on jarvis
           ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=yes "$VPS_USER@$VPS_HOST" \
-            "mkdir -p /home/jarvis/SharedDrive/projects/k8s/base /home/jarvis/SharedDrive/projects/k8s/overlays/production"
+            "mkdir -p /home/jarvis/SharedDrive/bytemap/attandace/k8s/base /home/jarvis/SharedDrive/bytemap/attandace/k8s/overlays/production"
 
-          scp -i ~/.ssh/deploy_key -o StrictHostKeyChecking=yes -r k8s/base/* "$VPS_USER@$VPS_HOST:/home/jarvis/SharedDrive/projects/k8s/base/"
-          scp -i ~/.ssh/deploy_key -o StrictHostKeyChecking=yes -r k8s/overlays/* "$VPS_USER@$VPS_HOST:/home/jarvis/SharedDrive/projects/k8s/overlays/"
+          scp -i ~/.ssh/deploy_key -o StrictHostKeyChecking=yes -r k8s/base/* "$VPS_USER@$VPS_HOST:/home/jarvis/SharedDrive/bytemap/attandace/k8s/base/"
+          scp -i ~/.ssh/deploy_key -o StrictHostKeyChecking=yes -r k8s/overlays/* "$VPS_USER@$VPS_HOST:/home/jarvis/SharedDrive/bytemap/attandace/k8s/overlays/"
 
           # Update image tags with commit SHA and apply manifests on k3s
           ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=yes "$VPS_USER@$VPS_HOST" \
             "set -euo pipefail
-             cd /home/jarvis/SharedDrive/projects/k8s/overlays/production
+             cd /home/jarvis/SharedDrive/bytemap/attandace/k8s/overlays/production
              /usr/local/bin/k3s kubectl apply -k .
              /usr/local/bin/k3s kubectl -n attendance set image deployment/backend backend='$BACKEND_IMAGE'
              /usr/local/bin/k3s kubectl -n attendance set image deployment/frontend frontend='$FRONTEND_IMAGE'

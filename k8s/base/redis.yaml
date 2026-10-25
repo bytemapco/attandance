@@ -69,8 +69,8 @@ spec:
       volumes:
         - name: redis-data
           hostPath:
-            path: /data/k3s/redis
-            type: DirectoryOrCreate
+            path: /home/jarvis/SharedDrive/bytemap/attandace/redis
+            type: Directory
 ---
 apiVersion: v1
 kind: Service
