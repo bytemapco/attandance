@@ -128,14 +128,22 @@ jobs:
              pip install -r backend/requirements.txt
              (cd backend && prisma generate && prisma db push --accept-data-loss)
 
+             # Ensure local redis-server is active if installed
+             if command -v redis-server >/dev/null 2>&1; then
+               if ! pgrep -x redis-server >/dev/null 2>&1; then
+                 echo 'Starting local redis-server in daemon mode...'
+                 redis-server --daemonize yes || true
+               fi
+             fi
+
              # Start or reload services via PM2
              pm2 startOrReload ecosystem.config.cjs --update-env
              pm2 save
 
              # Verify services are responding with retry tolerance for model loading
              echo 'Waiting for services initialization...'
-             curl --retry 10 --retry-delay 3 --retry-connrefused -fsS http://127.0.0.1:8011/health || { echo 'Backend health check failed'; pm2 logs smart-attendance-backend --lines 30 --nostream; exit 1; }
-             curl --retry 5 --retry-delay 2 --retry-connrefused -fsS -I http://127.0.0.1:3011/ || { echo 'Frontend health check failed'; pm2 logs smart-attendance-frontend --lines 30 --nostream; exit 1; }
+             curl --retry 15 --retry-delay 3 --retry-connrefused -fsS http://127.0.0.1:8011/health || { echo 'Backend health check failed'; pm2 logs smart-attendance-backend --lines 40 --nostream; exit 1; }
+             curl --retry 8 --retry-delay 2 --retry-connrefused -fsS -I http://127.0.0.1:3011/ || { echo 'Frontend health check failed'; pm2 logs smart-attendance-frontend --lines 40 --nostream; exit 1; }
              pm2 list"
 
           rm -f ~/.ssh/deploy_key ~/.ssh/known_hosts
