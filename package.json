@@ -1,0 +1,27 @@
+{
+  "name": "smart-attendance-system-workspace",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Multi-layer AI-powered Smart Attendance System workspace CLI & runner",
+  "type": "module",
+  "bin": {
+    "setup": "./scripts/setup.mjs",
+    "dev": "./scripts/dev.mjs"
+  },
+  "scripts": {
+    "postinstall": "node scripts/setup.mjs --setup",
+    "dev": "node scripts/dev.mjs",
+    "setup": "node scripts/setup.mjs --setup",
+    "check": "node scripts/setup.mjs --check",
+    "backend:setup": "node scripts/setup.mjs --backend",
+    "frontend:setup": "node scripts/setup.mjs --frontend",
+    "dev:frontend": "node -e \"process.chdir('frontend'); require('child_process').execSync('npm', ['run', 'dev'], {stdio: 'inherit'})\";",
+    "dev:backend": "node -e \"const path = require('path'); const fs = require('fs'); const { execSync } = require('child_process'); const backendDir = path.resolve('backend'); const venvPythonPosix = path.join(backendDir, '.venv', 'bin', 'python'); const venvPythonWin = path.join(backendDir, '.venv', 'Scripts', 'python.exe'); let pythonExec; if (fs.existsSync(venvPythonPosix)) pythonExec = venvPythonPosix; else if (fs.existsSync(venvPythonWin)) pythonExec = venvPythonWin; else pythonExec = process.platform === 'win32' ? 'python' : 'python3'; execSync(pythonExec, ['-m', 'uvicorn', 'main:app', '--reload', '--port', '8000'], {stdio: 'inherit'})\";",
+    "test": "npm run test:backend && npm run test:frontend",
+    "test:backend": "cd backend && ./.venv/bin/pytest",
+    "test:frontend": "cd frontend && npm run test"
+  },
+  "dependencies": {
+    "@prisma/client": "^7.10.0"
+  }
+}

@@ -1,0 +1,90 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="supported-color-schemes" content="light dark" />
+  <title>{{ subject }}</title>
+  <style type="text/css">
+    @media (prefers-color-scheme: dark) {
+      body, .email-canvas { background-color: #090d16 !important; }
+      .email-card { background-color: #0f172a !important; border-color: #1e293b !important; }
+      .email-header { border-bottom-color: #1e293b !important; }
+      .email-footer { background-color: #090d16 !important; border-top-color: #1e293b !important; }
+      .text-title { color: #f8fafc !important; }
+      .text-body { color: #cbd5e1 !important; }
+      .text-muted { color: #94a3b8 !important; }
+      .info-table { border-color: #1e293b !important; background-color: #0f172a !important; }
+      .info-header-cell { background-color: #131d31 !important; border-color: #1e293b !important; color: #94a3b8 !important; }
+      .info-value-cell { border-color: #1e293b !important; color: #f8fafc !important; }
+      .fallback-box { background-color: #131d31 !important; border-color: #1e293b !important; color: #94a3b8 !important; }
+    }
+    a { text-decoration: none; }
+  </style>
+</head>
+<body style="margin:0; padding:0; background-color:#f8fafc; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color:#334155; -webkit-text-size-adjust:100%; -ms-text-size-adjust:100%;">
+  <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" class="email-canvas" style="background-color:#f8fafc; padding:40px 16px; margin:0; border-collapse:collapse;">
+    <tr>
+      <td align="center" style="padding:0; margin:0;">
+        <!--[if mso]>
+        <table role="presentation" align="center" border="0" cellpadding="0" cellspacing="0" width="580" style="width:580px;">
+        <tr>
+        <td>
+        <![endif]-->
+        <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" class="email-card" style="max-width:580px; background-color:#ffffff; border:1px solid #e2e8f0; border-radius:12px; overflow:hidden; border-collapse:separate; box-shadow:0 4px 12px -2px rgba(15, 23, 42, 0.06);">
+          <!-- Top Accent Bar -->
+          <tr>
+            <td style="height:3px; background-color:#0f172a; line-height:3px; font-size:3px; padding:0; margin:0;">&nbsp;</td>
+          </tr>
+          <!-- Header -->
+          <tr>
+            <td class="email-header" style="padding:28px 36px 20px 36px; border-bottom:1px solid #f1f5f9; background-color:transparent;">
+              <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+                <tr>
+                  <td style="vertical-align:middle;">
+                    <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td style="width:34px; height:34px; background-color:#0f172a; border-radius:8px; text-align:center; vertical-align:middle; font-size:16px; color:#ffffff; font-weight:700;">
+                          &#10003;
+                        </td>
+                        <td style="padding-left:12px; vertical-align:middle;">
+                          <h1 class="text-title" style="margin:0; font-size:16px; font-weight:700; color:#0f172a; letter-spacing:-0.02em; line-height:1.2;">{{ system_name }}</h1>
+                          <span class="text-muted" style="font-size:11px; font-weight:600; color:#64748b; letter-spacing:0.04em; text-transform:uppercase;">Attendance Platform</span>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <!-- Content Body -->
+          <tr>
+            <td class="text-body" style="padding:32px 36px; font-size:14px; line-height:1.65; color:#334155;">
+              {% block content %}{% endblock %}
+            </td>
+          </tr>
+          <!-- Footer -->
+          <tr>
+            <td class="email-footer" style="padding:24px 36px; background-color:#f8fafc; border-top:1px solid #f1f5f9; font-size:12px; line-height:1.6; color:#64748b;">
+              <p class="text-muted" style="margin:0 0 6px 0; color:#475569; font-weight:500;">
+                <strong class="text-title" style="color:#0f172a;">{{ system_name }}</strong> &bull; Attendance Notifications
+              </p>
+              <p class="text-muted" style="margin:0; font-size:11px; color:#94a3b8;">
+                This message was sent for your account. If you did not take this action, contact your administrator.
+              </p>
+            </td>
+          </tr>
+        </table>
+        <!--[if mso]>
+        </td>
+        </tr>
+        </table>
+        <![endif]-->
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+

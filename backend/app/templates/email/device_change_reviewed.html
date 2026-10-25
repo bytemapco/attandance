@@ -1,0 +1,43 @@
+{% extends "base_email.html" %}
+
+{% block content %}
+  {% if status == "APPROVED" %}
+    <h2 class="text-title" style="margin:0 0 12px 0; font-size:18px; font-weight:700; line-height:1.35; color:#0f172a; letter-spacing:-0.02em;">Device Change Approved</h2>
+    <p class="text-body" style="margin:0 0 20px 0; font-size:14px; line-height:1.6; color:#475569;">
+      Hi <strong class="text-title" style="color:#0f172a;">{{ recipient_name }}</strong>, your request to register a new mobile device has been approved. You can now use your new phone for attendance.
+    </p>
+  {% else %}
+    <h2 class="text-title" style="margin:0 0 12px 0; font-size:18px; font-weight:700; line-height:1.35; color:#0f172a; letter-spacing:-0.02em;">Device Change Declined</h2>
+    <p class="text-body" style="margin:0 0 20px 0; font-size:14px; line-height:1.6; color:#475569;">
+      Hi <strong class="text-title" style="color:#0f172a;">{{ recipient_name }}</strong>, your request to register a new mobile device was reviewed and declined.
+    </p>
+  {% endif %}
+
+  <!-- Details Table -->
+  <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" class="info-table" style="border:1px solid #e2e8f0; border-radius:8px; border-collapse:separate; border-spacing:0; margin:20px 0; background-color:#ffffff; font-size:13px; overflow:hidden;">
+    <tr>
+      <td width="36%" class="info-header-cell" style="padding:12px 16px; color:#64748b; font-weight:500; background-color:#f8fafc; border-bottom:1px solid #f1f5f9; border-right:1px solid #f1f5f9;">Enrollment Number</td>
+      <td class="info-value-cell" style="padding:12px 16px; color:#0f172a; font-weight:600; border-bottom:1px solid #f1f5f9;">{{ enrollment_number }}</td>
+    </tr>
+    <tr>
+      <td width="36%" class="info-header-cell" style="padding:12px 16px; color:#64748b; font-weight:500; background-color:#f8fafc; border-right:1px solid #f1f5f9;">Decision</td>
+      <td class="info-value-cell" style="padding:12px 16px;">
+        {% if status == "APPROVED" %}
+          <span style="display:inline-block; padding:3px 9px; background-color:#ecfdf5; border:1px solid #a7f3d0; color:#065f46; border-radius:6px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.04em;">
+            Approved
+          </span>
+        {% else %}
+          <span style="display:inline-block; padding:3px 9px; background-color:#fef2f2; border:1px solid #fecaca; color:#991b1b; border-radius:6px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.04em;">
+            Declined
+          </span>
+        {% endif %}
+      </td>
+    </tr>
+  </table>
+
+  {% if status != "APPROVED" %}
+  <p class="text-muted" style="margin:16px 0 0 0; font-size:13px; line-height:1.55; color:#64748b;">
+    If you need help or think this was an error, contact your administrator.
+  </p>
+  {% endif %}
+{% endblock %}

@@ -1,0 +1,185 @@
+# ==============================================================================
+# Smart Attendance System - Master Monorepo .gitignore
+# Covers: Workspace Root, Backend (FastAPI/Python/Prisma), Frontend (Next.js/TS),
+# and Mobile (Flutter/Dart/Android/iOS)
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# 1. Operating System & Filesystem Artifacts
+# ------------------------------------------------------------------------------
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# ------------------------------------------------------------------------------
+# 2. Editors, IDEs & Developer Tooling
+# ------------------------------------------------------------------------------
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+*.swp
+*.swo
+*~
+*.bak
+*.orig
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+.project
+.classpath
+.cproject
+.settings/
+
+# ------------------------------------------------------------------------------
+# 3. Environment Variables & Secret Credentials (CRITICAL)
+# ------------------------------------------------------------------------------
+# Block all .env files across all subdirectories
+.env
+.env.*
+.env*.local
+!.env.example
+!.env.*.example
+
+# Credentials & Certificates
+credentials.txt
+*-credentials.json
+firebase-credentials*.json
+google-services*.json
+google_services.json
+*.pem
+*.key
+*.crt
+*.cert
+*.pfx
+*.p12
+
+# ------------------------------------------------------------------------------
+# 4. Logs, Runtime & Debug Output
+# ------------------------------------------------------------------------------
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# ------------------------------------------------------------------------------
+# 5. Python & Backend (FastAPI, Prisma, Pytest, Ruff, ML)
+# ------------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual Environments
+.venv/
+venv/
+ENV/
+env/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Testing & Coverage Artifacts
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+cov_html/
+
+# Databases & Prisma Client
+*.db
+*.db-journal
+*.sqlite3
+prisma/client/
+backend/prisma/client/
+
+# Dynamic AI/ML Model Weights (Keep base models explicitly whitelisted)
+*.pb
+*.pt
+*.pth
+*.pkl
+*.joblib
+*.onnx
+!backend/models/**/*.h5
+
+# ------------------------------------------------------------------------------
+# 6. Frontend & Node.js (Next.js, React, Tailwind, Vitest, Playwright)
+# ------------------------------------------------------------------------------
+node_modules/
+*/node_modules/
+.pnp
+.pnp.*
+
+# Next.js Build Outputs & Local Deployment
+.next/
+*/.next/
+out/
+build/
+.vercel/
+*/.vercel/
+
+# TypeScript & Test Caches
+*.tsbuildinfo
+next-env.d.ts
+coverage/
+*/coverage/
+playwright-report/
+blob-report/
+test-results/
+screenshots/
+e2e-screenshots/
+
+# ------------------------------------------------------------------------------
+# 7. Mobile (Flutter, Dart, Android, iOS)
+# ------------------------------------------------------------------------------
+.dart_tool/
+*/.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+mobile/build/
+mobile/.gradle/
+local.properties
+*/local.properties
+key.properties
+*/key.properties
+mobile/android/**/generated/
+
+# iOS Ephemeral & CocoaPods
+mobile/ios/Flutter/Generated.xcconfig
+mobile/ios/Flutter/flutter_export_environment.sh
+mobile/ios/Flutter/ephemeral/
+mobile/ios/Pods/
+mobile/ios/.symlinks/
+mobile/ios/Podfile.lock
+mobile/*.xcworkspace/
+app.*.symbols
+app.*.map.json
+
+# ------------------------------------------------------------------------------
+# 8. Temporary & Agent Knowledge Caches
+# ------------------------------------------------------------------------------
+temp/
+tmp/
+.reticle/
+.kilo/
+graphify-out/

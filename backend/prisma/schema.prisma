@@ -1,0 +1,679 @@
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  extensions = [vector]
+}
+
+generator client {
+  provider             = "prisma-client-py"
+  output               = "../.venv/lib/python3.11/site-packages/prisma"
+  interface            = "asyncio"
+  recursive_type_depth = 5
+  previewFeatures      = ["postgresqlExtensions"]
+}
+
+
+// ==============================================================================
+// ENUMS
+// ==============================================================================
+
+enum Role {
+  STUDENT
+  TEACHER
+  ADMIN
+  SUPER_ADMIN
+  TENANT_ADMIN
+}
+
+enum TenantType {
+  SCHOOL
+  COLLEGE
+  COACHING_CENTER
+  UNIVERSITY
+}
+
+enum TenantStatus {
+  ACTIVE
+  SUSPENDED
+  TRIAL
+  EXPIRED
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  FLAGGED
+  APPROVED
+  EXCUSED
+}
+
+enum AttendanceMethod {
+  AI_BIOMETRIC
+  SMART_PASS_OFFLINE
+  MANUAL_OVERRIDE
+}
+
+enum LeaveStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+enum DeviceStatus {
+  ACTIVE
+  REVOKED
+}
+
+enum RequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum DeviceChangeStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum LicenseRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+// ==============================================================================
+// TENANTS & USERS
+// ==============================================================================
+
+model Tenant {
+  id           String       @id @default(uuid())
+  slug         String       @unique
+  name         String
+  type         TenantType   @default(COLLEGE)
+  status       TenantStatus @default(ACTIVE)
+  domain       String?      @unique
+  licenseCount Int          @default(0) @map("license_count")
+  settings     Json?        @default("{}")
+  config       Json?
+  createdAt    DateTime     @default(now()) @map("created_at")
+  updatedAt    DateTime     @updatedAt @map("updated_at")
+
+  users           User[]
+  students        Student[]
+  teachers        Teacher[]
+  departments     Department[]
+  subjects        Subject[]
+  classrooms      Classroom[]
+  designations    Designation[]
+  cohorts         AcademicCohort[]
+  courseOfferings CourseOffering[]
+  classes         AcademicClass[]
+  timeSlots       TimeSlot[]
+  attendance      Attendance[]
+  auditLogs       AuditLog[]
+  licenseRequests LicenseRequest[]
+  notifications   Notification[]
+  systemConfig    SystemConfiguration?
+
+  @@index([status])
+  @@map("tenants")
+}
+
+model User {
+  id                 String    @id @default(uuid())
+  tenantId           String?   @map("tenant_id")
+  email              String    @unique
+  hashedPassword     String    @map("hashed_password")
+  role               Role      @default(STUDENT)
+  isActive           Boolean   @default(true) @map("is_active")
+  mustChangePassword Boolean   @default(false) @map("must_change_password")
+  lastLoginAt        DateTime? @map("last_login_at")
+  createdAt          DateTime  @default(now()) @map("created_at")
+  updatedAt          DateTime  @updatedAt @map("updated_at")
+
+  tenant                     Tenant?          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  student                    Student?
+  teacher                    Teacher?
+  notifications              Notification[]
+  licenseRequestsAsRequester LicenseRequest[] @relation("LicenseRequester")
+  licenseRequestsAsProcessor LicenseRequest[] @relation("LicenseProcessor")
+
+  @@index([tenantId, role])
+  @@index([tenantId, isActive])
+  @@map("users")
+}
+
+model Student {
+  id               String    @id @default(uuid())
+  tenantId         String?   @map("tenant_id")
+  userId           String    @unique @map("user_id")
+  departmentId     String?   @map("department_id")
+  enrollmentNumber String    @map("enrollment_number")
+  firstName        String?   @map("first_name")
+  lastName         String?   @map("last_name")
+  phone            String?   @map("phone")
+  gender           String?   @map("gender")
+  branch           String?   @map("branch")
+  dateOfBirth      DateTime? @map("date_of_birth") @db.Date
+  semester         Int?      @map("semester")
+  batch            String?   @map("batch")
+  deviceUuid       String?   @map("device_uuid")
+  fcmToken         String?   @map("fcm_token")
+  faceEmbedding    Unsupported("vector(128)")? @map("face_embedding")
+  currentStreak    Int       @default(0) @map("current_streak")
+  highestStreak    Int       @default(0) @map("highest_streak")
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
+
+  tenant               Tenant?               @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user                 User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  department           Department?           @relation(fields: [departmentId], references: [id], onDelete: SetNull)
+  biometrics           StudentBiometric[]
+  devices              StudentDevice[]
+  enrollments          Enrollment[]
+  attendanceRecords    Attendance[]
+  leaveRequests        LeaveRequest[]
+  deviceChangeRequests DeviceChangeRequest[]
+  cohortMemberships    CohortStudent[]
+
+  @@unique([enrollmentNumber])
+  @@index([tenantId, departmentId])
+  @@index([tenantId, createdAt])
+  @@index([semester, batch])
+  @@map("students")
+}
+
+model StudentBiometric {
+  id               String                     @id @default(uuid())
+  tenantId         String?                    @map("tenant_id")
+  studentId        String                     @map("student_id")
+  algorithm        String                     @default("facenet_128")
+  embeddingVersion Int                        @default(1) @map("embedding_version")
+  faceEmbedding    Unsupported("vector(128)") @map("face_embedding")
+  isActive         Boolean                    @default(true) @map("is_active")
+  consentGiven     Boolean                    @default(true) @map("consent_given")
+  createdAt        DateTime                   @default(now()) @map("created_at")
+  updatedAt        DateTime                   @updatedAt @map("updated_at")
+
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([studentId, isActive])
+  @@index([tenantId])
+  @@map("student_biometrics")
+}
+
+model StudentDevice {
+  id           String       @id @default(uuid())
+  tenantId     String?      @map("tenant_id")
+  studentId    String       @map("student_id")
+  deviceUuid   String       @map("device_uuid")
+  deviceModel  String?      @map("device_model")
+  osVersion    String?      @map("os_version")
+  status       DeviceStatus @default(ACTIVE)
+  registeredAt DateTime     @default(now()) @map("registered_at")
+  lastUsedAt   DateTime?    @map("last_used_at")
+
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, deviceUuid])
+  @@index([studentId, status])
+  @@map("student_devices")
+}
+
+model Teacher {
+  id              String    @id @default(uuid())
+  tenantId        String?   @map("tenant_id")
+  userId          String    @unique @map("user_id")
+  departmentId    String    @map("department_id")
+  designationId   String    @map("designation_id")
+  employeeId      String    @unique @map("employee_id")
+  firstName       String    @map("first_name")
+  lastName        String    @map("last_name")
+  nameInitials    String?   @map("name_initials")
+  phone           String?   @map("phone")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  tenant                Tenant?               @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user                  User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  department            Department            @relation(fields: [departmentId], references: [id], onDelete: Restrict)
+  designation           Designation           @relation(fields: [designationId], references: [id], onDelete: Restrict)
+  classes               AcademicClass[]
+  primaryCourses        CourseOffering[]
+  originalSubstitutions TeacherSubstitution[] @relation("OriginalTeacher")
+  assignedSubstitutions TeacherSubstitution[] @relation("SubstituteTeacher")
+
+  @@index([tenantId, departmentId])
+  @@map("teachers")
+}
+
+// ==============================================================================
+// ACADEMIC SETUP & COURSES
+// ==============================================================================
+
+model Department {
+  id          String   @id @default(uuid())
+  tenantId    String?  @map("tenant_id")
+  code        String
+  name        String
+  head        String?
+  description String?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  tenant   Tenant?          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  teachers Teacher[]
+  students Student[]
+  subjects Subject[]
+  cohorts  AcademicCohort[]
+
+  @@index([tenantId])
+  @@map("departments")
+}
+
+model Designation {
+  id          String   @id @default(uuid())
+  tenantId    String?  @map("tenant_id")
+  code        String
+  name        String
+  description String?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  tenant   Tenant?   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  teachers Teacher[]
+
+  @@index([tenantId])
+  @@map("designations")
+}
+
+model Subject {
+  id           String   @id @default(uuid())
+  tenantId     String?  @map("tenant_id")
+  departmentId String?  @map("department_id")
+  code         String
+  name         String
+  description  String?
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  tenant          Tenant?          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  department      Department?      @relation(fields: [departmentId], references: [id], onDelete: SetNull)
+  classes         AcademicClass[]
+  courseOfferings CourseOffering[]
+
+  @@index([tenantId])
+  @@index([departmentId])
+  @@map("subjects")
+}
+
+model Classroom {
+  id        String   @id @default(uuid())
+  tenantId  String?  @map("tenant_id")
+  name      String
+  building  String?
+  capacity  Int?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  tenant           Tenant?          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  classes          AcademicClass[]
+  timetableEntries TimetableEntry[]
+
+  @@index([tenantId])
+  @@map("classrooms")
+}
+
+model AcademicCohort {
+  id           String   @id @default(uuid())
+  tenantId     String?  @map("tenant_id")
+  departmentId String   @map("department_id")
+  name         String
+  semester     Int
+  academicYear String   @map("academic_year")
+  documentUrl  String?  @map("document_url")
+  documentKey  String?  @map("document_key")
+  isActive     Boolean  @default(true) @map("is_active")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  tenant          Tenant?          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  department      Department       @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+  students        CohortStudent[]
+  batches         CohortBatch[]
+  courseOfferings CourseOffering[]
+
+  @@unique([departmentId, name, semester, academicYear])
+  @@index([tenantId, isActive])
+  @@map("academic_cohorts")
+}
+
+model CohortStudent {
+  id        String   @id @default(uuid())
+  cohortId  String   @map("cohort_id")
+  studentId String   @map("student_id")
+  joinedAt  DateTime @default(now()) @map("joined_at")
+
+  cohort  AcademicCohort @relation(fields: [cohortId], references: [id], onDelete: Cascade)
+  student Student        @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([cohortId, studentId])
+  @@index([studentId])
+  @@map("cohort_students")
+}
+
+model CohortBatch {
+  id       String @id @default(uuid())
+  cohortId String @map("cohort_id")
+  name     String
+
+  cohort           AcademicCohort   @relation(fields: [cohortId], references: [id], onDelete: Cascade)
+  timetableEntries TimetableEntry[]
+
+  @@unique([cohortId, name])
+  @@map("cohort_batches")
+}
+
+model CourseOffering {
+  id               String   @id @default(uuid())
+  tenantId         String?  @map("tenant_id")
+  cohortId         String   @map("cohort_id")
+  subjectId        String   @map("subject_id")
+  primaryTeacherId String   @map("primary_teacher_id")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  tenant           Tenant?          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  cohort           AcademicCohort   @relation(fields: [cohortId], references: [id], onDelete: Cascade)
+  subject          Subject          @relation(fields: [subjectId], references: [id], onDelete: Restrict)
+  primaryTeacher   Teacher          @relation(fields: [primaryTeacherId], references: [id], onDelete: Restrict)
+  timetableEntries TimetableEntry[]
+
+  @@unique([cohortId, subjectId])
+  @@index([tenantId, primaryTeacherId])
+  @@map("course_offerings")
+}
+
+model TimeSlot {
+  id         String   @id @default(uuid())
+  tenantId   String?  @map("tenant_id")
+  slotNumber Int      @map("slot_number")
+  name       String
+  startTime  String   @map("start_time")
+  endTime    String   @map("end_time")
+  isBreak    Boolean  @default(false) @map("is_break")
+
+  tenant           Tenant?          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  timetableEntries TimetableEntry[]
+
+  @@unique([tenantId, slotNumber])
+  @@map("time_slots")
+}
+
+model TimetableEntry {
+  id               String  @id @default(uuid())
+  courseOfferingId String  @map("course_offering_id")
+  timeSlotId       String  @map("time_slot_id")
+  classroomId      String? @map("classroom_id")
+  batchId          String? @map("batch_id")
+  dayOfWeek        Int     @map("day_of_week")
+
+  courseOffering CourseOffering        @relation(fields: [courseOfferingId], references: [id], onDelete: Cascade)
+  timeSlot       TimeSlot              @relation(fields: [timeSlotId], references: [id], onDelete: Restrict)
+  classroom      Classroom?            @relation(fields: [classroomId], references: [id], onDelete: SetNull)
+  batch          CohortBatch?          @relation(fields: [batchId], references: [id], onDelete: SetNull)
+  substitutions  TeacherSubstitution[]
+  sessions       Session[]
+
+  @@unique([courseOfferingId, timeSlotId, dayOfWeek, batchId])
+  @@index([dayOfWeek, timeSlotId])
+  @@index([classroomId, dayOfWeek, timeSlotId])
+  @@map("timetable_entries")
+}
+
+model TeacherSubstitution {
+  id                  String   @id @default(uuid())
+  timetableEntryId    String   @map("timetable_entry_id")
+  originalTeacherId   String   @map("original_teacher_id")
+  substituteTeacherId String   @map("substitute_teacher_id")
+  date                DateTime @map("date")
+  reason              String?
+  status              String   @default("APPROVED")
+  createdAt           DateTime @default(now()) @map("created_at")
+
+  timetableEntry    TimetableEntry @relation(fields: [timetableEntryId], references: [id], onDelete: Cascade)
+  originalTeacher   Teacher        @relation("OriginalTeacher", fields: [originalTeacherId], references: [id], onDelete: Restrict)
+  substituteTeacher Teacher        @relation("SubstituteTeacher", fields: [substituteTeacherId], references: [id], onDelete: Restrict)
+
+  @@unique([timetableEntryId, date])
+  @@index([substituteTeacherId, date])
+  @@map("teacher_substitutions")
+}
+
+model AcademicClass {
+  id          String   @id @default(uuid())
+  tenantId    String?  @map("tenant_id")
+  name        String
+  subjectId   String   @map("subject_id")
+  teacherId   String   @map("teacher_id")
+  classroomId String?  @map("classroom_id")
+  semester    Int?
+  batch       String?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  tenant      Tenant?      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  teacher     Teacher      @relation(fields: [teacherId], references: [id], onDelete: Restrict)
+  subject     Subject      @relation(fields: [subjectId], references: [id], onDelete: Restrict)
+  classroom   Classroom?   @relation(fields: [classroomId], references: [id], onDelete: SetNull)
+  geofence    Geofence?
+  enrollments Enrollment[]
+  sessions    Session[]
+
+  @@index([tenantId, teacherId, semester])
+  @@index([subjectId])
+  @@index([classroomId])
+  @@map("classes")
+}
+
+model Enrollment {
+  id              String   @id @default(uuid())
+  studentId       String   @map("student_id")
+  academicClassId String   @map("academic_class_id")
+  enrolledAt      DateTime @default(now()) @map("enrolled_at")
+
+  student       Student       @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  academicClass AcademicClass @relation(fields: [academicClassId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, academicClassId])
+  @@index([academicClassId])
+  @@map("enrollments")
+}
+
+// ==============================================================================
+// SESSIONS & ATTENDANCE (HIGH SPEED)
+// ==============================================================================
+
+model Session {
+  id               String    @id @default(uuid())
+  tenantId         String?   @map("tenant_id")
+  academicClassId  String    @map("class_id")
+  timetableEntryId String?   @map("timetable_entry_id")
+  startTime        DateTime  @map("start_time")
+  endTime          DateTime  @map("end_time")
+  isActive         Boolean   @default(true) @map("is_active")
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
+
+  academicClass  AcademicClass   @relation(fields: [academicClassId], references: [id], onDelete: Cascade)
+  timetableEntry TimetableEntry? @relation(fields: [timetableEntryId], references: [id], onDelete: SetNull)
+  attendance     Attendance[]
+
+  @@index([academicClassId, isActive])
+  @@index([tenantId, startTime])
+  @@map("sessions")
+}
+
+model Geofence {
+  id              String   @id @default(uuid())
+  academicClassId String   @unique @map("class_id")
+  latitude        Float
+  longitude       Float
+  radiusMeters    Float    @map("radius_meters")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  academicClass AcademicClass @relation(fields: [academicClassId], references: [id], onDelete: Cascade)
+
+  @@map("geofences")
+}
+
+model Attendance {
+  id                 String    @id @default(uuid())
+  tenantId           String?   @map("tenant_id")
+  sessionId          String    @map("session_id")
+  studentId          String    @map("student_id")
+  status             String
+  faceScore          Float     @map("face_score")
+  livenessScore      Float     @map("liveness_score")
+  backgroundScore    Float     @map("background_score")
+  finalAiScore       Float     @map("final_ai_score")
+  gpsLatitude        Float     @map("gps_latitude")
+  gpsLongitude       Float     @map("gps_longitude")
+  evidencePhotoUrl   String?   @map("evidence_photo_url")
+  remarks            String?
+  studentNote        String?   @map("student_note")
+  reviewedBy         String?   @map("reviewed_by")
+  reviewedAt         DateTime? @map("reviewed_at")
+  createdAt          DateTime  @default(now()) @map("created_at")
+  updatedAt          DateTime  @updatedAt @map("updated_at")
+
+  tenant  Tenant? @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  session Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, sessionId])
+  @@index([tenantId, createdAt])
+  @@index([studentId, createdAt])
+  @@index([sessionId, status])
+  @@map("attendance")
+}
+
+// ==============================================================================
+// LEAVES, HARDWARE & AUDITING
+// ==============================================================================
+
+model LeaveRequest {
+  id           String      @id @default(uuid())
+  tenantId     String?     @map("tenant_id")
+  studentId    String      @map("student_id")
+  startDate    DateTime    @map("start_date")
+  endDate      DateTime    @map("end_date")
+  reason       String
+  documentUrl  String?     @map("document_url")
+  status       LeaveStatus @default(PENDING)
+  approvedBy   String?     @map("approved_by")
+  approverNote String?     @map("approver_note")
+  createdAt    DateTime    @default(now()) @map("created_at")
+  updatedAt    DateTime    @updatedAt @map("updated_at")
+
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([studentId, status, startDate, endDate])
+  @@index([tenantId, status])
+  @@map("leave_requests")
+}
+
+model DeviceChangeRequest {
+  id            String             @id @default(uuid())
+  tenantId      String?            @map("tenant_id")
+  studentId     String             @map("student_id")
+  newDeviceUuid String             @map("new_device_uuid")
+  reason        String?
+  status        DeviceChangeStatus @default(PENDING)
+  approvedBy    String?            @map("approved_by")
+  createdAt     DateTime           @default(now()) @map("created_at")
+  updatedAt     DateTime           @updatedAt @map("updated_at")
+
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([studentId, status])
+  @@index([tenantId, status])
+  @@map("device_change_requests")
+}
+
+model LicenseRequest {
+  id             String               @id @default(uuid())
+  tenantId       String?              @map("tenant_id")
+  requestedById  String               @map("requested_by_id")
+  requestedCount Int                  @map("requested_count")
+  status         LicenseRequestStatus @default(PENDING)
+  processedById  String?              @map("processed_by_id")
+  processedAt    DateTime?            @map("processed_at")
+  createdAt      DateTime             @default(now()) @map("created_at")
+  updatedAt      DateTime             @updatedAt @map("updated_at")
+
+  tenant      Tenant? @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  requestedBy User    @relation("LicenseRequester", fields: [requestedById], references: [id], onDelete: Cascade)
+  processedBy User?   @relation("LicenseProcessor", fields: [processedById], references: [id], onDelete: SetNull)
+
+  @@index([tenantId, status])
+  @@map("license_requests")
+}
+
+model AuditLog {
+  id          String   @id @default(uuid())
+  tenantId    String?  @map("tenant_id")
+  actorId     String?  @map("actor_id")
+  actor       String
+  eventType   String   @map("event_type")
+  severity    String
+  target      String
+  description String
+  ipAddress   String?  @map("ip_address")
+  metadata    Json?
+  timestamp   DateTime @default(now())
+
+  tenant Tenant? @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, timestamp])
+  @@index([eventType, timestamp])
+  @@map("audit_logs")
+}
+
+model SystemConfiguration {
+  id                              String   @id @default(uuid())
+  tenantId                        String?  @unique @map("tenant_id")
+  isFaceRecognitionEnabled        Boolean  @default(true) @map("is_face_recognition_enabled")
+  isGpsVerificationEnabled        Boolean  @default(true) @map("is_gps_verification_enabled")
+  isAiBackgroundValidationEnabled Boolean  @default(true) @map("is_ai_background_validation_enabled")
+  geofenceRadiusMeters            Int      @default(50) @map("geofence_radius_meters")
+  updatedAt                       DateTime @updatedAt @map("updated_at")
+
+  tenant Tenant? @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@map("system_configurations")
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  tenantId  String?  @map("tenant_id")
+  userId    String?  @map("user_id")
+  role      Role?
+  title     String
+  message   String
+  type      String   @default("info")
+  category  String   @default("system")
+  link      String?
+  isRead    Boolean  @default(false) @map("is_read")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  tenant Tenant? @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, createdAt])
+  @@index([userId, isRead])
+  @@map("notifications")
+}
