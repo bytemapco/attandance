@@ -44,8 +44,8 @@ jobs:
       - name: Build Frontend Standalone
         working-directory: frontend
         env:
-          NEXT_PUBLIC_API_URL: https://attandace_backend.bytemap.in/api/v1
-          NEXT_PUBLIC_WS_URL: wss://attandace_backend.bytemap.in/ws/connect
+          NEXT_PUBLIC_API_URL: https://attendance-backend.bytemap.in/api/v1
+          NEXT_PUBLIC_WS_URL: wss://attendance-backend.bytemap.in/ws/connect
           NEXT_PUBLIC_DEFAULT_TENANT_ID: default-institution
         run: |
           npm ci
@@ -90,25 +90,25 @@ jobs:
 
           # Ensure deployment directories exist
           ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=yes "$VPS_USER@$VPS_HOST" \
-            "mkdir -p /home/jarvis/SharedDrive/bytemap/attandace/backend /home/jarvis/SharedDrive/bytemap/attandace/frontend"
+            "mkdir -p /home/jarvis/SharedDrive/bytemap/attendance/backend /home/jarvis/SharedDrive/bytemap/attendance/frontend"
 
           # Securely transfer environment files
           scp -i ~/.ssh/deploy_key -o StrictHostKeyChecking=yes \
-            /tmp/deploy_envs/backend.env "$VPS_USER@$VPS_HOST:/home/jarvis/SharedDrive/bytemap/attandace/backend/.env"
+            /tmp/deploy_envs/backend.env "$VPS_USER@$VPS_HOST:/home/jarvis/SharedDrive/bytemap/attendance/backend/.env"
           scp -i ~/.ssh/deploy_key -o StrictHostKeyChecking=yes \
-            /tmp/deploy_envs/frontend.env "$VPS_USER@$VPS_HOST:/home/jarvis/SharedDrive/bytemap/attandace/frontend/.env"
+            /tmp/deploy_envs/frontend.env "$VPS_USER@$VPS_HOST:/home/jarvis/SharedDrive/bytemap/attendance/frontend/.env"
           rm -rf /tmp/deploy_envs
 
           # Transfer deployment bundles and PM2 configuration
           scp -i ~/.ssh/deploy_key -o StrictHostKeyChecking=yes \
             frontend-bundle.tar.gz backend-bundle.tar.gz ecosystem.config.cjs \
-            "$VPS_USER@$VPS_HOST:/home/jarvis/SharedDrive/bytemap/attandace/"
+            "$VPS_USER@$VPS_HOST:/home/jarvis/SharedDrive/bytemap/attendance/"
 
           # Deploy bundles and orchestrate with PM2
           ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=yes "$VPS_USER@$VPS_HOST" \
             "set -euo pipefail
-             export PATH=\"/home/jarvis/SharedDrive/bytemap/attandace/backend/venv/bin:/home/jarvis/.local/bin:/home/linuxbrew/.linuxbrew/bin:\$PATH\"
-             cd /home/jarvis/SharedDrive/bytemap/attandace
+             export PATH=\"/home/jarvis/SharedDrive/bytemap/attendance/backend/venv/bin:/home/jarvis/.local/bin:/home/linuxbrew/.linuxbrew/bin:\$PATH\"
+             cd /home/jarvis/SharedDrive/bytemap/attendance
 
              # Set strict permissions on environment files
              chmod 600 backend/.env frontend/.env

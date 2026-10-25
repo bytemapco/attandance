@@ -2,8 +2,8 @@ module.exports = {
   apps: [
     {
       name: 'smart-attendance-backend',
-      cwd: '/home/jarvis/SharedDrive/bytemap/attandace/backend',
-      script: '/home/jarvis/SharedDrive/bytemap/attandace/backend/venv/bin/uvicorn',
+      cwd: '/home/jarvis/SharedDrive/bytemap/attendance/backend',
+      script: '/home/jarvis/SharedDrive/bytemap/attendance/backend/venv/bin/uvicorn',
       args: 'main:app --host 0.0.0.0 --port 8011 --workers 1',
       interpreter: 'none',
       autorestart: true,
@@ -17,7 +17,7 @@ module.exports = {
     },
     {
       name: 'smart-attendance-frontend',
-      cwd: '/home/jarvis/SharedDrive/bytemap/attandace/frontend',
+      cwd: '/home/jarvis/SharedDrive/bytemap/attendance/frontend',
       script: 'server.js',
       interpreter: 'node',
       autorestart: true,

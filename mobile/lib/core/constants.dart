@@ -3,7 +3,7 @@ library;
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-const String kDefaultProductionApiBaseUrl = 'https://attandace_backend.bytemap.in/api/v1';
+const String kDefaultProductionApiBaseUrl = 'https://attendance-backend.bytemap.in/api/v1';
 
 String get kApiBaseUrl {
   const defineUrl = String.fromEnvironment('API_BASE_URL', defaultValue: '');

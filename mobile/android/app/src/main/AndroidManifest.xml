@@ -48,24 +48,24 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="smartattendance" android:host="reset-password" />
             </intent-filter>
-            <!-- App Link Intent Filter: https://smart-attandance-system-theta.vercel.app/reset-password -->
+            <!-- App Link Intent Filter: https://smart-attendance-system-theta.vercel.app/reset-password -->
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data
                     android:scheme="https"
-                    android:host="smart-attandance-system-theta.vercel.app"
+                    android:host="smart-attendance-system-theta.vercel.app"
                     android:pathPrefix="/reset-password" />
             </intent-filter>
-            <!-- App Link Intent Filter: https://smart-attandance-system.bytemap.in/reset-password -->
+            <!-- App Link Intent Filter: https://smart-attendance-system.bytemap.in/reset-password -->
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data
                     android:scheme="https"
-                    android:host="smart-attandance-system.bytemap.in"
+                    android:host="smart-attendance-system.bytemap.in"
                     android:pathPrefix="/reset-password" />
             </intent-filter>
         </activity>

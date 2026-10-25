@@ -8,7 +8,7 @@ This guide covers the host environment, PM2 process management, and day-to-day o
 
 All project artifacts are scoped strictly inside:
 ```text
-/home/jarvis/SharedDrive/bytemap/attandace/
+/home/jarvis/SharedDrive/bytemap/attendance/
 ├── backend/
 │   ├── .env                    # Sourced from PRODUCTION_BACKEND_ENV (0600)
 │   ├── venv/                   # Python 3.11 dedicated virtualenv
@@ -83,8 +83,8 @@ pm2 save
 - **Behavior**: `prisma-client-py` is installed in `backend/venv/bin/prisma-client-py`.
 - **Handling**: When running manual migrations, ensure `backend/venv/bin` is in `$PATH`:
   ```bash
-  export PATH="/home/jarvis/SharedDrive/bytemap/attandace/backend/venv/bin:$PATH"
-  cd /home/jarvis/SharedDrive/bytemap/attandace/backend
+  export PATH="/home/jarvis/SharedDrive/bytemap/attendance/backend/venv/bin:$PATH"
+  cd /home/jarvis/SharedDrive/bytemap/attendance/backend
   prisma db push --accept-data-loss
   ```
 
