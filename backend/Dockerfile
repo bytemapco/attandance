@@ -32,6 +32,7 @@ FROM python:3.11-slim AS runner
 ENV DEBIAN_FRONTEND=noninteractive \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
+    PRISMA_CACHE_DIR="/home/appuser/.cache/prisma-python" \
     PYTHONPATH="/app:${PYTHONPATH}"
 
 # Install minimal runtime libraries for OpenCV, GLib, and healthcheck curl
@@ -54,12 +55,12 @@ COPY --from=builder /install/wheels /usr/local
 # Copy application source code
 COPY --chown=appuser:appgroup . .
 
-# Generate Prisma Client Python inside container environment
-# prisma generate uses prisma/schema.prisma
-RUN python -m prisma generate
+# Generate Prisma Client Python and fetch engines to application cache
+RUN python -m prisma generate && \
+    python -m prisma py fetch
 
-# Create directory for DeepFace / model caches with proper permissions
-RUN mkdir -p /home/appuser/.deepface/weights /app/models && \
+# Create directories with proper non-root ownership
+RUN mkdir -p /home/appuser/.deepface/weights /app/models /home/appuser/.cache && \
     chown -R appuser:appgroup /home/appuser /app
 
 USER appuser
