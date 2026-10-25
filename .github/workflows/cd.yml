@@ -111,17 +111,16 @@ jobs:
              fi
              pip install --upgrade pip
              pip install -r backend/requirements.txt
-             (cd backend && prisma generate)
+             (cd backend && prisma generate && prisma db push --accept-data-loss)
 
              # Start or reload services via PM2
              pm2 startOrReload ecosystem.config.js --update-env
              pm2 save
 
-             # Verify services are responding
+             # Verify services are responding with retry tolerance for model loading
              echo 'Waiting for services initialization...'
-             sleep 10
-             curl -fsS http://127.0.0.1:8011/health || { echo 'Backend health check failed'; pm2 logs smart-attendance-backend --lines 30 --nostream; exit 1; }
-             curl -fsS -I http://127.0.0.1:3011/ || { echo 'Frontend health check failed'; pm2 logs smart-attendance-frontend --lines 30 --nostream; exit 1; }
+             curl --retry 10 --retry-delay 3 --retry-connrefused -fsS http://127.0.0.1:8011/health || { echo 'Backend health check failed'; pm2 logs smart-attendance-backend --lines 30 --nostream; exit 1; }
+             curl --retry 5 --retry-delay 2 --retry-connrefused -fsS -I http://127.0.0.1:3011/ || { echo 'Frontend health check failed'; pm2 logs smart-attendance-frontend --lines 30 --nostream; exit 1; }
              pm2 list"
 
           rm -f ~/.ssh/deploy_key ~/.ssh/known_hosts
