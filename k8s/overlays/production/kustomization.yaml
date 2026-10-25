@@ -3,7 +3,7 @@ kind: Kustomization
 
 namespace: attendance
 
-bases:
+resources:
   - ../../base
 
 images:
