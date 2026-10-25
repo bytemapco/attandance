@@ -32,7 +32,6 @@ FROM python:3.11-slim AS runner
 ENV DEBIAN_FRONTEND=noninteractive \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    PATH="/app/.venv_prisma/bin:${PATH}" \
     PYTHONPATH="/app:${PYTHONPATH}"
 
 # Install minimal runtime libraries for OpenCV, GLib, and healthcheck curl

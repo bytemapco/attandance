@@ -6,7 +6,6 @@ datasource db {
 
 generator client {
   provider             = "prisma-client-py"
-  output               = "../.venv/lib/python3.11/site-packages/prisma"
   interface            = "asyncio"
   recursive_type_depth = 5
   previewFeatures      = ["postgresqlExtensions"]
