@@ -1,25 +1,110 @@
-name: CD
+name: CI/CD
 
 on:
-  workflow_run:
-    workflows: ["CI"]
-    types: [completed]
+  push:
+    branches: [main]
+  pull_request:
     branches: [main]
 
 permissions:
   contents: read
 
-concurrency:
-  group: cd-production
-  cancel-in-progress: false
-
 jobs:
+  frontend-check:
+    name: Frontend Quality Checks
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run ESLint
+        run: npm run lint
+
+      - name: Run TypeScript type check
+        run: npm run type-check
+
+      - name: Run Vitest unit tests
+        run: npm test
+
+      - name: Build Next.js application
+        env:
+          NEXT_PUBLIC_API_URL: /api/v1
+          NEXT_PUBLIC_WS_URL: /ws/connect
+        run: npm run build
+
+  backend-check:
+    name: Backend Quality Checks
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install system dependencies for OpenCV and GLib
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends libgl1 libglib2.0-0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: |
+            backend/requirements.txt
+            backend/requirements-dev.txt
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt -r requirements-dev.txt
+
+      - name: Generate Prisma Client Python
+        run: python -m prisma generate
+
+      - name: Run Ruff Linter
+        run: ruff check .
+
+      - name: Run Pytest test suite
+        run: pytest tests/ -v
+
+  compose-validate:
+    name: Validate Docker Compose
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate Compose File Syntax
+        run: docker compose config --quiet
+
   deploy:
     name: Build, Publish & Deploy
-    if: >-
-      github.event.workflow_run.conclusion == 'success' &&
-      github.event.workflow_run.event == 'push'
+    needs: [frontend-check, backend-check, compose-validate]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+
+    concurrency:
+      group: production-deploy
+      cancel-in-progress: false
 
     permissions:
       contents: read
@@ -29,8 +114,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.workflow_run.head_sha }}
 
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
@@ -46,9 +129,9 @@ jobs:
         id: repo
         run: |
           echo "owner_repo=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_OUTPUT"
-          echo "commit_sha=${{ github.event.workflow_run.head_sha }}" >> "$GITHUB_OUTPUT"
+          echo "commit_sha=${{ github.sha }}" >> "$GITHUB_OUTPUT"
 
-      - name: Build & Push Backend Image
+      - name: Build & Push Backend Docker Image
         uses: docker/build-push-action@v6
         with:
           context: ./backend
@@ -58,7 +141,7 @@ jobs:
             ghcr.io/${{ steps.repo.outputs.owner_repo }}-backend:${{ steps.repo.outputs.commit_sha }}
             ghcr.io/${{ steps.repo.outputs.owner_repo }}-backend:latest
 
-      - name: Build & Push Frontend Image
+      - name: Build & Push Frontend Docker Image
         uses: docker/build-push-action@v6
         with:
           context: ./frontend
@@ -99,10 +182,10 @@ jobs:
           ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=yes "$VPS_USER@$VPS_HOST" \
             "mkdir -p /home/jarvis/SharedDrive/bytemap/attandace"
 
-          # Copy production docker-compose.yml to the deployment directory
+          # Copy production docker-compose.yml to jarvis
           scp -i ~/.ssh/deploy_key -o StrictHostKeyChecking=yes docker-compose.yml "$VPS_USER@$VPS_HOST:/home/jarvis/SharedDrive/bytemap/attandace/docker-compose.yml"
 
-          # Authenticate to GHCR, pull images, and restart services
+          # Authenticate to GHCR, pull fresh images, and launch services
           ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=yes "$VPS_USER@$VPS_HOST" \
             "set -euo pipefail
              cd /home/jarvis/SharedDrive/bytemap/attandace
