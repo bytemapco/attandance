@@ -7,7 +7,7 @@ from app.api.dependencies import get_current_student
 from app.core.logging_config import get_logger
 from app.core.security import create_access_token
 from app.db.client import db
-from app.repositories.leave_repo import LeaveRepository
+from app.repositories.leave_repository import LeaveRepository
 
 from app.schemas.attendance import (
     AttendanceMarkResponse,

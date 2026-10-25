@@ -9,7 +9,7 @@ import GlassLoader from "@/components/ui/GlassLoader";
 import GlassEmptyState from "@/components/ui/GlassEmptyState";
 import toast from "react-hot-toast";
 import HistoryFilters from "./HistoryFilters";
-import { getSessionLogColumns, type SessionLogItem } from "./history-columns";
+import { getSessionLogColumns, type SessionLogItem } from "./HistoryColumns";
 
 interface AcademicClass {
   id: string;

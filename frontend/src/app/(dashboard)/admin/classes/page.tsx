@@ -10,7 +10,7 @@ import EnterpriseTableToolbar from "@/components/ui/EnterpriseTableToolbar";
 import EnterprisePagination from "@/components/ui/EnterprisePagination";
 import BulkImportModal from "@/components/admin/BulkImportModal";
 import { useTableQuery } from "@/hooks/useTableQuery";
-import { classColumns } from "./class-columns";
+import { classColumns } from "./ClassColumns";
 import type { ClassResponse, SubjectResponse } from "@/types";
 
 export default function ClassesPage(): React.ReactElement {

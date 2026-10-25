@@ -1,6 +1,6 @@
 from typing import Optional, Tuple
 from app.core.logging_config import get_logger
-from app.repositories.geofence_repo import GeofenceRepository
+from app.repositories.geofence_repository import GeofenceRepository
 from app.utils.geofencing import GPSCoordinate, calculate_haversine_distance, is_within_geofence
 
 logger = get_logger("app.attendance.geofence")

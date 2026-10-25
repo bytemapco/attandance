@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Trash2, Mail, Layers, CheckCircle, AlertTriangle } from "lucide-react";
-import { ParsedBulkRecord, BulkImportEntityType } from "./bulk-types";
+import { ParsedBulkRecord, BulkImportEntityType } from "./bulkTypes";
 
 interface BulkImportPreviewTableProps {
   records: ParsedBulkRecord[];

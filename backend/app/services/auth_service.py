@@ -9,9 +9,9 @@ from app.core.logging_config import get_logger
 from app.core.security import hash_password, verify_password, create_access_token
 from app.db.client import db
 from app.db.redis import get_redis
-from app.repositories.user_repo import UserRepository
-from app.repositories.student_repo import StudentRepository
-from app.repositories.teacher_repo import TeacherRepository
+from app.repositories.user_repository import UserRepository
+from app.repositories.student_repository import StudentRepository
+from app.repositories.teacher_repository import TeacherRepository
 from app.schemas.auth import Token, UserLogin
 from app.schemas.student import StudentCreate, StudentResponse
 from app.schemas.teacher import TeacherCreate, TeacherResponse

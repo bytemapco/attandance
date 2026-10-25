@@ -1,12 +1,6 @@
-from typing import List
+"""Backward-compatibility alias for app.repositories.class_repository."""
 
-from prisma.models import AcademicClass
-from app.db.client import db
+from app.repositories.class_repository import *  # noqa: F401, F403
+from app.repositories.class_repository import ClassRepository  # noqa: F401
 
-
-class ClassRepository:
-    async def get_by_id(self, class_id: str) -> AcademicClass | None:
-        return await db.academicclass.find_unique(where={"id": class_id})
-
-    async def get_by_teacher_id(self, teacher_id: str) -> List[AcademicClass]:
-        return await db.academicclass.find_many(where={"teacherId": teacher_id})
+__all__ = ["ClassRepository"]

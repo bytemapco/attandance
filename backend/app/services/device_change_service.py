@@ -3,8 +3,8 @@ from fastapi import HTTPException, status
 from app.core.logging_config import get_logger
 from app.core.security import verify_password
 from app.db.client import db
-from app.repositories.user_repo import UserRepository
-from app.repositories.student_repo import StudentRepository
+from app.repositories.user_repository import UserRepository
+from app.repositories.student_repository import StudentRepository
 from app.schemas.auth import DeviceChangeRequestCreate
 from app.schemas.teacher import DeviceChangeResponse
 from app.services.email_service import email_service

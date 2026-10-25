@@ -5,9 +5,9 @@ from prisma.models import Attendance
 from app.core.logging_config import get_logger
 from app.core.security import create_access_token, decode_access_token
 from app.db.redis import get_redis
-from app.repositories.attendance_repo import AttendanceRepository
-from app.repositories.session_repo import SessionRepository
-from app.repositories.student_repo import StudentRepository
+from app.repositories.attendance_repository import AttendanceRepository
+from app.repositories.session_repository import SessionRepository
+from app.repositories.student_repository import StudentRepository
 from app.services.ai_orchestrator import AIOrchestrator
 from app.services.system_config_service import SystemConfigService
 from app.services.attendance.geofence_validator import GeofenceValidator

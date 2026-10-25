@@ -74,10 +74,13 @@ class WebSocketService {
       final cleanBase = kApiBaseUrl.endsWith('/')
           ? kApiBaseUrl.substring(0, kApiBaseUrl.length - 1)
           : kApiBaseUrl;
-      final wsUrl = cleanBase
+      final wsBaseUrl = cleanBase
           .replaceFirst('http://', 'ws://')
           .replaceFirst('https://', 'wss://');
-      final uri = Uri.parse('$wsUrl/ws/connect');
+      final wsPath = wsBaseUrl.endsWith('/ws/connect')
+          ? wsBaseUrl
+          : '$wsBaseUrl/ws/connect';
+      final uri = Uri.parse(wsPath);
       
       _channel = WebSocketChannel.connect(uri);
       

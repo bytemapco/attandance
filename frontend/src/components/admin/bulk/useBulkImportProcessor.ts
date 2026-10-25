@@ -2,8 +2,8 @@
 
 import { useState, useRef } from "react";
 import api, { getApiErrorMessage } from "@/lib/api";
-import { ParsedBulkRecord, ImportStage, BatchProgressItem, BulkImportSummary, BulkImportEntityType } from "./bulk-types";
-import { buildBatches, buildBulkPayload } from "./bulk-payload-builder";
+import { ParsedBulkRecord, ImportStage, BatchProgressItem, BulkImportSummary, BulkImportEntityType } from "./bulkTypes";
+import { buildBatches, buildBulkPayload } from "./bulkPayloadBuilder";
 
 export function humanizeImportError(errorMsg: string): string {
   if (!errorMsg) return "Unknown error";

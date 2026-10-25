@@ -2,8 +2,8 @@
 
 import React, { useRef } from "react";
 import { Upload, Download, FileSpreadsheet, AlertCircle } from "lucide-react";
-import { ParsedBulkRecord, BulkImportEntityType } from "./bulk-types";
-import { getSampleCsv } from "./bulk-csv-samples";
+import { ParsedBulkRecord, BulkImportEntityType } from "./bulkTypes";
+import { getSampleCsv } from "./bulkCsvSamples";
 
 interface BulkImportDropzoneProps {
   entityType: BulkImportEntityType;

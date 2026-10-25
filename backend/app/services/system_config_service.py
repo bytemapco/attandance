@@ -1,7 +1,7 @@
 import json
 from typing import Optional
 from prisma.models import SystemConfiguration
-from app.repositories.system_config_repo import SystemConfigRepository
+from app.repositories.system_config_repository import SystemConfigRepository
 from app.db.redis import get_redis
 from app.core.logging_config import get_logger
 

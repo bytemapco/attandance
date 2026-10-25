@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import toast from "react-hot-toast";
 import { Check, X, RefreshCw, Inbox } from "lucide-react";
-import { superAdminService } from "@/lib/services/superAdminService";
+import { superAdminService } from "@/services/superAdminService";
 import { getApiErrorMessage } from "@/lib/api";
 import GlassBreadcrumb from "@/components/ui/GlassBreadcrumb";
 import GlassPageHeader from "@/components/ui/GlassPageHeader";

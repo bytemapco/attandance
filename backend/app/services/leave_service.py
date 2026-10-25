@@ -4,10 +4,10 @@ from prisma.models import LeaveRequest
 
 from app.core.logging_config import get_logger
 from app.db.client import db
-from app.repositories.leave_repo import LeaveRepository
-from app.repositories.attendance_repo import AttendanceRepository
-from app.repositories.enrollment_repo import EnrollmentRepository
-from app.repositories.session_repo import SessionRepository
+from app.repositories.leave_repository import LeaveRepository
+from app.repositories.attendance_repository import AttendanceRepository
+from app.repositories.enrollment_repository import EnrollmentRepository
+from app.repositories.session_repository import SessionRepository
 
 logger = get_logger("app.leave_service")
 

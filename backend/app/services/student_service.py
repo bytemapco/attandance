@@ -2,7 +2,7 @@ from fastapi import HTTPException, status
 
 from app.core.logging_config import get_logger
 from app.db.client import db
-from app.repositories.student_repo import StudentRepository
+from app.repositories.student_repository import StudentRepository
 from app.schemas.student import StudentAttendanceItem, StudentAttendanceHistoryResponse, StudentClassResponse
 
 logger = get_logger("app.student.service")
@@ -134,9 +134,9 @@ class StudentService:
         from app.core.security import decode_access_token
         from app.services.gamification_service import GamificationService
         from app.services.system_config_service import SystemConfigService
-        from app.repositories.geofence_repo import GeofenceRepository
+        from app.repositories.geofence_repository import GeofenceRepository
         from app.utils.geofencing import GPSCoordinate, calculate_haversine_distance, is_within_geofence
-        from app.api.ws import manager
+        from app.api.websocket import manager
         from app.schemas.student import StudentSmartPassScanResponse
 
         payload = decode_access_token(qr_token)

@@ -3,9 +3,9 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { logger } from "./cli/logger.mjs";
-import { runSystemCheck } from "./cli/systemCheck.mjs";
-import { setupBackend } from "./cli/backendSetup.mjs";
-import { setupFrontend } from "./cli/frontendSetup.mjs";
+import { runSystemCheck } from "./cli/system-check.mjs";
+import { setupBackend } from "./cli/backend-setup.mjs";
+import { setupFrontend } from "./cli/frontend-setup.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

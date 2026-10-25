@@ -1,12 +1,30 @@
 library;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+const String kDefaultProductionApiBaseUrl = 'https://attandace_backend.bytemap.in/api/v1';
+
 String get kApiBaseUrl {
-  final envUrl = dotenv.isInitialized ? dotenv.env['API_BASE_URL'] : null;
-  if (envUrl != null && envUrl.trim().isNotEmpty) return envUrl.trim();
   const defineUrl = String.fromEnvironment('API_BASE_URL', defaultValue: '');
-  return defineUrl.trim();
+  if (defineUrl.trim().isNotEmpty) {
+    return _sanitizeApiUrl(defineUrl.trim());
+  }
+
+  final envUrl = dotenv.isInitialized ? dotenv.env['API_BASE_URL'] : null;
+  if (envUrl != null && envUrl.trim().isNotEmpty) {
+    return _sanitizeApiUrl(envUrl.trim());
+  }
+
+  return kDefaultProductionApiBaseUrl;
+}
+
+String _sanitizeApiUrl(String rawUrl) {
+  var url = rawUrl.trim();
+  if (kReleaseMode && url.startsWith('http://') && !url.contains('localhost') && !url.contains('10.0.2.2')) {
+    url = url.replaceFirst('http://', 'https://');
+  }
+  return url;
 }
 
 const String kHiveBoxProfile = 'sas_profile';

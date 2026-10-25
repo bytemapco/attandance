@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import { History, RefreshCw, Radio, Users, AlertCircle, CheckCircle2, Info, AlertTriangle } from "lucide-react";
-import { superAdminService } from "@/lib/services/superAdminService";
+import { superAdminService } from "@/services/superAdminService";
 import GlassCard from "@/components/ui/GlassCard";
 import GlassBadge, { type BadgeVariant } from "@/components/ui/GlassBadge";
 import type { BroadcastHistoryItem } from "@/types/tenant";

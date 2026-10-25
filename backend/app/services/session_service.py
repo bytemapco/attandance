@@ -3,8 +3,8 @@ from typing import Optional
 
 from app.core.logging_config import get_logger
 from app.db.redis import get_redis
-from app.repositories.session_repo import SessionRepository
-from app.repositories.class_repo import ClassRepository
+from app.repositories.session_repository import SessionRepository
+from app.repositories.class_repository import ClassRepository
 from app.schemas.teacher import SessionResponse, SessionStart
 
 logger = get_logger("app.session")

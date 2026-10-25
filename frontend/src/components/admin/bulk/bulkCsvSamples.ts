@@ -1,4 +1,4 @@
-import { BulkImportEntityType } from "./bulk-types";
+import { BulkImportEntityType } from "./bulkTypes";
 
 export function getSampleCsv(entityType: BulkImportEntityType): string {
   if (entityType === "students") {

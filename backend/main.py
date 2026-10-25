@@ -28,7 +28,7 @@ from app.api import (
     logs,
     health,
     notifications,
-    ws as ws_module,
+    websocket as websocket_router,
     search,
     super_admin,
     scim,
@@ -56,13 +56,13 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     await connect_db()
     await connect_redis()
     s3_service.ensure_bucket_exists()
-    ws_module.manager.start_heartbeat()
+    websocket_router.manager.start_heartbeat()
     session_scheduler.start()
     logger.info("Server ready")
     yield
     logger.info("Shutting down...")
     session_scheduler.stop()
-    ws_module.manager.stop_heartbeat()
+    websocket_router.manager.stop_heartbeat()
     await disconnect_db()
     await disconnect_redis()
     logger.info("Shutdown complete")
@@ -97,7 +97,7 @@ app.include_router(teacher.router, prefix=settings.API_V1_STR)
 app.include_router(admin.router, prefix=settings.API_V1_STR)
 app.include_router(logs.router, prefix=settings.API_V1_STR)
 app.include_router(notifications.router, prefix=settings.API_V1_STR)
-app.include_router(ws_module.router, prefix=settings.API_V1_STR)
+app.include_router(websocket_router.router, prefix=settings.API_V1_STR)
 app.include_router(search.router, prefix=settings.API_V1_STR)
 app.include_router(scim.router, prefix=settings.API_V1_STR)
 

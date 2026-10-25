@@ -8,7 +8,7 @@ import GlassPageHeader from "@/components/ui/GlassPageHeader";
 import GlassButton from "@/components/ui/GlassButton";
 import SuperAdminKpiStrip from "@/components/super-admin/SuperAdminKpiStrip";
 import TenantTable from "@/components/super-admin/TenantTable";
-import { superAdminService } from "@/lib/services/superAdminService";
+import { superAdminService } from "@/services/superAdminService";
 import type { SuperAdminStats, Tenant } from "@/types";
 import toast from "react-hot-toast";
 

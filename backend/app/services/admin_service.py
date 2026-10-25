@@ -14,11 +14,11 @@ from app.services.admin.designation_service import DesignationService
 from app.services.admin.bulk_import_service import BulkImportService
 from app.services.admin.audit_export_service import AuditExportService
 
-from app.repositories.user_repo import UserRepository
-from app.repositories.student_repo import StudentRepository
-from app.repositories.teacher_repo import TeacherRepository
-from app.repositories.class_repo import ClassRepository
-from app.repositories.enrollment_repo import EnrollmentRepository
+from app.repositories.user_repository import UserRepository
+from app.repositories.student_repository import StudentRepository
+from app.repositories.teacher_repository import TeacherRepository
+from app.repositories.class_repository import ClassRepository
+from app.repositories.enrollment_repository import EnrollmentRepository
 
 
 class AdminService:

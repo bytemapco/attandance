@@ -10,7 +10,7 @@ import GlassInput from "@/components/ui/GlassInput";
 import GlassSelect from "@/components/ui/GlassSelect";
 import GlassButton from "@/components/ui/GlassButton";
 import GlassLoader from "@/components/ui/GlassLoader";
-import { superAdminService } from "@/lib/services/superAdminService";
+import { superAdminService } from "@/services/superAdminService";
 import { getApiErrorMessage } from "@/lib/api";
 import type { TenantDetail, TenantType, TenantStatus } from "@/types/tenant";
 import toast from "react-hot-toast";

@@ -417,7 +417,7 @@ class SuperAdminService:
         except Exception as cache_err:
             logger.warning("Failed updating tenant Redis resolution keys for %s: %s", tenant_id, cache_err)
         if data.status == "SUSPENDED":
-            from app.api.ws import manager as ws_manager
+            from app.api.websocket import manager as ws_manager
 
             await ws_manager.force_close_tenant(
                 tenant_id, f"Institution '{updated.name}' has been suspended. Please contact your administrator."
@@ -436,7 +436,7 @@ class SuperAdminService:
 
         # Disconnect connected websocket users for this tenant
         try:
-            from app.api.ws import manager as ws_manager
+            from app.api.websocket import manager as ws_manager
 
             await ws_manager.force_close_tenant(
                 tenant_id, f"Institution '{t.name}' has been deleted by platform super admin."
@@ -858,7 +858,7 @@ class SuperAdminService:
 
         # Deliver in real-time over platform WebSocket
         try:
-            from app.api.ws import manager as ws_manager
+            from app.api.websocket import manager as ws_manager
 
             payload = {
                 "type": "notification",

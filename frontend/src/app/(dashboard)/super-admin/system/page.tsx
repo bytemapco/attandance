@@ -4,7 +4,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { RefreshCw, Copy, Check } from "lucide-react";
 import toast from "react-hot-toast";
 
-import { superAdminService } from "@/lib/services/superAdminService";
+import { superAdminService } from "@/services/superAdminService";
 import { getApiErrorMessage } from "@/lib/api";
 import GlassBreadcrumb from "@/components/ui/GlassBreadcrumb";
 import GlassPageHeader from "@/components/ui/GlassPageHeader";

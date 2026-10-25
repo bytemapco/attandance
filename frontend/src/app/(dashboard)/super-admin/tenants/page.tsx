@@ -9,7 +9,7 @@ import EnterprisePagination from "@/components/ui/EnterprisePagination";
 import TenantFilterBar from "@/components/super-admin/TenantFilterBar";
 import TenantTable from "@/components/super-admin/TenantTable";
 import DeleteTenantModal from "@/components/super-admin/DeleteTenantModal";
-import { superAdminService } from "@/lib/services/superAdminService";
+import { superAdminService } from "@/services/superAdminService";
 import { useDebounce } from "@/hooks/useDebounce";
 import type { Tenant } from "@/types/tenant";
 import toast from "react-hot-toast";

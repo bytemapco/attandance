@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Loader2, CheckCircle2, AlertCircle, Clock, Mail, ShieldAlert } from "lucide-react";
-import { BatchProgressItem } from "./bulk-types";
+import { BatchProgressItem } from "./bulkTypes";
 
 interface BulkImportProgressProps {
   batches: BatchProgressItem[];

@@ -1,6 +1,0 @@
-Collecting werkzeug
-  Using cached werkzeug-3.1.9-py3-none-any.whl.metadata (4.1 kB)
-Requirement already satisfied: markupsafe>=2.1.1 in ./backend/.venv/lib/python3.11/site-packages (from werkzeug) (3.0.4)
-Using cached werkzeug-3.1.9-py3-none-any.whl (228 kB)
-Installing collected packages: werkzeug
-Successfully installed werkzeug-3.1.9

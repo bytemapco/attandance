@@ -7,9 +7,9 @@ from app.core.logging_config import get_logger
 from app.db.client import db
 
 logger = get_logger("app.teacher")
-from app.repositories.teacher_repo import TeacherRepository
-from app.repositories.class_repo import ClassRepository
-from app.repositories.geofence_repo import GeofenceRepository
+from app.repositories.teacher_repository import TeacherRepository
+from app.repositories.class_repository import ClassRepository
+from app.repositories.geofence_repository import GeofenceRepository
 from app.schemas.teacher import (
     GeofenceUpsert,
     GeofenceResponse,
@@ -612,7 +612,7 @@ class TeacherService:
     async def verify_smart_pass(self, user_id: str, session_id: str, qr_token: str):
         from app.core.security import decode_access_token
         from app.services.gamification_service import GamificationService
-        from app.api.ws import manager
+        from app.api.websocket import manager
         from app.schemas.teacher import SmartPassVerifyResponse
 
         payload = decode_access_token(qr_token)

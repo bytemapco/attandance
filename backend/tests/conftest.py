@@ -158,13 +158,13 @@ def mock_db(monkeypatch):
     import app.services.auth_service as auth_service_module
     monkeypatch.setattr(auth_service_module, "db", mock_prisma)
 
-    import app.repositories.user_repo as user_repo_module
+    import app.repositories.user_repositorysitory as user_repo_module
     monkeypatch.setattr(user_repo_module, "db", mock_prisma)
 
-    import app.repositories.student_repo as student_repo_module
+    import app.repositories.student_repositorysitory as student_repo_module
     monkeypatch.setattr(student_repo_module, "db", mock_prisma)
 
-    import app.repositories.teacher_repo as teacher_repo_module
+    import app.repositories.teacher_repositorysitory as teacher_repo_module
     monkeypatch.setattr(teacher_repo_module, "db", mock_prisma)
 
     return mock_prisma

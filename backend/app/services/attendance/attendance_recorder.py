@@ -1,7 +1,7 @@
 import os
 from prisma.models import Attendance
 from app.core.logging_config import get_logger
-from app.repositories.attendance_repo import AttendanceRepository
+from app.repositories.attendance_repository import AttendanceRepository
 from app.services.gamification_service import GamificationService
 
 logger = get_logger("app.attendance.recorder")

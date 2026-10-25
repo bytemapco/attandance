@@ -2,8 +2,8 @@ from datetime import datetime, timedelta, timezone
 from typing import Tuple
 
 from app.core.logging_config import get_logger
-from app.repositories.student_repo import StudentRepository
-from app.repositories.attendance_repo import AttendanceRepository
+from app.repositories.student_repository import StudentRepository
+from app.repositories.attendance_repository import AttendanceRepository
 
 logger = get_logger("app.gamification")
 

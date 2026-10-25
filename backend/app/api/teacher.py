@@ -6,8 +6,8 @@ from prisma.models import Teacher
 
 from app.api.dependencies import get_current_teacher
 from app.db.client import db
-from app.repositories.attendance_repo import AttendanceRepository
-from app.repositories.leave_repo import LeaveRepository
+from app.repositories.attendance_repository import AttendanceRepository
+from app.repositories.leave_repository import LeaveRepository
 from app.schemas.teacher import (
     SessionResponse,
     SessionStart,

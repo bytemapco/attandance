@@ -34,7 +34,7 @@ async def create_in_app_notification(
 
         # Broadcast real-time event via WebSocket
         try:
-            from app.api.ws import manager
+            from app.api.websocket import manager
 
             payload = {
                 "event": "NOTIFICATION_RECEIVED",

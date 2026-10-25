@@ -7,7 +7,7 @@ import GlassInput from "@/components/ui/GlassInput";
 import GlassButton from "@/components/ui/GlassButton";
 import GlassBadge from "@/components/ui/GlassBadge";
 import GlassResetPasswordDialog from "@/components/ui/GlassResetPasswordDialog";
-import { superAdminService } from "@/lib/services/superAdminService";
+import { superAdminService } from "@/services/superAdminService";
 import { getApiErrorMessage } from "@/lib/api";
 import type { TenantDetail } from "@/types/tenant";
 

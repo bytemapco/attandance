@@ -1,4 +1,4 @@
-import { ParsedBulkRecord, BatchProgressItem, BulkImportEntityType } from "./bulk-types";
+import { ParsedBulkRecord, BatchProgressItem, BulkImportEntityType } from "./bulkTypes";
 
 export const BULK_BATCH_SIZE = 10;
 

@@ -3,8 +3,8 @@
 import React, { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuthStore } from "@/store/authStore";
-import Sidebar from "@/components/ui/Sidebar";
-import Header from "@/components/ui/Header";
+import Sidebar from "@/components/navigation/Sidebar";
+import Header from "@/components/navigation/Header";
 import GlassLoader from "@/components/ui/GlassLoader";
 import { usePlatformWebSocket } from "@/hooks/usePlatformWebSocket";
 

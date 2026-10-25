@@ -6,9 +6,9 @@ from app.core.config import settings
 from app.core.logging_config import get_logger
 from app.core.security import decode_access_token
 from app.db.redis import get_redis
-from app.repositories.user_repo import UserRepository
-from app.repositories.student_repo import StudentRepository
-from app.repositories.teacher_repo import TeacherRepository
+from app.repositories.user_repository import UserRepository
+from app.repositories.student_repository import StudentRepository
+from app.repositories.teacher_repository import TeacherRepository
 
 logger = get_logger("app.auth")
 

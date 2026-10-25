@@ -3,7 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
 import { logger } from "./logger.mjs";
-import { findPython311Binary } from "./systemCheck.mjs";
+import { findPython311Binary } from "./system-check.mjs";
 
 function getVenvPython(backendDir) {
   const venvPythonPosix = path.join(backendDir, ".venv", "bin", "python");

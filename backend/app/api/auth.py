@@ -10,7 +10,7 @@ from app.core.security import decode_access_token
 from app.core.url_resolver import resolve_frontend_url
 from app.db.client import db
 from app.db.redis import get_redis
-from app.repositories.student_repo import StudentRepository
+from app.repositories.student_repository import StudentRepository
 from app.schemas.auth import (
     Token,
     UserLogin,

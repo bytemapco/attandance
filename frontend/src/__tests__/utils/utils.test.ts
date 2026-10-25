@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { cn } from "@/lib/utils";
-import { exportToCSV } from "@/utils/exportUtils";
+import { exportToCSV } from "@/utils/csvExport";
 
 describe("cn utility", () => {
   it("merges classes correctly", () => {

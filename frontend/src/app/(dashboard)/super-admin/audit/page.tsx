@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import toast from "react-hot-toast";
-import { superAdminService } from "@/lib/services/superAdminService";
+import { superAdminService } from "@/services/superAdminService";
 import { useDebounce } from "@/hooks/useDebounce";
 import { getApiErrorMessage } from "@/lib/api";
 import GlassBreadcrumb from "@/components/ui/GlassBreadcrumb";

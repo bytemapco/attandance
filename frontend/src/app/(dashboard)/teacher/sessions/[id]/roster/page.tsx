@@ -15,8 +15,8 @@ import GlassLoader from "@/components/ui/GlassLoader";
 import GlassConfirmDialog from "@/components/ui/GlassConfirmDialog";
 import SmartPassGeneratorModal from "@/components/scanner/SmartPassGeneratorModal";
 import SmartPassScannerModal from "@/components/scanner/SmartPassScannerModal";
-import { exportRosterToCSV } from "@/utils/exportUtils";
-import { getRosterColumns } from "./roster-columns";
+import { exportRosterToCSV } from "@/utils/csvExport";
+import { getRosterColumns } from "./RosterColumns";
 import type { SessionAttendanceResponse, StudentRosterItem, BulkMarkRequest } from "@/types";
 
 export default function SessionRosterPage(): React.ReactElement {

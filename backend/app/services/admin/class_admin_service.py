@@ -1,9 +1,9 @@
 from typing import List, Optional
 from app.db.client import db
-from app.repositories.teacher_repo import TeacherRepository
-from app.repositories.class_repo import ClassRepository
-from app.repositories.student_repo import StudentRepository
-from app.repositories.enrollment_repo import EnrollmentRepository
+from app.repositories.teacher_repository import TeacherRepository
+from app.repositories.class_repository import ClassRepository
+from app.repositories.student_repository import StudentRepository
+from app.repositories.enrollment_repository import EnrollmentRepository
 from app.schemas.admin import ClassCreate, ClassResponse
 
 

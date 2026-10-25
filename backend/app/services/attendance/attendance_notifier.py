@@ -1,9 +1,9 @@
 from app.core.logging_config import get_logger
-from app.api.ws import manager
+from app.api.websocket import manager
 from app.db.client import db
-from app.repositories.student_repo import StudentRepository
-from app.repositories.class_repo import ClassRepository
-from app.repositories.teacher_repo import TeacherRepository
+from app.repositories.student_repository import StudentRepository
+from app.repositories.class_repository import ClassRepository
+from app.repositories.teacher_repository import TeacherRepository
 
 logger = get_logger("app.attendance.notifier")
 

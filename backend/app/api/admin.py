@@ -6,7 +6,7 @@ from prisma.models import User
 
 from app.api.dependencies import RoleChecker, get_current_user, get_tenant_context
 from app.db.client import db
-from app.repositories.attendance_repo import AttendanceRepository
+from app.repositories.attendance_repository import AttendanceRepository
 from app.schemas.student import StudentCreate, StudentResponse, StudentUpdate
 from app.schemas.teacher import TeacherCreate, TeacherResponse, TeacherUpdate
 from app.schemas.admin import (

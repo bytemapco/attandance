@@ -2,7 +2,7 @@
 
 import React from "react";
 import { CheckCircle2, AlertTriangle, XCircle, Download, Mail, RefreshCw } from "lucide-react";
-import { BulkImportSummary, BulkImportEntityType } from "./bulk-types";
+import { BulkImportSummary, BulkImportEntityType } from "./bulkTypes";
 
 interface BulkImportResultsProps {
   summary: BulkImportSummary;

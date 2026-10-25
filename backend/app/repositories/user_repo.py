@@ -1,19 +1,6 @@
-from prisma.models import User
-from app.db.client import db
+"""Backward-compatibility alias for app.repositories.user_repository."""
 
+from app.repositories.user_repository import *  # noqa: F401, F403
+from app.repositories.user_repository import UserRepository  # noqa: F401
 
-class UserRepository:
-    async def get_by_email(self, email: str) -> User | None:
-        return await db.user.find_unique(
-            where={"email": email},
-            include={"student": True, "teacher": True, "tenant": True},
-        )
-
-    async def get_by_id(self, user_id: str) -> User | None:
-        return await db.user.find_unique(
-            where={"id": user_id},
-            include={"student": True, "teacher": True, "tenant": True},
-        )
-
-    async def create(self, email: str, password_hash: str, role: str) -> User:
-        return await db.user.create(data={"email": email, "hashedPassword": password_hash, "role": role})
+__all__ = ["UserRepository"]

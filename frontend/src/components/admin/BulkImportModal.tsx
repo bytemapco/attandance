@@ -8,7 +8,7 @@ import BulkImportDropzone from "./bulk/BulkImportDropzone";
 import BulkImportPreviewTable from "./bulk/BulkImportPreviewTable";
 import BulkImportProgress from "./bulk/BulkImportProgress";
 import BulkImportResults from "./bulk/BulkImportResults";
-import { BulkImportEntityType } from "./bulk/bulk-types";
+import { BulkImportEntityType } from "./bulk/bulkTypes";
 
 interface BulkImportModalProps {
   isOpen: boolean;

@@ -10,7 +10,7 @@ import EnterpriseTableToolbar, { type ToolbarFilterConfig } from "@/components/u
 import EnterprisePagination from "@/components/ui/EnterprisePagination";
 import BulkImportModal from "@/components/admin/BulkImportModal";
 import { useTableQuery } from "@/hooks/useTableQuery";
-import { teacherColumns } from "./teacher-columns";
+import { teacherColumns } from "./TeacherColumns";
 import type { TeacherResponse, DepartmentResponse } from "@/types";
 
 export default function TeachersPage(): React.ReactElement {

@@ -10,7 +10,7 @@ import {
   tenantProvisionSchema,
   type TenantProvisionFormData,
 } from "@/lib/validations/superAdmin";
-import { superAdminService } from "@/lib/services/superAdminService";
+import { superAdminService } from "@/services/superAdminService";
 import { getApiErrorMessage, applyValidationErrorsToForm } from "@/lib/api";
 import GlassBreadcrumb from "@/components/ui/GlassBreadcrumb";
 import GlassPageHeader from "@/components/ui/GlassPageHeader";
