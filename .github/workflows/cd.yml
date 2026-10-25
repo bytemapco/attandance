@@ -95,7 +95,7 @@ jobs:
 
           # Copy k8s manifests to the project deployment directory on jarvis
           ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=yes "$VPS_USER@$VPS_HOST" \
-            "mkdir -p /home/jarvis/SharedDrive/projects/k8s/base /home/jarvis/SharedDrive/projects/k8s/overlays/production /data/k3s/redis"
+            "mkdir -p /home/jarvis/SharedDrive/projects/k8s/base /home/jarvis/SharedDrive/projects/k8s/overlays/production"
 
           scp -i ~/.ssh/deploy_key -o StrictHostKeyChecking=yes -r k8s/base/* "$VPS_USER@$VPS_HOST:/home/jarvis/SharedDrive/projects/k8s/base/"
           scp -i ~/.ssh/deploy_key -o StrictHostKeyChecking=yes -r k8s/overlays/* "$VPS_USER@$VPS_HOST:/home/jarvis/SharedDrive/projects/k8s/overlays/"
