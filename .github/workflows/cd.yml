@@ -60,8 +60,8 @@ jobs:
           tags: |
             ghcr.io/${{ steps.meta.outputs.owner_repo }}-backend:${{ steps.meta.outputs.commit_sha }}
             ghcr.io/${{ steps.meta.outputs.owner_repo }}-backend:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=gha,scope=backend
+          cache-to: type=gha,mode=max,scope=backend
 
       - name: Build & Push Frontend Image
         uses: docker/build-push-action@v6
@@ -75,8 +75,8 @@ jobs:
           tags: |
             ghcr.io/${{ steps.meta.outputs.owner_repo }}-frontend:${{ steps.meta.outputs.commit_sha }}
             ghcr.io/${{ steps.meta.outputs.owner_repo }}-frontend:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=gha,scope=frontend
+          cache-to: type=gha,mode=max,scope=frontend
 
       - name: Connect to Tailscale
         uses: tailscale/github-action@v4
