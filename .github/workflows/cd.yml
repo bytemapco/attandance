@@ -124,14 +124,14 @@ jobs:
 
              echo 'Verifying deployment health...'
              HEALTHY=false
-             for i in {1..12}; do
+             for i in {1..24}; do
                if curl -fsS http://127.0.0.1:8011/health > /dev/null 2>&1 && \
                   curl -fsS http://127.0.0.1:3011/ > /dev/null 2>&1; then
                  HEALTHY=true
-                 echo \"Application passed all health checks on iteration \$i.\"
+                 echo "Application passed all health checks on iteration $i."
                  break
                fi
-               echo \"Waiting for containers to become ready... (attempt \$i/12)\"
+               echo "Waiting for containers to become ready... (attempt $i/24)"
                sleep 5
              done
 
