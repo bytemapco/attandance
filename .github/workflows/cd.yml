@@ -49,13 +49,14 @@ jobs:
         run: |
           npm ci
           npm run build
-          cp -r public .next/standalone/public
-          cp -r .next/static .next/standalone/.next/static
-          tar -czf ../frontend-bundle.tar.gz -C .next/standalone .
+          mkdir -p .next/standalone/frontend/.next
+          cp -r public .next/standalone/frontend/public
+          cp -r .next/static .next/standalone/frontend/.next/static
+          tar -czf ../frontend-bundle.tar.gz -C .next/standalone/frontend .
 
       - name: Package Backend Bundle
         run: |
-          tar -czf backend-bundle.tar.gz -C backend app prisma requirements.txt
+          tar -czf backend-bundle.tar.gz --exclude='__pycache__' --exclude='*.pyc' -C backend app prisma requirements.txt
 
       - name: Connect to Tailscale
         uses: tailscale/github-action@v4
