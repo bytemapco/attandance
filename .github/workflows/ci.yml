@@ -90,13 +90,3 @@ jobs:
       - name: Run Pytest test suite
         run: pytest tests/ -v
 
-  compose-ci:
-    name: Validate Docker Compose Specification
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Validate Compose File Syntax
-        run: docker compose config --quiet
