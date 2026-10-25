@@ -109,38 +109,15 @@ jobs:
           # Copy production docker-compose.yml to jarvis
           scp -i ~/.ssh/deploy_key -o StrictHostKeyChecking=yes docker-compose.yml "$VPS_USER@$VPS_HOST:/home/jarvis/SharedDrive/bytemap/attandace/docker-compose.yml"
 
-          # Deploy and verify live container health
+          # Native Docker Compose zero-downtime deployment with built-in health waiting
           ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=yes "$VPS_USER@$VPS_HOST" \
             "set -euo pipefail
-             cd /home/jarvis/SharedDrive/bytemap/attandace
-
              echo '$GHCR_TOKEN' | docker login ghcr.io -u '$GHCR_USER' --password-stdin
-             export BACKEND_IMAGE='$BACKEND_IMAGE'
-             export FRONTEND_IMAGE='$FRONTEND_IMAGE'
-
+             export BACKEND_IMAGE='$BACKEND_IMAGE' FRONTEND_IMAGE='$FRONTEND_IMAGE'
+             cd /home/jarvis/SharedDrive/bytemap/attandace
              docker compose pull
-             docker compose up -d --remove-orphans
+             docker compose up -d --wait --wait-timeout 120 --remove-orphans
              docker logout ghcr.io || true
-
-             echo 'Verifying deployment health...'
-             HEALTHY=false
-             for i in {1..24}; do
-               if curl -fsS http://127.0.0.1:8011/health > /dev/null 2>&1 && \
-                  curl -fsS http://127.0.0.1:3011/ > /dev/null 2>&1; then
-                 HEALTHY=true
-                 echo "Application passed all health checks on iteration $i."
-                 break
-               fi
-               echo "Waiting for containers to become ready... (attempt $i/24)"
-               sleep 5
-             done
-
-             if [ \"\$HEALTHY\" != 'true' ]; then
-               echo 'Deployment verification FAILED. Recent container logs:'
-               docker compose logs --tail=50
-               exit 1
-             fi
-
              docker compose ps"
 
           rm -f ~/.ssh/deploy_key ~/.ssh/known_hosts

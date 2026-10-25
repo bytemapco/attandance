@@ -58,5 +58,4 @@ EXPOSE 3000
 HEALTHCHECK --interval=15s --timeout=5s --start-period=20s --retries=3 \
   CMD wget --no-verbose --tries=1 --spider http://localhost:3000/ || exit 1
 
-# If server.js is nested inside frontend/ (due to turbopack root or monorepo), launch appropriately
-CMD ["sh", "-c", "if [ -f ./server.js ]; then node server.js; elif [ -f ./frontend/server.js ]; then cd frontend && node server.js; else node $(find . -name server.js | head -n 1); fi"]
+CMD ["node", "server.js"]
