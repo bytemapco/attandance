@@ -1,4 +1,4 @@
-from typing import Optional, Dict, Any
+from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from prisma.models import User
 from app.api.dependencies import RoleChecker, get_current_user

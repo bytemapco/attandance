@@ -1,4 +1,4 @@
-from unittest.mock import AsyncMock, MagicMock
+from unittest.mock import AsyncMock
 import pytest
 from app.services.session_service import SessionService
 from app.schemas.teacher import SessionStart
