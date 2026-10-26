@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:smart_attendance_app/app/theme.dart';
 
 /// Clean enterprise canvas background shared across screens.
 class AnimatedBackground extends StatelessWidget {
@@ -10,7 +9,7 @@ class AnimatedBackground extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: SasColors.bgPrimary,
+      color: Theme.of(context).scaffoldBackgroundColor,
       child: child,
     );
   }

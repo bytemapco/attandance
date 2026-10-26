@@ -65,24 +65,20 @@ class _ForceChangePasswordScreenState
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Container(
-                        width: 64,
-                        height: 64,
+                        width: 54,
+                        height: 54,
                         decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          gradient: LinearGradient(
-                            colors: [
-                              SasColors.accentEmerald.withValues(alpha: 0.25),
-                              SasColors.accentTeal.withValues(alpha: 0.1),
-                            ],
-                          ),
+                          borderRadius: BorderRadius.circular(16),
+                          color: SasColors.osageOrange.withValues(alpha: 0.12),
                           border: Border.all(
-                            color: SasColors.accentEmerald.withValues(alpha: 0.3),
+                            color: SasColors.osageOrange.withValues(alpha: 0.35),
+                            width: 1.2,
                           ),
                         ),
                         child: const Icon(
                           Icons.shield_outlined,
-                          color: SasColors.accentEmerald,
-                          size: 28,
+                          color: SasColors.osageOrange,
+                          size: 26,
                         ),
                       ),
                       const SizedBox(height: 16),

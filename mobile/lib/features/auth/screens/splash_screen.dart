@@ -61,31 +61,29 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
               children: [
                 
                 Container(
-                  width: 80,
-                  height: 80,
+                  width: 76,
+                  height: 76,
                   decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: LinearGradient(
+                    borderRadius: BorderRadius.circular(22),
+                    gradient: const LinearGradient(
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        SasColors.accentEmerald.withValues(alpha: 0.3),
-                        SasColors.accentTeal.withValues(alpha: 0.15),
+                        SasColors.osageOrange,
+                        SasColors.sunsetInItaly,
                       ],
                     ),
-                    border: Border.all(
-                      color: SasColors.accentEmerald.withValues(alpha: 0.4),
-                    ),
-                    boxShadow: [
+                    boxShadow: const [
                       BoxShadow(
-                        color: SasColors.accentEmerald.withValues(alpha: 0.2),
-                        blurRadius: 30,
+                        color: SasColors.accentGlow,
+                        blurRadius: 20,
+                        offset: Offset(0, 4),
                       ),
                     ],
                   ),
                   child: const Icon(
-                    Icons.verified_user_rounded,
-                    color: SasColors.accentEmerald,
+                    Icons.school_rounded,
+                    color: SasColors.brilliance,
                     size: 36,
                   ),
                 ),
@@ -93,27 +91,26 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                 Text(
                   'Smart Attendance',
                   style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w700,
                         letterSpacing: -0.5,
                       ),
                 ),
                 const SizedBox(height: 8),
-                const Text(
-                  'AI-Powered Verification',
-                  style: TextStyle(
-                    color: SasColors.textMuted,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                  ),
+                Text(
+                  'AI-Powered Verification System',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: SasColors.maidenMist,
+                        letterSpacing: 0.1,
+                      ),
                 ),
                 const SizedBox(height: 40),
-                SizedBox(
+                const SizedBox(
                   width: 24,
                   height: 24,
                   child: CircularProgressIndicator(
                     strokeWidth: 2.5,
                     valueColor: AlwaysStoppedAnimation<Color>(
-                      SasColors.accentEmerald.withValues(alpha: 0.6),
+                      SasColors.osageOrange,
                     ),
                   ),
                 ),

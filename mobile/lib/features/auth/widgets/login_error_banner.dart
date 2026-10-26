@@ -22,32 +22,37 @@ class LoginErrorBanner extends StatelessWidget {
         errorMessage.contains('bound');
 
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
-        color: SasColors.accentPink.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(8),
+        color: SasColors.danger.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: SasColors.accentPink.withValues(alpha: 0.3),
+          color: SasColors.danger.withValues(alpha: 0.25),
         ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const Icon(Icons.error_outline, color: SasColors.danger, size: 18),
-              const SizedBox(width: 8),
+              const Icon(Icons.error_outline_rounded, color: SasColors.danger, size: 18),
+              const SizedBox(width: 10),
               Expanded(
                 child: Text(
                   errorMessage,
-                  style: const TextStyle(color: SasColors.danger, fontSize: 13),
+                  style: const TextStyle(
+                    color: SasColors.danger,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
             ],
           ),
           if (isDeviceBound) ...[
             const SizedBox(height: 12),
-            ElevatedButton.icon(
+            OutlinedButton.icon(
               onPressed: () async {
                 if (!isFormValid) return;
                 final success = await showDialog<bool>(
@@ -63,17 +68,19 @@ class LoginErrorBanner extends StatelessWidget {
                       content: Text(
                         'Request sent! Please ask your teacher to approve your new device.',
                       ),
-                      backgroundColor: SasColors.accentEmerald,
+                      backgroundColor: SasColors.success,
                     ),
                   );
                 }
               },
-              icon: const Icon(Icons.smartphone, size: 16),
+              icon: const Icon(Icons.smartphone_rounded, size: 16),
               label: const Text('Request Device Change'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: SasColors.bgSurface,
-                foregroundColor: SasColors.accentEmerald,
-                side: const BorderSide(color: SasColors.accentEmerald),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: SasColors.osageOrange,
+                side: BorderSide(color: SasColors.osageOrange.withValues(alpha: 0.5)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
               ),
             ),
           ],

@@ -3,10 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:smart_attendance_app/app/theme.dart';
 import 'package:smart_attendance_app/features/home/providers/session_provider.dart';
-import 'package:smart_attendance_app/shared/widgets/glass_button.dart';
+import 'package:smart_attendance_app/features/home/widgets/class_session_actions.dart';
+import 'package:smart_attendance_app/features/home/widgets/class_session_header.dart';
 import 'package:smart_attendance_app/shared/widgets/glass_card.dart';
-import 'package:smart_attendance_app/shared/widgets/pulsing_dot.dart';
-import 'package:smart_attendance_app/shared/widgets/status_chip.dart';
 
 class ClassSessionCard extends StatefulWidget {
   final ClassSession session;
@@ -62,120 +61,106 @@ class _ClassSessionCardState extends State<ClassSessionCard> {
   bool get _isWindowClosed => _remaining != null && _remaining == Duration.zero;
   bool get _canMark => widget.session.isActive && widget.session.sessionId != null && !widget.isMarked && !_isWindowClosed;
 
+  String get _courseCode {
+    final name = widget.session.className;
+    if (name.contains(':')) return name.split(':').first.trim();
+    return '';
+  }
+
+  String get _courseTitle {
+    final name = widget.session.className;
+    if (name.contains(':')) {
+      final titlePart = name.split(':').sublist(1).join(':').trim();
+      if (titlePart.isNotEmpty) return titlePart;
+    }
+    if (widget.session.subject.isNotEmpty) return widget.session.subject;
+    return name;
+  }
+
   @override
   Widget build(BuildContext context) {
     final isActive = widget.session.isActive;
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.only(bottom: 12),
       child: GlassCard(
         borderColor: isActive
-            ? (widget.isMarked ? SasColors.accentEmerald.withValues(alpha: 0.25) : SasColors.accentEmerald.withValues(alpha: 0.5))
-            : null,
-        padding: const EdgeInsets.all(14),
+            ? (widget.isMarked
+                ? SasColors.accentEmerald.withValues(alpha: 0.3)
+                : SasColors.osageOrange.withValues(alpha: 0.45))
+            : (isDark ? const Color(0x1FBAC0BE) : null),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            ClassSessionHeader(
+              courseCode: _courseCode,
+              isActive: isActive,
+              isMarked: widget.isMarked,
+              isWindowClosed: _isWindowClosed,
+            ),
+            const SizedBox(height: 10),
+            Text(
+              _courseTitle,
+              style: TextStyle(
+                fontWeight: FontWeight.w800,
+                fontSize: 16.5,
+                letterSpacing: -0.4,
+                color: isDark ? SasColors.brilliance : SasColors.indianInk,
+              ),
+            ),
+            const SizedBox(height: 6),
             Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(3.5),
                   decoration: BoxDecoration(
-                    color: isActive
-                        ? (widget.isMarked ? SasColors.accentEmerald.withValues(alpha: 0.1) : SasColors.accentEmerald.withValues(alpha: 0.12))
-                        : SasColors.bgCanvas,
-                    borderRadius: BorderRadius.circular(8),
+                    color: isDark ? const Color(0x14FFFFFF) : const Color(0x0A000000),
+                    shape: BoxShape.circle,
                   ),
                   child: Icon(
-                    widget.isMarked ? Icons.check_circle_rounded : Icons.school_rounded,
-                    size: 18,
-                    color: isActive ? SasColors.accentEmerald : SasColors.textMuted,
+                    Icons.person_rounded,
+                    size: 12,
+                    color: isDark ? SasColors.maidenMist : SasColors.textMuted,
                   ),
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(widget.session.className,
-                          style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14, color: SasColors.textPrimary)),
-                      const SizedBox(height: 1),
-                      Text(widget.session.subject,
-                          style: const TextStyle(color: SasColors.textSecondary, fontSize: 12)),
-                      Text(widget.session.teacherName,
-                          style: const TextStyle(color: SasColors.textMuted, fontSize: 11)),
-                    ],
+                const SizedBox(width: 5),
+                Text(
+                  widget.session.teacherName,
+                  style: TextStyle(
+                    color: isDark ? SasColors.maidenMist : SasColors.textSecondary,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
-                if (isActive) ...[
-                  if (widget.isMarked)
-                    const StatusChip(label: 'SUBMITTED', color: SasColors.accentEmerald)
-                  else if (_isWindowClosed)
-                    const StatusChip(label: 'CLOSED', color: SasColors.danger)
-                  else
-                    const Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        PulsingDot(),
-                        SizedBox(width: 5),
-                        StatusChip(label: 'LIVE', color: SasColors.accentEmerald),
-                      ],
+                if (isActive && _remaining != null && !_isWindowClosed && !widget.isMarked) ...[
+                  const Spacer(),
+                  Icon(
+                    Icons.timer_outlined,
+                    size: 13,
+                    color: _remaining!.inMinutes < 2 ? SasColors.danger : SasColors.osageOrange,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    '${_remaining!.inMinutes}:${(_remaining!.inSeconds % 60).toString().padLeft(2, '0')} left',
+                    style: TextStyle(
+                      color: _remaining!.inMinutes < 2 ? SasColors.danger : SasColors.osageOrange,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
                     ),
+                  ),
                 ],
               ],
             ),
-            if (isActive && _remaining != null && !_isWindowClosed && !widget.isMarked) ...[
-              const SizedBox(height: 8),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: (_remaining!.inMinutes < 2 ? SasColors.warning : SasColors.accentEmerald).withValues(alpha: 0.08),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.timer_outlined, size: 12, color: _remaining!.inMinutes < 2 ? SasColors.warning : SasColors.accentEmerald),
-                    const SizedBox(width: 4),
-                    Text(
-                      '${_remaining!.inMinutes}:${(_remaining!.inSeconds % 60).toString().padLeft(2, '0')} remaining',
-                      style: TextStyle(
-                        color: _remaining!.inMinutes < 2 ? SasColors.warning : SasColors.accentEmerald,
-                        fontSize: 11,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-            if (_canMark) ...[
-              const SizedBox(height: 10),
-              Row(
-                children: [
-                  Expanded(
-                    child: GlassButton(
-                      label: 'Smart Pass QR',
-                      icon: Icons.qr_code_scanner_rounded,
-                      height: 40,
-                      fontSize: 12.5,
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                      onPressed: () => context.push('/smart-pass'),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: GlassButton(
-                      label: 'Face Match',
-                      variant: GlassButtonVariant.secondary,
-                      icon: Icons.face_retouching_natural_rounded,
-                      height: 40,
-                      fontSize: 12.5,
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                      onPressed: () => context.push('/verify/${widget.session.sessionId}'),
-                    ),
-                  ),
-                ],
+            if (widget.isMarked || _canMark) ...[
+              const SizedBox(height: 12),
+              ClassSessionActions(
+                isMarked: widget.isMarked,
+                canMark: _canMark,
+                onSmartPass: () => context.push('/smart-pass'),
+                onFaceMatch: () => context.push('/verify/${widget.session.sessionId}'),
               ),
             ],
           ],

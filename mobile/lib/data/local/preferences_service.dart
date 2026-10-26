@@ -91,4 +91,16 @@ class PreferencesService {
     final prefs = await _instance;
     await prefs.setBool(_keyFirstCameraUse, false);
   }
+
+  static const _keyThemeMode = 'pref_theme_mode';
+
+  Future<String> getThemeMode() async {
+    final prefs = await _instance;
+    return prefs.getString(_keyThemeMode) ?? 'light';
+  }
+
+  Future<void> setThemeMode(String value) async {
+    final prefs = await _instance;
+    await prefs.setString(_keyThemeMode, value);
+  }
 }

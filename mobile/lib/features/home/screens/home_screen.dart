@@ -65,27 +65,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     final overallPct =
         (rawPct.isNaN || rawPct.isInfinite) ? 0.0 : rawPct.toDouble();
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return AnimatedBackground(
       child: SafeArea(
         child: RefreshIndicator(
-          color: SasColors.accentEmerald,
-          backgroundColor: SasColors.bgSecondary,
+          color: SasColors.osageOrange,
+          backgroundColor: Theme.of(context).cardTheme.color ?? SasColors.bgSecondary,
           onRefresh: () async {
             await ref.read(sessionProvider.notifier).fetchSessions();
             await ref.read(historyProvider.notifier).fetch();
           },
           child: ListView(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             children: [
               HomeWelcomeCard(user: user, pendingCount: pendingCount),
               const SizedBox(height: 14),
-              if (overallPct > 0 && overallPct < 75) ...[
-                HomeWarningBanner(
-                  percentage: overallPct,
-                  onTap: () => context.go('/analytics'),
-                ),
-                const SizedBox(height: 10),
-              ],
               if (historyState.data != null) ...[
                 HomeAttendanceOverview(
                   overallPct: overallPct,
@@ -95,51 +90,63 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                   onTapAnalytics: () => context.go('/analytics'),
                 ),
                 const SizedBox(height: 16),
+              ] else if (overallPct > 0 && overallPct < 75) ...[
+                HomeWarningBanner(
+                  percentage: overallPct,
+                  onTap: () => context.go('/analytics'),
+                ),
+                const SizedBox(height: 16),
               ],
               Row(
                 children: [
-                  const Icon(
-                    Icons.schedule_rounded,
-                    color: SasColors.textMuted,
-                    size: 16,
-                  ),
-                  const SizedBox(width: 6),
-                  const Text(
-                    "Today's Schedule",
-                    style: TextStyle(
-                      color: SasColors.textPrimary,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700,
+                  Container(
+                    padding: const EdgeInsets.all(5),
+                    decoration: BoxDecoration(
+                      color: SasColors.osageOrange.withValues(alpha: isDark ? 0.2 : 0.12),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: const Icon(
+                      Icons.calendar_today_rounded,
+                      color: SasColors.osageOrange,
+                      size: 13,
                     ),
                   ),
-                  const SizedBox(width: 6),
+                  const SizedBox(width: 8),
+                  Text(
+                    "Today's Classes",
+                    style: TextStyle(
+                      color: isDark ? SasColors.brilliance : SasColors.indianInk,
+                      fontSize: 14.5,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: -0.2,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
                   if (sessionState.sessions.isNotEmpty)
                     Container(
                       padding:
-                          const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+                          const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
                       decoration: BoxDecoration(
-                        color: SasColors.accentEmerald.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(4),
+                        color: SasColors.osageOrange.withValues(alpha: isDark ? 0.22 : 0.12),
+                        borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(
                         '${sessionState.sessions.length}',
                         style: const TextStyle(
-                          color: SasColors.accentEmerald,
-                          fontSize: 10,
-                          fontWeight: FontWeight.w700,
+                          color: SasColors.osageOrange,
+                          fontSize: 10.5,
+                          fontWeight: FontWeight.w800,
                         ),
                       ),
                     ),
                   const Spacer(),
-                  Flexible(
-                    child: Text(
-                      DateTime.now().shortDate,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        color: SasColors.textMuted,
-                        fontSize: 11,
-                        fontWeight: FontWeight.w500,
-                      ),
+                  Text(
+                    DateTime.now().shortDate,
+                    style: TextStyle(
+                      color: isDark ? SasColors.maidenMist : SasColors.textMuted,
+                      fontSize: 11.5,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: -0.1,
                     ),
                   ),
                 ],

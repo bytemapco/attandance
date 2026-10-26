@@ -49,7 +49,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Password reset successfully! Please log in.'),
-          backgroundColor: SasColors.accentEmerald,
+          backgroundColor: SasColors.success,
         ),
       );
       context.go('/login');
@@ -130,18 +130,18 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-          width: 56,
-          height: 56,
+          width: 54,
+          height: 54,
           decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: SasColors.accentEmerald.withValues(alpha: 0.15),
-            border: Border.all(color: SasColors.accentEmerald.withValues(alpha: 0.3)),
+            borderRadius: BorderRadius.circular(16),
+            color: SasColors.osageOrange.withValues(alpha: 0.12),
+            border: Border.all(color: SasColors.osageOrange.withValues(alpha: 0.35), width: 1.2),
           ),
-          child: const Icon(Icons.lock_reset_rounded, color: SasColors.accentEmerald, size: 28),
+          child: const Icon(Icons.lock_reset_rounded, color: SasColors.osageOrange, size: 26),
         ),
         const SizedBox(height: 16),
         Text('Reset Password',
-            style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w800)),
+            style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w700)),
         const SizedBox(height: 6),
         Text('Create a new password for ${state.email ?? "your account"}',
             textAlign: TextAlign.center,

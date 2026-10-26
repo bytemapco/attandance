@@ -78,13 +78,13 @@ class GlassButton extends StatelessWidget {
             height: height ?? 46,
             decoration: BoxDecoration(
               color: colors.background,
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(12),
               border: Border.all(color: colors.border),
               boxShadow: colors.shadow,
             ),
             child: InkWell(
               onTap: disabled ? null : onPressed,
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(12),
               splashColor: colors.foreground.withValues(alpha: 0.1),
               child: Padding(
                 padding: padding ?? const EdgeInsets.symmetric(horizontal: 14),
@@ -101,14 +101,14 @@ class GlassButton extends StatelessWidget {
     switch (variant) {
       case GlassButtonVariant.primary:
         return const _ButtonColors(
-          background: SasColors.accentEmerald,
-          foreground: Colors.white,
+          background: SasColors.osageOrange,
+          foreground: SasColors.darkCanvas,
           border: Colors.transparent,
           shadow: [
             BoxShadow(
-              color: Color(0x18059669),
-              blurRadius: 4,
-              offset: Offset(0, 1),
+              color: SasColors.accentGlow,
+              blurRadius: 10,
+              offset: Offset(0, 3),
             ),
           ],
         );
@@ -119,9 +119,9 @@ class GlassButton extends StatelessWidget {
           border: SasColors.glassBorder,
           shadow: [
             BoxShadow(
-              color: Color(0x06000000),
-              blurRadius: 2,
-              offset: Offset(0, 1),
+              color: Color(0x14000000),
+              blurRadius: 6,
+              offset: Offset(0, 2),
             ),
           ],
         );
@@ -132,9 +132,9 @@ class GlassButton extends StatelessWidget {
           border: Colors.transparent,
           shadow: [
             BoxShadow(
-              color: Color(0x18DC2626),
-              blurRadius: 4,
-              offset: Offset(0, 1),
+              color: Color(0x28F43F5E),
+              blurRadius: 8,
+              offset: Offset(0, 2),
             ),
           ],
         );

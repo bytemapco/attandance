@@ -15,7 +15,7 @@ class GlassCard extends StatelessWidget {
     super.key,
     required this.child,
     this.padding = const EdgeInsets.all(16),
-    this.borderRadius = 10,
+    this.borderRadius = 18,
     this.onTap,
     this.borderColor,
     this.backgroundColor,
@@ -24,18 +24,27 @@ class GlassCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final defaultBg = isDark ? SasColors.darkSurface : SasColors.lightSurface;
+    final defaultBorder = isDark ? const Color(0x2EBAC0BE) : const Color(0x24BAC0BE);
+
     final decoration = BoxDecoration(
-      color: backgroundColor ?? SasColors.bgSecondary,
+      color: backgroundColor ?? defaultBg,
       borderRadius: BorderRadius.circular(borderRadius),
       border: Border.all(
-        color: borderColor ?? SasColors.glassBorder,
+        color: borderColor ?? defaultBorder,
         width: 1.0,
       ),
-      boxShadow: const [
+      boxShadow: [
         BoxShadow(
-          color: Color(0x06000000),
+          color: isDark ? const Color(0x33000000) : const Color(0x0A000000),
+          blurRadius: 16,
+          offset: const Offset(0, 4),
+        ),
+        BoxShadow(
+          color: isDark ? const Color(0x1F000000) : const Color(0x05000000),
           blurRadius: 4,
-          offset: Offset(0, 1),
+          offset: const Offset(0, 1),
         ),
       ],
     );

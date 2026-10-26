@@ -1,32 +1,53 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:smart_attendance_app/app/typography.dart';
 
 class SasColors {
   SasColors._();
 
-  static const Color bgPrimary = Color(0xFFF8FAFC);
-  static const Color bgCanvas = Color(0xFFF8FAFC);
-  static const Color bgSecondary = Color(0xFFFFFFFF);
-  static const Color bgSurface = Color(0xFFF1F5F9);
+  // Core 6-Swatch Palette
+  static const Color brilliance = Color(0xFFFDFDFD);
+  static const Color polishWhite = Color(0xFFE8E8E7);
+  static const Color sunsetInItaly = Color(0xFFF1C183);
+  static const Color maidenMist = Color(0xFFBAC0BE);
+  static const Color osageOrange = Color(0xFFF6A242);
+  static const Color indianInk = Color(0xFF3C3D48);
 
-  static const Color textPrimary = Color(0xFF0F172A);
-  static const Color textSecondary = Color(0xFF334155);
-  static const Color textMuted = Color(0xFF64748B);
+  // Surface Hierarchy
+  static const Color darkCanvas = Color(0xFF17181F);
+  static const Color darkSurface = Color(0xFF22242D);
+  static const Color darkElevated = Color(0xFF3C3D48);
 
-  static const Color accentEmerald = Color(0xFF059669);
-  static const Color accentTeal = Color(0xFF0D9488);
-  static const Color accentPink = Color(0xFFDC2626);
-  static const Color accentAmber = Color(0xFFD97706);
+  static const Color lightCanvas = Color(0xFFFDFDFD);
+  static const Color lightSurface = Color(0xFFFFFFFF);
+  static const Color lightElevated = Color(0xFFE8E8E7);
 
+  // Functional & Semantic Tokens
+  static const Color success = Color(0xFF10B981);
+  static const Color warning = Color(0xFFF6A242);
+  static const Color danger = Color(0xFFF43F5E);
+  static const Color info = Color(0xFFF1C183);
+
+  // Glow & Overlays
+  static const Color accentGlow = Color(0x33F6A242);
   static const Color glassBg = Color(0xFFFFFFFF);
   static const Color glassBgHover = Color(0xFFF8FAFC);
-  static const Color glassBorder = Color(0xFFE2E8F0);
-  static const Color glassBorderHover = Color(0xFFCBD5E1);
+  static const Color glassBorder = Color(0x33BAC0BE);
+  static const Color glassBorderHover = Color(0x59BAC0BE);
 
-  static const Color success = Color(0xFF059669);
-  static const Color warning = Color(0xFFD97706);
-  static const Color danger = Color(0xFFDC2626);
-  static const Color info = Color(0xFF2563EB);
+  // Default Palette Mappings (Light Mode by Default)
+  static const Color bgPrimary = lightCanvas;
+  static const Color bgCanvas = lightCanvas;
+  static const Color bgSecondary = lightSurface;
+  static const Color bgSurface = lightElevated;
+
+  static const Color textPrimary = indianInk;
+  static const Color textSecondary = Color(0xFF595B6A);
+  static const Color textMuted = Color(0xFF858997);
+
+  static const Color accentEmerald = success;
+  static const Color accentTeal = sunsetInItaly;
+  static const Color accentPink = danger;
+  static const Color accentAmber = osageOrange;
 }
 
 class SasSpacing {
@@ -46,10 +67,10 @@ class SasSpacing {
 class SasRadius {
   SasRadius._();
 
-  static const double sm = 6;
-  static const double md = 10;
-  static const double lg = 14;
-  static const double xl = 18;
+  static const double sm = 8;
+  static const double md = 12;
+  static const double lg = 16;
+  static const double xl = 22;
 
   static BorderRadius get smAll => BorderRadius.circular(sm);
   static BorderRadius get mdAll => BorderRadius.circular(md);
@@ -65,114 +86,94 @@ class SasDurations {
   static const Duration slow = Duration(milliseconds: 300);
 }
 
-ThemeData buildSasTheme() {
-  final baseText = GoogleFonts.interTextTheme(
-    ThemeData.light().textTheme,
-  );
+ThemeData buildSasTheme({Brightness brightness = Brightness.light}) {
+  final isDark = brightness == Brightness.dark;
+
+  final textColor = isDark ? SasColors.brilliance : SasColors.indianInk;
+  final mutedColor = isDark ? SasColors.maidenMist : const Color(0xFF595B6A);
+  final subtleBorder = isDark ? const Color(0x2EBAC0BE) : const Color(0x33BAC0BE);
 
   return ThemeData(
-    brightness: Brightness.light,
-    scaffoldBackgroundColor: SasColors.bgPrimary,
-    colorScheme: const ColorScheme.light(
-      primary: SasColors.accentEmerald,
-      secondary: SasColors.accentTeal,
-      surface: SasColors.bgSecondary,
-      error: SasColors.danger,
-      onPrimary: Colors.white,
-      onSecondary: Colors.white,
-      onSurface: SasColors.textPrimary,
-      onError: Colors.white,
-    ),
-    textTheme: baseText.copyWith(
-      displayLarge: baseText.displayLarge?.copyWith(
-        letterSpacing: -0.02,
-        fontWeight: FontWeight.w700,
-        color: SasColors.textPrimary,
-      ),
-      headlineMedium: baseText.headlineMedium?.copyWith(
-        letterSpacing: -0.02,
-        fontWeight: FontWeight.w700,
-        color: SasColors.textPrimary,
-      ),
-      titleLarge: baseText.titleLarge?.copyWith(
-        fontWeight: FontWeight.w700,
-        color: SasColors.textPrimary,
-        letterSpacing: -0.01,
-      ),
-      titleMedium: baseText.titleMedium?.copyWith(
-        fontWeight: FontWeight.w600,
-        color: SasColors.textPrimary,
-      ),
-      bodyLarge: baseText.bodyLarge?.copyWith(
-        color: SasColors.textPrimary,
-        height: 1.5,
-      ),
-      bodyMedium: baseText.bodyMedium?.copyWith(
-        color: SasColors.textSecondary,
-        height: 1.5,
-      ),
-      bodySmall: baseText.bodySmall?.copyWith(
-        color: SasColors.textMuted,
-        height: 1.4,
-      ),
-    ),
+    brightness: brightness,
+    scaffoldBackgroundColor: isDark ? SasColors.darkCanvas : SasColors.lightCanvas,
+    colorScheme: isDark
+        ? const ColorScheme.dark(
+            primary: SasColors.osageOrange,
+            secondary: SasColors.sunsetInItaly,
+            surface: SasColors.darkSurface,
+            error: SasColors.danger,
+            onPrimary: SasColors.darkCanvas,
+            onSecondary: SasColors.darkCanvas,
+            onSurface: SasColors.brilliance,
+            onError: Colors.white,
+          )
+        : const ColorScheme.light(
+            primary: SasColors.osageOrange,
+            secondary: SasColors.sunsetInItaly,
+            surface: SasColors.lightSurface,
+            error: SasColors.danger,
+            onPrimary: Colors.white,
+            onSecondary: SasColors.indianInk,
+            onSurface: SasColors.indianInk,
+            onError: Colors.white,
+          ),
+    textTheme: buildSasTextTheme(brightness),
     appBarTheme: AppBarTheme(
-      backgroundColor: SasColors.bgSecondary,
+      backgroundColor: isDark ? SasColors.darkSurface : SasColors.lightSurface,
       elevation: 0,
       centerTitle: true,
-      titleTextStyle: GoogleFonts.inter(
-        fontSize: 16,
-        fontWeight: FontWeight.w700,
-        color: SasColors.textPrimary,
-        letterSpacing: -0.01,
+      titleTextStyle: SasTypography.style(
+        fontSize: 17,
+        fontWeight: FontWeight.w600,
+        color: textColor,
       ),
-      iconTheme: const IconThemeData(color: SasColors.textPrimary),
+      iconTheme: IconThemeData(color: textColor),
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
-      fillColor: SasColors.bgSecondary,
+      fillColor: isDark ? SasColors.darkSurface : SasColors.polishWhite,
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: const BorderSide(color: SasColors.glassBorder),
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: subtleBorder),
       ),
       enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: const BorderSide(color: SasColors.glassBorder),
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: subtleBorder),
       ),
       focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(12),
         borderSide: const BorderSide(
-          color: SasColors.accentEmerald,
+          color: SasColors.osageOrange,
           width: 1.5,
         ),
       ),
       errorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(12),
         borderSide: const BorderSide(
           color: SasColors.danger,
           width: 1.0,
         ),
       ),
       focusedErrorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(12),
         borderSide: const BorderSide(
           color: SasColors.danger,
           width: 1.5,
         ),
       ),
-      hintStyle: const TextStyle(color: SasColors.textMuted, fontSize: 14),
-      labelStyle: const TextStyle(color: SasColors.textSecondary, fontSize: 14),
+      hintStyle: TextStyle(color: mutedColor, fontSize: 14),
+      labelStyle: TextStyle(color: mutedColor, fontSize: 14),
     ),
     cardTheme: CardThemeData(
-      color: SasColors.bgSecondary,
+      color: isDark ? SasColors.darkSurface : SasColors.lightSurface,
       elevation: 0,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-        side: const BorderSide(color: SasColors.glassBorder),
+        borderRadius: BorderRadius.circular(14),
+        side: BorderSide(color: subtleBorder),
       ),
     ),
-    dividerColor: SasColors.glassBorder,
+    dividerColor: subtleBorder,
     useMaterial3: true,
   );
 }

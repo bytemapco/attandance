@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_attendance_app/app/router.dart';
 import 'package:smart_attendance_app/app/theme.dart';
+import 'package:smart_attendance_app/app/theme_provider.dart';
 import 'package:smart_attendance_app/core/attendance_constants.dart';
 import 'package:smart_attendance_app/data/api/student_api.dart';
 import 'package:smart_attendance_app/data/local/notification_service.dart';
@@ -148,11 +149,13 @@ class _SmartAttendanceAppState extends ConsumerState<SmartAttendanceApp> {
     });
 
     final router = ref.watch(routerProvider);
+    final themeMode = ref.watch(themeModeProvider);
 
     return MaterialApp.router(
       title: 'Smart Attendance',
-      debugShowCheckedModeBanner: false,
-      theme: buildSasTheme(),
+      theme: buildSasTheme(brightness: Brightness.light),
+      darkTheme: buildSasTheme(brightness: Brightness.dark),
+      themeMode: themeMode,
       routerConfig: router,
     );
   }

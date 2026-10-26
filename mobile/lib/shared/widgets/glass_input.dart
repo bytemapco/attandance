@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smart_attendance_app/app/theme.dart';
+import 'package:smart_attendance_app/app/typography.dart';
 
 class GlassInput extends StatelessWidget {
   final TextEditingController? controller;
@@ -35,6 +36,13 @@ class GlassInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primaryTextColor = isDark ? SasColors.brilliance : SasColors.indianInk;
+    final labelTextColor = isDark ? SasColors.maidenMist : const Color(0xFF474A59);
+    final hintTextColor = isDark ? const Color(0x99BAC0BE) : const Color(0xFF858997);
+    final inputBg = isDark ? SasColors.darkCanvas : SasColors.polishWhite;
+    final inputBorderColor = isDark ? SasColors.indianInk : const Color(0xFFD5D8D7);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -42,14 +50,13 @@ class GlassInput extends StatelessWidget {
         if (label != null) ...[
           Text(
             label!,
-            style: const TextStyle(
-              color: SasColors.textSecondary,
+            style: SasTypography.style(
               fontSize: 13,
               fontWeight: FontWeight.w600,
-              letterSpacing: -0.01,
+              color: labelTextColor,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 7),
         ],
         TextFormField(
           controller: controller,
@@ -61,16 +68,17 @@ class GlassInput extends StatelessWidget {
           validator: validator,
           onChanged: onChanged,
           enabled: enabled,
-          style: const TextStyle(
-            color: SasColors.textPrimary,
+          style: SasTypography.style(
             fontSize: 15,
             fontWeight: FontWeight.w500,
+            color: primaryTextColor,
           ),
           decoration: InputDecoration(
             hintText: hint,
-            hintStyle: const TextStyle(
-              color: SasColors.textMuted,
+            hintStyle: SasTypography.style(
               fontSize: 14,
+              fontWeight: FontWeight.w400,
+              color: hintTextColor,
             ),
             prefixIcon: prefixIcon != null
                 ? Padding(
@@ -78,7 +86,7 @@ class GlassInput extends StatelessWidget {
                     child: Icon(
                       prefixIcon,
                       size: 20,
-                      color: SasColors.textMuted,
+                      color: hintTextColor,
                     ),
                   )
                 : null,
@@ -88,33 +96,33 @@ class GlassInput extends StatelessWidget {
             ),
             suffixIcon: suffix,
             filled: true,
-            fillColor: SasColors.bgSecondary,
+            fillColor: inputBg,
             contentPadding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: const BorderSide(color: SasColors.glassBorder),
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: inputBorderColor),
             ),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: const BorderSide(color: SasColors.glassBorder),
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: inputBorderColor),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(12),
               borderSide: const BorderSide(
-                color: SasColors.accentEmerald,
+                color: SasColors.osageOrange,
                 width: 1.5,
               ),
             ),
             errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(12),
               borderSide: const BorderSide(
                 color: SasColors.danger,
                 width: 1.0,
               ),
             ),
             focusedErrorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(12),
               borderSide: const BorderSide(
                 color: SasColors.danger,
                 width: 1.5,

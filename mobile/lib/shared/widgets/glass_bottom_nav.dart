@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:smart_attendance_app/app/theme.dart';
 
-/// Clean enterprise bottom navigation bar.
+/// Clean enterprise bottom navigation bar adhering to Apple HIG.
 class GlassBottomNav extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onTap;
@@ -15,6 +15,9 @@ class GlassBottomNav extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final unselectedColor = isDark ? SasColors.maidenMist : const Color(0xFF858997);
+
     const items = [
       ('Home', Icons.home_rounded),
       ('History', Icons.event_note_rounded),
@@ -23,23 +26,28 @@ class GlassBottomNav extends StatelessWidget {
     ];
 
     return Container(
-      decoration: const BoxDecoration(
-        color: SasColors.bgSecondary,
+      decoration: BoxDecoration(
+        color: isDark ? SasColors.darkCanvas : SasColors.lightCanvas,
         border: Border(
-          top: BorderSide(color: SasColors.glassBorder),
+          top: BorderSide(
+            color: isDark ? const Color(0x2EBAC0BE) : const Color(0x33BAC0BE),
+            width: 0.8,
+          ),
         ),
       ),
       child: SafeArea(
         top: false,
         child: Padding(
           padding: const EdgeInsets.symmetric(
-            horizontal: 8,
-            vertical: 6,
+            horizontal: 12,
+            vertical: 8,
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: List.generate(items.length, (i) {
               final selected = i == currentIndex;
+              final itemColor = selected ? SasColors.osageOrange : unselectedColor;
+
               return Expanded(
                 child: InkWell(
                   onTap: () {
@@ -48,40 +56,36 @@ class GlassBottomNav extends StatelessWidget {
                     }
                     onTap(i);
                   },
-                  borderRadius: BorderRadius.circular(8),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 6),
-                    decoration: selected
-                        ? BoxDecoration(
-                            color: SasColors.accentEmerald
-                                .withValues(alpha: 0.08),
-                            borderRadius: BorderRadius.circular(8),
-                          )
-                        : null,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          items[i].$2,
-                          size: 20,
-                          color: selected
-                              ? SasColors.accentEmerald
-                              : SasColors.textMuted,
+                  splashColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        items[i].$2,
+                        size: 22,
+                        color: itemColor,
+                      ),
+                      const SizedBox(height: 3),
+                      Text(
+                        items[i].$1,
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+                          color: itemColor,
+                          letterSpacing: -0.1,
                         ),
-                        const SizedBox(height: 3),
-                        Text(
-                          items[i].$1,
-                          style: TextStyle(
-                            fontSize: 11,
-                            fontWeight:
-                                selected ? FontWeight.w700 : FontWeight.w500,
-                            color: selected
-                                ? SasColors.accentEmerald
-                                : SasColors.textMuted,
-                          ),
+                      ),
+                      const SizedBox(height: 3),
+                      Container(
+                        width: 4,
+                        height: 4,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: selected ? SasColors.osageOrange : Colors.transparent,
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               );

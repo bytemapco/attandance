@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:smart_attendance_app/app/theme.dart';
+import 'package:smart_attendance_app/features/profile/widgets/appearance_setting_tile.dart';
 import 'package:smart_attendance_app/shared/widgets/glass_card.dart';
 import 'package:smart_attendance_app/shared/widgets/status_chip.dart';
 
@@ -27,6 +28,13 @@ class ProfileSettingsList extends StatelessWidget {
           padding: EdgeInsets.zero,
           child: Column(
             children: [
+              const AppearanceSettingTile(),
+              const Divider(
+                height: 1,
+                thickness: 1,
+                color: SasColors.glassBorder,
+                indent: 48,
+              ),
               _SettingTile(
                 icon: Icons.track_changes_rounded,
                 iconColor: SasColors.success,
