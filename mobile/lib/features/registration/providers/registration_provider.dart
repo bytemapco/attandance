@@ -27,6 +27,11 @@ class RegistrationNotifier extends StateNotifier<RegistrationState> {
   Future<bool> uploadFace(String imagePath) async {
     state = state.copyWith(status: RegistrationStatus.uploading, errorMessage: null);
     try {
+      try {
+        await _repo.submitBiometricConsent();
+      } catch (e) {
+        AppLogger.warn('Biometric consent recording notice: $e');
+      }
       await _repo.registerFace(imagePath);
       state = state.copyWith(status: RegistrationStatus.success);
       return true;

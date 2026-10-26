@@ -186,6 +186,12 @@ class AttendanceRepository {
     }
   }
 
+  Future<void> submitBiometricConsent({String policyVersion = '2026.1-BIPA'}) =>
+      _studentApi.submitBiometricConsent(policyVersion: policyVersion);
+
+  Future<Map<String, dynamic>> getBiometricConsentStatus() =>
+      _studentApi.getBiometricConsentStatus();
+
   Future<void> registerFace(String imagePath) => _studentApi.registerFace(imagePath);
 
   Future<AttendanceHistoryResponse> getHistory() => _studentApi.getMyAttendance();

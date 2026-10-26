@@ -15,6 +15,29 @@ def get_current_tenant_id() -> Optional[str]:
     return current_tenant_id.get()
 
 
+RESERVED_PLATFORM_SUBDOMAINS = (
+    "www",
+    "api",
+    "app",
+    "admin",
+    "backend",
+    "attendance",
+    "attendance-backend",
+    "auth",
+    "cdn",
+    "static",
+    "mail",
+)
+
+
+def _is_platform_subdomain(subdomain: str) -> bool:
+    return (
+        subdomain in RESERVED_PLATFORM_SUBDOMAINS
+        or subdomain.endswith("-backend")
+        or subdomain.endswith("-api")
+    )
+
+
 class TenantResolutionMiddleware(BaseHTTPMiddleware):
     # Paths that do not require tenant resolution
     EXEMPT_PREFIXES = (
@@ -79,13 +102,11 @@ class TenantResolutionMiddleware(BaseHTTPMiddleware):
             if host_header and host_header not in ("localhost", "127.0.0.1", "0.0.0.0", "testserver"):
                 parts = host_header.split(".")
                 if len(parts) >= 3:
-                    if parts[0] not in ("www", "api", "app", "admin"):
+                    if not _is_platform_subdomain(parts[0]):
                         header_tenant_id = parts[0]
-                    elif len(parts) >= 4 and parts[1] not in ("www", "api", "app", "admin"):
+                    elif len(parts) >= 4 and not _is_platform_subdomain(parts[1]):
                         header_tenant_id = parts[1]
-                    else:
-                        header_tenant_id = host_header
-                else:
+                elif len(parts) == 2 and not _is_platform_subdomain(parts[0]):
                     header_tenant_id = host_header
 
         tenant_identifier = jwt_tenant_id or header_tenant_id

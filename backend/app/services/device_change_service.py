@@ -35,11 +35,25 @@ class DeviceChangeService:
         except Exception as exc:
             logger.warning("Redis device change rate limit error: %s", exc)
 
-        user = await self.user_repo.get_by_email(data.email)
-        if not user or not verify_password(data.password, user.hashedPassword) or user.role != "STUDENT":
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid email or password")
+        identifier = data.email.strip()
+        user = None
+        student = None
+        if "@" in identifier:
+            user = await self.user_repo.get_by_email(identifier.lower())
+            if user:
+                student = await self.student_repo.get_by_user_id(user.id)
+        else:
+            student = await self.student_repo.get_by_enrollment(identifier)
+            if student and student.user:
+                user = student.user
+            else:
+                user = await self.user_repo.get_by_email(identifier.lower())
+                if user:
+                    student = await self.student_repo.get_by_user_id(user.id)
 
-        student = await self.student_repo.get_by_user_id(user.id)
+        if not user or not verify_password(data.password, user.hashedPassword) or user.role != "STUDENT":
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials or not a student account")
+
         if not student:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Student record not found")
 

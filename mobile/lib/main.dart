@@ -33,7 +33,13 @@ class AppHttpOverrides extends HttpOverrides {
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp();
+  try {
+    if (Firebase.apps.isEmpty) {
+      await Firebase.initializeApp();
+    }
+  } catch (_) {
+    return;
+  }
   final notificationService = NotificationService();
   await notificationService.initialize();
   await notificationService.addNotification(

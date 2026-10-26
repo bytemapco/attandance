@@ -127,7 +127,12 @@ class ChangePasswordRequest(BaseModel):
 class DeviceChangeRequestCreate(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    email: EmailStr = Field(..., description="Unique email address of the user")
+    email: str = Field(
+        ...,
+        min_length=2,
+        max_length=255,
+        description="Unique email address or institutional Student ID / Enrollment Number",
+    )
     password: str = Field(..., min_length=8, max_length=128, description="Plaintext password")
     new_device_uuid: str = Field(..., min_length=1, max_length=128, description="The new hardware device UUID")
     reason: Optional[str] = Field(None, max_length=500, description="Optional reason for changing the device")
@@ -135,7 +140,8 @@ class DeviceChangeRequestCreate(BaseModel):
     @field_validator("email", mode="before")
     @classmethod
     def strip_email(cls, v: str) -> str:
-        return v.strip().lower() if isinstance(v, str) else v
+        return v.strip() if isinstance(v, str) else v
+
 
 
 class ForgotPasswordRequest(BaseModel):

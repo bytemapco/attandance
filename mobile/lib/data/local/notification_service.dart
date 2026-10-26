@@ -6,6 +6,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:smart_attendance_app/core/constants.dart';
 import 'package:smart_attendance_app/data/api/notification_api.dart';
 import 'package:smart_attendance_app/data/api/websocket_service.dart';
+import 'package:smart_attendance_app/data/local/secure_storage.dart';
 import 'package:smart_attendance_app/domain/models/app_notification.dart';
 import 'package:smart_attendance_app/utils/logger.dart';
 
@@ -74,6 +75,7 @@ final notificationsProvider =
     ref.read(notificationServiceProvider),
     ref.read(notificationApiProvider),
     ref.read(websocketServiceProvider),
+    ref.read(secureStorageProvider),
   );
 });
 
@@ -85,12 +87,13 @@ class NotificationsNotifier extends StateNotifier<List<LocalNotification>> {
   final NotificationService _service;
   final NotificationApi _api;
   final WebSocketService _ws;
+  final SecureStorageService _storage;
   StreamSubscription? _wsSub;
   bool _isLoading = false;
 
   bool get isLoading => _isLoading;
 
-  NotificationsNotifier(this._service, this._api, this._ws) : super([]) {
+  NotificationsNotifier(this._service, this._api, this._ws, this._storage) : super([]) {
     load().then((_) => _listenWebSocket());
   }
 
@@ -131,6 +134,12 @@ class NotificationsNotifier extends StateNotifier<List<LocalNotification>> {
     _isLoading = true;
     if (!_service.isInitialized) await _service.initialize();
     state = _service.getNotifications();
+
+    final token = await _storage.getToken();
+    if (token == null || token.isEmpty) {
+      _isLoading = false;
+      return;
+    }
 
     try {
       final remote = await _api.getNotifications(page: 1, pageSize: 40);

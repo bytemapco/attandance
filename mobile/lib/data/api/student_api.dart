@@ -17,6 +17,16 @@ class StudentApi {
 
   const StudentApi(this._dio);
 
+  Future<void> submitBiometricConsent({String policyVersion = '2026.1-BIPA'}) async {
+    final formData = FormData.fromMap({'policy_version': policyVersion});
+    await _dio.post<void>('/student/biometric/consent', data: formData);
+  }
+
+  Future<Map<String, dynamic>> getBiometricConsentStatus() async {
+    final response = await _dio.get<Map<String, dynamic>>('/student/biometric/consent-status');
+    return response.data!;
+  }
+
   Future<void> registerFace(String imagePath) async {
     final formData = FormData.fromMap({
       'image': await MultipartFile.fromFile(

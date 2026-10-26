@@ -32,19 +32,19 @@ class LeaveRequest {
 
   factory LeaveRequest.fromJson(Map<String, dynamic> json) {
     return LeaveRequest(
-      id: json['id'] as String,
-      studentId: json['student_id'] as String,
-      studentName: json['student_name'] as String,
-      enrollmentNumber: json['enrollment_number'] as String,
-      startDate: DateTime.parse(json['start_date'] as String),
-      endDate: DateTime.parse(json['end_date'] as String),
-      reason: json['reason'] as String,
+      id: json['id'] as String? ?? '',
+      studentId: json['student_id'] as String? ?? '',
+      studentName: json['student_name'] as String? ?? '',
+      enrollmentNumber: json['enrollment_number'] as String? ?? '',
+      startDate: DateTime.tryParse(json['start_date'] as String? ?? '') ?? DateTime.now(),
+      endDate: DateTime.tryParse(json['end_date'] as String? ?? '') ?? DateTime.now(),
+      reason: json['reason'] as String? ?? '',
       documentUrl: json['document_url'] as String?,
-      status: json['status'] as String,
+      status: json['status'] as String? ?? 'PENDING',
       approvedBy: json['approved_by'] as String?,
       approverNote: json['approver_note'] as String?,
-      createdAt: DateTime.parse(json['created_at'] as String),
-      updatedAt: DateTime.parse(json['updated_at'] as String),
+      createdAt: DateTime.tryParse(json['created_at'] as String? ?? '') ?? DateTime.now(),
+      updatedAt: DateTime.tryParse(json['updated_at'] as String? ?? '') ?? DateTime.now(),
     );
   }
 

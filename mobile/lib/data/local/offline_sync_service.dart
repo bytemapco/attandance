@@ -90,7 +90,8 @@ class OfflineSyncService {
 
     try {
       final response = await _dio.get<Map<String, dynamic>>('/health');
-      if (response.statusCode != 200 || response.data?['status'] != 'healthy') return 0;
+      final healthStatus = response.data?['status'] as String?;
+      if (response.statusCode != 200 || (healthStatus != 'healthy' && healthStatus != 'degraded')) return 0;
     } catch (_) {
       return 0;
     }
