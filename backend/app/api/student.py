@@ -77,8 +77,35 @@ async def _rate_limit_student(student_id: str, max_requests: int = 15, window_se
         logger.warning("Redis rate limiter unavailable for student %s: %s", student_id, exc)
 
 
+def _validate_image_bytes(contents: bytes) -> None:
+    if len(contents) < 12:
+        raise HTTPException(
+            status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
+            detail="Unsupported media type. Image is corrupted or too small.",
+        )
+    is_jpeg = contents.startswith(b"\xff\xd8\xff")
+    is_png = contents.startswith(b"\x89PNG\r\n\x1a\n")
+    is_webp = contents.startswith(b"RIFF") and contents[8:12] == b"WEBP"
+    if not (is_jpeg or is_png or is_webp):
+        raise HTTPException(
+            status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
+            detail="Unsupported media type. Upload must be a valid JPEG, PNG, or WebP image.",
+        )
+
+
 async def _save_uploaded_image(upload_file: UploadFile, folder: str) -> tuple[str, bytes]:
-    _key, url, contents = await s3_service.upload_uploadfile(upload_file, folder)
+    contents = await upload_file.read()
+    _validate_image_bytes(contents)
+    if len(contents) > _MAX_IMAGE_SIZE:
+        raise HTTPException(
+            status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
+            detail="Payload too large. Uploaded image cannot exceed 5MB.",
+        )
+    ext = os.path.splitext(upload_file.filename)[1].lower() if upload_file.filename else ".jpg"
+    if ext not in (".jpg", ".jpeg", ".png", ".webp"):
+        ext = ".jpg"
+    key = f"{folder}/{uuid.uuid4()}{ext}"
+    url = s3_service.upload_bytes(contents, key, content_type=upload_file.content_type or "image/jpeg")
     return url, contents
 
 
@@ -281,15 +308,24 @@ async def register_face(
     try:
         consent_service = BiometricConsentService()
         if not await consent_service.has_consent(student.id):
-            await consent_service.record_consent(student.id, policy_version="2026.1-BIPA")
+            s3_service.delete_file(image_url)
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Biometric consent is required prior to registering facial biometrics.",
+            )
         success = await attendance_service.register_face(student.id, image_bytes)
         if not success:
+            s3_service.delete_file(image_url)
             raise ValueError("Could not extract a valid face from the image.")
         return MessageResponse(status="success", message="Face embedding registered successfully.")
+    except HTTPException:
+        raise
     except ValueError as err:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(err))
-    finally:
         s3_service.delete_file(image_url)
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(err))
+    except Exception:
+        s3_service.delete_file(image_url)
+        raise
 
 
 @router.get("/my-attendance", response_model=StudentAttendanceHistoryResponse)
@@ -382,24 +418,18 @@ async def create_leave_request(
                 status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
                 detail="Unsupported file type. Allowed types: PDF, JPG, PNG, DOC, DOCX.",
             )
-        # Check file size
-        if hasattr(document, "size") and document.size is not None:
-            if document.size > _MAX_LEAVE_DOCUMENT_SIZE:
-                raise HTTPException(
-                    status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
-                    detail="File size too large. Maximum size is 10 MB.",
-                )
-        else:
-            # If size is not available, read the file to check the size
-            contents = await document.read()
-            if len(contents) > _MAX_LEAVE_DOCUMENT_SIZE:
-                raise HTTPException(
-                    status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
-                    detail="File size too large. Maximum size is 10 MB.",
-                )
-            await document.seek(0)  # Reset file position for reading again
+        contents = await document.read()
+        if len(contents) > _MAX_LEAVE_DOCUMENT_SIZE:
+            raise HTTPException(
+                status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
+                detail="File size too large. Maximum size is 10 MB.",
+            )
         try:
-            _key, document_url, _ = await s3_service.upload_uploadfile(document, "leaves")
+            ext = os.path.splitext(document.filename)[1].lower() if document.filename else ".pdf"
+            key = f"leaves/{uuid.uuid4()}{ext}"
+            document_url = s3_service.upload_bytes(
+                contents, key, content_type=document.content_type or "application/octet-stream"
+            )
         except Exception as exc:
             logger.error("Could not upload leave document to S3: %s", exc)
             raise HTTPException(

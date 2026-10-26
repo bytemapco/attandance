@@ -4,6 +4,7 @@ from typing import Dict, Set
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from app.api.dependencies import get_current_user_from_token
 from app.core.logging_config import get_logger
+from app.db.client import db
 
 logger = get_logger("app.websocket")
 router = APIRouter(prefix="/ws", tags=["WebSocket"])
@@ -182,15 +183,18 @@ async def websocket_endpoint(websocket: WebSocket):
         if not user:
             await websocket.close(code=1008, reason="Unauthorized")
             return
-        student_obj = getattr(user, "student", None)
-        teacher_obj = getattr(user, "teacher", None)
-        profile_id = (
-            student_obj.id
-            if (user.role == "STUDENT" and student_obj)
-            else (teacher_obj.id if (user.role == "TEACHER" and teacher_obj) else None)
-        )
+        profile_id = None
+        if user.role == "STUDENT":
+            student_record = await db.student.find_unique(where={"userId": user.id})
+            profile_id = student_record.id if student_record else None
+        elif user.role == "TEACHER":
+            teacher_record = await db.teacher.find_unique(where={"userId": user.id})
+            profile_id = teacher_record.id if teacher_record else None
+
         tenant_id = getattr(user, "tenantId", None)
-        tenant_obj = getattr(user, "tenant", None)
+        tenant_obj = None
+        if tenant_id:
+            tenant_obj = await db.tenant.find_unique(where={"id": tenant_id})
         tenant_slug = tenant_obj.slug if tenant_obj else None
         if user.role != "SUPER_ADMIN" and tenant_obj and tenant_obj.status != "ACTIVE":
             await websocket.send_json(

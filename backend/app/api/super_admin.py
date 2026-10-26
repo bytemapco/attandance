@@ -3,6 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from prisma.models import User
 from app.api.dependencies import RoleChecker, get_current_user
 from app.schemas.super_admin import (
+    TenantAdminInput,
     TenantProvisionRequest,
     TenantUpdateRequest,
     TenantDetailResponse,
@@ -99,11 +100,11 @@ async def process_license_request(
 @router.post("/tenants/{tenant_id}/admins", status_code=status.HTTP_201_CREATED)
 async def add_tenant_admin(
     tenant_id: str,
-    data: Dict[str, Any],
+    data: TenantAdminInput,
     current_user: User = Depends(get_current_user),
 ):
     try:
-        return await SuperAdminService.add_tenant_admin(tenant_id, data, actor=current_user.email)
+        return await SuperAdminService.add_tenant_admin(tenant_id, data.model_dump(), actor=current_user.email)
     except ValueError as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 

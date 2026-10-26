@@ -22,7 +22,7 @@ class SessionService:
 
         active = await self.session_repo.get_active_session_by_class(data.academic_class_id)
         if active:
-            await self.close_session(active.id)
+            raise ValueError("An active session already exists for this class. Please stop the active session first.")
 
         now = datetime.now(timezone.utc)
         session = await self.session_repo.create(

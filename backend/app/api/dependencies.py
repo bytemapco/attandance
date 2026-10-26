@@ -31,7 +31,13 @@ async def _check_token_revoked(token: str) -> None:
     except HTTPException:
         raise
     except Exception as exc:
-        logger.warning("Could not check token revocation denylist in Redis: %s", exc)
+        logger.critical("Security Alert: Could not check token revocation denylist in Redis: %s", exc)
+        if getattr(settings, "TOKEN_REVOCATION_FAIL_CLOSED", False):
+            raise HTTPException(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                detail="Authentication service temporarily unavailable due to revocation cache outage.",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
 
 
 async def _validate_token_payload(token: str) -> dict:

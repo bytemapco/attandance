@@ -106,6 +106,18 @@ async def broadcast_notification(
 ):
     """Endpoint for Admins and Faculty Teachers to broadcast announcements to students or campus-wide."""
     tenant_id = getattr(current_user, "tenantId", None)
+    if current_user.role == "TEACHER":
+        if not tenant_id:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Teachers must be assigned to an institution to broadcast announcements.",
+            )
+        if payload.target_role and payload.target_role not in ("STUDENT", "ALL"):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Teachers may only broadcast announcements to students within their institution.",
+            )
+
     await broadcast_announcement(
         title=payload.title,
         message=payload.message,

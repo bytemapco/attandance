@@ -154,23 +154,29 @@ class GamificationService:
     async def _update_redis_score(self, student_id: str, current_streak: int, highest_streak: int) -> None:
         """Update a student's score in the Redis leaderboard."""
         try:
+            student = await self.student_repo.get_by_id(student_id)
+            tenant_id = getattr(student, "tenantId", None) if student else None
+            cache_key = f"leaderboard:{tenant_id or 'global'}:points"
+
             redis = self._get_redis_client()
             if redis:
                 all_records = await self.attendance_repo.get_by_student_id(student_id)
                 present_count = sum(1 for r in all_records if r.status in ("Present", "Approved"))
                 new_points = present_count * 50 + highest_streak * 100 + current_streak * 20
-                await redis.zadd("leaderboard:points", {student_id: float(new_points)})
+                await redis.zadd(cache_key, {student_id: float(new_points)})
         except Exception as e:
             logger.warning("Failed to update leaderboard cache: %s", e)
 
     async def get_leaderboard(self, current_student_id: str) -> dict:
         """Fetch the leaderboard from Redis, falling back to DB if empty."""
+        student = await self.student_repo.get_by_id(current_student_id)
+        tenant_id = getattr(student, "tenantId", None) if student else None
+        cache_key = f"leaderboard:{tenant_id or 'global'}:points"
         redis = self._get_redis_client()
-        cache_key = "leaderboard:points"
 
         try:
             if redis and not await redis.exists(cache_key):
-                await self._rebuild_leaderboard_cache(redis, cache_key)
+                await self._rebuild_leaderboard_cache(redis, cache_key, tenant_id=tenant_id)
         except Exception as e:
             logger.warning("Redis operation failed in leaderboard check: %s", e)
 
@@ -179,20 +185,24 @@ class GamificationService:
             leaderboard_data = await self._fetch_leaderboard_from_cache(redis, cache_key)
 
         if not leaderboard_data:
-            return await self._get_leaderboard_from_db(current_student_id)
+            return await self._get_leaderboard_from_db(current_student_id, tenant_id=tenant_id)
 
         user_rank, user_points = await self._fetch_user_rank_and_points(redis, cache_key, current_student_id)
         return {"leaderboard": leaderboard_data, "user_rank": user_rank, "user_points": user_points}
 
-    async def _rebuild_leaderboard_cache(self, redis, cache_key: str) -> None:
+    async def _rebuild_leaderboard_cache(self, redis, cache_key: str, tenant_id: str | None = None) -> None:
         """Rebuild the leaderboard cache from DB data."""
         if not redis:
             return
         try:
             from app.db.client import db
 
+            where_cond: dict = {"user": {"is": {"isActive": True}}}
+            if tenant_id:
+                where_cond["tenantId"] = tenant_id
+
             students = await db.student.find_many(
-                where={"user": {"is": {"isActive": True}}}, include={"attendance": True}
+                where=where_cond, include={"attendance": True}
             )
             scores_dict = {}
             for s in students:
@@ -249,13 +259,17 @@ class GamificationService:
             logger.warning("Failed to fetch user rank from Redis: %s", e)
             return None, 0
 
-    async def _get_leaderboard_from_db(self, current_student_id: str) -> dict:
+    async def _get_leaderboard_from_db(self, current_student_id: str, tenant_id: str | None = None) -> dict:
         """Generate leaderboard directly from database query (fallback)."""
         try:
             from app.db.client import db
 
+            where_cond: dict = {"user": {"is": {"isActive": True}}}
+            if tenant_id:
+                where_cond["tenantId"] = tenant_id
+
             students = await db.student.find_many(
-                where={"user": {"is": {"isActive": True}}}, include={"attendance": True}
+                where=where_cond, include={"attendance": True}
             )
             student_list = []
             for s in students:

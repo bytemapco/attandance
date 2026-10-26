@@ -6,13 +6,15 @@ from prisma.models import User
 
 from app.api.dependencies import get_current_user, reusable_oauth2, auth_rate_limit
 from app.core.logging_config import get_logger
-from app.core.security import decode_access_token
+from app.core.security import decode_access_token, create_access_token, create_refresh_token
 from app.core.url_resolver import resolve_frontend_url
 from app.db.client import db
 from app.db.redis import get_redis
 from app.repositories.student_repository import StudentRepository
+from app.repositories.user_repository import UserRepository
 from app.schemas.auth import (
     Token,
+    RefreshTokenRequest,
     UserLogin,
     UserProfileResponse,
     DeviceChangeRequestCreate,
@@ -43,6 +45,67 @@ async def login(login_data: UserLogin, request: Request, auth_service: AuthServi
         logger.warning("Failed login: %s", login_data.email)
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect email or password")
     return token
+
+
+@router.post("/refresh", response_model=Token)
+async def refresh_token_endpoint(payload: RefreshTokenRequest) -> Token:
+    decoded = decode_access_token(payload.refresh_token)
+    if not decoded or decoded.get("type") != "refresh":
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid or expired refresh token",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    r = await get_redis()
+    if await r.get(f"denylist:{payload.refresh_token}"):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Refresh token has been revoked",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    user_id = decoded.get("sub")
+    user = await UserRepository().get_by_id(user_id)
+    if not user or not user.isActive:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="User account is inactive or not found",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    tid = getattr(user, "tenantId", None)
+    tenant_slug, tenant_name = None, None
+    if tid:
+        t = await db.tenant.find_unique(where={"id": tid})
+        if t:
+            if t.status != "ACTIVE":
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail=f"Institution account '{t.name}' is currently {t.status.lower()}.",
+                )
+            tenant_slug, tenant_name = t.slug, t.name
+
+    new_access_token = create_access_token(
+        subject=user.id,
+        role=user.role,
+        extra_data={"tid": tid, "tenant_id": tid} if tid else None,
+    )
+    new_refresh_token = create_refresh_token(subject=user.id, role=user.role)
+
+    # Invalidate previous refresh token
+    await r.setex(f"denylist:{payload.refresh_token}", 7 * 86400, "1")
+
+    return Token(
+        access_token=new_access_token,
+        refresh_token=new_refresh_token,
+        token_type="bearer",
+        role=user.role,
+        must_change_password=getattr(user, "mustChangePassword", False),
+        tenant_id=tid,
+        tenant_slug=tenant_slug,
+        tenant_name=tenant_name,
+    )
 
 
 @router.get("/me", response_model=UserProfileResponse)

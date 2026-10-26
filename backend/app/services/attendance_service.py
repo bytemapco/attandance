@@ -1,4 +1,5 @@
 import json
+import uuid
 from datetime import datetime, timezone, timedelta
 from typing import Optional
 from prisma.models import Attendance
@@ -98,7 +99,10 @@ class AttendanceService:
                 raise ValueError("Image is required when verification is enabled.")
             ai_results = await self.ai_orchestrator.analyze_attendance(submission.image_path, face_embedding)
         else:
-            ai_results = {"face_score": 1.0, "liveness_score": 1.0, "background_score": 1.0}
+            logger.info("Biometric and background verification disabled by policy for session %s", submission.session_id)
+            ai_results = {"face_score": 0.0, "liveness_score": 0.0, "background_score": 0.0}
+            verification_note = "[AI verification disabled by policy]"
+            remarks = f"{remarks} {verification_note}".strip() if remarks else verification_note
 
         active_scores = []
         is_verified = True
@@ -176,9 +180,10 @@ class AttendanceService:
         final_score = round(sum(active_scores) / len(active_scores), 4) if active_scores else 1.0
         predicted_status = "Flagged" if (geofence_missing or not is_verified) else "Present"
 
-        token_data = {
-            "type": "attendance_review",
+        review_id = str(uuid.uuid4())
+        review_data = {
             "session_id": submission.session_id,
+            "student_id": submission.student_id,
             "face_score": ai_results["face_score"],
             "liveness_score": ai_results["liveness_score"],
             "background_score": ai_results["background_score"],
@@ -189,8 +194,14 @@ class AttendanceService:
             "latitude": submission.latitude,
             "longitude": submission.longitude,
         }
+        redis = get_redis()
+        await redis.setex(f"attendance_review:{review_id}", 300, json.dumps(review_data))
+
         review_token = create_access_token(
-            subject=submission.student_id, role="STUDENT", expires_delta=timedelta(minutes=5), extra_data=token_data
+            subject=submission.student_id,
+            role="STUDENT",
+            expires_delta=timedelta(minutes=5),
+            extra_data={"type": "attendance_review", "review_id": review_id},
         )
         return {
             **ai_results,
@@ -204,28 +215,40 @@ class AttendanceService:
         if not payload or payload.get("type") != "attendance_review" or payload.get("sub") != student_id:
             raise ValueError("Invalid, expired, or mismatched review token.")
 
-        session = await self._get_active_session(payload["session_id"])
-        if await self.attendance_repo.get_by_student_and_session(student_id, payload["session_id"]):
+        review_id = payload.get("review_id")
+        if not review_id:
+            raise ValueError("Invalid, expired, or mismatched review token.")
+
+        redis = get_redis()
+        cached_data = await redis.get(f"attendance_review:{review_id}")
+        if not cached_data:
+            raise ValueError("Invalid, expired, or mismatched review token.")
+
+        await redis.delete(f"attendance_review:{review_id}")
+        review_info = json.loads(cached_data)
+
+        session = await self._get_active_session(review_info["session_id"])
+        if await self.attendance_repo.get_by_student_and_session(student_id, review_info["session_id"]):
             raise ValueError("Attendance already submitted for this session.")
 
-        status = payload["predicted_status"]
-        remarks = "Missing Geofence Data" if payload.get("geofence_missing") else None
+        status = review_info["predicted_status"]
+        remarks = "Missing Geofence Data" if review_info.get("geofence_missing") else None
         record = await self.recorder.record_attendance(
             student_id,
-            payload["session_id"],
+            review_info["session_id"],
             status,
             {
-                "face_score": payload["face_score"],
-                "liveness_score": payload["liveness_score"],
-                "background_score": payload["background_score"],
+                "face_score": review_info["face_score"],
+                "liveness_score": review_info["liveness_score"],
+                "background_score": review_info["background_score"],
             },
-            payload["final_ai_score"],
-            payload["latitude"],
-            payload["longitude"],
+            review_info["final_ai_score"],
+            review_info["latitude"],
+            review_info["longitude"],
             remarks,
-            payload.get("image_path"),
+            review_info.get("image_path"),
         )
-        await self.notifier.broadcast_attendance_update(payload["session_id"], student_id, status)
+        await self.notifier.broadcast_attendance_update(review_info["session_id"], student_id, status)
         if status == "Flagged":
             await self.notifier.dispatch_flagged_notifications(student_id, session.academicClassId, record.id)
         return record

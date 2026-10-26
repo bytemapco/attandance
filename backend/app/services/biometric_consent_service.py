@@ -37,40 +37,73 @@ class BiometricConsentService:
         }
 
         r = await get_redis()
-        await r.setex(
-            f"{self.CONSENT_PREFIX}{student_id}",
-            self.CONSENT_TTL_SECONDS,
-            json.dumps(consent_record),
-        )
+        try:
+            await r.setex(
+                f"{self.CONSENT_PREFIX}{student_id}",
+                self.CONSENT_TTL_SECONDS,
+                json.dumps(consent_record),
+            )
+        except Exception as redis_err:
+            logger.warning("Redis consent cache write error: %s", redis_err)
+
+        try:
+            await db.studentbiometric.update_many(
+                where={"studentId": student_id},
+                data={"consentGiven": True},
+            )
+        except Exception as db_err:
+            logger.warning("DB consent persistence error for student %s: %s", student_id, db_err)
+
         logger.info("Biometric consent recorded for student %s under policy %s", student_id, policy_version)
         return consent_record
 
     async def has_consent(self, student_id: str) -> bool:
-        r = await get_redis()
-        raw = await r.get(f"{self.CONSENT_PREFIX}{student_id}")
-        if not raw:
+        try:
+            r = await get_redis()
+            raw = await r.get(f"{self.CONSENT_PREFIX}{student_id}")
+            if raw:
+                data = json.loads(raw)
+                return bool(data.get("consented", False))
+        except Exception as redis_err:
+            logger.warning("Redis consent read error: %s", redis_err)
+
+        try:
+            biometric = await db.studentbiometric.find_first(
+                where={"studentId": student_id, "isActive": True, "consentGiven": True}
+            )
+            return biometric is not None
+        except Exception as db_err:
+            logger.error("DB consent fallback read error: %s", db_err)
             return False
-        data = json.loads(raw)
-        return bool(data.get("consented", False))
 
     async def get_consent_status(self, student_id: str) -> Dict[str, Any]:
-        r = await get_redis()
-        raw = await r.get(f"{self.CONSENT_PREFIX}{student_id}")
-        if not raw:
+        has_consented = await self.has_consent(student_id)
+        consented_at = None
+        policy_ver = "2026.1-BIPA"
+        try:
+            r = await get_redis()
+            raw = await r.get(f"{self.CONSENT_PREFIX}{student_id}")
+            if raw:
+                data = json.loads(raw)
+                consented_at = data.get("consented_at")
+                policy_ver = data.get("policy_version", policy_ver)
+        except Exception:
+            pass
+
+        if not has_consented:
             return {
                 "student_id": student_id,
                 "has_consent": False,
                 "consent_required": True,
-                "policy_version": "2026.1-BIPA",
+                "policy_version": policy_ver,
                 "message": "Explicit biometric consent required prior to facial verification.",
             }
-        data = json.loads(raw)
         return {
             "student_id": student_id,
             "has_consent": True,
             "consent_required": False,
-            "consented_at": data.get("consented_at"),
-            "policy_version": data.get("policy_version"),
+            "consented_at": consented_at,
+            "policy_version": policy_ver,
         }
 
     async def purge_attendance_photos(
@@ -92,10 +125,13 @@ class BiometricConsentService:
         for rec in records:
             remarks = rec.remarks or ""
             note = rec.studentNote or ""
-            if "photo_purged" in remarks:
+            if "photo_purged" in remarks and not rec.evidencePhotoUrl:
                 continue
 
             found_refs: List[str] = []
+            if rec.evidencePhotoUrl:
+                found_refs.append(rec.evidencePhotoUrl)
+
             combined_text = f"{remarks} {note}"
             photo_bracket_matches = re.findall(r"\[photo:(.*?)\]", combined_text)
             url_matches = re.findall(r"(https?://[^\s\]]+)", combined_text)
@@ -118,9 +154,13 @@ class BiometricConsentService:
             purged_count += 1
             cleaned_remarks = re.sub(r"\[photo:.*?\]", "", remarks).strip()
             new_remarks = f"{cleaned_remarks} [photo_purged_for_data_minimization]".strip()
+            update_data: Dict[str, Any] = {"remarks": new_remarks}
+            if rec.evidencePhotoUrl:
+                update_data["evidencePhotoUrl"] = None
+
             await db.attendance.update(
                 where={"id": rec.id},
-                data={"remarks": new_remarks},
+                data=update_data,
             )
 
         logger.info(

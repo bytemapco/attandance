@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_attendance_app/app/theme.dart';
@@ -50,9 +51,20 @@ class _DeviceChangeDialogState extends ConsumerState<DeviceChangeDialog> {
     } catch (e) {
       AppLogger.error('Failed to request device change: $e');
       if (!mounted) return;
+
+      String errorMessage = 'Failed to submit request. Please try again.';
+      if (e is DioException && e.response?.data is Map) {
+        final data = e.response!.data as Map;
+        if (data['detail'] is String) {
+          errorMessage = data['detail'] as String;
+        } else if (data['message'] is String) {
+          errorMessage = data['message'] as String;
+        }
+      }
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Failed to submit request. Please try again.'),
+          content: Text(errorMessage),
           backgroundColor: SasColors.danger,
         ),
       );

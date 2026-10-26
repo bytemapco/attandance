@@ -45,3 +45,4 @@ app.*.map.json
 .env*
 !.env.example
 !.env.*.example
+*.xcworkspace/

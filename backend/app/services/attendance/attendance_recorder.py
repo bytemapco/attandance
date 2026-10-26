@@ -1,5 +1,6 @@
 import os
 from prisma.models import Attendance
+from prisma.errors import UniqueViolationError
 from app.core.logging_config import get_logger
 from app.repositories.attendance_repository import AttendanceRepository
 from app.services.gamification_service import GamificationService
@@ -31,20 +32,27 @@ class AttendanceRecorder:
             elif "[photo:" not in effective_remarks:
                 effective_remarks = f"{effective_remarks} [photo:{image_path}]"
 
-        record = await self.attendance_repo.create(
-            {
-                "studentId": student_id,
-                "sessionId": session_id,
-                "status": status,
-                "faceScore": ai_results["face_score"],
-                "livenessScore": ai_results["liveness_score"],
-                "backgroundScore": ai_results["background_score"],
-                "finalAiScore": final_score,
-                "gpsLatitude": latitude,
-                "gpsLongitude": longitude,
-                "remarks": effective_remarks,
-            }
-        )
+        try:
+            record = await self.attendance_repo.create(
+                {
+                    "studentId": student_id,
+                    "sessionId": session_id,
+                    "status": status,
+                    "faceScore": ai_results["face_score"],
+                    "livenessScore": ai_results["liveness_score"],
+                    "backgroundScore": ai_results["background_score"],
+                    "finalAiScore": final_score,
+                    "gpsLatitude": latitude,
+                    "gpsLongitude": longitude,
+                    "remarks": effective_remarks,
+                    "evidencePhotoUrl": image_path if status == "Flagged" else None,
+                }
+            )
+        except UniqueViolationError as exc:
+            logger.warning(
+                "Duplicate attendance detected by DB unique constraint: student=%s session=%s", student_id, session_id
+            )
+            raise ValueError("Attendance already submitted for this session.") from exc
 
         try:
             await self.gamification_service.update_streak(student_id, status)

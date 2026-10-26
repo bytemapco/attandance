@@ -29,15 +29,18 @@ class LeaveService:
         # Verify teacher authorization for this student
         teacher_classes = await db.academicclass.find_many(where={"teacherId": teacher_id})
         teacher_class_ids = {c.id for c in teacher_classes}
-        if teacher_class_ids:
-            enrollment = await db.enrollment.find_first(
-                where={"studentId": leave.studentId, "academicClassId": {"in": list(teacher_class_ids)}}
+        if not teacher_class_ids:
+            logger.warning("Teacher %s has no classes and cannot approve leaves", teacher_id)
+            return None
+
+        enrollment = await db.enrollment.find_first(
+            where={"studentId": leave.studentId, "academicClassId": {"in": list(teacher_class_ids)}}
+        )
+        if not enrollment:
+            logger.warning(
+                "Teacher %s unauthorized to approve leave for un-enrolled student %s", teacher_id, leave.studentId
             )
-            if not enrollment:
-                logger.warning(
-                    "Teacher %s unauthorized to approve leave for un-enrolled student %s", teacher_id, leave.studentId
-                )
-                return None
+            return None
 
         updated_leave = await self.leave_repo.update_status(
             leave_id=leave_id, status=status, approved_by=teacher_id, approver_note=approver_note

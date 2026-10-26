@@ -3,6 +3,7 @@ from fastapi import HTTPException, status
 from app.core.logging_config import get_logger
 from app.core.security import verify_password
 from app.db.client import db
+from app.db.redis import get_redis
 from app.repositories.user_repository import UserRepository
 from app.repositories.student_repository import StudentRepository
 from app.schemas.auth import DeviceChangeRequestCreate
@@ -18,6 +19,22 @@ class DeviceChangeService:
         self.student_repo = StudentRepository()
 
     async def request_device_change(self, data: DeviceChangeRequestCreate) -> None:
+        r = await get_redis()
+        rate_key = f"rate_limit:device_change:{data.email.strip().lower()}"
+        try:
+            attempts = await r.incr(rate_key)
+            if attempts == 1:
+                await r.expire(rate_key, 900)
+            if attempts > 5:
+                raise HTTPException(
+                    status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+                    detail="Too many device change attempts for this account. Please try again after 15 minutes.",
+                )
+        except HTTPException:
+            raise
+        except Exception as exc:
+            logger.warning("Redis device change rate limit error: %s", exc)
+
         user = await self.user_repo.get_by_email(data.email)
         if not user or not verify_password(data.password, user.hashedPassword) or user.role != "STUDENT":
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid email or password")
@@ -25,6 +42,18 @@ class DeviceChangeService:
         student = await self.student_repo.get_by_user_id(user.id)
         if not student:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Student record not found")
+
+        active_enrollment = await db.enrollment.find_first(
+            where={
+                "studentId": student.id,
+                "academicClass": {"isNot": {"teacherId": None}},
+            }
+        )
+        if not active_enrollment:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="No teacher assigned yet. Kindly contact your faculty or administration.",
+            )
 
         pending_request = await db.devicechangerequest.find_first(
             where={
@@ -67,14 +96,13 @@ class DeviceChangeService:
         teacher_classes = await db.academicclass.find_many(where={"teacherId": teacher_id})
         teacher_class_ids = [c.id for c in teacher_classes]
 
-        where_filter: dict = {"status": "PENDING"}
-        if teacher_class_ids:
-            where_filter["student"] = {"is": {"enrollments": {"some": {"academicClassId": {"in": teacher_class_ids}}}}}
-        else:
-            teacher = await db.teacher.find_unique(where={"id": teacher_id}, include={"user": True})
-            tid = getattr(teacher.user, "tenantId", None) if (teacher and teacher.user) else None
-            if tid:
-                where_filter["student"] = {"is": {"user": {"is": {"tenantId": tid}}}}
+        if not teacher_class_ids:
+            return []
+
+        where_filter: dict = {
+            "status": "PENDING",
+            "student": {"is": {"enrollments": {"some": {"academicClassId": {"in": teacher_class_ids}}}}},
+        }
 
         records = await db.devicechangerequest.find_many(
             where=where_filter,
@@ -116,7 +144,10 @@ class DeviceChangeService:
             return False
 
         teacher = await db.teacher.find_unique(where={"id": teacher_id}, include={"user": True})
-        if teacher and teacher.user and request_record.student and request_record.student.user:
+        if not teacher:
+            return False
+
+        if teacher.user and request_record.student and request_record.student.user:
             t_tid = getattr(teacher.user, "tenantId", None)
             s_tid = getattr(request_record.student.user, "tenantId", None)
             if t_tid and s_tid and t_tid != s_tid:
@@ -126,6 +157,21 @@ class DeviceChangeService:
                     request_record.studentId,
                 )
                 return False
+
+        # Verify this teacher is actually assigned to one of the student's classes
+        teaches_student = await db.academicclass.find_first(
+            where={
+                "teacherId": teacher_id,
+                "enrollments": {"some": {"studentId": request_record.studentId}},
+            }
+        )
+        if not teaches_student:
+            logger.warning(
+                "Unauthorized device change review: teacher %s does not teach student %s",
+                teacher_id,
+                request_record.studentId,
+            )
+            return False
 
         if new_status == "APPROVED":
             await db.student.update(

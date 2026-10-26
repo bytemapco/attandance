@@ -6,7 +6,7 @@ from fastapi import HTTPException, status
 
 from app.core.config import settings
 from app.core.logging_config import get_logger
-from app.core.security import hash_password, verify_password, create_access_token
+from app.core.security import hash_password, verify_password, create_access_token, create_refresh_token
 from app.db.client import db
 from app.db.redis import get_redis
 from app.repositories.user_repository import UserRepository
@@ -43,8 +43,41 @@ class AuthService:
                     else await self.user_repo.get_by_email(identifier.lower())
                 )
 
+        login_key = f"failed_login:{identifier.lower()}"
+        redis = None
+        try:
+            redis = get_redis()
+        except Exception:
+            pass
+
+        if redis:
+            try:
+                failed_attempts = await redis.get(login_key)
+                if failed_attempts and int(failed_attempts) >= 5:
+                    raise HTTPException(
+                        status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+                        detail="Account is temporarily locked due to multiple failed login attempts. Please try again after 15 minutes.",
+                    )
+            except HTTPException:
+                raise
+            except Exception as exc:
+                logger.warning("Redis failed login check error: %s", exc)
+
         if not user or not verify_password(login_data.password, user.hashedPassword):
+            if redis:
+                try:
+                    attempts = await redis.incr(login_key)
+                    if attempts == 1:
+                        await redis.expire(login_key, 900)
+                except Exception as exc:
+                    logger.warning("Redis increment failed login error: %s", exc)
             return None
+
+        if redis:
+            try:
+                await redis.delete(login_key)
+            except Exception:
+                pass
 
         if not user.isActive:
             raise HTTPException(
@@ -54,14 +87,20 @@ class AuthService:
 
         if user.role == "STUDENT":
             student = await self.student_repo.get_by_user_id(user.id)
-            if student and login_data.device_uuid:
-                if not student.deviceUuid:
+            if student:
+                if student.deviceUuid:
+                    if not login_data.device_uuid:
+                        raise HTTPException(
+                            status_code=status.HTTP_403_FORBIDDEN,
+                            detail="Device UUID is required for this student account.",
+                        )
+                    if student.deviceUuid != login_data.device_uuid:
+                        raise HTTPException(
+                            status_code=status.HTTP_403_FORBIDDEN,
+                            detail="Account is bound to another device. Please submit a device change request.",
+                        )
+                elif login_data.device_uuid:
                     await db.student.update(where={"id": student.id}, data={"deviceUuid": login_data.device_uuid})
-                elif student.deviceUuid != login_data.device_uuid:
-                    raise HTTPException(
-                        status_code=status.HTTP_403_FORBIDDEN,
-                        detail="Account is bound to another device. Please submit a device change request.",
-                    )
 
         tid = getattr(user, "tenantId", None)
         tenant_slug, tenant_name = None, None
@@ -80,8 +119,10 @@ class AuthService:
             role=user.role,
             extra_data={"tid": tid, "tenant_id": tid} if tid else None,
         )
+        refresh_token = create_refresh_token(subject=user.id, role=user.role)
         return Token(
             access_token=token,
+            refresh_token=refresh_token,
             token_type="bearer",
             role=user.role,
             must_change_password=getattr(user, "mustChangePassword", False),
@@ -157,10 +198,19 @@ class AuthService:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid or expired invitation link.")
 
         user_id = data["user_id"]
+        user = await self.user_repo.get_by_id(user_id)
+        if not user:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="User account not found.")
+        if user.isActive:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="This invitation link has already been used.",
+            )
+
         hashed = hash_password(password)
         await db.user.update(
             where={"id": user_id},
-            data={"hashedPassword": hashed, "isActive": True},
+            data={"hashedPassword": hashed, "isActive": True, "mustChangePassword": False},
         )
         redis = get_redis()
         await redis.delete(f"invite:{token}")

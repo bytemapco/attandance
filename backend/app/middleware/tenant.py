@@ -77,10 +77,16 @@ class TenantResolutionMiddleware(BaseHTTPMiddleware):
         if not header_tenant_id:
             host_header = request.headers.get("host", "").split(":")[0].lower()
             if host_header and host_header not in ("localhost", "127.0.0.1", "0.0.0.0", "testserver"):
-                header_tenant_id = host_header
                 parts = host_header.split(".")
-                if len(parts) >= 3 and parts[0] not in ("www", "api", "app", "admin"):
-                    header_tenant_id = parts[0]
+                if len(parts) >= 3:
+                    if parts[0] not in ("www", "api", "app", "admin"):
+                        header_tenant_id = parts[0]
+                    elif len(parts) >= 4 and parts[1] not in ("www", "api", "app", "admin"):
+                        header_tenant_id = parts[1]
+                    else:
+                        header_tenant_id = host_header
+                else:
+                    header_tenant_id = host_header
 
         tenant_identifier = jwt_tenant_id or header_tenant_id
 

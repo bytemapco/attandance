@@ -33,12 +33,19 @@ class Token(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     access_token: str = Field(..., description="Signed JWT access token")
+    refresh_token: Optional[str] = Field(None, description="Signed refresh token for extending session")
     token_type: str = Field("bearer", description="Token protocol type")
     role: str = Field(..., description="Role of the authenticated user")
     must_change_password: bool = Field(default=False, description="Flag indicating user must set a new password")
     tenant_id: Optional[str] = Field(None, description="UUID of the user's institution/tenant")
     tenant_slug: Optional[str] = Field(None, description="Tenant slug")
     tenant_name: Optional[str] = Field(None, description="Tenant institution name")
+
+
+class RefreshTokenRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    refresh_token: str = Field(..., min_length=1, description="Refresh token string")
 
 
 class StudentProfileBrief(BaseModel):
@@ -93,6 +100,16 @@ class UserProfileResponse(BaseModel):
     )
 
 
+def _check_password_complexity(password: str) -> str:
+    if len(password) < 8:
+        raise ValueError("Password must be at least 8 characters long.")
+    if not any(char.isupper() for char in password):
+        raise ValueError("Password must contain at least one uppercase letter.")
+    if not any(char.isdigit() for char in password):
+        raise ValueError("Password must contain at least one numeric digit.")
+    return password
+
+
 class ChangePasswordRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -100,6 +117,11 @@ class ChangePasswordRequest(BaseModel):
         None, min_length=1, max_length=128, description="Current or temporary password"
     )
     new_password: str = Field(..., min_length=8, max_length=128, description="New secure password")
+
+    @field_validator("new_password")
+    @classmethod
+    def validate_new_password(cls, v: str) -> str:
+        return _check_password_complexity(v)
 
 
 class DeviceChangeRequestCreate(BaseModel):
@@ -133,12 +155,22 @@ class ResetPasswordRequest(BaseModel):
     token: str = Field(..., min_length=1, description="Password reset token received via email")
     new_password: str = Field(..., min_length=8, max_length=128, description="New plaintext password")
 
+    @field_validator("new_password")
+    @classmethod
+    def validate_reset_password(cls, v: str) -> str:
+        return _check_password_complexity(v)
+
 
 class CompleteOnboardingRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     token: str = Field(..., min_length=1, description="Invitation token received via email")
     password: str = Field(..., min_length=8, max_length=128, description="Chosen password")
+
+    @field_validator("password")
+    @classmethod
+    def validate_onboarding_password(cls, v: str) -> str:
+        return _check_password_complexity(v)
 
 
 class VerifyTokenResponse(BaseModel):
