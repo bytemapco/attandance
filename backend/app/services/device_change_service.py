@@ -58,12 +58,14 @@ class DeviceChangeService:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Student record not found")
 
         active_enrollment = await db.enrollment.find_first(
-            where={
-                "studentId": student.id,
-                "academicClass": {"isNot": {"teacherId": None}},
-            }
+            where={"studentId": student.id},
+            include={"academicClass": True},
         )
-        if not active_enrollment:
+        if (
+            not active_enrollment
+            or not active_enrollment.academicClass
+            or not active_enrollment.academicClass.teacherId
+        ):
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="No teacher assigned yet. Kindly contact your faculty or administration.",

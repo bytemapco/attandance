@@ -97,17 +97,19 @@ class FakeRedis:
         pass
 
 
-@pytest.fixture
+@pytest.fixture(autouse=True)
 def fake_redis(monkeypatch):
     redis_instance = FakeRedis()
     import app.db.redis as redis_module
     import app.core.rate_limit as rate_limit_module
     import app.api.dependencies as deps_module
+    import app.services.device_change_service as device_change_module
 
     monkeypatch.setattr(redis_module, "redis_client", redis_instance)
     monkeypatch.setattr(redis_module, "get_redis", lambda: redis_instance)
     monkeypatch.setattr(rate_limit_module, "get_redis", lambda: redis_instance)
     monkeypatch.setattr(deps_module, "get_redis", lambda: redis_instance)
+    monkeypatch.setattr(device_change_module, "get_redis", lambda: redis_instance)
     return redis_instance
 
 
@@ -146,6 +148,22 @@ def mock_db(monkeypatch):
     mock_prisma.leaverequest = MagicMock()
     mock_prisma.leaverequest.find_many = AsyncMock(return_value=[])
 
+    mock_prisma.enrollment = MagicMock()
+    mock_prisma.enrollment.find_first = AsyncMock()
+    mock_prisma.enrollment.find_many = AsyncMock(return_value=[])
+    mock_prisma.enrollment.create = AsyncMock()
+
+    mock_prisma.academicclass = MagicMock()
+    mock_prisma.academicclass.find_first = AsyncMock()
+    mock_prisma.academicclass.find_many = AsyncMock(return_value=[])
+
+    mock_prisma.devicechangerequest = MagicMock()
+    mock_prisma.devicechangerequest.find_first = AsyncMock()
+    mock_prisma.devicechangerequest.find_many = AsyncMock(return_value=[])
+    mock_prisma.devicechangerequest.find_unique = AsyncMock()
+    mock_prisma.devicechangerequest.create = AsyncMock()
+    mock_prisma.devicechangerequest.update = AsyncMock()
+
     import app.db.client as db_client_module
     monkeypatch.setattr(db_client_module, "db", mock_prisma)
 
@@ -157,6 +175,9 @@ def mock_db(monkeypatch):
 
     import app.services.auth_service as auth_service_module
     monkeypatch.setattr(auth_service_module, "db", mock_prisma)
+
+    import app.services.device_change_service as device_change_module
+    monkeypatch.setattr(device_change_module, "db", mock_prisma)
 
     import app.repositories.user_repository as user_repo_module
     monkeypatch.setattr(user_repo_module, "db", mock_prisma)

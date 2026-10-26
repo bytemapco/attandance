@@ -1,4 +1,4 @@
-from unittest.mock import AsyncMock
+from unittest.mock import AsyncMock, MagicMock, patch
 import pytest
 from app.core.security import hash_password
 
@@ -95,3 +95,70 @@ async def test_login_suspended_tenant_blocked(async_client, mock_db):
     )
     assert response.status_code == 403
     assert "suspended" in response.json().get("detail", "").lower()
+
+
+@pytest.mark.integration
+async def test_request_device_change_validation_error(async_client):
+    response = await async_client.post(
+        "/api/v1/auth/request-device-change",
+        json={"identifier": "test"},
+    )
+    assert response.status_code == 422
+
+
+@pytest.mark.integration
+async def test_request_device_change_success(async_client, mock_db):
+    user = DummyUser()
+    student = DummyStudent(device_uuid="old-device-uuid")
+    academic_class = MagicMock()
+    academic_class.id = "class-1"
+    academic_class.teacherId = "teacher-1"
+
+    enrollment = MagicMock()
+    enrollment.id = "enr-1"
+    enrollment.academicClass = academic_class
+
+    mock_db.user.find_unique = AsyncMock(return_value=user)
+    mock_db.student.find_first = AsyncMock(return_value=student)
+    mock_db.enrollment.find_first = AsyncMock(return_value=enrollment)
+    mock_db.devicechangerequest.find_first = AsyncMock(return_value=None)
+    mock_db.devicechangerequest.create = AsyncMock()
+
+    with patch(
+        "app.services.device_change_service.email_service.send_device_change_requested_email",
+        new_callable=AsyncMock,
+    ):
+        response = await async_client.post(
+            "/api/v1/auth/request-device-change",
+            json={
+                "email": "student@univ.edu",
+                "password": "ValidPassword123!",
+                "new_device_uuid": "new-phone-uuid-1234",
+                "reason": "Screen cracked",
+            },
+        )
+    assert response.status_code == 200
+    assert "submitted" in response.json()["message"].lower()
+
+
+@pytest.mark.integration
+async def test_request_device_change_no_teacher_returns_400(async_client, mock_db):
+    user = DummyUser()
+    student = DummyStudent(device_uuid="old-device-uuid")
+
+    mock_db.user.find_unique = AsyncMock(return_value=user)
+    mock_db.student.find_first = AsyncMock(return_value=student)
+    mock_db.enrollment.find_first = AsyncMock(return_value=None)
+
+    response = await async_client.post(
+        "/api/v1/auth/request-device-change",
+        json={
+            "email": "student@univ.edu",
+            "password": "ValidPassword123!",
+            "new_device_uuid": "new-phone-uuid-1234",
+            "reason": "New phone",
+        },
+    )
+    assert response.status_code == 400
+    assert "no teacher assigned yet" in response.json()["detail"].lower()
+
