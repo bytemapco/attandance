@@ -6,7 +6,7 @@ import 'package:smart_attendance_app/features/auth/providers/auth_provider.dart'
 import 'package:smart_attendance_app/features/auth/widgets/auth_hero_section.dart';
 import 'package:smart_attendance_app/features/auth/widgets/auth_identifier_step.dart';
 import 'package:smart_attendance_app/features/auth/widgets/auth_password_step.dart';
-import 'package:smart_attendance_app/features/auth/widgets/auth_sheet_wrapper.dart';
+import 'package:smart_attendance_app/shared/widgets/fade_slide_transition.dart';
 import 'package:smart_attendance_app/shared/widgets/loading_overlay.dart';
 
 enum _LoginStep { identifier, password }
@@ -40,10 +40,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   void _handleContinue() {
     if (!_identifierFormKey.currentState!.validate()) return;
+    FocusScope.of(context).unfocus();
     setState(() => _step = _LoginStep.password);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _passwordFocusNode.requestFocus();
-    });
   }
 
   Future<void> _handleLogin() async {
@@ -60,56 +58,119 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final isLoading = authState.status == AuthStatus.loading;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Scaffold(
-      backgroundColor: isDark ? SasColors.darkCanvas : SasColors.bgCanvas,
-      resizeToAvoidBottomInset: true,
-      body: Stack(
+    return PopScope(
+      canPop: _step == _LoginStep.identifier,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop && _step == _LoginStep.password) {
+          setState(() => _step = _LoginStep.identifier);
+        }
+      },
+      child: Scaffold(
+        backgroundColor: isDark ? SasColors.darkCanvas : Colors.white,
+        resizeToAvoidBottomInset: _step == _LoginStep.identifier,
+        body: Stack(
+          fit: StackFit.expand,
+          children: [
+            SizedBox.expand(
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 320),
+              switchInCurve: Curves.easeOutCubic,
+              switchOutCurve: Curves.easeInCubic,
+              transitionBuilder: (child, animation) {
+                return FadeTransition(
+                  opacity: animation,
+                  child: SlideTransition(
+                    position: Tween<Offset>(
+                      begin: const Offset(0.04, 0),
+                      end: Offset.zero,
+                    ).animate(animation),
+                    child: child,
+                  ),
+                );
+              },
+              child: _step == _LoginStep.identifier
+                  ? _buildIdentifierScreen(isDark)
+                  : _buildPasswordScreen(authState, isLoading),
+              ),
+            ),
+            if (isLoading) const LoadingOverlay(message: 'Signing in...'),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildIdentifierScreen(bool isDark) {
+    return KeyedSubtree(
+      key: const ValueKey('step_identifier'),
+      child: Stack(
+        fit: StackFit.expand,
         children: [
-          const Positioned.fill(
+          // Full-screen Golden Hour Campus Walk photography backdrop
+          Positioned.fill(
+            child: Image.asset(
+              'assets/images/auth_hero.png',
+              fit: BoxFit.cover,
+              alignment: Alignment.topCenter,
+            ),
+          ),
+
+          // Protective subtle tint in dark mode
+          if (isDark)
+            Positioned.fill(
+              child: ColoredBox(
+                color: Colors.black.withValues(alpha: 0.35),
+              ),
+            ),
+
+          // Top Hero Section with brand logo, headline & 3-feature card
+          const Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
             child: AuthHeroSection(),
           ),
+
+          // Bottom Sign In Sheet
           Align(
             alignment: Alignment.bottomCenter,
             child: SingleChildScrollView(
               physics: const ClampingScrollPhysics(),
-              child: AuthSheetWrapper(
-                child: AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 220),
-                  switchInCurve: Curves.easeOut,
-                  switchOutCurve: Curves.easeIn,
-                  child: _step == _LoginStep.identifier
-                      ? AuthIdentifierStep(
-                          key: const ValueKey('step_identifier'),
-                          formKey: _identifierFormKey,
-                          controller: _identifierController,
-                          focusNode: _identifierFocusNode,
-                          onContinue: _handleContinue,
-                        )
-                      : AuthPasswordStep(
-                          key: const ValueKey('step_password'),
-                          formKey: _passwordFormKey,
-                          studentId: _identifierController.text.trim(),
-                          controller: _passwordController,
-                          focusNode: _passwordFocusNode,
-                          obscurePassword: _obscurePassword,
-                          onToggleObscurePassword: () {
-                            setState(() {
-                              _obscurePassword = !_obscurePassword;
-                            });
-                          },
-                          isLoading: isLoading,
-                          errorMessage: authState.errorMessage,
-                          onBackPressed: () {
-                            setState(() => _step = _LoginStep.identifier);
-                          },
-                          onSubmit: _handleLogin,
-                        ),
+              child: FadeSlideTransition(
+                delay: const Duration(milliseconds: 140),
+                beginOffset: const Offset(0, 0.08),
+                child: AuthIdentifierStep(
+                  formKey: _identifierFormKey,
+                  controller: _identifierController,
+                  focusNode: _identifierFocusNode,
+                  onContinue: _handleContinue,
                 ),
               ),
             ),
           ),
-          if (isLoading) const LoadingOverlay(message: 'Signing in...'),
         ],
+      ),
+    );
+  }
+
+  Widget _buildPasswordScreen(dynamic authState, bool isLoading) {
+    return KeyedSubtree(
+      key: const ValueKey('step_password'),
+      child: AuthPasswordStep(
+        formKey: _passwordFormKey,
+        studentId: _identifierController.text.trim(),
+        controller: _passwordController,
+        focusNode: _passwordFocusNode,
+        obscurePassword: _obscurePassword,
+        onToggleObscurePassword: () {
+          setState(() => _obscurePassword = !_obscurePassword);
+        },
+        isLoading: isLoading,
+        errorMessage: authState.errorMessage,
+        onBackPressed: () {
+          setState(() => _step = _LoginStep.identifier);
+        },
+        onSubmit: _handleLogin,
       ),
     );
   }

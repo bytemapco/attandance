@@ -138,15 +138,15 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
   }
 
   Widget _buildEmpty() {
-    return const GlassCard(
-      padding: EdgeInsets.all(32),
+    return GlassCard(
+      padding: const EdgeInsets.all(32),
       child: Column(
         children: [
-          Icon(Icons.notifications_none_rounded, size: 44, color: SasColors.textMuted),
-          SizedBox(height: 10),
-          Text('No notifications', style: TextStyle(color: SasColors.textPrimary, fontSize: 14, fontWeight: FontWeight.w700)),
-          SizedBox(height: 4),
-          Text('Broadcast announcements and classroom alerts will appear here.',
+          const Icon(Icons.notifications_none_rounded, size: 44, color: SasColors.textMuted),
+          const SizedBox(height: 10),
+          Text('No notifications', style: TextStyle(color: SasColors.textPrimaryOf(context), fontSize: 14, fontWeight: FontWeight.w700)),
+          const SizedBox(height: 4),
+          const Text('Broadcast announcements and classroom alerts will appear here.',
               textAlign: TextAlign.center, style: TextStyle(color: SasColors.textMuted, fontSize: 12)),
         ],
       ),

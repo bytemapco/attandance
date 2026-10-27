@@ -26,14 +26,10 @@ class ClassSessionHeader extends StatelessWidget {
       children: [
         if (courseCode.isNotEmpty) ...[
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
+            padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
             decoration: BoxDecoration(
-              color: SasColors.osageOrange.withValues(alpha: isDark ? 0.2 : 0.12),
-              borderRadius: BorderRadius.circular(7),
-              border: Border.all(
-                color: SasColors.osageOrange.withValues(alpha: 0.25),
-                width: 0.8,
-              ),
+              color: SasColors.osageOrange.withValues(alpha: isDark ? 0.18 : 0.10),
+              borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
               courseCode,
@@ -41,7 +37,7 @@ class ClassSessionHeader extends StatelessWidget {
                 color: SasColors.osageOrange,
                 fontSize: 11,
                 fontWeight: FontWeight.w800,
-                letterSpacing: 0.3,
+                letterSpacing: 0.4,
               ),
             ),
           ),
@@ -64,13 +60,17 @@ class ClassSessionHeader extends StatelessWidget {
             ),
         ] else ...[
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0x14FFFFFF) : const Color(0x08000000),
-              borderRadius: BorderRadius.circular(6),
+              color: isDark
+                  ? const Color(0x14FFFFFF)
+                  : const Color(0x08000000),
+              borderRadius: BorderRadius.circular(7),
               border: Border.all(
-                color: isDark ? const Color(0x2EBAC0BE) : const Color(0x1EBAC0BE),
-                width: 0.8,
+                color: isDark
+                    ? const Color(0x1EFFFFFF)
+                    : const Color(0x14000000),
+                width: 0.7,
               ),
             ),
             child: Row(
@@ -79,16 +79,16 @@ class ClassSessionHeader extends StatelessWidget {
                 Icon(
                   Icons.schedule_rounded,
                   size: 11,
-                  color: isDark ? SasColors.maidenMist : SasColors.textMuted,
+                  color: SasColors.textSecondaryOf(context),
                 ),
                 const SizedBox(width: 4),
                 Text(
                   'SCHEDULED',
                   style: TextStyle(
-                    color: isDark ? SasColors.maidenMist : SasColors.textMuted,
+                    color: SasColors.textSecondaryOf(context),
                     fontSize: 10,
                     fontWeight: FontWeight.w700,
-                    letterSpacing: 0.4,
+                    letterSpacing: 0.5,
                   ),
                 ),
               ],

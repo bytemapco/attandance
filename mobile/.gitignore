@@ -28,7 +28,6 @@ ios/Pods/
 ios/.symlinks/
 ios/Podfile.lock
 Podfile.lock
-*.xcworkspace/
 
 # Symbols and Maps
 app.*.symbols
@@ -45,4 +44,3 @@ app.*.map.json
 .env*
 !.env.example
 !.env.*.example
-*.xcworkspace/

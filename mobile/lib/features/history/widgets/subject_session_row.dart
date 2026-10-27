@@ -36,7 +36,7 @@ class SubjectSessionRow extends StatelessWidget {
                 children: [
                   Text(
                     DateFormat('EEE, MMM d, yyyy').format(item.markedAt),
-                    style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: SasColors.textPrimary),
+                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: SasColors.textPrimaryOf(context)),
                   ),
                   Text(
                     DateFormat.jm().format(item.markedAt),

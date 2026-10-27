@@ -161,7 +161,7 @@ class _LeaveRequestsScreenState extends ConsumerState<LeaveRequestsScreen> {
                   controller: _notesController,
                   maxLines: 3,
                   maxLength: 300,
-                  style: const TextStyle(color: SasColors.textPrimary, fontSize: 13),
+                  style: TextStyle(color: SasColors.textPrimaryOf(context), fontSize: 13),
                   decoration: const InputDecoration(
                     hintText: 'Provide additional context for your instructor...',
                     hintStyle: TextStyle(color: SasColors.textMuted, fontSize: 12),

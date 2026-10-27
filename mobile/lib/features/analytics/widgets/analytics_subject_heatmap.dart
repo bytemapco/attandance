@@ -73,8 +73,8 @@ class AnalyticsSubjectHeatmap extends StatelessWidget {
                         width: 90,
                         child: Text(
                           stat.subject.truncate(11),
-                          style: const TextStyle(
-                            color: SasColors.textPrimary,
+                          style: TextStyle(
+                            color: SasColors.textPrimaryOf(context),
                             fontSize: 10,
                             fontWeight: FontWeight.w500,
                           ),

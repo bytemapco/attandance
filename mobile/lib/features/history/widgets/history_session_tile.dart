@@ -48,10 +48,10 @@ class _HistorySessionTileState extends State<HistorySessionTile> {
                   children: [
                     Text(
                       item.className,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontWeight: FontWeight.w700,
                         fontSize: 13,
-                        color: SasColors.textPrimary,
+                        color: SasColors.textPrimaryOf(context),
                       ),
                     ),
                     Text(

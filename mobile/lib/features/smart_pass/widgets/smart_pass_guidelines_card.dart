@@ -27,12 +27,12 @@ class SmartPassGuidelinesCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 8),
-              const Text(
+              Text(
                 'How Smart Pass Works',
                 style: TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w700,
-                  color: SasColors.textPrimary,
+                  color: SasColors.textPrimaryOf(context),
                 ),
               ),
             ],

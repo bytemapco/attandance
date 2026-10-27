@@ -21,9 +21,15 @@
 - **Strict Typing & Diagnostics**: Avoid `any` in TypeScript. Ensure Python code complies with strict typing and ruff/flake8 standards.
 - **No Residual Debug Code**: Remove all temporary `console.log`, arbitrary `print()` statements, and one-off debug test routes before finalizing production releases.
 
-## 5. Version Control
+## 5. Version Control & Dual-Repository Architecture
 - **Work on `dev`**: All ongoing features, refactoring, and bug fixes are committed to `dev`.
 - **Production via `main`**: Verified and stable work from `dev` is merged into `main`.
+- **Dual-Repository Architecture (Monorepo & Standalone Mobile)**:
+  - **Main Repository (`bytemapco/attandance`)**: The root repository containing the entire system (`backend`, `frontend`, `mobile`, `docs`, `scripts`).
+  - **Dedicated Mobile Repository (`bytemapco/attandance_mobile`)**: The standalone repository mapped directly to `./mobile` (via its own `.git`).
+  - **Mandatory Two-Way Sync**: Any modification made to the mobile Flutter application (`./mobile`) must be kept in sync across both repositories. When committing/pushing mobile changes, commits must be created and pushed to both:
+    1. The root repository: `bytemapco/attandance`
+    2. The mobile repository: `bytemapco/attandance_mobile` (inside `./mobile`)
 
 ## 6. Database & Prisma Schema Standards
 - **Never Add `output` in `schema.prisma`**: The `generator client` block in `backend/prisma/schema.prisma` must never contain hardcoded `output` directory paths (e.g. `output = ...`). Custom output paths break containerized builds where Python packages and site-packages are resolved dynamically.

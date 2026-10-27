@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:smart_attendance_app/app/theme.dart';
 import 'package:smart_attendance_app/data/local/notification_service.dart';
+import 'package:smart_attendance_app/features/home/widgets/home_notification_bell.dart';
+import 'package:smart_attendance_app/features/home/widgets/home_welcome_avatar.dart';
 
 class HomeWelcomeCard extends ConsumerWidget {
   final dynamic user;
@@ -48,35 +50,9 @@ class HomeWelcomeCard extends ConsumerWidget {
 
     return Row(
       children: [
-        Container(
-          width: 46,
-          height: 46,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                SasColors.osageOrange.withValues(alpha: isDark ? 0.25 : 0.15),
-                SasColors.sunsetInItaly.withValues(alpha: isDark ? 0.12 : 0.08),
-              ],
-            ),
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(
-              color: SasColors.osageOrange.withValues(alpha: isDark ? 0.35 : 0.25),
-              width: 1.2,
-            ),
-          ),
-          child: Center(
-            child: Text(
-              _getInitials(),
-              style: const TextStyle(
-                color: SasColors.osageOrange,
-                fontSize: 16.5,
-                fontWeight: FontWeight.w800,
-                letterSpacing: 0.2,
-              ),
-            ),
-          ),
+        HomeWelcomeAvatar(
+          initials: _getInitials(),
+          isDark: isDark,
         ),
         const SizedBox(width: 12),
         Expanded(
@@ -85,31 +61,36 @@ class HomeWelcomeCard extends ConsumerWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                _getDisplayName(),
+                'Hello, ${_getDisplayName().split(' ').first} 👋',
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 19,
                   fontWeight: FontWeight.w800,
                   color: isDark ? SasColors.brilliance : SasColors.indianInk,
-                  letterSpacing: -0.4,
+                  letterSpacing: -0.5,
+                  height: 1.15,
                 ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
-              const SizedBox(height: 3),
+              const SizedBox(height: 4),
               Row(
                 children: [
                   if (enrollment.isNotEmpty) ...[
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 7,
+                        vertical: 2.5,
+                      ),
                       decoration: BoxDecoration(
-                        color: SasColors.osageOrange.withValues(alpha: isDark ? 0.2 : 0.12),
-                        borderRadius: BorderRadius.circular(5),
+                        color: SasColors.osageOrange
+                            .withValues(alpha: isDark ? 0.18 : 0.10),
+                        borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(
                         enrollment,
                         style: const TextStyle(
                           color: SasColors.osageOrange,
-                          fontSize: 11,
+                          fontSize: 10.5,
                           fontWeight: FontWeight.w700,
                           letterSpacing: 0.2,
                         ),
@@ -118,10 +99,12 @@ class HomeWelcomeCard extends ConsumerWidget {
                     if (institution.isNotEmpty) ...[
                       const SizedBox(width: 6),
                       Text(
-                        '•',
+                        '·',
                         style: TextStyle(
-                          color: isDark ? const Color(0x66BAC0BE) : const Color(0x66858997),
-                          fontSize: 11,
+                          color: isDark
+                              ? const Color(0x55FFFFFF)
+                              : SasColors.textMuted,
+                          fontSize: 12,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -133,7 +116,9 @@ class HomeWelcomeCard extends ConsumerWidget {
                       child: Text(
                         institution,
                         style: TextStyle(
-                          color: isDark ? SasColors.maidenMist : SasColors.textMuted,
+                          color: isDark
+                              ? SasColors.maidenMist
+                              : SasColors.textSecondary,
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
                           letterSpacing: -0.1,
@@ -148,47 +133,10 @@ class HomeWelcomeCard extends ConsumerWidget {
           ),
         ),
         const SizedBox(width: 10),
-        Material(
-          color: Colors.transparent,
-          child: InkWell(
-            onTap: () => context.push('/notifications'),
-            borderRadius: BorderRadius.circular(13),
-            child: Container(
-              width: 44,
-              height: 44,
-              decoration: BoxDecoration(
-                color: isDark ? const Color(0x1AFFFFFF) : const Color(0x0A000000),
-                borderRadius: BorderRadius.circular(13),
-                border: Border.all(
-                  color: isDark ? const Color(0x2EBAC0BE) : const Color(0x24BAC0BE),
-                  width: 0.8,
-                ),
-              ),
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  Icon(
-                    Icons.notifications_none_rounded,
-                    size: 20,
-                    color: isDark ? SasColors.brilliance : SasColors.indianInk,
-                  ),
-                  if (unreadCount > 0)
-                    Positioned(
-                      top: 10,
-                      right: 10,
-                      child: Container(
-                        width: 7,
-                        height: 7,
-                        decoration: const BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: SasColors.osageOrange,
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-            ),
-          ),
+        HomeNotificationBell(
+          unreadCount: unreadCount,
+          isDark: isDark,
+          onTap: () => context.push('/notifications'),
         ),
       ],
     );

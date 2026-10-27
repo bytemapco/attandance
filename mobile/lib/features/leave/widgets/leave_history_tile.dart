@@ -33,10 +33,10 @@ class LeaveHistoryTile extends StatelessWidget {
                 Expanded(
                   child: Text(
                     leave.reason,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontWeight: FontWeight.w700,
                       fontSize: 14,
-                      color: SasColors.textPrimary,
+                      color: SasColors.textPrimaryOf(context),
                     ),
                   ),
                 ),

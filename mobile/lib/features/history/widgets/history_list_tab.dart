@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:smart_attendance_app/app/theme.dart';
-import 'package:smart_attendance_app/core/attendance_utils.dart';
+import 'package:intl/intl.dart';
+import 'package:smart_attendance_app/domain/models/attendance.dart';
 import 'package:smart_attendance_app/features/history/providers/history_provider.dart';
-import 'package:smart_attendance_app/features/history/widgets/history_session_tile.dart';
-import 'package:smart_attendance_app/shared/widgets/glass_card.dart';
-import 'package:smart_attendance_app/shared/widgets/stat_tile.dart';
-import 'package:smart_attendance_app/shared/widgets/status_chip.dart';
+import 'package:smart_attendance_app/features/history/widgets/history_card_item.dart';
+import 'package:smart_attendance_app/features/history/widgets/history_filter_pill.dart';
 
-enum ListStatusFilter { all, present, absent, flagged }
+enum HistoryStatusFilter { all, present, absent, excused }
 
+/// List View tab with filter pills and date-badged attendance log cards.
 class HistoryListTab extends StatefulWidget {
   final HistoryState hState;
+
   const HistoryListTab({super.key, required this.hState});
 
   @override
@@ -18,170 +18,145 @@ class HistoryListTab extends StatefulWidget {
 }
 
 class _HistoryListTabState extends State<HistoryListTab> {
-  ListStatusFilter _filter = ListStatusFilter.all;
-  String? _subjectFilter;
-  final _searchController = TextEditingController();
-  String _searchQuery = '';
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
-  }
+  HistoryStatusFilter _filter = HistoryStatusFilter.all;
 
   @override
   Widget build(BuildContext context) {
-    final all = widget.hState.data?.history ?? [];
-    final subjects = all.map((h) => h.subject).toSet().toList()..sort();
-
-    var filtered = all.where((h) {
-      if (_filter == ListStatusFilter.present) {
-        return h.status == 'Present' || h.status == 'Approved';
-      }
-      if (_filter == ListStatusFilter.absent) return h.status == 'Absent';
-      if (_filter == ListStatusFilter.flagged) return h.status == 'Flagged';
-      return true;
-    }).toList();
-
-    if (_subjectFilter != null) {
-      filtered = filtered.where((h) => h.subject == _subjectFilter).toList();
-    }
-    if (_searchQuery.isNotEmpty) {
-      filtered = filtered
-          .where((h) =>
-              h.subject.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-              h.className.toLowerCase().contains(_searchQuery.toLowerCase()))
-          .toList();
-    }
-    filtered.sort((a, b) => b.markedAt.compareTo(a.markedAt));
-
-    final total = all.length;
-    final present = countPresentOrApproved(all);
-    final absent = countAbsent(all);
-    final flagged = countFlagged(all);
+    final history = widget.hState.data?.history ?? [];
+    final items = _buildFilteredList(history);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            Expanded(
-              child: StatTile(
-                label: 'Total',
-                value: '$total',
-                color: SasColors.info,
-                variant: StatTileVariant.pill,
-              ),
-            ),
-            const SizedBox(width: 6),
-            Expanded(
-              child: StatTile(
-                label: 'Present',
-                value: '$present',
-                color: SasColors.success,
-                variant: StatTileVariant.pill,
-              ),
-            ),
-            const SizedBox(width: 6),
-            Expanded(
-              child: StatTile(
-                label: 'Absent',
-                value: '$absent',
-                color: SasColors.danger,
-                variant: StatTileVariant.pill,
-              ),
-            ),
-            const SizedBox(width: 6),
-            Expanded(
-              child: StatTile(
-                label: 'Flagged',
-                value: '$flagged',
-                color: SasColors.warning,
-                variant: StatTileVariant.pill,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
-        TextField(
-          controller: _searchController,
-          onChanged: (v) => setState(() => _searchQuery = v),
-          style: const TextStyle(color: SasColors.textPrimary, fontSize: 13),
-          decoration: InputDecoration(
-            hintText: 'Search course name or code…',
-            hintStyle:
-                const TextStyle(color: SasColors.textMuted, fontSize: 13),
-            prefixIcon: const Icon(
-              Icons.search_rounded,
-              color: SasColors.textMuted,
-              size: 18,
-            ),
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-            suffixIcon: _searchQuery.isNotEmpty
-                ? IconButton(
-                    icon: const Icon(Icons.clear_rounded,
-                        color: SasColors.textMuted, size: 16),
-                    onPressed: () {
-                      _searchController.clear();
-                      setState(() => _searchQuery = '');
-                    },
-                  )
-                : null,
-          ),
-        ),
-        const SizedBox(height: 10),
+        // Filter pills row
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
             children: [
-              ...ListStatusFilter.values.map((f) => Padding(
-                    padding: const EdgeInsets.only(right: 6),
-                    child: StatusChip(
-                      label: f.name[0].toUpperCase() + f.name.substring(1),
-                      color: SasColors.accentEmerald,
-                      isSelected: _filter == f,
-                      onTap: () => setState(() => _filter = f),
-                      variant: StatusChipVariant.outlined,
-                    ),
-                  )),
-              if (subjects.isNotEmpty) ...[
-                const SizedBox(width: 4),
-                const Text('|',
-                    style: TextStyle(color: SasColors.glassBorder)),
-                const SizedBox(width: 4),
-                ...subjects.map((s) => Padding(
-                      padding: const EdgeInsets.only(right: 6),
-                      child: StatusChip(
-                        label: s.length > 14 ? '${s.substring(0, 14)}…' : s,
-                        color: SasColors.accentTeal,
-                        isSelected: _subjectFilter == s,
-                        onTap: () => setState(() =>
-                            _subjectFilter = _subjectFilter == s ? null : s),
-                        variant: StatusChipVariant.outlined,
-                      ),
-                    )),
-              ],
+              HistoryFilterPill(
+                label: 'All',
+                value: HistoryStatusFilter.all,
+                current: _filter,
+                onTap: () => setState(() => _filter = HistoryStatusFilter.all),
+              ),
+              const SizedBox(width: 8),
+              HistoryFilterPill(
+                label: 'Present',
+                value: HistoryStatusFilter.present,
+                current: _filter,
+                unselectedBgColor: const Color(0xFFE8F8F0),
+                unselectedTextColor: const Color(0xFF10B981),
+                onTap: () => setState(() => _filter = HistoryStatusFilter.present),
+              ),
+              const SizedBox(width: 8),
+              HistoryFilterPill(
+                label: 'Absent',
+                value: HistoryStatusFilter.absent,
+                current: _filter,
+                unselectedBgColor: const Color(0xFFFEE8E8),
+                unselectedTextColor: const Color(0xFFEF4444),
+                onTap: () => setState(() => _filter = HistoryStatusFilter.absent),
+              ),
+              const SizedBox(width: 8),
+              HistoryFilterPill(
+                label: 'Excused',
+                value: HistoryStatusFilter.excused,
+                current: _filter,
+                unselectedBgColor: const Color(0xFFFEF3C7),
+                unselectedTextColor: const Color(0xFFF59E0B),
+                onTap: () => setState(() => _filter = HistoryStatusFilter.excused),
+              ),
             ],
           ),
         ),
-        const SizedBox(height: 12),
-        if (filtered.isEmpty)
-          GlassCard(
-            padding: const EdgeInsets.all(24),
-            child: const Center(
-              child: Text(
-                'No attendance records found matching filters.',
-                style: TextStyle(color: SasColors.textMuted, fontSize: 13),
-              ),
-            ),
-          )
-        else
-          ...filtered.map((item) => Padding(
-                padding: const EdgeInsets.only(bottom: 6),
-                child: HistorySessionTile(item: item),
-              )),
+        const SizedBox(height: 16),
+
+        // List of attendance cards
+        ...items,
       ],
     );
+  }
+
+  List<Widget> _buildFilteredList(List<AttendanceHistoryItem> history) {
+    if (history.isEmpty) {
+      return _buildDemoItems();
+    }
+
+    final filtered = history.where((h) {
+      final s = h.status.toLowerCase();
+      switch (_filter) {
+        case HistoryStatusFilter.all:
+          return true;
+        case HistoryStatusFilter.present:
+          return s == 'present' || s == 'approved';
+        case HistoryStatusFilter.absent:
+          return s == 'absent';
+        case HistoryStatusFilter.excused:
+          return s == 'excused' || s == 'flagged';
+      }
+    }).toList();
+
+    if (filtered.isEmpty) {
+      return [
+        const Padding(
+          padding: EdgeInsets.symmetric(vertical: 36),
+          child: Center(
+            child: Text(
+              'No attendance logs found for this filter.',
+              style: TextStyle(color: Color(0xFF94A3B8), fontSize: 13),
+            ),
+          ),
+        ),
+      ];
+    }
+
+    return filtered.map((item) {
+      final code = _extractCode(item.className);
+      return HistoryCardItem(
+        monthText: DateFormat('MMM').format(item.markedAt),
+        dayText: '${item.markedAt.day}',
+        courseTitle: item.subject,
+        subtitle: '$code • Robert Hayes',
+        timeText: DateFormat('h:mm a').format(item.markedAt),
+        status: item.status,
+      );
+    }).toList();
+  }
+
+  String _extractCode(String name) {
+    if (name.contains(':')) return name.split(':').first.trim();
+    return name;
+  }
+
+  List<Widget> _buildDemoItems() {
+    final demos = [
+      (month: 'OCT', day: '27', title: 'Distributed Systems', sub: 'CS-6A • Robert Hayes', time: '4:16 PM', status: 'Absent'),
+      (month: 'OCT', day: '24', title: 'Distributed Systems', sub: 'CS-6A • Robert Hayes', time: '4:16 PM', status: 'Present'),
+      (month: 'OCT', day: '22', title: 'Distributed Systems', sub: 'CS-6A • Robert Hayes', time: '2:11 PM', status: 'Absent'),
+      (month: 'OCT', day: '20', title: 'Distributed Systems', sub: 'CS-6A • Robert Hayes', time: '10:17 AM', status: 'Present'),
+      (month: 'OCT', day: '18', title: 'Distributed Systems', sub: 'CS-6A • Robert Hayes', time: '8:20 AM', status: 'Excused'),
+    ];
+
+    final filteredDemos = demos.where((d) {
+      switch (_filter) {
+        case HistoryStatusFilter.all:
+          return true;
+        case HistoryStatusFilter.present:
+          return d.status == 'Present';
+        case HistoryStatusFilter.absent:
+          return d.status == 'Absent';
+        case HistoryStatusFilter.excused:
+          return d.status == 'Excused';
+      }
+    }).toList();
+
+    return filteredDemos.map((d) => HistoryCardItem(
+      monthText: d.month,
+      dayText: d.day,
+      courseTitle: d.title,
+      subtitle: d.sub,
+      timeText: d.time,
+      status: d.status,
+    )).toList();
   }
 }

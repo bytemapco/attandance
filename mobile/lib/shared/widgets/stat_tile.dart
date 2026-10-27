@@ -32,13 +32,13 @@ class StatTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return switch (variant) {
-      StatTileVariant.compact => _buildCompact(),
-      StatTileVariant.pill => _buildPill(),
-      StatTileVariant.minimal => _buildMinimal(),
+      StatTileVariant.compact => _buildCompact(context),
+      StatTileVariant.pill => _buildPill(context),
+      StatTileVariant.minimal => _buildMinimal(context),
     };
   }
 
-  Widget _buildCompact() {
+  Widget _buildCompact(BuildContext context) {
     return GlassCard(
       onTap: onTap,
       padding: const EdgeInsets.symmetric(
@@ -65,9 +65,10 @@ class StatTile extends StatelessWidget {
           const SizedBox(height: 2),
           Text(
             label,
-            style: const TextStyle(
-              color: SasColors.textMuted,
-              fontSize: 10,
+            style: TextStyle(
+              color: SasColors.textSecondaryOf(context),
+              fontSize: 10.5,
+              fontWeight: FontWeight.w600,
             ),
           ),
         ],
@@ -75,7 +76,7 @@ class StatTile extends StatelessWidget {
     );
   }
 
-  Widget _buildPill() {
+  Widget _buildPill(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: SasSpacing.sm),
       decoration: BoxDecoration(
@@ -95,14 +96,18 @@ class StatTile extends StatelessWidget {
           ),
           Text(
             label,
-            style: const TextStyle(color: SasColors.textMuted, fontSize: 10),
+            style: TextStyle(
+              color: SasColors.textSecondaryOf(context),
+              fontSize: 10.5,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildMinimal() {
+  Widget _buildMinimal(BuildContext context) {
     return Column(
       children: [
         Text(
@@ -115,7 +120,11 @@ class StatTile extends StatelessWidget {
         ),
         Text(
           label,
-          style: const TextStyle(color: SasColors.textMuted, fontSize: 11),
+          style: TextStyle(
+            color: SasColors.textSecondaryOf(context),
+            fontSize: 11,
+            fontWeight: FontWeight.w600,
+          ),
         ),
       ],
     );

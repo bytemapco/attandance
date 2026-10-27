@@ -1,0 +1,47 @@
+{
+  "version": 1,
+  "skills": {
+    "flutter-accessibility": {
+      "source": "musabekisakov-imj/flutter-design-engineer",
+      "sourceType": "github",
+      "skillPath": "skills/flutter-accessibility/SKILL.md",
+      "computedHash": "9739f0ea2a0e330fd1c2f60b29a802c9e03b0c90462a7d3094077e70d150df73"
+    },
+    "flutter-audit": {
+      "source": "musabekisakov-imj/flutter-design-engineer",
+      "sourceType": "github",
+      "skillPath": "skills/flutter-audit/SKILL.md",
+      "computedHash": "34416043a4514f8909c320a9d3ed54abdf05676ff7212a25adf000bbeea22a25"
+    },
+    "flutter-design": {
+      "source": "musabekisakov-imj/flutter-design-engineer",
+      "sourceType": "github",
+      "skillPath": "skills/flutter-design/SKILL.md",
+      "computedHash": "f15b4df1879d8ccdca07205faa19317e0aa0005975dd39c483a4dbe0676ef123"
+    },
+    "flutter-design-system": {
+      "source": "musabekisakov-imj/flutter-design-engineer",
+      "sourceType": "github",
+      "skillPath": "skills/flutter-design-system/SKILL.md",
+      "computedHash": "e57cb7673706bc523f34fbdc1763e4a5a3127276e0ad01e9ffa056e7ad726e5f"
+    },
+    "flutter-implementation": {
+      "source": "musabekisakov-imj/flutter-design-engineer",
+      "sourceType": "github",
+      "skillPath": "skills/flutter-implementation/SKILL.md",
+      "computedHash": "c2c2d2babeb11e4613188bde88c1830954fdc78f0fbb19cb68299ef19f5ad1c1"
+    },
+    "flutter-motion": {
+      "source": "musabekisakov-imj/flutter-design-engineer",
+      "sourceType": "github",
+      "skillPath": "skills/flutter-motion/SKILL.md",
+      "computedHash": "1464c54621ef7b5515e41995475926b6fc96ed17ce2641ba684bd0568a5fb9ca"
+    },
+    "flutter-visual-qa": {
+      "source": "musabekisakov-imj/flutter-design-engineer",
+      "sourceType": "github",
+      "skillPath": "skills/flutter-visual-qa/SKILL.md",
+      "computedHash": "66d9efd5578eb2bd73386133ee6909e66441bc3f6899526a503a3f60a4bdae8b"
+    }
+  }
+}

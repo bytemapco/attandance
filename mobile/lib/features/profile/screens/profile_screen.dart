@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:smart_attendance_app/app/theme.dart';
+import 'package:smart_attendance_app/app/typography.dart';
 import 'package:smart_attendance_app/data/local/notification_service.dart';
 import 'package:smart_attendance_app/data/local/pending_count_provider.dart';
 import 'package:smart_attendance_app/features/auth/providers/auth_provider.dart';
@@ -8,7 +10,7 @@ import 'package:smart_attendance_app/features/profile/widgets/profile_header_car
 import 'package:smart_attendance_app/features/profile/widgets/profile_quick_actions.dart';
 import 'package:smart_attendance_app/features/profile/widgets/profile_settings_list.dart';
 import 'package:smart_attendance_app/shared/widgets/animated_background.dart';
-import 'package:smart_attendance_app/shared/widgets/glass_button.dart';
+import 'package:smart_attendance_app/shared/widgets/smart_pull_to_refresh.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -20,54 +22,160 @@ class ProfileScreen extends ConsumerWidget {
     final profile = user?.studentProfile;
     final notifications = ref.watch(notificationsProvider);
     final unreadCount = notifications.where((n) => !n.isRead).length;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primaryTextColor =
+        isDark ? SasColors.brilliance : const Color(0xFF0F172A);
 
     return AnimatedBackground(
       child: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            ProfileHeaderCard(user: user, profile: profile),
-            const SizedBox(height: 16),
-            ProfileQuickActions(unreadCount: unreadCount),
-            const SizedBox(height: 16),
-            ProfileSettingsList(pendingCount: pendingCount),
-            const SizedBox(height: 20),
-            GlassButton(
-              label: 'Sign Out',
-              variant: GlassButtonVariant.danger,
-              isExpanded: true,
-              icon: Icons.logout_rounded,
-              onPressed: () => _confirmLogout(context, ref),
+        child: SmartPullToRefresh(
+          onRefresh: () async {
+            // Refresh user session / profile if needed
+            await Future.delayed(const Duration(milliseconds: 600));
+          },
+          child: ListView(
+            physics: const AlwaysScrollableScrollPhysics(
+              parent: BouncingScrollPhysics(),
             ),
-          ],
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            children: [
+              // Page header: "Profile" + Settings Gear Button
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    'Profile',
+                    style: SasTypography.style(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: -0.6,
+                      color: primaryTextColor,
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () => context.push('/settings/goals'),
+                    borderRadius: BorderRadius.circular(14),
+                    child: Container(
+                      width: 42,
+                      height: 42,
+                      decoration: BoxDecoration(
+                        color: isDark ? const Color(0xFF1E2838) : Colors.white,
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(
+                          color: isDark
+                              ? const Color(0x1FFFFFFF)
+                              : const Color(0xFFE2E8F0),
+                          width: 1.0,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: isDark ? 0.20 : 0.04),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Icon(
+                        Icons.settings_outlined,
+                        size: 20,
+                        color: primaryTextColor,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+
+              // 1. User Identity Card
+              ProfileHeaderCard(user: user, profile: profile),
+              const SizedBox(height: 14),
+
+              // 2. Quick Actions 2x2 Grid
+              ProfileQuickActions(unreadCount: unreadCount),
+              const SizedBox(height: 14),
+
+              // 3. Settings & Support Grouped Card
+              ProfileSettingsList(pendingCount: pendingCount),
+              const SizedBox(height: 20),
+
+              // 4. Soft Red Sign Out Button
+              InkWell(
+                onTap: () => _confirmLogout(context, ref),
+                borderRadius: BorderRadius.circular(18),
+                child: Container(
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: isDark ? const Color(0xFF3F1D24) : const Color(0xFFFFF1F2),
+                    borderRadius: BorderRadius.circular(18),
+                    border: Border.all(
+                      color: isDark ? const Color(0xFF7F1D1D) : const Color(0xFFFECDD3),
+                      width: 1.0,
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(
+                        Icons.logout_rounded,
+                        color: Color(0xFFEF4444),
+                        size: 18,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Sign Out',
+                        style: SasTypography.style(
+                          color: const Color(0xFFEF4444),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 24),
+            ],
+          ),
         ),
       ),
     );
   }
 
   void _confirmLogout(BuildContext context, WidgetRef ref) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: SasColors.bgSecondary,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-          side: const BorderSide(color: SasColors.glassBorder),
-        ),
-        title: const Text(
+        backgroundColor: isDark ? const Color(0xFF1E2838) : Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Text(
           'Sign Out?',
-          style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
+          style: SasTypography.style(
+            fontWeight: FontWeight.w800,
+            fontSize: 18,
+            color: isDark ? SasColors.brilliance : const Color(0xFF0F172A),
+          ),
         ),
-        content: const Text(
+        content: Text(
           'You will need to re-authenticate with your university credentials to access the app.',
-          style: TextStyle(color: SasColors.textSecondary, fontSize: 13),
+          style: SasTypography.style(
+            color: isDark ? const Color(0xFFCBD5E1) : const Color(0xFF64748B),
+            fontSize: 13.5,
+            height: 1.4,
+          ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text(
+            child: Text(
               'Cancel',
-              style: TextStyle(color: SasColors.textMuted),
+              style: SasTypography.style(
+                fontSize: 14,
+                color: isDark ? const Color(0xFFCBD5E1) : const Color(0xFF64748B),
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
           TextButton(
@@ -75,10 +183,11 @@ class ProfileScreen extends ConsumerWidget {
               Navigator.of(ctx).pop();
               await ref.read(authProvider.notifier).logout();
             },
-            child: const Text(
+            child: Text(
               'Sign Out',
-              style: TextStyle(
-                color: SasColors.danger,
+              style: SasTypography.style(
+                fontSize: 14,
+                color: const Color(0xFFEF4444),
                 fontWeight: FontWeight.w700,
               ),
             ),

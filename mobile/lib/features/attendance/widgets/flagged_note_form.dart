@@ -57,7 +57,7 @@ class FlaggedNoteForm extends StatelessWidget {
                       controller: controller,
                       maxLines: 3,
                       maxLength: 300,
-                      style: const TextStyle(color: SasColors.textPrimary, fontSize: 13),
+                      style: TextStyle(color: SasColors.textPrimaryOf(context), fontSize: 13),
                       decoration: const InputDecoration(
                         hintText: 'e.g. Back row seating with dim lighting...',
                         hintStyle: TextStyle(color: SasColors.textMuted, fontSize: 12),

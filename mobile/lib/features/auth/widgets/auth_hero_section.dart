@@ -1,94 +1,89 @@
 import 'package:flutter/material.dart';
 import 'package:smart_attendance_app/app/theme.dart';
 import 'package:smart_attendance_app/app/typography.dart';
+import 'package:smart_attendance_app/features/auth/widgets/auth_brand_header.dart';
 
+import 'package:smart_attendance_app/shared/widgets/fade_slide_transition.dart';
+
+/// Top section of Screen 1 displaying the golden hour campus backdrop,
+/// "Your Attendance Made Simple" headline, and the 3-feature floating card.
 class AuthHeroSection extends StatelessWidget {
   const AuthHeroSection({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        Image.asset(
-          'assets/images/auth_hero.jpg',
-          fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) => _buildFallback(),
-        ),
-        DecoratedBox(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                Colors.black.withValues(alpha: 0.65),
-                Colors.black.withValues(alpha: 0.15),
-                SasColors.darkCanvas.withValues(alpha: 0.70),
-                SasColors.darkCanvas.withValues(alpha: 0.98),
-              ],
-              stops: const [0.0, 0.35, 0.70, 1.0],
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primaryTextColor =
+        isDark ? SasColors.brilliance : const Color(0xFF0F172A);
+    final subtitleColor =
+        isDark ? const Color(0xFFE2E8F0) : const Color(0xFF334155);
+
+    final screenHeight = MediaQuery.of(context).size.height;
+    final isCompact = screenHeight < 720;
+    final topGap = isCompact ? 20.0 : 48.0;
+    final titleSize = isCompact ? 28.0 : 32.0;
+
+    return SafeArea(
+      bottom: false,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Brand logo header
+            FadeSlideTransition(
+              delay: Duration.zero,
+              beginOffset: const Offset(0, -0.06),
+              child: AuthBrandHeader(isLightBackground: !isDark),
             ),
-          ),
-        ),
-        Positioned(
-          top: 0,
-          left: 0,
-          right: 0,
-          child: SafeArea(
-            bottom: false,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 14),
-              child: Row(
-                children: [
-                  Container(
-                    width: 34,
-                    height: 34,
-                    decoration: BoxDecoration(
-                      color: SasColors.osageOrange,
-                      borderRadius: BorderRadius.circular(10),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: SasColors.accentGlow,
-                          blurRadius: 10,
-                          offset: Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: const Icon(
-                      Icons.school_rounded,
-                      color: SasColors.brilliance,
-                      size: 19,
-                    ),
+            SizedBox(height: topGap),
+
+            // Main headline with clean, balanced typography placed lower in the mid-sky area
+            FadeSlideTransition(
+              delay: const Duration(milliseconds: 60),
+              beginOffset: const Offset(0, -0.04),
+              child: Text.rich(
+                TextSpan(
+                  text: 'Your\nAttendance\nMade ',
+                  style: SasTypography.style(
+                    fontSize: titleSize,
+                    fontWeight: FontWeight.w600,
+                    color: primaryTextColor,
+                    height: 1.15,
+                    letterSpacing: -0.6,
                   ),
-                  const SizedBox(width: 10),
-                  Text(
-                    'SMART ATTENDANCE',
-                    style: SasTypography.style(
-                      fontSize: 13.5,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 1.0,
-                      color: SasColors.brilliance,
+                  children: const [
+                    TextSpan(
+                      text: 'Simple',
+                      style: TextStyle(
+                        color: Color(0xFFF95721),
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-        ),
-      ],
-    );
-  }
+            const SizedBox(height: 10),
 
-  Widget _buildFallback() {
-    return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            SasColors.darkCanvas,
-            SasColors.darkSurface,
-            SasColors.indianInk,
+            // Subtitle
+            FadeSlideTransition(
+              delay: const Duration(milliseconds: 100),
+              beginOffset: const Offset(0, -0.03),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 300),
+                child: Text(
+                  'Stay connected with your academic journey,\nanytime, anywhere.',
+                  style: SasTypography.style(
+                    fontSize: 13.5,
+                    fontWeight: FontWeight.w400,
+                    color: subtitleColor,
+                    height: 1.35,
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),

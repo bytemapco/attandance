@@ -24,10 +24,10 @@ class HomeEmptyClasses extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 12),
-          const Text(
+          Text(
             'No Classes Scheduled Today',
             style: TextStyle(
-              color: SasColors.textPrimary,
+              color: SasColors.textPrimaryOf(context),
               fontSize: 15,
               fontWeight: FontWeight.w700,
               letterSpacing: -0.2,

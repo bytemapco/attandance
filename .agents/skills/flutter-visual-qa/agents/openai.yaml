@@ -1,0 +1,4 @@
+interface:
+  display_name: "Flutter Visual QA"
+  short_description: "Verify rendered Flutter UI quality"
+  default_prompt: "Use $flutter-visual-qa to inspect rendered Flutter screens and refine them."

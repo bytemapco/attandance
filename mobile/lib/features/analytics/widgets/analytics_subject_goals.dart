@@ -71,10 +71,10 @@ class AnalyticsSubjectGoals extends StatelessWidget {
                           children: [
                             Text(
                               stat.subject,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontWeight: FontWeight.w600,
                                 fontSize: 13,
-                                color: SasColors.textPrimary,
+                                color: SasColors.textPrimaryOf(context),
                               ),
                             ),
                             Text(

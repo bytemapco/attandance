@@ -63,7 +63,7 @@ class AttendanceProgressGauge extends StatelessWidget {
                   fontSize: 8.5,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 0.6,
-                  color: isDark ? SasColors.maidenMist : SasColors.textMuted,
+                  color: SasColors.textSecondaryOf(context),
                 ),
               ),
             ],

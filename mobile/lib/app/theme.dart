@@ -4,45 +4,61 @@ import 'package:smart_attendance_app/app/typography.dart';
 class SasColors {
   SasColors._();
 
-  // Core 6-Swatch Palette
+  // Core Brand Palette — "Academy Premium"
   static const Color brilliance = Color(0xFFFDFDFD);
-  static const Color polishWhite = Color(0xFFE8E8E7);
-  static const Color sunsetInItaly = Color(0xFFF1C183);
-  static const Color maidenMist = Color(0xFFBAC0BE);
-  static const Color osageOrange = Color(0xFFF6A242);
-  static const Color indianInk = Color(0xFF3C3D48);
+  static const Color polishWhite = Color(0xFFEFF3F7);
+  static const Color sunsetInItaly = Color(0xFFEAC96A);  // champagne
+  static const Color maidenMist = Color(0xFF94A3B8);     // slate-400 (navy-compatible)
+  static const Color osageOrange = Color(0xFFF59E0B);    // amber
+  static const Color indianInk = Color(0xFF1E293B);      // slate-800 (light-mode text)
 
-  // Surface Hierarchy
-  static const Color darkCanvas = Color(0xFF17181F);
-  static const Color darkSurface = Color(0xFF22242D);
-  static const Color darkElevated = Color(0xFF3C3D48);
+  // Surface Hierarchy — Dark (deep navy)
+  static const Color darkCanvas = Color(0xFF0D1B2A);
+  static const Color darkSurface = Color(0xFF162033);
+  static const Color darkElevated = Color(0xFF1E3048);
 
-  static const Color lightCanvas = Color(0xFFFDFDFD);
+  // Surface Hierarchy — Light (cool-tinted)
+  static const Color lightCanvas = Color(0xFFF8FAFC);
   static const Color lightSurface = Color(0xFFFFFFFF);
-  static const Color lightElevated = Color(0xFFE8E8E7);
+  static const Color lightElevated = Color(0xFFEFF3F7);
 
-  // Functional & Semantic Tokens
-  static const Color success = Color(0xFF10B981);
-  static const Color warning = Color(0xFFF6A242);
-  static const Color danger = Color(0xFFF43F5E);
-  static const Color info = Color(0xFFF1C183);
+  // Semantic
+  static const Color success = Color(0xFF10B981);   // emerald
+  static const Color warning = Color(0xFFF59E0B);   // amber
+  static const Color danger = Color(0xFFF43F5E);    // rose
+  static const Color info = Color(0xFF38BDF8);      // sky blue
 
   // Glow & Overlays
-  static const Color accentGlow = Color(0x33F6A242);
+  static const Color accentGlow = Color(0x33F59E0B);
   static const Color glassBg = Color(0xFFFFFFFF);
   static const Color glassBgHover = Color(0xFFF8FAFC);
-  static const Color glassBorder = Color(0x33BAC0BE);
-  static const Color glassBorderHover = Color(0x59BAC0BE);
+  static const Color glassBorder = Color(0x1EFFFFFF);
+  static const Color glassBorderHover = Color(0x33FFFFFF);
 
-  // Default Palette Mappings (Light Mode by Default)
+  // Default Palette Mappings (Light Mode)
   static const Color bgPrimary = lightCanvas;
   static const Color bgCanvas = lightCanvas;
   static const Color bgSecondary = lightSurface;
   static const Color bgSurface = lightElevated;
 
-  static const Color textPrimary = indianInk;
-  static const Color textSecondary = Color(0xFF595B6A);
-  static const Color textMuted = Color(0xFF858997);
+  static const Color textPrimary = brilliance;
+  static const Color textSecondary = Color(0xFF334155);  // slate-700 (deep, sharp contrast)
+  static const Color textMuted = Color(0xFF475569);      // slate-600 (clear legible contrast)
+
+  static Color textPrimaryOf(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark
+          ? brilliance
+          : const Color(0xFF0F172A);
+
+  static Color textSecondaryOf(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark
+          ? const Color(0xFFCBD5E1)   // slate-300: bright, crisp against navy
+          : const Color(0xFF334155);  // slate-700: deep, high-contrast charcoal
+
+  static Color textMutedOf(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark
+          ? const Color(0xFF94A3B8)   // slate-400
+          : const Color(0xFF475569);  // slate-600: 6:1 contrast ratio against white
 
   static const Color accentEmerald = success;
   static const Color accentTeal = sunsetInItaly;
@@ -70,7 +86,8 @@ class SasRadius {
   static const double sm = 8;
   static const double md = 12;
   static const double lg = 16;
-  static const double xl = 22;
+  static const double xl = 20;
+  static const double xxl = 28;
 
   static BorderRadius get smAll => BorderRadius.circular(sm);
   static BorderRadius get mdAll => BorderRadius.circular(md);
@@ -84,30 +101,33 @@ class SasDurations {
   static const Duration fast = Duration(milliseconds: 150);
   static const Duration normal = Duration(milliseconds: 200);
   static const Duration slow = Duration(milliseconds: 300);
+  static const Duration spring = Duration(milliseconds: 400);
 }
 
 ThemeData buildSasTheme({Brightness brightness = Brightness.light}) {
   final isDark = brightness == Brightness.dark;
 
   final textColor = isDark ? SasColors.brilliance : SasColors.indianInk;
-  final mutedColor = isDark ? SasColors.maidenMist : const Color(0xFF595B6A);
-  final subtleBorder = isDark ? const Color(0x2EBAC0BE) : const Color(0x33BAC0BE);
+  final mutedColor = isDark ? SasColors.maidenMist : SasColors.textSecondary;
+  final subtleBorder = isDark ? const Color(0x1EFFFFFF) : const Color(0x18000000);
 
   return ThemeData(
     brightness: brightness,
-    scaffoldBackgroundColor: isDark ? SasColors.darkCanvas : SasColors.lightCanvas,
+    scaffoldBackgroundColor:
+        isDark ? SasColors.darkCanvas : SasColors.lightCanvas,
     colorScheme: isDark
-        ? const ColorScheme.dark(
+        ? ColorScheme.dark(
             primary: SasColors.osageOrange,
             secondary: SasColors.sunsetInItaly,
             surface: SasColors.darkSurface,
             error: SasColors.danger,
-            onPrimary: SasColors.darkCanvas,
+            onPrimary: Colors.white,
             onSecondary: SasColors.darkCanvas,
             onSurface: SasColors.brilliance,
             onError: Colors.white,
+            outline: subtleBorder,
           )
-        : const ColorScheme.light(
+        : ColorScheme.light(
             primary: SasColors.osageOrange,
             secondary: SasColors.sunsetInItaly,
             surface: SasColors.lightSurface,
@@ -116,10 +136,12 @@ ThemeData buildSasTheme({Brightness brightness = Brightness.light}) {
             onSecondary: SasColors.indianInk,
             onSurface: SasColors.indianInk,
             onError: Colors.white,
+            outline: subtleBorder,
           ),
     textTheme: buildSasTextTheme(brightness),
     appBarTheme: AppBarTheme(
-      backgroundColor: isDark ? SasColors.darkSurface : SasColors.lightSurface,
+      backgroundColor:
+          isDark ? SasColors.darkSurface : SasColors.lightSurface,
       elevation: 0,
       centerTitle: true,
       titleTextStyle: SasTypography.style(
@@ -132,7 +154,8 @@ ThemeData buildSasTheme({Brightness brightness = Brightness.light}) {
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
       fillColor: isDark ? SasColors.darkSurface : SasColors.polishWhite,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      contentPadding:
+          const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
         borderSide: BorderSide(color: subtleBorder),
@@ -143,24 +166,18 @@ ThemeData buildSasTheme({Brightness brightness = Brightness.light}) {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(
-          color: SasColors.osageOrange,
-          width: 1.5,
-        ),
+        borderSide:
+            const BorderSide(color: SasColors.osageOrange, width: 1.5),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(
-          color: SasColors.danger,
-          width: 1.0,
-        ),
+        borderSide:
+            const BorderSide(color: SasColors.danger, width: 1.0),
       ),
       focusedErrorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(
-          color: SasColors.danger,
-          width: 1.5,
-        ),
+        borderSide:
+            const BorderSide(color: SasColors.danger, width: 1.5),
       ),
       hintStyle: TextStyle(color: mutedColor, fontSize: 14),
       labelStyle: TextStyle(color: mutedColor, fontSize: 14),
@@ -169,7 +186,7 @@ ThemeData buildSasTheme({Brightness brightness = Brightness.light}) {
       color: isDark ? SasColors.darkSurface : SasColors.lightSurface,
       elevation: 0,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(20),
         side: BorderSide(color: subtleBorder),
       ),
     ),

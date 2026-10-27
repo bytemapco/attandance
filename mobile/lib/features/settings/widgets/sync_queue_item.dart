@@ -42,7 +42,7 @@ class SyncQueueItem extends StatelessWidget {
                 children: [
                   Text(
                     payload.className ?? 'Class Session',
-                    style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: SasColors.textPrimary),
+                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: SasColors.textPrimaryOf(context)),
                   ),
                   const SizedBox(height: 2),
                   Text(

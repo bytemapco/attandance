@@ -4,6 +4,7 @@ import 'package:smart_attendance_app/core/attendance_utils.dart';
 import 'package:smart_attendance_app/domain/models/attendance.dart';
 import 'package:smart_attendance_app/features/home/widgets/attendance_progress_gauge.dart';
 import 'package:smart_attendance_app/features/home/widgets/attendance_stat_tile.dart';
+import 'package:smart_attendance_app/features/home/widgets/home_attendance_status_badge.dart';
 import 'package:smart_attendance_app/shared/widgets/glass_card.dart';
 
 class HomeAttendanceOverview extends StatelessWidget {
@@ -38,32 +39,27 @@ class HomeAttendanceOverview extends StatelessWidget {
 
     String insightText;
     if (!isCompliant) {
-      if (needs.needToAttend > 0) {
-        insightText =
-            'Attend next ${needs.needToAttend} ${needs.needToAttend == 1 ? 'class' : 'classes'} to restore 75% goal.';
-      } else {
-        insightText = 'Attendance is below institutional 75% requirement.';
-      }
+      insightText = needs.needToAttend > 0
+          ? 'Attend next ${needs.needToAttend} ${needs.needToAttend == 1 ? 'class' : 'classes'} to reach 75%.'
+          : 'Below the institutional 75% requirement.';
     } else {
-      if (needs.canMiss > 0) {
-        insightText =
-            'On track • Buffer of ${needs.canMiss} ${needs.canMiss == 1 ? 'class' : 'classes'} available.';
-      } else {
-        insightText = 'On track • Meeting institutional 75% requirement.';
-      }
+      insightText = needs.canMiss > 0
+          ? 'On track · ${needs.canMiss} ${needs.canMiss == 1 ? 'class' : 'classes'} buffer available.'
+          : 'Meeting institutional 75% requirement.';
     }
 
     return GlassCard(
       onTap: onTapAnalytics,
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(18),
       borderColor: isDark
           ? (isCompliant
-              ? SasColors.success.withValues(alpha: 0.15)
-              : SasColors.osageOrange.withValues(alpha: 0.2))
+              ? SasColors.success.withValues(alpha: 0.20)
+              : SasColors.osageOrange.withValues(alpha: 0.25))
           : null,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Header row
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -71,78 +67,61 @@ class HomeAttendanceOverview extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Container(
-                    width: 6,
-                    height: 6,
+                    width: 7,
+                    height: 7,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: statusColor,
+                      boxShadow: [
+                        BoxShadow(
+                          color: statusColor.withValues(alpha: 0.6),
+                          blurRadius: 6,
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(width: 6),
+                  const SizedBox(width: 7),
                   Text(
                     'TERM COMPLIANCE',
                     style: TextStyle(
-                      fontSize: 11,
+                      fontSize: 10.5,
                       fontWeight: FontWeight.w700,
-                      letterSpacing: 0.9,
-                      color: isDark ? SasColors.maidenMist : SasColors.textMuted,
+                      letterSpacing: 1.1,
+                      color: SasColors.textSecondaryOf(context),
                     ),
                   ),
                 ],
               ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
-                decoration: BoxDecoration(
-                  color: statusColor.withValues(alpha: isDark ? 0.16 : 0.10),
-                  borderRadius: BorderRadius.circular(7),
-                  border: Border.all(
-                    color: statusColor.withValues(alpha: 0.28),
-                    width: 0.8,
-                  ),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      isCompliant
-                          ? Icons.check_circle_rounded
-                          : Icons.warning_amber_rounded,
-                      size: 12,
-                      color: statusColor,
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      isCompliant ? 'Good Standing' : 'Below 75%',
-                      style: TextStyle(
-                        color: statusColor,
-                        fontSize: 11,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: -0.1,
-                      ),
-                    ),
-                  ],
-                ),
+              HomeAttendanceStatusBadge(
+                isCompliant: isCompliant,
+                statusColor: statusColor,
+                isDark: isDark,
               ),
             ],
           ),
-          const SizedBox(height: 14),
+
+          const SizedBox(height: 16),
+
+          // Gauge + stats
           Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               AttendanceProgressGauge(
                 overallPct: overallPct,
                 isCompliant: isCompliant,
               ),
-              const SizedBox(width: 14),
+              const SizedBox(width: 16),
               Expanded(
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     AttendanceStatTile(
                       icon: Icons.local_fire_department_rounded,
                       iconColor: SasColors.osageOrange,
                       title: '$streak Day Streak',
-                      subtitle: 'Personal best: $highestStreak days',
+                      subtitle: 'Best: $highestStreak days',
                     ),
-                    const SizedBox(height: 7),
+                    const SizedBox(height: 10),
                     AttendanceStatTile(
                       icon: Icons.calendar_today_rounded,
                       iconColor: SasColors.sunsetInItaly,
@@ -154,14 +133,17 @@ class HomeAttendanceOverview extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 12),
+
+          const SizedBox(height: 14),
+
+          // Insight banner
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
             decoration: BoxDecoration(
-              color: statusColor.withValues(alpha: isDark ? 0.10 : 0.07),
-              borderRadius: BorderRadius.circular(10),
+              color: statusColor.withValues(alpha: isDark ? 0.12 : 0.07),
+              borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: statusColor.withValues(alpha: 0.2),
+                color: statusColor.withValues(alpha: 0.22),
                 width: 0.8,
               ),
             ),
@@ -171,16 +153,16 @@ class HomeAttendanceOverview extends StatelessWidget {
                   isCompliant
                       ? Icons.verified_outlined
                       : Icons.trending_up_rounded,
-                  size: 14,
+                  size: 15,
                   color: statusColor,
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: 9),
                 Expanded(
                   child: Text(
                     insightText,
                     style: TextStyle(
                       color: isDark ? SasColors.brilliance : statusColor,
-                      fontSize: 11,
+                      fontSize: 11.5,
                       fontWeight: FontWeight.w600,
                       letterSpacing: -0.1,
                     ),
@@ -189,7 +171,7 @@ class HomeAttendanceOverview extends StatelessWidget {
                 Icon(
                   Icons.arrow_forward_ios_rounded,
                   size: 11,
-                  color: statusColor.withValues(alpha: 0.7),
+                  color: statusColor.withValues(alpha: 0.6),
                 ),
               ],
             ),

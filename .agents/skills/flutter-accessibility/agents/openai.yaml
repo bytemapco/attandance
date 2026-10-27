@@ -1,0 +1,4 @@
+interface:
+  display_name: "Flutter Accessibility"
+  short_description: "Harden Flutter accessibility and RTL"
+  default_prompt: "Use $flutter-accessibility to audit and improve this Flutter experience."

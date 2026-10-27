@@ -72,7 +72,7 @@ class CalendarMonthGrid extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: isToday ? FontWeight.w700 : FontWeight.w500,
-                    color: isSelected ? SasColors.accentEmerald : SasColors.textPrimary,
+                    color: isSelected ? SasColors.accentEmerald : SasColors.textPrimaryOf(context),
                   ),
                 ),
                 if (dotColor != null)

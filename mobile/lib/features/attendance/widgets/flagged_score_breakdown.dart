@@ -29,13 +29,13 @@ class FlaggedScoreBreakdown extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           child: Column(
             children: [
-              _buildBar('Face Match', item.faceScore ?? 0, 'Face similarity with your profile.'),
+              _buildBar(context, 'Face Match', item.faceScore ?? 0, 'Face similarity with your profile.'),
               const SizedBox(height: 12),
-              _buildBar('Liveness Check', item.livenessScore ?? 0, 'Checks for a live photo instead of a screen.'),
+              _buildBar(context, 'Liveness Check', item.livenessScore ?? 0, 'Checks for a live photo instead of a screen.'),
               const SizedBox(height: 12),
-              _buildBar('Location & Room', item.backgroundScore ?? 0, 'Classroom environment match.'),
+              _buildBar(context, 'Location & Room', item.backgroundScore ?? 0, 'Classroom environment match.'),
               const Divider(color: SasColors.glassBorder, height: 20),
-              _buildBar('Overall Score', item.finalAiScore ?? 0, 'Combined verification score.', isFinal: true),
+              _buildBar(context, 'Overall Score', item.finalAiScore ?? 0, 'Combined verification score.', isFinal: true),
             ],
           ),
         ),
@@ -43,7 +43,7 @@ class FlaggedScoreBreakdown extends StatelessWidget {
     );
   }
 
-  Widget _buildBar(String label, double score, String hint, {bool isFinal = false}) {
+  Widget _buildBar(BuildContext context, String label, double score, String hint, {bool isFinal = false}) {
     final color = scoreColor(score);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -56,7 +56,7 @@ class FlaggedScoreBreakdown extends StatelessWidget {
               style: TextStyle(
                 fontWeight: isFinal ? FontWeight.w700 : FontWeight.w600,
                 fontSize: isFinal ? 13 : 12,
-                color: isFinal ? SasColors.textPrimary : SasColors.textSecondary,
+                color: isFinal ? SasColors.textPrimaryOf(context) : SasColors.textSecondary,
               ),
             ),
             Text(

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Flutter UI Audit"
+  short_description: "Audit Flutter UI and UX with evidence"
+  default_prompt: "Use $flutter-audit to inspect this Flutter interface and prioritize issues."

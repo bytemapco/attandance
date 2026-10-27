@@ -27,7 +27,7 @@ class LeaveHistoryScreen extends ConsumerWidget {
       body: AnimatedBackground(
         child: SafeArea(
           child: historyAsync.when(
-            data: (leaves) => leaves.isEmpty ? _buildEmpty() : _buildList(leaves),
+            data: (leaves) => leaves.isEmpty ? _buildEmpty(context) : _buildList(leaves),
             loading: () => const Center(child: CircularProgressIndicator(color: SasColors.accentEmerald)),
             error: (err, _) => _buildError(err.toString()),
           ),
@@ -58,10 +58,10 @@ class LeaveHistoryScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildEmpty() {
-    return const Center(
+  Widget _buildEmpty(BuildContext context) {
+    return Center(
       child: Padding(
-        padding: EdgeInsets.all(32),
+        padding: const EdgeInsets.all(32),
         child: GlassCard(
           padding: EdgeInsets.all(24),
           child: Column(
@@ -71,7 +71,7 @@ class LeaveHistoryScreen extends ConsumerWidget {
               SizedBox(height: 12),
               Text(
                 'No Leave History',
-                style: TextStyle(fontWeight: FontWeight.w700, fontSize: 15, color: SasColors.textPrimary),
+                style: TextStyle(fontWeight: FontWeight.w700, fontSize: 15, color: SasColors.textPrimaryOf(context)),
               ),
               SizedBox(height: 6),
               Text(

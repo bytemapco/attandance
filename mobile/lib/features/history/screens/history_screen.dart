@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_attendance_app/app/theme.dart';
-import 'package:smart_attendance_app/core/attendance_utils.dart';
 import 'package:smart_attendance_app/features/history/providers/history_provider.dart';
-import 'package:smart_attendance_app/features/history/widgets/history_calendar_tab.dart';
+import 'package:smart_attendance_app/features/history/widgets/history_calendar_card.dart';
+import 'package:smart_attendance_app/features/history/widgets/history_course_card.dart';
+import 'package:smart_attendance_app/features/history/widgets/history_header.dart';
 import 'package:smart_attendance_app/features/history/widgets/history_list_tab.dart';
+import 'package:smart_attendance_app/features/history/widgets/history_segmented_tabs.dart';
 import 'package:smart_attendance_app/shared/widgets/animated_background.dart';
 import 'package:smart_attendance_app/shared/widgets/glass_button.dart';
 import 'package:smart_attendance_app/shared/widgets/glass_card.dart';
 import 'package:smart_attendance_app/shared/widgets/shimmer_placeholder.dart';
-
-enum HistoryViewMode { calendar, list }
+import 'package:smart_attendance_app/shared/widgets/smart_pull_to_refresh.dart';
 
 class HistoryScreen extends ConsumerStatefulWidget {
   const HistoryScreen({super.key});
@@ -34,89 +35,83 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
   Widget build(BuildContext context) {
     final hState = ref.watch(historyProvider);
     final pct = hState.data?.overallAttendancePercentage ?? 0;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final pctClean = (pct.isNaN || pct.isInfinite) ? 0.0 : pct;
+
+    final historyList = hState.data?.history ?? [];
+    final firstItem = historyList.isNotEmpty ? historyList.first : null;
+    final courseTitle = firstItem?.subject ?? 'Distributed Systems';
+    final classCode = firstItem != null && firstItem.className.contains(':')
+        ? firstItem.className.split(':').first.trim()
+        : (firstItem?.className ?? 'CS-6A');
+    final courseSubtitle = '$classCode • Robert Hayes';
 
     return AnimatedBackground(
       child: SafeArea(
-        child: RefreshIndicator(
-          color: SasColors.accentEmerald,
-          backgroundColor: SasColors.bgSecondary,
+        child: SmartPullToRefresh(
           onRefresh: () => ref.read(historyProvider.notifier).fetch(),
           child: ListView(
-            padding: const EdgeInsets.all(16),
+            physics: const AlwaysScrollableScrollPhysics(
+              parent: BouncingScrollPhysics(),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             children: [
-              GlassCard(
-                padding: const EdgeInsets.all(14),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 44,
-                      height: 44,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: pctColor(pct).withValues(alpha: 0.1),
-                      ),
-                      child: Center(
-                        child: Text(
-                          '${pct.toStringAsFixed(0)}%',
-                          style: TextStyle(color: pctColor(pct), fontWeight: FontWeight.w700, fontSize: 14),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    const Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('Attendance Log', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14, color: SasColors.textPrimary)),
-                          Text('Historical record across all courses', style: TextStyle(color: SasColors.textMuted, fontSize: 11)),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 12),
-              Container(
-                decoration: BoxDecoration(
-                  color: SasColors.bgSecondary,
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: SasColors.glassBorder),
-                ),
-                child: Row(
-                  children: [
-                    _buildTabBtn('Calendar', Icons.calendar_month_rounded, _mode == HistoryViewMode.calendar, () {
-                      setState(() => _mode = HistoryViewMode.calendar);
-                    }),
-                    _buildTabBtn('List View', Icons.format_list_bulleted_rounded, _mode == HistoryViewMode.list, () {
-                      setState(() => _mode = HistoryViewMode.list);
-                    }),
-                  ],
-                ),
+              // Screen header with "Attendance Log" & circular overall gauge
+              HistoryHeader(percentage: pctClean),
+              const SizedBox(height: 16),
+
+              // Segmented tab switcher ("Calendar" | "List View")
+              HistorySegmentedTabs(
+                mode: _mode,
+                onChanged: (m) => setState(() => _mode = m),
+                isDark: isDark,
               ),
               const SizedBox(height: 14),
+
+              // Course selector dropdown card
+              HistoryCourseCard(
+                courseTitle: courseTitle,
+                courseSubtitle: courseSubtitle,
+              ),
+              const SizedBox(height: 14),
+
+              // Main content body with smooth cross-fade transition
               if (hState.errorMessage != null && hState.data == null)
-                GlassCard(
-                  borderColor: SasColors.danger.withValues(alpha: 0.3),
-                  child: Column(
-                    children: [
-                      const Icon(Icons.cloud_off_rounded, size: 36, color: SasColors.danger),
-                      const SizedBox(height: 10),
-                      Text(hState.errorMessage!, textAlign: TextAlign.center, style: const TextStyle(color: SasColors.textSecondary, fontSize: 13)),
-                      const SizedBox(height: 12),
-                      GlassButton(
-                        label: 'Retry Connection',
-                        icon: Icons.refresh_rounded,
-                        onPressed: () => ref.read(historyProvider.notifier).fetch(),
-                      ),
-                    ],
-                  ),
-                )
+                _buildErrorCard(hState.errorMessage!, isDark)
               else if (hState.isLoading && hState.data == null)
                 const ShimmerCalendarPlaceholder()
-              else if (_mode == HistoryViewMode.calendar)
-                HistoryCalendarTab(hState: hState)
               else
-                HistoryListTab(hState: hState),
+                AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 240),
+                  switchInCurve: Curves.easeOutCubic,
+                  switchOutCurve: Curves.easeInCubic,
+                  transitionBuilder: (child, animation) {
+                    return FadeTransition(
+                      opacity: animation,
+                      child: SlideTransition(
+                        position: Tween<Offset>(
+                          begin: const Offset(0.0, 0.02),
+                          end: Offset.zero,
+                        ).animate(animation),
+                        child: child,
+                      ),
+                    );
+                  },
+                  child: _mode == HistoryViewMode.calendar
+                      ? KeyedSubtree(
+                          key: const ValueKey('calendar_mode'),
+                          child: HistoryCalendarCard(
+                            grouped: hState.groupedByDate,
+                            history: historyList,
+                          ),
+                        )
+                      : KeyedSubtree(
+                          key: const ValueKey('list_mode'),
+                          child: HistoryListTab(hState: hState),
+                        ),
+                ),
+
+              const SizedBox(height: 24),
             ],
           ),
         ),
@@ -124,31 +119,34 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
     );
   }
 
-  Widget _buildTabBtn(String label, IconData icon, bool selected, VoidCallback onTap) {
-    return Expanded(
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          decoration: BoxDecoration(
-            color: selected ? SasColors.accentEmerald.withValues(alpha: 0.1) : Colors.transparent,
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(icon, size: 15, color: selected ? SasColors.accentEmerald : SasColors.textMuted),
-              const SizedBox(width: 6),
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
-                  color: selected ? SasColors.accentEmerald : SasColors.textMuted,
-                ),
+  Widget _buildErrorCard(String error, bool isDark) {
+    return GlassCard(
+      borderColor: SasColors.danger.withValues(alpha: 0.30),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        child: Column(
+          children: [
+            const Icon(
+              Icons.cloud_off_rounded,
+              size: 36,
+              color: SasColors.danger,
+            ),
+            const SizedBox(height: 10),
+            Text(
+              error,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: isDark ? SasColors.maidenMist : SasColors.textSecondary,
+                fontSize: 13,
               ),
-            ],
-          ),
+            ),
+            const SizedBox(height: 14),
+            GlassButton(
+              label: 'Retry',
+              icon: Icons.refresh_rounded,
+              onPressed: () => ref.read(historyProvider.notifier).fetch(),
+            ),
+          ],
         ),
       ),
     );

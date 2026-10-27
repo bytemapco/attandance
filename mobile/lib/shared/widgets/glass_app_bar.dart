@@ -19,6 +19,13 @@ class GlassAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textColor = isDark ? SasColors.brilliance : SasColors.indianInk;
+    final bgColor = isDark ? SasColors.darkSurface : SasColors.lightSurface;
+    final borderColor = isDark
+        ? const Color(0x1EFFFFFF)
+        : const Color(0x14000000);
+
     bool canPop = false;
     try {
       canPop = GoRouter.of(context).canPop();
@@ -27,23 +34,22 @@ class GlassAppBar extends StatelessWidget implements PreferredSizeWidget {
     }
 
     return Container(
-      decoration: const BoxDecoration(
-        color: SasColors.bgSecondary,
+      decoration: BoxDecoration(
+        color: bgColor,   // Fixed: was hardcoded bgSecondary (white) in dark mode
         border: Border(
-          bottom: BorderSide(color: SasColors.glassBorder),
+          bottom: BorderSide(color: borderColor, width: 0.5),
         ),
       ),
       child: SafeArea(
         bottom: false,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 8),
           child: Row(
             children: [
               if (showBack || canPop)
                 IconButton(
-                  icon: const Icon(Icons.arrow_back_rounded, size: 20),
-                  color: SasColors.textPrimary,
-                  splashRadius: 20,
+                  icon: Icon(Icons.arrow_back_ios_new_rounded, size: 18),
+                  color: textColor,
                   onPressed: () {
                     try {
                       context.pop();
@@ -51,21 +57,25 @@ class GlassAppBar extends StatelessWidget implements PreferredSizeWidget {
                       Navigator.of(context).maybePop();
                     }
                   },
-                ),
+                )
+              else
+                const SizedBox(width: 12),
               Expanded(
                 child: Text(
                   title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
-                    color: SasColors.textPrimary,
-                    letterSpacing: -0.01,
+                    color: textColor,
+                    letterSpacing: -0.3,
                   ),
-                  textAlign:
-                      (showBack || canPop) ? TextAlign.left : TextAlign.center,
+                  textAlign: (showBack || canPop)
+                      ? TextAlign.left
+                      : TextAlign.center,
                 ),
               ),
-              if (actions != null) ...actions!,
+              if (actions != null) ...actions!
+              else const SizedBox(width: 48),
             ],
           ),
         ),

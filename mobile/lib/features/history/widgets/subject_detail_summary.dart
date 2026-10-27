@@ -39,7 +39,7 @@ class SubjectDetailSummary extends StatelessWidget {
         children: [
           Text(
             subjectName,
-            style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16, color: SasColors.textPrimary),
+            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16, color: SasColors.textPrimaryOf(context)),
           ),
           if (className.isNotEmpty)
             Text(className, style: const TextStyle(color: SasColors.textMuted, fontSize: 12)),

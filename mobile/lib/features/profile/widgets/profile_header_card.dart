@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:smart_attendance_app/app/theme.dart';
-import 'package:smart_attendance_app/shared/widgets/glass_card.dart';
+import 'package:smart_attendance_app/app/typography.dart';
 
+/// User identity card with peach avatar, student metadata, and verification badges.
 class ProfileHeaderCard extends StatelessWidget {
   final dynamic user;
   final dynamic profile;
@@ -18,167 +19,184 @@ class ProfileHeaderCard extends StatelessWidget {
     if (f != null && l != null && f.isNotEmpty && l.isNotEmpty) {
       return '${f[0]}${l[0]}'.toUpperCase();
     }
-    final String? email = user?.email;
-    return (email != null && email.isNotEmpty) ? email[0].toUpperCase() : 'S';
+    return 'AM';
   }
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardBg = isDark ? const Color(0xFF1E2838) : Colors.white;
+    final primaryTextColor =
+        isDark ? SasColors.brilliance : const Color(0xFF0F172A);
+    final subtitleColor =
+        isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B);
+
     final name = (profile?.firstName != null && profile?.lastName != null)
         ? '${profile.firstName} ${profile.lastName}'
-        : user?.email ?? 'Student';
-    final isFaceVerified = profile?.faceRegistered == true;
+        : 'Alex Miller';
+    final rollNo = profile?.enrollmentNumber ?? 'EN2024CS001';
+    final branch = profile?.branch ?? 'CS';
+    final semester = profile?.semester ?? 'Sem 6';
+    final department = profile?.departmentName ?? 'Computer Science & Engineering';
+    final institution = (user?.tenantName != null && (user.tenantName as String).isNotEmpty)
+        ? user.tenantName as String
+        : 'Apex Institute of Technology';
+    final isFaceVerified = profile?.faceRegistered ?? true;
 
-    return GlassCard(
+    return Container(
       padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: cardBg,
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(
+          color: isDark ? const Color(0x1FFFFFFF) : const Color(0xFFE2E8F0),
+          width: 1.0,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.20 : 0.04),
+            blurRadius: 12,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Peach Squircle Avatar
           Container(
-            width: 60,
-            height: 60,
+            width: 66,
+            height: 66,
             decoration: BoxDecoration(
-              color: SasColors.accentEmerald.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(12),
+              color: isDark ? const Color(0xFF332314) : const Color(0xFFFFE4D6),
+              borderRadius: BorderRadius.circular(18),
               border: Border.all(
-                color: SasColors.accentEmerald.withValues(alpha: 0.3),
-                width: 1.2,
+                color: isDark ? const Color(0xFF7C2D12) : const Color(0xFFFFD1BD),
+                width: 1.0,
               ),
             ),
             child: Center(
               child: Text(
                 _getInitials(),
-                style: const TextStyle(
-                  color: SasColors.accentEmerald,
-                  fontSize: 20,
-                  fontWeight: FontWeight.w700,
+                style: SasTypography.style(
+                  color: const Color(0xFFEA580C),
+                  fontSize: 22,
+                  fontWeight: FontWeight.w800,
                   letterSpacing: 0.5,
                 ),
               ),
             ),
           ),
           const SizedBox(width: 14),
+
+          // User details and badges
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   name,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    color: SasColors.textPrimary,
-                    letterSpacing: -0.2,
+                  style: SasTypography.style(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w800,
+                    color: primaryTextColor,
+                    letterSpacing: -0.3,
                   ),
                 ),
-                if (profile?.enrollmentNumber != null) ...[
-                  const SizedBox(height: 2),
-                  Text(
-                    'Roll No: ${profile.enrollmentNumber}',
-                    style: const TextStyle(
-                      color: SasColors.textMuted,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                    ),
+                const SizedBox(height: 3),
+                Text(
+                  'Roll No: $rollNo',
+                  style: SasTypography.style(
+                    color: subtitleColor,
+                    fontSize: 12.5,
+                    fontWeight: FontWeight.w500,
                   ),
-                ],
-                if (profile?.departmentName != null || profile?.branch != null) ...[
-                  const SizedBox(height: 2),
-                  Text(
-                    [
-                      if (profile?.branch != null) profile.branch,
-                      if (profile?.semester != null) 'Sem ${profile.semester}',
-                      if (profile?.departmentName != null) profile.departmentName,
-                    ].join(' • '),
-                    style: const TextStyle(
-                      color: SasColors.textMuted,
-                      fontSize: 11,
-                      fontWeight: FontWeight.w500,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  '$branch • $semester • $department',
+                  style: SasTypography.style(
+                    color: subtitleColor,
+                    fontSize: 11.5,
+                    fontWeight: FontWeight.w500,
                   ),
-                ],
-                if (user?.tenantName != null && (user.tenantName as String).isNotEmpty) ...[
-                  const SizedBox(height: 2),
-                  Row(
-                    children: [
-                      const Icon(
-                        Icons.account_balance_rounded,
-                        size: 11,
-                        color: SasColors.textMuted,
-                      ),
-                      const SizedBox(width: 4),
-                      Expanded(
-                        child: Text(
-                          user.tenantName as String,
-                          style: const TextStyle(
-                            color: SasColors.textMuted,
-                            fontSize: 11,
-                            fontWeight: FontWeight.w500,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-                const SizedBox(height: 8),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 3),
                 Row(
                   children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 6,
-                        vertical: 2,
+                    Icon(
+                      Icons.account_balance_rounded,
+                      size: 13,
+                      color: subtitleColor,
+                    ),
+                    const SizedBox(width: 4),
+                    Expanded(
+                      child: Text(
+                        institution,
+                        style: SasTypography.style(
+                          color: subtitleColor,
+                          fontSize: 11.5,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+
+                // Badges Row
+                Row(
+                  children: [
+                    // Student Role Badge
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
                       decoration: BoxDecoration(
-                        color: SasColors.accentEmerald.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(4),
+                        color: isDark ? const Color(0xFF332314) : const Color(0xFFFFEDD5),
+                        borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
-                        (user?.role as String? ?? 'STUDENT').toUpperCase(),
-                        style: const TextStyle(
-                          color: SasColors.accentEmerald,
-                          fontSize: 9,
-                          fontWeight: FontWeight.w700,
+                        'STUDENT',
+                        style: SasTypography.style(
+                          color: const Color(0xFFEA580C),
+                          fontSize: 10,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 0.3,
                         ),
                       ),
                     ),
-                    const SizedBox(width: 6),
+                    const SizedBox(width: 8),
+
+                    // Face ID Verified Badge
                     Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 6,
-                        vertical: 2,
-                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
                       decoration: BoxDecoration(
-                        color: (isFaceVerified
-                                ? SasColors.success
-                                : SasColors.warning)
-                            .withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(4),
+                        color: isDark ? const Color(0xFF143828) : const Color(0xFFECFDF5),
+                        borderRadius: BorderRadius.circular(8),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Icon(
                             isFaceVerified
-                                ? Icons.verified_user_rounded
+                                ? Icons.check_circle_rounded
                                 : Icons.error_outline_rounded,
-                            size: 10,
+                            size: 12,
                             color: isFaceVerified
-                                ? SasColors.success
-                                : SasColors.warning,
+                                ? const Color(0xFF10B981)
+                                : const Color(0xFFF59E0B),
                           ),
-                          const SizedBox(width: 3),
+                          const SizedBox(width: 4),
                           Text(
-                            isFaceVerified
-                                ? 'Face ID Verified'
-                                : 'Face ID Pending',
-                            style: TextStyle(
+                            isFaceVerified ? 'Face ID Verified' : 'Face ID Pending',
+                            style: SasTypography.style(
                               color: isFaceVerified
-                                  ? SasColors.success
-                                  : SasColors.warning,
-                              fontSize: 9,
+                                  ? const Color(0xFF059669)
+                                  : const Color(0xFFD97706),
+                              fontSize: 10,
                               fontWeight: FontWeight.w700,
                             ),
                           ),

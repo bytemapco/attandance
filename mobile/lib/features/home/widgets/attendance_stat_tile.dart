@@ -59,7 +59,7 @@ class AttendanceStatTile extends StatelessWidget {
                 Text(
                   subtitle,
                   style: TextStyle(
-                    color: isDark ? SasColors.maidenMist : SasColors.textMuted,
+                    color: SasColors.textSecondaryOf(context),
                     fontSize: 10.5,
                     fontWeight: FontWeight.w500,
                     letterSpacing: -0.1,

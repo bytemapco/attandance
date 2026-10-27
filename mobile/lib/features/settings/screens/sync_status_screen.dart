@@ -67,10 +67,10 @@ class _SyncStatusScreenState extends ConsumerState<SyncStatusScreen> {
                         children: [
                           Text(
                             queue.isEmpty ? 'All Synced' : '${queue.length} Pending Records',
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontWeight: FontWeight.w700,
                               fontSize: 15,
-                              color: SasColors.textPrimary,
+                              color: SasColors.textPrimaryOf(context),
                             ),
                           ),
                           const SizedBox(height: 2),
@@ -113,10 +113,10 @@ class _SyncStatusScreenState extends ConsumerState<SyncStatusScreen> {
                       Icon(Icons.cloud_done_rounded,
                           size: 48, color: SasColors.accentEmerald.withValues(alpha: 0.4)),
                       const SizedBox(height: 12),
-                      const Text(
+                      Text(
                         'Up to Date',
                         style: TextStyle(
-                          color: SasColors.textPrimary,
+                          color: SasColors.textPrimaryOf(context),
                           fontSize: 14,
                           fontWeight: FontWeight.w700,
                         ),

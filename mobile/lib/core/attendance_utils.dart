@@ -4,12 +4,14 @@ import 'package:smart_attendance_app/app/theme.dart';
 import 'package:smart_attendance_app/core/attendance_constants.dart';
 import 'package:smart_attendance_app/domain/models/attendance.dart';
 
-bool isPresentOrApproved(String status) =>
-    status == kStatusPresent || status == kStatusApproved;
+bool isPresentOrApproved(String status) {
+  final s = status.trim().toUpperCase();
+  return s == 'PRESENT' || s == 'APPROVED';
+}
 
-bool isAbsent(String status) => status == kStatusAbsent;
+bool isAbsent(String status) => status.trim().toUpperCase() == 'ABSENT';
 
-bool isFlagged(String status) => status == kStatusFlagged;
+bool isFlagged(String status) => status.trim().toUpperCase() == 'FLAGGED';
 
 Color pctColor(double pct) {
   if (pct >= kOverallGoodPct) return SasColors.success;
@@ -24,10 +26,11 @@ Color scoreColor(double score) {
 }
 
 Color statusColor(String status) {
-  if (status == kStatusPresent || status == kStatusApproved) {
+  final s = status.trim().toUpperCase();
+  if (s == 'PRESENT' || s == 'APPROVED') {
     return SasColors.success;
   }
-  if (status == kStatusFlagged) return SasColors.warning;
+  if (s == 'FLAGGED') return SasColors.warning;
   return SasColors.danger;
 }
 

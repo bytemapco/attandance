@@ -85,7 +85,7 @@ class LeaderboardScreen extends ConsumerWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       physics: const AlwaysScrollableScrollPhysics(),
       children: [
-        _buildUserSummaryCard(response),
+        _buildUserSummaryCard(context, response),
         const SizedBox(height: 16),
         const Text(
           'TOP PERFORMERS',
@@ -114,7 +114,7 @@ class LeaderboardScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildUserSummaryCard(LeaderboardResponse response) {
+  Widget _buildUserSummaryCard(BuildContext context, LeaderboardResponse response) {
     final rankText =
         response.userRank != null ? '#${response.userRank}' : 'N/A';
 
@@ -165,10 +165,10 @@ class LeaderboardScreen extends ConsumerWidget {
               const SizedBox(height: 4),
               Text(
                 '${response.userPoints}',
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.w800,
-                  color: SasColors.textPrimary,
+                  color: SasColors.textPrimaryOf(context),
                 ),
               ),
             ],

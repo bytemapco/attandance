@@ -81,19 +81,19 @@ class MenuGridItem extends StatelessWidget {
           const SizedBox(height: SasSpacing.md),
           Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               fontWeight: FontWeight.w700,
               fontSize: 14,
-              color: SasColors.textPrimary,
+              color: SasColors.textPrimaryOf(context),
             ),
           ),
           if (subtitle != null) ...[
             const SizedBox(height: 3),
             Text(
               subtitle!,
-              style: const TextStyle(
-                color: SasColors.textMuted,
-                fontSize: 11,
+              style: TextStyle(
+                color: SasColors.textSecondaryOf(context),
+                fontSize: 11.5,
                 fontWeight: FontWeight.w500,
               ),
             ),

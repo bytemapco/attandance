@@ -21,9 +21,9 @@ class _FlaggedTroubleshootFaqState extends State<FlaggedTroubleshootFaq> {
         child: ExpansionTile(
           tilePadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 2),
           childrenPadding: const EdgeInsets.fromLTRB(14, 0, 14, 14),
-          title: const Text(
+          title: Text(
             'Troubleshooting & Tips',
-            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: SasColors.textPrimary),
+            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: SasColors.textPrimaryOf(context)),
           ),
           trailing: Icon(
             _expanded ? Icons.keyboard_arrow_up_rounded : Icons.keyboard_arrow_down_rounded,
@@ -73,7 +73,7 @@ class _TipItem extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(title, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12, color: SasColors.textPrimary)),
+              Text(title, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12, color: SasColors.textPrimaryOf(context))),
               const SizedBox(height: 1),
               Text(desc, style: const TextStyle(color: SasColors.textMuted, fontSize: 11, height: 1.3)),
             ],

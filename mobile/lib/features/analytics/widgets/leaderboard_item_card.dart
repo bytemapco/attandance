@@ -49,7 +49,7 @@ class LeaderboardItemCard extends StatelessWidget {
                           fontSize: 13,
                           color: isCurrentUser
                               ? SasColors.success
-                              : SasColors.textPrimary,
+                              : SasColors.textPrimaryOf(context),
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),

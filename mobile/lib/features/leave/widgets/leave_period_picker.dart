@@ -68,7 +68,7 @@ class LeavePeriodPicker extends StatelessWidget {
                         fontSize: 13,
                         fontWeight: FontWeight.w700,
                         color: startDate != null
-                            ? SasColors.textPrimary
+                            ? SasColors.textPrimaryOf(context)
                             : SasColors.textMuted,
                       ),
                     ),
@@ -108,7 +108,7 @@ class LeavePeriodPicker extends StatelessWidget {
                         fontSize: 13,
                         fontWeight: FontWeight.w700,
                         color: endDate != null
-                            ? SasColors.textPrimary
+                            ? SasColors.textPrimaryOf(context)
                             : SasColors.textMuted,
                       ),
                     ),

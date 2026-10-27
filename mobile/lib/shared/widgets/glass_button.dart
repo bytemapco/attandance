@@ -29,7 +29,7 @@ class GlassButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = _resolveColors();
+    final colors = _resolveColors(context);
     final disabled = onPressed == null || isLoading;
 
     Widget child = Row(
@@ -45,10 +45,10 @@ class GlassButton extends StatelessWidget {
               valueColor: AlwaysStoppedAnimation<Color>(colors.foreground),
             ),
           ),
-          const SizedBox(width: 6),
+          const SizedBox(width: 8),
         ] else if (icon != null) ...[
-          Icon(icon, size: 16, color: colors.foreground),
-          const SizedBox(width: 6),
+          Icon(icon, size: 17, color: colors.foreground),
+          const SizedBox(width: 7),
         ],
         Flexible(
           child: Text(
@@ -56,10 +56,10 @@ class GlassButton extends StatelessWidget {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
-              fontSize: fontSize ?? 14,
+              fontSize: fontSize ?? 14.5,
               fontWeight: FontWeight.w600,
               color: colors.foreground,
-              letterSpacing: -0.01,
+              letterSpacing: -0.1,
             ),
           ),
         ),
@@ -67,7 +67,7 @@ class GlassButton extends StatelessWidget {
     );
 
     return AnimatedOpacity(
-      opacity: disabled ? 0.5 : 1.0,
+      opacity: disabled ? 0.45 : 1.0,
       duration: SasDurations.fast,
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
@@ -75,19 +75,23 @@ class GlassButton extends StatelessWidget {
         child: Material(
           color: Colors.transparent,
           child: Ink(
-            height: height ?? 46,
+            height: height ?? 48,
             decoration: BoxDecoration(
               color: colors.background,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: colors.border),
+              borderRadius: BorderRadius.circular(14),
+              border: colors.border != Colors.transparent
+                  ? Border.all(color: colors.border)
+                  : null,
               boxShadow: colors.shadow,
             ),
             child: InkWell(
               onTap: disabled ? null : onPressed,
-              borderRadius: BorderRadius.circular(12),
-              splashColor: colors.foreground.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(14),
+              splashColor: colors.foreground.withValues(alpha: 0.08),
+              highlightColor: colors.foreground.withValues(alpha: 0.04),
               child: Padding(
-                padding: padding ?? const EdgeInsets.symmetric(horizontal: 14),
+                padding: padding ??
+                    const EdgeInsets.symmetric(horizontal: 16),
                 child: child,
               ),
             ),
@@ -97,51 +101,57 @@ class GlassButton extends StatelessWidget {
     );
   }
 
-  _ButtonColors _resolveColors() {
+  _ButtonColors _resolveColors(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     switch (variant) {
       case GlassButtonVariant.primary:
-        return const _ButtonColors(
+        return _ButtonColors(
           background: SasColors.osageOrange,
-          foreground: SasColors.darkCanvas,
+          foreground: Colors.white,  // Fixed: was darkCanvas (2.8:1 fail)
           border: Colors.transparent,
           shadow: [
             BoxShadow(
-              color: SasColors.accentGlow,
-              blurRadius: 10,
-              offset: Offset(0, 3),
+              color: SasColors.osageOrange.withValues(alpha: 0.35),
+              blurRadius: 16,
+              offset: const Offset(0, 4),
             ),
           ],
         );
       case GlassButtonVariant.secondary:
-        return const _ButtonColors(
-          background: SasColors.bgSecondary,
-          foreground: SasColors.textPrimary,
-          border: SasColors.glassBorder,
+        return _ButtonColors(
+          background: isDark
+              ? SasColors.darkElevated
+              : SasColors.lightSurface,
+          foreground: isDark ? SasColors.brilliance : SasColors.indianInk,
+          border: isDark
+              ? const Color(0x1EFFFFFF)
+              : const Color(0x18000000),
           shadow: [
             BoxShadow(
-              color: Color(0x14000000),
-              blurRadius: 6,
-              offset: Offset(0, 2),
+              color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.06),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
             ),
           ],
         );
       case GlassButtonVariant.danger:
-        return const _ButtonColors(
+        return _ButtonColors(
           background: SasColors.danger,
           foreground: Colors.white,
           border: Colors.transparent,
           shadow: [
             BoxShadow(
-              color: Color(0x28F43F5E),
-              blurRadius: 8,
-              offset: Offset(0, 2),
+              color: SasColors.danger.withValues(alpha: 0.3),
+              blurRadius: 12,
+              offset: const Offset(0, 3),
             ),
           ],
         );
       case GlassButtonVariant.ghost:
-        return const _ButtonColors(
+        return _ButtonColors(
           background: Colors.transparent,
-          foreground: SasColors.textSecondary,
+          foreground:
+              isDark ? SasColors.maidenMist : SasColors.textSecondary,
           border: Colors.transparent,
           shadow: null,
         );

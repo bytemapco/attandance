@@ -52,10 +52,10 @@ class HistorySubjectBreakdown extends StatelessWidget {
                       children: [
                         Text(
                           stat.name,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontWeight: FontWeight.w600,
                             fontSize: 12,
-                            color: SasColors.textPrimary,
+                            color: SasColors.textPrimaryOf(context),
                           ),
                         ),
                         Text(

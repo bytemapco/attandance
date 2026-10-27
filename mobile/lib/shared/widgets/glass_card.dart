@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:smart_attendance_app/app/theme.dart';
 
-/// Clean elevated surface card with subtle drop shadow and crisp enterprise border.
+/// Elevated surface card with a subtle inner-gradient shimmer and
+/// adaptive border — no glassmorphism, just structural depth.
 class GlassCard extends StatelessWidget {
   final Widget child;
   final EdgeInsetsGeometry padding;
@@ -15,7 +16,7 @@ class GlassCard extends StatelessWidget {
     super.key,
     required this.child,
     this.padding = const EdgeInsets.all(16),
-    this.borderRadius = 18,
+    this.borderRadius = 20,
     this.onTap,
     this.borderColor,
     this.backgroundColor,
@@ -26,27 +27,51 @@ class GlassCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final defaultBg = isDark ? SasColors.darkSurface : SasColors.lightSurface;
-    final defaultBorder = isDark ? const Color(0x2EBAC0BE) : const Color(0x24BAC0BE);
+    final defaultBorder = isDark
+        ? const Color(0x1EFFFFFF)
+        : const Color(0x14000000);
+    final bg = backgroundColor ?? defaultBg;
 
     final decoration = BoxDecoration(
-      color: backgroundColor ?? defaultBg,
+      // Micro inner-gradient: adds structural depth without glassmorphism
+      gradient: LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: isDark
+            ? [
+                Color.lerp(bg, Colors.white, 0.04)!,
+                bg,
+              ]
+            : [
+                bg,
+                Color.lerp(bg, Colors.black, 0.015)!,
+              ],
+      ),
       borderRadius: BorderRadius.circular(borderRadius),
       border: Border.all(
         color: borderColor ?? defaultBorder,
-        width: 1.0,
+        width: 0.8,
       ),
-      boxShadow: [
-        BoxShadow(
-          color: isDark ? const Color(0x33000000) : const Color(0x0A000000),
-          blurRadius: 16,
-          offset: const Offset(0, 4),
-        ),
-        BoxShadow(
-          color: isDark ? const Color(0x1F000000) : const Color(0x05000000),
-          blurRadius: 4,
-          offset: const Offset(0, 1),
-        ),
-      ],
+      boxShadow: isDark
+          ? [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.28),
+                blurRadius: 20,
+                offset: const Offset(0, 6),
+              ),
+            ]
+          : [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.055),
+                blurRadius: 12,
+                offset: const Offset(0, 3),
+              ),
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.025),
+                blurRadius: 3,
+                offset: const Offset(0, 1),
+              ),
+            ],
     );
 
     Widget content = Container(
@@ -62,8 +87,12 @@ class GlassCard extends StatelessWidget {
         child: InkWell(
           onTap: onTap,
           borderRadius: BorderRadius.circular(borderRadius),
-          splashColor: SasColors.glassBgHover,
-          child: content,
+          splashColor: SasColors.osageOrange.withValues(alpha: 0.05),
+          highlightColor: SasColors.osageOrange.withValues(alpha: 0.03),
+          child: Ink(
+            decoration: decoration,
+            child: Padding(padding: padding, child: child),
+          ),
         ),
       );
     }

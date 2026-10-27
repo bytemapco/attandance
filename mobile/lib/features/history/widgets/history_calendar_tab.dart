@@ -96,7 +96,7 @@ class _HistoryCalendarTabState extends State<HistoryCalendarTab> {
         const SizedBox(height: 14),
         Text(
           _selectedDate.formattedDate,
-          style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13, color: SasColors.textPrimary),
+          style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13, color: SasColors.textPrimaryOf(context)),
         ),
         const SizedBox(height: 6),
         ..._buildDayRecords(grouped[_selectedDate] ?? []),
@@ -116,7 +116,7 @@ class _HistoryCalendarTabState extends State<HistoryCalendarTab> {
         ),
         Text(
           DateFormat.yMMMM().format(_focusedMonth),
-          style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14, color: SasColors.textPrimary),
+          style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14, color: SasColors.textPrimaryOf(context)),
         ),
         IconButton(
           icon: const Icon(Icons.chevron_right_rounded, size: 20),

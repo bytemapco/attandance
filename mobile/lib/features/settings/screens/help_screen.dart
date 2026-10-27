@@ -122,10 +122,10 @@ class _FaqTileState extends State<_FaqTile> {
               const EdgeInsets.fromLTRB(16, 0, 16, 16),
           title: Text(
             widget.question,
-            style: const TextStyle(
+            style: TextStyle(
                 fontWeight: FontWeight.w600,
                 fontSize: 14,
-                color: SasColors.textPrimary),
+                color: SasColors.textPrimaryOf(context)),
           ),
           trailing: Icon(
             _expanded

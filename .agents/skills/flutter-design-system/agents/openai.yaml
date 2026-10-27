@@ -1,0 +1,4 @@
+interface:
+  display_name: "Flutter Design System"
+  short_description: "Build semantic Flutter design systems"
+  default_prompt: "Use $flutter-design-system to define or improve this app's design system."

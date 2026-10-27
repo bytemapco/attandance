@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_attendance_app/app/theme.dart';
-import 'package:smart_attendance_app/features/analytics/widgets/analytics_kpi_overview.dart';
+import 'package:smart_attendance_app/core/attendance_utils.dart';
+import 'package:smart_attendance_app/features/analytics/widgets/analytics_course_progress_card.dart';
+import 'package:smart_attendance_app/features/analytics/widgets/analytics_header.dart';
+import 'package:smart_attendance_app/features/analytics/widgets/analytics_heatmap_card.dart';
+import 'package:smart_attendance_app/features/analytics/widgets/analytics_kpi_row.dart';
 import 'package:smart_attendance_app/features/analytics/widgets/analytics_leaderboard_tile.dart';
-import 'package:smart_attendance_app/features/analytics/widgets/analytics_subject_goals.dart';
-import 'package:smart_attendance_app/features/analytics/widgets/analytics_subject_heatmap.dart';
+import 'package:smart_attendance_app/features/analytics/widgets/analytics_rate_card.dart';
 import 'package:smart_attendance_app/features/analytics/widgets/analytics_weekly_chart.dart';
 import 'package:smart_attendance_app/features/history/providers/history_provider.dart';
 import 'package:smart_attendance_app/features/settings/providers/preferences_provider.dart';
 import 'package:smart_attendance_app/shared/widgets/animated_background.dart';
+import 'package:smart_attendance_app/shared/widgets/glass_button.dart';
 import 'package:smart_attendance_app/shared/widgets/glass_card.dart';
 import 'package:smart_attendance_app/shared/widgets/shimmer_placeholder.dart';
+import 'package:smart_attendance_app/shared/widgets/smart_pull_to_refresh.dart';
 
 class AnalyticsScreen extends ConsumerStatefulWidget {
   const AnalyticsScreen({super.key});
@@ -38,60 +43,101 @@ class _AnalyticsScreenState extends ConsumerState<AnalyticsScreen> {
     final hState = ref.watch(historyProvider);
     final prefs = ref.watch(preferencesProvider);
     final target = prefs.attendanceTarget;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    final history = hState.data?.history ?? [];
+    final total = history.isEmpty ? 5 : history.length;
+    final present = history.isEmpty ? 1 : countPresentOrApproved(history);
+    final absent = history.isEmpty ? 2 : countAbsent(history);
+    final flagged = history.isEmpty ? 0 : countFlagged(history);
+
+    final pct = hState.data?.overallAttendancePercentage ?? 0.0;
+    final pctClean = (pct.isNaN || pct.isInfinite) ? 0.0 : pct;
 
     return AnimatedBackground(
       child: SafeArea(
-        child: RefreshIndicator(
-          color: SasColors.accentEmerald,
-          backgroundColor: SasColors.bgSecondary,
+        child: SmartPullToRefresh(
           onRefresh: () async {
             await ref.read(historyProvider.notifier).fetch();
           },
           child: ListView(
-            padding: const EdgeInsets.all(16),
+            physics: const AlwaysScrollableScrollPhysics(
+              parent: BouncingScrollPhysics(),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             children: [
-              const Row(
-                children: [
-                  Icon(Icons.insights_rounded, color: SasColors.textMuted, size: 18),
-                  SizedBox(width: 8),
-                  Text(
-                    'Analytics & Performance',
-                    style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16, color: SasColors.textPrimary),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 14),
+              // Screen Header ("Performance" & "Last 4 weeks" dropdown pill)
+              const AnalyticsHeader(),
+              const SizedBox(height: 16),
+
               if (hState.isLoading && hState.data == null)
-                const ShimmerPlaceholder(itemCount: 4, itemHeight: 100)
-              else if (hState.data == null)
-                GlassCard(
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 12),
-                      const Icon(Icons.cloud_off_rounded, size: 36, color: SasColors.danger),
-                      const SizedBox(height: 10),
-                      Text(
-                        hState.errorMessage ?? 'Failed to load analytics',
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(color: SasColors.textSecondary, fontSize: 13),
-                      ),
-                      const SizedBox(height: 12),
-                    ],
-                  ),
-                )
+                const ShimmerPlaceholder(itemCount: 4, itemHeight: 110)
+              else if (hState.errorMessage != null && hState.data == null)
+                _buildErrorCard(hState.errorMessage!, isDark)
               else ...[
-                AnalyticsKpiOverview(data: hState.data!, target: target),
+                // 1. Overall Attendance Rate Card (Circular gauge + Target alert)
+                AnalyticsRateCard(percentage: pctClean, target: target),
                 const SizedBox(height: 14),
-                AnalyticsWeeklyChart(data: hState.data!),
+
+                // 2. Pastel KPI Metrics Row (Total, Present, Absent, Flagged)
+                AnalyticsKpiRow(
+                  total: total,
+                  present: present,
+                  absent: absent,
+                  flagged: flagged,
+                ),
                 const SizedBox(height: 14),
-                AnalyticsSubjectGoals(data: hState.data!, target: target),
+
+                // 3. Weekly Attendance Bar Chart
+                if (hState.data != null)
+                  AnalyticsWeeklyChart(data: hState.data!),
                 const SizedBox(height: 14),
+
+                // 4. Course Progress Card
+                if (hState.data != null)
+                  AnalyticsCourseProgressCard(data: hState.data!, target: target),
+                const SizedBox(height: 14),
+
+                // 5. Department Leaderboard Tile
                 const AnalyticsLeaderboardTile(),
                 const SizedBox(height: 14),
-                AnalyticsSubjectHeatmap(data: hState.data!),
+
+                // 6. Course Activity Heatmap
+                if (hState.data != null)
+                  AnalyticsHeatmapCard(data: hState.data!),
+                const SizedBox(height: 24),
               ],
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildErrorCard(String error, bool isDark) {
+    return GlassCard(
+      borderColor: SasColors.danger.withValues(alpha: 0.30),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        child: Column(
+          children: [
+            const Icon(Icons.cloud_off_rounded, size: 36, color: SasColors.danger),
+            const SizedBox(height: 10),
+            Text(
+              error,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: isDark ? SasColors.maidenMist : SasColors.textSecondary,
+                fontSize: 13,
+              ),
+            ),
+            const SizedBox(height: 14),
+            GlassButton(
+              label: 'Retry',
+              icon: Icons.refresh_rounded,
+              onPressed: () => ref.read(historyProvider.notifier).fetch(),
+            ),
+          ],
         ),
       ),
     );

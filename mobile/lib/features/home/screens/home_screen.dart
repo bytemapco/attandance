@@ -3,19 +3,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:smart_attendance_app/app/theme.dart';
 import 'package:smart_attendance_app/core/attendance_utils.dart';
-import 'package:smart_attendance_app/core/extensions.dart';
-import 'package:smart_attendance_app/data/local/pending_count_provider.dart';
+import 'package:smart_attendance_app/data/local/notification_service.dart';
 import 'package:smart_attendance_app/features/auth/providers/auth_provider.dart';
 import 'package:smart_attendance_app/features/history/providers/history_provider.dart';
 import 'package:smart_attendance_app/features/home/providers/session_provider.dart';
-import 'package:smart_attendance_app/features/home/widgets/class_session_card.dart';
-import 'package:smart_attendance_app/features/home/widgets/home_attendance_overview.dart';
-import 'package:smart_attendance_app/features/home/widgets/home_empty_classes.dart';
-import 'package:smart_attendance_app/features/home/widgets/home_warning_banner.dart';
-import 'package:smart_attendance_app/features/home/widgets/home_welcome_card.dart';
-import 'package:smart_attendance_app/shared/widgets/animated_background.dart';
-import 'package:smart_attendance_app/shared/widgets/info_banner.dart';
-import 'package:smart_attendance_app/shared/widgets/shimmer_placeholder.dart';
+import 'package:smart_attendance_app/features/home/widgets/home_compliance_card.dart';
+import 'package:smart_attendance_app/features/home/widgets/home_header_crest.dart';
+import 'package:smart_attendance_app/features/home/widgets/home_modern_header.dart';
+import 'package:smart_attendance_app/features/home/widgets/home_motivational_banner.dart';
+import 'package:smart_attendance_app/features/home/widgets/home_stat_pills_row.dart';
+import 'package:smart_attendance_app/features/home/widgets/home_today_classes_card.dart';
+import 'package:smart_attendance_app/shared/widgets/smart_pull_to_refresh.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -59,124 +57,124 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   Widget build(BuildContext context) {
     final user = ref.watch(authProvider).user;
     final sessionState = ref.watch(sessionProvider);
-    final pendingCount = ref.watch(pendingCountProvider);
     final historyState = ref.watch(historyProvider);
     final rawPct = historyState.data?.overallAttendancePercentage ?? 0;
     final overallPct =
         (rawPct.isNaN || rawPct.isInfinite) ? 0.0 : rawPct.toDouble();
 
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final historyList = historyState.data?.history ?? [];
+    final streakDays = calculateStreak(historyList);
+    final classesThisWeek = computeWeekPresent(historyList);
 
-    return AnimatedBackground(
-      child: SafeArea(
-        child: RefreshIndicator(
-          color: SasColors.osageOrange,
-          backgroundColor: Theme.of(context).cardTheme.color ?? SasColors.bgSecondary,
-          onRefresh: () async {
-            await ref.read(sessionProvider.notifier).fetchSessions();
-            await ref.read(historyProvider.notifier).fetch();
-          },
-          child: ListView(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            children: [
-              HomeWelcomeCard(user: user, pendingCount: pendingCount),
-              const SizedBox(height: 14),
-              if (historyState.data != null) ...[
-                HomeAttendanceOverview(
-                  overallPct: overallPct,
-                  history: historyState.data!.history,
-                  highestStreak:
-                      calculateHighestStreak(historyState.data!.history),
-                  onTapAnalytics: () => context.go('/analytics'),
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final notifications = ref.watch(notificationsProvider);
+    final unreadCount = notifications.where((n) => !n.isRead).length;
+
+    return Scaffold(
+      backgroundColor: isDark ? SasColors.darkCanvas : const Color(0xFFF8FAFC),
+      body: Stack(
+        children: [
+          // Campus header photo fading into the canvas
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            height: 240,
+            child: IgnorePointer(
+              child: ShaderMask(
+                shaderCallback: (rect) {
+                  return LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.black.withValues(alpha: isDark ? 0.45 : 0.85),
+                      Colors.transparent,
+                    ],
+                    stops: const [0.50, 1.0],
+                  ).createShader(rect);
+                },
+                blendMode: BlendMode.dstIn,
+                child: Image.asset(
+                  'assets/images/campus_header.png',
+                  fit: BoxFit.cover,
+                  alignment: const Alignment(0.35, 0.0),
                 ),
-                const SizedBox(height: 16),
-              ] else if (overallPct > 0 && overallPct < 75) ...[
-                HomeWarningBanner(
-                  percentage: overallPct,
-                  onTap: () => context.go('/analytics'),
+              ),
+            ),
+          ),
+
+          // Top-left curved organic orange crest
+          const Positioned(
+            top: 0,
+            left: 0,
+            width: 150,
+            height: 95,
+            child: HomeHeaderCrest(),
+          ),
+
+          SafeArea(
+            child: SmartPullToRefresh(
+              onRefresh: () async {
+                await ref.read(sessionProvider.notifier).fetchSessions();
+                await ref.read(historyProvider.notifier).fetch();
+              },
+              child: ListView(
+                physics: const AlwaysScrollableScrollPhysics(
+                  parent: BouncingScrollPhysics(),
                 ),
-                const SizedBox(height: 16),
-              ],
-              Row(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 children: [
-                  Container(
-                    padding: const EdgeInsets.all(5),
-                    decoration: BoxDecoration(
-                      color: SasColors.osageOrange.withValues(alpha: isDark ? 0.2 : 0.12),
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    child: const Icon(
-                      Icons.calendar_today_rounded,
-                      color: SasColors.osageOrange,
-                      size: 13,
-                    ),
+                  // Modern Student Header (Avatar, Hello, Institute, Bell)
+                  HomeModernHeader(
+                    user: user,
+                    unreadCount: unreadCount,
+                    onNotificationTap: () => context.push('/notifications'),
                   ),
-                  const SizedBox(width: 8),
-                  Text(
-                    "Today's Classes",
-                    style: TextStyle(
-                      color: isDark ? SasColors.brilliance : SasColors.indianInk,
-                      fontSize: 14.5,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: -0.2,
-                    ),
+                  const SizedBox(height: 16),
+
+                  // Hero Term Compliance Gradient Card (0% with Circular Gauge)
+                  HomeComplianceCard(
+                    percentage: overallPct,
+                    onTap: () => context.go('/analytics'),
                   ),
-                  const SizedBox(width: 8),
-                  if (sessionState.sessions.isNotEmpty)
-                    Container(
-                      padding:
-                          const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: SasColors.osageOrange.withValues(alpha: isDark ? 0.22 : 0.12),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Text(
-                        '${sessionState.sessions.length}',
-                        style: const TextStyle(
-                          color: SasColors.osageOrange,
-                          fontSize: 10.5,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
-                    ),
-                  const Spacer(),
-                  Text(
-                    DateTime.now().shortDate,
-                    style: TextStyle(
-                      color: isDark ? SasColors.maidenMist : SasColors.textMuted,
-                      fontSize: 11.5,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: -0.1,
-                    ),
+                  const SizedBox(height: 14),
+
+                  // Streak & Classes this week pills
+                  HomeStatPillsRow(
+                    streakDays: streakDays,
+                    classesThisWeek: classesThisWeek > 0 ? classesThisWeek : 1,
+                    onTapStreak: () => context.go('/history'),
+                    onTapClasses: () => context.go('/history'),
                   ),
+                  const SizedBox(height: 14),
+
+                  // Today's Classes Card with in-card action buttons
+                  HomeTodayClassesCard(
+                    sessions: sessionState.sessions,
+                    onViewAll: () => context.go('/history'),
+                    onSmartPass: () => context.push('/smart-pass'),
+                    onFaceMatch: () {
+                      final activeSessionId = sessionState.sessions
+                          .where((s) => s.isActive && s.sessionId != null)
+                          .firstOrNull
+                          ?.sessionId;
+                      if (activeSessionId != null) {
+                        context.push('/verify/$activeSessionId');
+                      } else {
+                        context.push('/smart-pass');
+                      }
+                    },
+                  ),
+                  const SizedBox(height: 14),
+
+                  // Bottom Motivational Trophy Banner
+                  const HomeMotivationalBanner(),
+                  const SizedBox(height: 20),
                 ],
               ),
-              const SizedBox(height: 10),
-              if (sessionState.errorMessage != null &&
-                  sessionState.sessions.isEmpty)
-                InfoBanner(
-                  message: sessionState.errorMessage!,
-                  severity: BannerSeverity.danger,
-                  customIcon: Icons.wifi_off_rounded,
-                  actionLabel: 'Retry',
-                  onAction: () =>
-                      ref.read(sessionProvider.notifier).fetchSessions(),
-                )
-              else if (sessionState.isLoading && sessionState.sessions.isEmpty)
-                const ShimmerPlaceholder()
-              else if (sessionState.sessions.isEmpty)
-                const HomeEmptyClasses()
-              else
-                ...sessionState.sessions.map(
-                  (session) => ClassSessionCard(
-                    session: session,
-                    isMarked: sessionState.markedSessionIds
-                        .contains(session.sessionId),
-                  ),
-                ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

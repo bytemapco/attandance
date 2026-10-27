@@ -27,12 +27,12 @@ class AnalyticsKpiOverview extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Attendance KPIs',
           style: TextStyle(
             fontWeight: FontWeight.w700,
             fontSize: 13,
-            color: SasColors.textSecondary,
+            color: SasColors.textSecondaryOf(context),
           ),
         ),
         const SizedBox(height: 8),
@@ -80,12 +80,12 @@ class AnalyticsKpiOverview extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
+                  Text(
                     'Overall Attendance Rate',
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
                       fontSize: 13,
-                      color: SasColors.textPrimary,
+                      color: SasColors.textPrimaryOf(context),
                     ),
                   ),
                   Text(
@@ -114,9 +114,10 @@ class AnalyticsKpiOverview extends StatelessWidget {
                 children: [
                   Text(
                     'Target: ${target.toStringAsFixed(0)}%',
-                    style: const TextStyle(
-                      color: SasColors.textMuted,
+                    style: TextStyle(
+                      color: SasColors.textSecondaryOf(context),
                       fontSize: 11,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                   if (pct < target)
