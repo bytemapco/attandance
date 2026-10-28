@@ -35,21 +35,21 @@ class ResultConfig {
         icon: Icons.error_outline_rounded,
         color: SasColors.danger,
         title: 'Submission Failed',
-        subtitle: message ?? 'Something went wrong. Please try again.',
+        subtitle: message ?? 'Could not submit attendance. Please try again.',
       );
 
   factory ResultConfig.offline() => const ResultConfig(
-        icon: Icons.cloud_sync_rounded,
+        icon: Icons.cloud_done_rounded,
         color: SasColors.info,
         title: 'Saved Offline',
-        subtitle: 'Attendance queued. It will sync once internet is connected.',
+        subtitle: 'Attendance queued locally. It will automatically sync when online.',
       );
 
   factory ResultConfig.present(AttendanceResult att) => ResultConfig(
         icon: Icons.check_circle_rounded,
         color: SasColors.accentEmerald,
         title: 'Verified Present',
-        subtitle: 'Your attendance has been confirmed and logged.',
+        subtitle: 'Attendance confirmed for this class session.',
         scores: ScoreData(
           overall: att.finalAiScore,
           face: att.faceScore,
@@ -59,10 +59,10 @@ class ResultConfig {
       );
 
   factory ResultConfig.flagged(AttendanceResult att) => ResultConfig(
-        icon: Icons.warning_amber_rounded,
-        color: SasColors.warning,
+        icon: Icons.schedule_rounded,
+        color: const Color(0xFFF95721),
         title: 'Sent for Review',
-        subtitle: 'Submitted for teacher review.',
+        subtitle: 'Attendance recorded. Pending instructor review.',
         scores: ScoreData(
           overall: att.finalAiScore,
           face: att.faceScore,
@@ -72,9 +72,9 @@ class ResultConfig {
       );
 
   factory ResultConfig.processing() => const ResultConfig(
-        icon: Icons.hourglass_empty_rounded,
+        icon: Icons.hourglass_top_rounded,
         color: SasColors.textMuted,
-        title: 'Verifying Attendance...',
-        subtitle: 'Checking face and location',
+        title: 'Checking Attendance',
+        subtitle: 'Verifying location and biometric records...',
       );
 }

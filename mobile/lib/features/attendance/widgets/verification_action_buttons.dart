@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:smart_attendance_app/shared/widgets/glass_button.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class VerificationActionButtons extends StatelessWidget {
   final String primaryLabel;
@@ -23,24 +23,62 @@ class VerificationActionButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Row(
       children: [
         if (secondaryLabel != null) ...[
           Expanded(
-            child: GlassButton(
-              label: secondaryLabel!,
-              variant: isSecondaryGhost ? GlassButtonVariant.ghost : GlassButtonVariant.secondary,
-              icon: secondaryIcon,
-              onPressed: onSecondaryPressed,
+            child: SizedBox(
+              height: 48,
+              child: OutlinedButton.icon(
+                onPressed: onSecondaryPressed,
+                icon: secondaryIcon != null
+                    ? Icon(secondaryIcon, size: 18, color: isDark ? Colors.white : const Color(0xFF0F172A))
+                    : const SizedBox.shrink(),
+                label: Text(
+                  secondaryLabel!,
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: isDark ? Colors.white : const Color(0xFF0F172A),
+                  ),
+                ),
+                style: OutlinedButton.styleFrom(
+                  side: BorderSide(
+                    color: isDark ? const Color(0xFF334155) : const Color(0xFFCBD5E1),
+                    width: 1.2,
+                  ),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                ),
+              ),
             ),
           ),
           const SizedBox(width: 12),
         ],
         Expanded(
-          child: GlassButton(
-            label: primaryLabel,
-            icon: primaryIcon,
-            onPressed: onPrimaryPressed,
+          child: SizedBox(
+            height: 48,
+            child: ElevatedButton.icon(
+              onPressed: onPrimaryPressed,
+              icon: primaryIcon != null
+                  ? Icon(primaryIcon, size: 18, color: Colors.white)
+                  : const SizedBox.shrink(),
+              label: Text(
+                primaryLabel,
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                ),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFF95721),
+                elevation: 1,
+                shadowColor: const Color(0xFFF95721).withValues(alpha: 0.35),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+              ),
+            ),
           ),
         ),
       ],

@@ -9,41 +9,43 @@ class HomeComplianceArc extends StatelessWidget {
   const HomeComplianceArc({
     super.key,
     required this.progress,
-    this.size = 126,
+    this.size = 124,
   });
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final trackColor = isDark
+        ? const Color(0xFF334155)
+        : const Color(0xFFEEF2F6);
+    final iconColor = isDark
+        ? Colors.white
+        : const Color(0xFF475569);
+
+    // Show at least a small segment if 0% or clamp actual progress
+    final displayProgress = progress > 0 ? progress : 0.18;
+
     return SizedBox(
       width: size,
       height: size,
       child: Stack(
         alignment: Alignment.center,
         children: [
-          // Darker navy inner circular backing disc
-          Container(
-            width: size - 14,
-            height: size - 14,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: const Color(0xFF131D33).withValues(alpha: 0.55),
-            ),
-          ),
-
           // Track and active orange progress arc
           CustomPaint(
             size: Size(size, size),
             painter: _ArcPainter(
-              progress: progress > 0 ? progress : 0.35,
-              strokeWidth: 9.5,
+              progress: displayProgress,
+              trackColor: trackColor,
+              strokeWidth: 10.0,
             ),
           ),
 
-          // White calendar with checkmark icon matching reference
-          const Icon(
+          // Clean calendar with checkmark outline icon
+          Icon(
             Icons.event_available_rounded,
-            color: Colors.white,
-            size: 32,
+            color: iconColor,
+            size: 28,
           ),
         ],
       ),
@@ -53,9 +55,14 @@ class HomeComplianceArc extends StatelessWidget {
 
 class _ArcPainter extends CustomPainter {
   final double progress;
+  final Color trackColor;
   final double strokeWidth;
 
-  const _ArcPainter({required this.progress, required this.strokeWidth});
+  const _ArcPainter({
+    required this.progress,
+    required this.trackColor,
+    required this.strokeWidth,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -64,7 +71,7 @@ class _ArcPainter extends CustomPainter {
 
     // Track circular ring
     final trackPaint = Paint()
-      ..color = Colors.white.withValues(alpha: 0.12)
+      ..color = trackColor
       ..style = PaintingStyle.stroke
       ..strokeWidth = strokeWidth
       ..strokeCap = StrokeCap.round;
@@ -78,10 +85,19 @@ class _ArcPainter extends CustomPainter {
       ..strokeCap = StrokeCap.round;
 
     final rect = Rect.fromCircle(center: center, radius: radius);
-    canvas.drawArc(rect, -math.pi / 4, math.pi * 1.5 * progress, false, arcPaint);
+    canvas.drawArc(
+      rect,
+      -math.pi / 4,
+      math.pi * 2 * progress,
+      false,
+      arcPaint,
+    );
   }
 
   @override
   bool shouldRepaint(covariant _ArcPainter old) =>
-      old.progress != progress || old.strokeWidth != strokeWidth;
+      old.progress != progress ||
+      old.trackColor != trackColor ||
+      old.strokeWidth != strokeWidth;
 }
+

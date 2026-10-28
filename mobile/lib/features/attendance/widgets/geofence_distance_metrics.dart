@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:smart_attendance_app/app/theme.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:smart_attendance_app/features/attendance/providers/geofence_verification_provider.dart';
+import 'package:smart_attendance_app/features/attendance/widgets/geofence_metric_box.dart';
 
 class GeofenceDistanceMetrics extends StatelessWidget {
   final GeofenceVerificationState state;
@@ -12,96 +14,79 @@ class GeofenceDistanceMetrics extends StatelessWidget {
     required this.statusColor,
   });
 
+  static String formatDistance(double meters) {
+    if (meters < 1000) {
+      return '${meters.round()} m';
+    } else if (meters < 10000) {
+      return '${(meters / 1000).toStringAsFixed(1)} km';
+    } else {
+      final km = (meters / 1000).round();
+      return '${NumberFormat('#,###').format(km)} km';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final distance = state.distanceMeters ?? 0;
     final radius = state.radiusMeters ?? 100;
-    final progress = (distance / radius).clamp(0.0, 1.5);
-    final isInside = state.status == GeofenceStatus.success;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    final containerBg = isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC);
+    final borderCol = isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0);
+    final mutedTextCol = isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B);
 
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: SasColors.bgCanvas,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: SasColors.glassBorder),
+        color: containerBg,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: borderCol),
       ),
       child: Column(
         children: [
           Row(
             children: [
               Expanded(
-                child: _buildChip(
-                  'Distance',
-                  '${distance.toStringAsFixed(0)}m',
-                  Icons.near_me_rounded,
-                  statusColor,
+                child: GeofenceMetricBox(
+                  label: 'Current Distance',
+                  meters: distance,
+                  icon: Icons.near_me_rounded,
+                  accentColor: statusColor,
+                  isDark: isDark,
+                  borderColor: borderCol,
                 ),
               ),
               const SizedBox(width: 8),
               Expanded(
-                child: _buildChip(
-                  'Allowed Radius',
-                  '${radius.toStringAsFixed(0)}m',
-                  Icons.radio_button_checked_rounded,
-                  SasColors.textMuted,
+                child: GeofenceMetricBox(
+                  label: 'Allowed Radius',
+                  meters: radius,
+                  icon: Icons.radio_button_checked_rounded,
+                  accentColor: isDark ? const Color(0xFFCBD5E1) : const Color(0xFF475569),
+                  isDark: isDark,
+                  borderColor: borderCol,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text('Boundary status', style: TextStyle(fontSize: 11, color: SasColors.textMuted)),
-              Text(
-                isInside ? 'Within Range' : 'Outside Range',
-                style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: statusColor),
-              ),
-            ],
-          ),
-          const SizedBox(height: 4),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(4),
-            child: LinearProgressIndicator(
-              value: (progress / 1.5).clamp(0.0, 1.0),
-              backgroundColor: SasColors.glassBorder,
-              valueColor: AlwaysStoppedAnimation<Color>(statusColor),
-              minHeight: 5,
-            ),
-          ),
           if (state.accuracy != null) ...[
-            const SizedBox(height: 6),
-            Text(
-              'Accuracy: ±${state.accuracy!.toStringAsFixed(0)}m',
-              style: const TextStyle(color: SasColors.textMuted, fontSize: 10),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.gps_fixed_rounded, size: 12, color: mutedTextCol),
+                const SizedBox(width: 4),
+                Text(
+                  'GPS accuracy ±${state.accuracy!.toStringAsFixed(0)} m',
+                  style: GoogleFonts.plusJakartaSans(
+                    color: mutedTextCol,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
             ),
           ],
-        ],
-      ),
-    );
-  }
-
-  Widget _buildChip(String label, String value, IconData icon, Color color) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-      decoration: BoxDecoration(
-        color: SasColors.bgSecondary,
-        borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: SasColors.glassBorder),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(icon, color: color, size: 12),
-              const SizedBox(width: 4),
-              Text(label, style: const TextStyle(fontSize: 10, color: SasColors.textMuted)),
-            ],
-          ),
-          const SizedBox(height: 2),
-          Text(value, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: color)),
         ],
       ),
     );

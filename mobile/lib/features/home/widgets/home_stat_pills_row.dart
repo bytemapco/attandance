@@ -141,19 +141,11 @@ class _StatPillCard extends StatelessWidget {
               ),
             ),
 
-            // Chevron
-            Container(
-              width: 24,
-              height: 24,
-              decoration: BoxDecoration(
-                color: isDark ? SasColors.darkElevated : const Color(0xFFF1F5F9),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.chevron_right_rounded,
-                size: 16,
-                color: subtitleColor,
-              ),
+            // Subtle Chevron matching goal UI
+            Icon(
+              Icons.chevron_right_rounded,
+              size: 20,
+              color: subtitleColor,
             ),
           ],
         ),

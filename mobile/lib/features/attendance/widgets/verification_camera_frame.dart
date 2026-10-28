@@ -1,8 +1,9 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:smart_attendance_app/app/theme.dart';
+import 'package:smart_attendance_app/app/typography.dart';
+import 'package:smart_attendance_app/features/attendance/widgets/verification_camera_tips_card.dart';
 import 'package:smart_attendance_app/shared/widgets/glass_button.dart';
-import 'package:smart_attendance_app/shared/widgets/glass_card.dart';
 
 class VerificationCameraFrame extends StatelessWidget {
   final CameraController? camera;
@@ -25,58 +26,52 @@ class VerificationCameraFrame extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (showTips) {
-      return GlassCard(
-        borderColor: SasColors.accentEmerald.withValues(alpha: 0.4),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Row(
-              children: [
-                Icon(Icons.tips_and_updates_rounded, color: SasColors.accentEmerald, size: 18),
-                SizedBox(width: 8),
-                Text('Tips for best results',
-                    style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
-              ],
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              '• Look straight at the camera\n'
-              '• Ensure good lighting (avoid backlighting)\n'
-              '• Remove glasses if possible\n'
-              '• Keep your full face inside the oval',
-              style: TextStyle(color: SasColors.textSecondary, fontSize: 13, height: 1.6),
-            ),
-            const SizedBox(height: 8),
-            GlassButton(
-              label: 'Got it',
-              variant: GlassButtonVariant.ghost,
-              onPressed: onDismissTips,
+      return VerificationCameraTipsCard(onDismissTips: onDismissTips);
+    }
+
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardBg = isDark ? SasColors.darkSurface : Colors.white;
+    final borderCol = isDark ? const Color(0x1FFFFFFF) : const Color(0xFFE3E9F1);
+    final primaryTextColor = isDark ? SasColors.brilliance : const Color(0xFF0F172A);
+
+    return Expanded(
+      child: Container(
+        decoration: BoxDecoration(
+          color: cardBg,
+          borderRadius: BorderRadius.circular(22),
+          border: Border.all(color: borderCol),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.06),
+              blurRadius: 16,
+              offset: const Offset(0, 4),
             ),
           ],
         ),
-      );
-    }
-
-    return Expanded(
-      child: GlassCard(
-        padding: EdgeInsets.zero,
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(22),
           child: cameraError != null
               ? Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.camera_alt_outlined, color: SasColors.danger, size: 48),
-                      const SizedBox(height: 12),
-                      Text(cameraError!, style: const TextStyle(color: SasColors.danger)),
-                      const SizedBox(height: 16),
-                      GlassButton(
-                        label: 'Retry Camera',
-                        icon: Icons.refresh_rounded,
-                        onPressed: onRetryCamera,
-                      ),
-                    ],
+                  child: Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.camera_alt_outlined, color: SasColors.danger, size: 48),
+                        const SizedBox(height: 12),
+                        Text(
+                          cameraError!,
+                          textAlign: TextAlign.center,
+                          style: SasTypography.style(color: SasColors.danger, fontSize: 13),
+                        ),
+                        const SizedBox(height: 16),
+                        GlassButton(
+                          label: 'Retry Camera',
+                          icon: Icons.refresh_rounded,
+                          onPressed: onRetryCamera,
+                        ),
+                      ],
+                    ),
                   ),
                 )
               : isCameraReady && camera != null
@@ -87,13 +82,20 @@ class VerificationCameraFrame extends StatelessWidget {
                         Center(
                           child: Container(
                             width: 220,
-                            height: 280,
+                            height: 290,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(110),
                               border: Border.all(
-                                color: SasColors.accentEmerald.withValues(alpha: 0.6),
-                                width: 2,
+                                color: const Color(0xFFF95721),
+                                width: 2.5,
                               ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: const Color(0xFFF95721).withValues(alpha: 0.22),
+                                  blurRadius: 16,
+                                  spreadRadius: 2,
+                                ),
+                              ],
                             ),
                           ),
                         ),
@@ -105,22 +107,32 @@ class VerificationCameraFrame extends StatelessWidget {
                             child: Container(
                               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                               decoration: BoxDecoration(
-                                color: SasColors.bgSecondary.withValues(alpha: 0.9),
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(color: SasColors.glassBorder, width: 1),
+                                color: (isDark ? const Color(0xFF0F172A) : Colors.white).withValues(alpha: 0.90),
+                                borderRadius: BorderRadius.circular(24),
+                                border: Border.all(color: borderCol),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withValues(alpha: 0.12),
+                                    blurRadius: 10,
+                                    offset: const Offset(0, 3),
+                                  ),
+                                ],
                               ),
-                              child: const Row(
+                              child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Icon(Icons.face_retouching_natural_rounded,
-                                      color: SasColors.accentEmerald, size: 20),
-                                  SizedBox(width: 8),
+                                  const Icon(
+                                    Icons.face_retouching_natural_rounded,
+                                    color: Color(0xFFF95721),
+                                    size: 19,
+                                  ),
+                                  const SizedBox(width: 8),
                                   Text(
-                                    'Position face inside frame',
-                                    style: TextStyle(
-                                      color: SasColors.textPrimary,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600,
+                                    'Position face inside oval frame',
+                                    style: SasTypography.style(
+                                      color: primaryTextColor,
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w700,
                                     ),
                                   ),
                                 ],
@@ -131,7 +143,7 @@ class VerificationCameraFrame extends StatelessWidget {
                       ],
                     )
                   : const Center(
-                      child: CircularProgressIndicator(color: SasColors.accentEmerald),
+                      child: CircularProgressIndicator(color: Color(0xFFF95721)),
                     ),
         ),
       ),

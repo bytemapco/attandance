@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:smart_attendance_app/app/theme.dart';
 import 'package:smart_attendance_app/features/home/widgets/home_compliance_arc.dart';
 import 'package:smart_attendance_app/features/home/widgets/home_compliance_info.dart';
 
-/// Hero compliance widget featuring navy background with glowing orange fluid wave.
+/// Hero compliance widget featuring clean surface card with circular progress gauge.
 class HomeComplianceCard extends StatelessWidget {
   final double percentage;
   final VoidCallback onTap;
@@ -16,106 +17,46 @@ class HomeComplianceCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final clampedPct = (percentage / 100.0).clamp(0.0, 1.0);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    final cardBg = isDark ? SasColors.darkSurface : Colors.white;
 
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(24),
       child: Container(
-        height: 198,
+        height: 194,
         width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(24),
-          color: const Color(0xFF15203A),
+          color: cardBg,
+          border: Border.all(
+            color: isDark ? const Color(0x1FFFFFFF) : const Color(0x0F000000),
+            width: 1.0,
+          ),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFF0F172A).withValues(alpha: 0.35),
-              blurRadius: 20,
-              offset: const Offset(0, 8),
+              color: Colors.black.withValues(alpha: isDark ? 0.20 : 0.04),
+              blurRadius: 16,
+              offset: const Offset(0, 4),
             ),
           ],
         ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(24),
-          child: Stack(
-            children: [
-              // Bottom-right smooth sweeping fluid orange wave
-              Positioned.fill(
-                child: CustomPaint(
-                  painter: _ComplianceWavePainter(),
-                ),
-              ),
-
-              // Content Padding
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: HomeComplianceInfo(percentage: percentage),
-                    ),
-                    HomeComplianceArc(
-                      progress: clampedPct,
-                      size: 126,
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
+        child: Row(
+          children: [
+            Expanded(
+              child: HomeComplianceInfo(percentage: percentage),
+            ),
+            const SizedBox(width: 8),
+            HomeComplianceArc(
+              progress: clampedPct,
+              size: 122,
+            ),
+          ],
         ),
       ),
     );
   }
 }
 
-class _ComplianceWavePainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    // Ambient bottom-right radial glow
-    final glowPaint = Paint()
-      ..shader = RadialGradient(
-        center: const Alignment(0.85, 0.85),
-        radius: 0.85,
-        colors: [
-          const Color(0xFFF95721).withValues(alpha: 0.45),
-          const Color(0xFFF95721).withValues(alpha: 0.0),
-        ],
-      ).createShader(Rect.fromLTWH(0, 0, size.width, size.height));
-    canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), glowPaint);
-
-    // Dynamic sweeping fluid wave at bottom-right
-    final wavePaint = Paint()
-      ..shader = const LinearGradient(
-        begin: Alignment.bottomLeft,
-        end: Alignment.topRight,
-        colors: [
-          Color(0xFFE65100),
-          Color(0xFFF95721),
-          Color(0xFFFB923C),
-        ],
-        stops: [0.0, 0.55, 1.0],
-      ).createShader(Rect.fromLTWH(0, 0, size.width, size.height));
-
-    final path = Path();
-    path.moveTo(size.width * 0.42, size.height);
-    path.quadraticBezierTo(
-      size.width * 0.58,
-      size.height * 0.88,
-      size.width * 0.72,
-      size.height * 0.82,
-    );
-    path.quadraticBezierTo(
-      size.width * 0.88,
-      size.height * 0.76,
-      size.width,
-      size.height * 0.42,
-    );
-    path.lineTo(size.width, size.height);
-    path.close();
-
-    canvas.drawPath(path, wavePaint);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}

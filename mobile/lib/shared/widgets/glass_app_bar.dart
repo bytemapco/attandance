@@ -6,12 +6,14 @@ class GlassAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final List<Widget>? actions;
   final bool showBack;
+  final VoidCallback? onBackPressed;
 
   const GlassAppBar({
     super.key,
     required this.title,
     this.actions,
     this.showBack = false,
+    this.onBackPressed,
   });
 
   @override
@@ -51,6 +53,10 @@ class GlassAppBar extends StatelessWidget implements PreferredSizeWidget {
                   icon: Icon(Icons.arrow_back_ios_new_rounded, size: 18),
                   color: textColor,
                   onPressed: () {
+                    if (onBackPressed != null) {
+                      onBackPressed!();
+                      return;
+                    }
                     try {
                       context.pop();
                     } catch (_) {

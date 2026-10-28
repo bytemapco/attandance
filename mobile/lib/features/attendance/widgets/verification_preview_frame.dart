@@ -1,9 +1,9 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:smart_attendance_app/app/theme.dart';
 import 'package:smart_attendance_app/core/attendance_constants.dart';
 import 'package:smart_attendance_app/features/attendance/widgets/verification_quality_bar.dart';
-import 'package:smart_attendance_app/shared/widgets/glass_card.dart';
 
 class VerificationPreviewFrame extends StatelessWidget {
   final String? imagePath;
@@ -26,13 +26,29 @@ class VerificationPreviewFrame extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardBg = isDark ? SasColors.darkSurface : Colors.white;
+    final borderCol = isDark ? const Color(0x1FFFFFFF) : const Color(0xFFE3E9F1);
+    final primaryTextColor = isDark ? SasColors.brilliance : const Color(0xFF0F172A);
+
     return Column(
       children: [
         Expanded(
-          child: GlassCard(
-            padding: EdgeInsets.zero,
+          child: Container(
+            decoration: BoxDecoration(
+              color: cardBg,
+              borderRadius: BorderRadius.circular(22),
+              border: Border.all(color: borderCol),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.05),
+                  blurRadius: 14,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(22),
               child: Stack(
                 fit: StackFit.expand,
                 children: [
@@ -40,13 +56,13 @@ class VerificationPreviewFrame extends StatelessWidget {
                     Image.file(File(imagePath!), fit: BoxFit.cover),
                   Center(
                     child: Container(
-                      width: 220,
+                      width: 210,
                       height: 280,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(110),
+                        borderRadius: BorderRadius.circular(105),
                         border: Border.all(
-                          color: SasColors.accentEmerald.withValues(alpha: 0.6),
-                          width: 2,
+                          color: const Color(0xFFF95721),
+                          width: 2.2,
                         ),
                       ),
                     ),
@@ -57,18 +73,25 @@ class VerificationPreviewFrame extends StatelessWidget {
                     right: 0,
                     child: Center(
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         decoration: BoxDecoration(
-                          color: SasColors.bgSecondary.withValues(alpha: 0.9),
+                          color: (isDark ? const Color(0xFF0F172A) : Colors.white).withValues(alpha: 0.92),
                           borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: SasColors.glassBorder),
+                          border: Border.all(color: borderCol),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.08),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
                         ),
-                        child: const Text(
-                          'Review your photo',
-                          style: TextStyle(
-                            color: SasColors.textPrimary,
+                        child: Text(
+                          'Review Captured Photo',
+                          style: GoogleFonts.plusJakartaSans(
+                            color: primaryTextColor,
                             fontSize: 13,
-                            fontWeight: FontWeight.w600,
+                            fontWeight: FontWeight.w700,
                           ),
                         ),
                       ),
@@ -80,14 +103,30 @@ class VerificationPreviewFrame extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 12),
-        GlassCard(
-          padding: const EdgeInsets.all(14),
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: cardBg,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: borderCol),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: isDark ? 0.20 : 0.04),
+                blurRadius: 10,
+                offset: const Offset(0, 3),
+              ),
+            ],
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Quality Check (Estimate):',
-                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+              Text(
+                'Photo Quality',
+                style: GoogleFonts.plusJakartaSans(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 14,
+                  color: primaryTextColor,
+                ),
               ),
               const SizedBox(height: 12),
               if (isAnalyzingQuality)
@@ -95,54 +134,61 @@ class VerificationPreviewFrame extends StatelessWidget {
                   child: Padding(
                     padding: EdgeInsets.all(8.0),
                     child: SizedBox(
-                      width: 24,
-                      height: 24,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: SasColors.accentEmerald,
-                      ),
+                      width: 22,
+                      height: 22,
+                      child: CircularProgressIndicator(strokeWidth: 2.2, color: Color(0xFFF95721)),
                     ),
                   ),
                 )
               else ...[
-                VerificationQualityBar(
-                  label: 'Lighting',
-                  value: brightnessScore ?? 0,
-                  goodThreshold: 0.3,
-                ),
-                const SizedBox(height: 12),
-                VerificationQualityBar(
-                  label: 'Sharpness',
-                  value: ((blurScore ?? 0) / 10).clamp(0.0, 1.0),
-                  goodThreshold: 0.3,
-                ),
-              ]
+                if (brightnessScore != null)
+                  VerificationQualityBar(
+                    label: 'Lighting',
+                    value: brightnessScore!,
+                    goodThreshold: kMinBrightnessForPhoto,
+                  ),
+                if (blurScore != null) ...[
+                  const SizedBox(height: 10),
+                  VerificationQualityBar(
+                    label: 'Clarity',
+                    value: ((blurScore ?? 0) / 10).clamp(0.0, 1.0),
+                    goodThreshold: kMinSharpnessForPhoto,
+                  ),
+                ],
+                if (isPoorQuality) ...[
+                  const SizedBox(height: 12),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF59E0B).withValues(alpha: isDark ? 0.15 : 0.08),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: const Color(0xFFF59E0B).withValues(alpha: 0.25),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.wb_incandescent_outlined, size: 16, color: Color(0xFFF59E0B)),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            'Low lighting detected. Retake in brighter light for faster verification.',
+                            style: GoogleFonts.plusJakartaSans(
+                              color: isDark ? const Color(0xFFFBBF24) : const Color(0xFFB45309),
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              height: 1.3,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ],
             ],
           ),
         ),
-        if (isPoorQuality) ...[
-          const SizedBox(height: 10),
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: SasColors.warning.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: SasColors.warning.withValues(alpha: 0.3)),
-            ),
-            child: const Row(
-              children: [
-                Icon(Icons.warning_amber_rounded, color: SasColors.warning, size: 16),
-                SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    'Photo too dark or blurry — please retake',
-                    style: TextStyle(color: SasColors.warning, fontSize: 12),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
       ],
     );
   }

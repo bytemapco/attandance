@@ -2,17 +2,18 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:smart_attendance_app/app/theme.dart';
 import 'package:smart_attendance_app/data/local/hive_service.dart';
 import 'package:smart_attendance_app/data/local/preferences_service.dart';
 import 'package:smart_attendance_app/data/repositories/config_repository.dart';
 import 'package:smart_attendance_app/features/attendance/providers/attendance_provider.dart';
 import 'package:smart_attendance_app/features/attendance/providers/geofence_verification_provider.dart';
 import 'package:smart_attendance_app/features/attendance/screens/verification_camera_mixin.dart';
+import 'package:smart_attendance_app/features/attendance/widgets/verification_app_bar.dart';
 import 'package:smart_attendance_app/features/attendance/widgets/verification_step_bottom_bar.dart';
 import 'package:smart_attendance_app/features/attendance/widgets/verification_step_content.dart';
 import 'package:smart_attendance_app/features/attendance/widgets/verification_step_indicator.dart';
 import 'package:smart_attendance_app/features/home/providers/session_provider.dart';
-import 'package:smart_attendance_app/shared/widgets/animated_background.dart';
 
 class VerificationScreen extends ConsumerStatefulWidget {
   final String sessionId;
@@ -31,24 +32,27 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen>
 
   static const _aiSteps = ['Checking face identity...', 'Verifying liveness...', 'Analyzing background...', 'Computing final score...'];
 
+  void _clearTimers() {
+    _aiStepTimer?.cancel();
+    _transitionTimer?.cancel();
+  }
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _checkFirstUse();
     Future.microtask(() {
-      if (mounted) {
-        ref.read(configRepositoryProvider).fetchAndCacheConfig();
-        _handleLocationVerify();
-      }
+      if (!mounted) return;
+      ref.read(configRepositoryProvider).fetchAndCacheConfig();
+      _handleLocationVerify();
     });
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    _aiStepTimer?.cancel();
-    _transitionTimer?.cancel();
+    _clearTimers();
     disposeCamera();
     super.dispose();
   }
@@ -65,9 +69,10 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (!mounted) return;
     if (state == AppLifecycleState.inactive || state == AppLifecycleState.paused) {
-      if (mounted) setState(() => isCameraReady = false);
+      setState(() => isCameraReady = false);
       disposeCamera();
-    } else if (state == AppLifecycleState.resumed && ref.read(attendanceVerificationProvider).step == VerificationStep.camera) {
+    } else if (state == AppLifecycleState.resumed &&
+        ref.read(attendanceVerificationProvider).step == VerificationStep.camera) {
       initCamera();
     }
   }
@@ -105,6 +110,31 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen>
     }
   }
 
+  void _onGpsSuccess(GeofenceVerificationState next) {
+    _transitionTimer?.cancel();
+    _transitionTimer = Timer(const Duration(milliseconds: 1500), () {
+      if (!mounted) return;
+      final config = ref.read(hiveServiceProvider).getSystemConfig();
+      ref.read(attendanceVerificationProvider.notifier).setGpsLocation(
+        next.position!.latitude, next.position!.longitude, next.position!.accuracy,
+      );
+      if (config.isFaceRecognitionEnabled || config.isAiBackgroundValidationEnabled) {
+        initCamera();
+      } else {
+        ref.read(attendanceVerificationProvider.notifier).setImagePath('skipped_camera.jpg');
+        _analyzePhoto();
+      }
+    });
+  }
+
+  void _onDone() {
+    _clearTimers();
+    disposeCamera();
+    final id = ref.read(attendanceVerificationProvider.notifier).lastSubmittedSessionId;
+    if (id != null) ref.read(sessionProvider.notifier).markSessionSubmitted(id);
+    if (mounted) context.pushReplacement('/result');
+  }
+
   @override
   Widget build(BuildContext context) {
     final vState = ref.watch(attendanceVerificationProvider);
@@ -112,84 +142,49 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen>
 
     ref.listen<AttendanceVerificationState>(attendanceVerificationProvider, (prev, next) {
       if (next.step == VerificationStep.reviewing) _aiStepTimer?.cancel();
-      if (next.step == VerificationStep.done && prev?.step != VerificationStep.done) {
-        _aiStepTimer?.cancel();
-        _transitionTimer?.cancel();
-        disposeCamera();
-        final submittedId = ref.read(attendanceVerificationProvider.notifier).lastSubmittedSessionId;
-        if (submittedId != null) ref.read(sessionProvider.notifier).markSessionSubmitted(submittedId);
-        if (mounted) context.pushReplacement('/result');
-      }
+      if (next.step == VerificationStep.done && prev?.step != VerificationStep.done) _onDone();
     });
 
     ref.listen<GeofenceVerificationState>(geofenceVerificationProvider, (prev, next) {
       if (vState.step == VerificationStep.gps && next.status == GeofenceStatus.success && prev?.status != GeofenceStatus.success) {
-        _transitionTimer?.cancel();
-        _transitionTimer = Timer(const Duration(milliseconds: 1500), () {
-          if (!mounted) return;
-          final config = ref.read(hiveServiceProvider).getSystemConfig();
-          ref.read(attendanceVerificationProvider.notifier).setGpsLocation(
-            next.position!.latitude, next.position!.longitude, next.position!.accuracy,
-          );
-          if (config.isFaceRecognitionEnabled || config.isAiBackgroundValidationEnabled) {
-            initCamera();
-          } else {
-            ref.read(attendanceVerificationProvider.notifier).setImagePath('skipped_camera.jpg');
-            _analyzePhoto();
-          }
-        });
+        _onGpsSuccess(next);
       }
     });
+
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return PopScope(
       canPop: true,
       onPopInvokedWithResult: (didPop, _) {
-        _aiStepTimer?.cancel();
-        _transitionTimer?.cancel();
+        _clearTimers();
         disposeCamera();
         ref.read(attendanceVerificationProvider.notifier).reset();
       },
       child: Scaffold(
-        body: AnimatedBackground(
-          child: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                children: [
-                  VerificationStepIndicator(current: vState.step),
-                  const SizedBox(height: 24),
-                  VerificationStepContent(
-                    step: vState.step,
-                    geoState: geoState,
-                    onRetryGeo: _handleLocationVerify,
-                    camera: camera,
-                    isCameraReady: isCameraReady,
-                    cameraError: cameraError,
-                    showTips: _showTips,
-                    onDismissTips: () => setState(() => _showTips = false),
-                    onRetryCamera: () {
-                      setState(() { cameraError = null; isCameraReady = false; });
-                      initCamera();
-                    },
-                    imagePath: vState.imagePath,
-                    isAnalyzingQuality: isAnalyzingQuality,
-                    brightnessScore: brightnessScore,
-                    blurScore: blurScore,
-                    aiStepIndex: _aiStepIndex,
-                    aiSteps: _aiSteps,
-                    analysisResult: vState.analysisResult,
-                  ),
-                  VerificationStepBottomBar(
-                    step: vState.step,
-                    showTips: _showTips,
-                    isCameraReady: isCameraReady,
-                    onCapture: capturePhoto,
-                    onRetake: _retakePhoto,
-                    onAnalyze: _analyzePhoto,
-                    onSubmit: () => ref.read(attendanceVerificationProvider.notifier).confirm(widget.sessionId),
-                  ),
-                ],
-              ),
+        backgroundColor: isDark ? SasColors.darkCanvas : const Color(0xFFF4F7FB),
+        appBar: const VerificationAppBar(),
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+            child: Column(
+              children: [
+                VerificationStepIndicator(current: vState.step),
+                const SizedBox(height: 20),
+                VerificationStepContent(
+                  step: vState.step, geoState: geoState, onRetryGeo: _handleLocationVerify,
+                  camera: camera, isCameraReady: isCameraReady, cameraError: cameraError,
+                  showTips: _showTips, onDismissTips: () => setState(() => _showTips = false),
+                  onRetryCamera: () { setState(() { cameraError = null; isCameraReady = false; }); initCamera(); },
+                  imagePath: vState.imagePath, isAnalyzingQuality: isAnalyzingQuality,
+                  brightnessScore: brightnessScore, blurScore: blurScore,
+                  aiStepIndex: _aiStepIndex, aiSteps: _aiSteps, analysisResult: vState.analysisResult,
+                ),
+                VerificationStepBottomBar(
+                  step: vState.step, showTips: _showTips, isCameraReady: isCameraReady,
+                  onCapture: capturePhoto, onRetake: _retakePhoto, onAnalyze: _analyzePhoto,
+                  onSubmit: () => ref.read(attendanceVerificationProvider.notifier).confirm(widget.sessionId),
+                ),
+              ],
             ),
           ),
         ),

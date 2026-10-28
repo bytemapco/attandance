@@ -1,10 +1,13 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:smart_attendance_app/app/theme.dart';
-import 'package:smart_attendance_app/shared/widgets/glass_button.dart';
-import 'package:smart_attendance_app/shared/widgets/glass_card.dart';
+import 'package:smart_attendance_app/features/smart_pass/widgets/scanner_reticle_overlay.dart';
+import 'package:smart_attendance_app/features/smart_pass/widgets/smart_pass_camera_error.dart';
+import 'package:smart_attendance_app/features/smart_pass/widgets/smart_pass_telemetry_pills.dart';
 
-/// Camera view finder for QR scanning in Smart Pass.
+/// Enterprise camera viewfinder for Smart Pass QR scanning.
 class SmartPassScannerView extends StatelessWidget {
   final MobileScannerController controller;
   final bool isLoading;
@@ -21,149 +24,171 @@ class SmartPassScannerView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GlassCard(
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardBg = isDark ? SasColors.darkSurface : Colors.white;
+    final borderColor = isDark ? const Color(0x1EFFFFFF) : const Color(0x140F172A);
+
+    return Container(
+      decoration: BoxDecoration(
+        color: cardBg,
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: borderColor),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.05),
+            blurRadius: 18,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(16),
-            child: Container(
-              height: 280,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: Colors.black,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: SasColors.accentEmerald.withValues(alpha: 0.5),
-                  width: 2,
-                ),
-              ),
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  MobileScanner(
-                    controller: controller,
-                    onDetect: onDetect,
-                    errorBuilder: (context, error) {
-                      return Container(
-                        color: Colors.black87,
-                        padding: const EdgeInsets.all(16),
-                        child: Center(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const Icon(
-                                Icons.videocam_off_rounded,
-                                size: 40,
-                                color: SasColors.warning,
-                              ),
-                              const SizedBox(height: 10),
-                              const Text(
-                                'Camera Access Required',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 14,
-                                ),
-                              ),
-                              const SizedBox(height: 6),
-                              Text(
-                                error.errorDetails?.message ??
-                                    'Please grant camera permission to scan QR codes.',
-                                textAlign: TextAlign.center,
-                                style: const TextStyle(
-                                  color: SasColors.textMuted,
-                                  fontSize: 11,
-                                ),
-                              ),
-                              const SizedBox(height: 12),
-                              GlassButton(
-                                label: 'Start Camera',
-                                height: 38,
-                                onPressed: () => controller.start(),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                  Positioned(
-                    top: 10,
-                    right: 10,
-                    child: Row(
-                      children: [
-                        IconButton(
-                          icon: ValueListenableBuilder(
-                            valueListenable: controller,
-                            builder: (context, state, child) {
-                              return Icon(
-                                state.torchState == TorchState.on
-                                    ? Icons.flash_on_rounded
-                                    : Icons.flash_off_rounded,
-                                color: Colors.white,
-                                size: 20,
-                              );
-                            },
-                          ),
-                          onPressed: () => controller.toggleTorch(),
-                        ),
-                        IconButton(
-                          icon: const Icon(
-                            Icons.cameraswitch_rounded,
-                            color: Colors.white,
-                            size: 20,
-                          ),
-                          onPressed: () => controller.switchCamera(),
-                        ),
-                      ],
-                    ),
-                  ),
-                  if (isLoading || isProcessing)
-                    Container(
-                      color: Colors.black.withValues(alpha: 0.65),
-                      child: const Center(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            CircularProgressIndicator(
-                              color: SasColors.accentEmerald,
-                            ),
-                            SizedBox(height: 12),
-                            Text(
-                              'Verifying attendance...',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-            ),
-          ),
+          _buildCameraViewport(context),
           const SizedBox(height: 14),
-          const Text(
-            "Point camera at the teacher's QR code",
+          Text(
+            'Scan Classroom QR',
             textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-              color: SasColors.textPrimary,
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+              color: SasColors.textPrimaryOf(context),
             ),
           ),
           const SizedBox(height: 4),
-          const Text(
-            'Location and device are checked automatically.',
+          Text(
+            "Align the instructor's code inside the frame to check in.",
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 11, color: SasColors.textMuted),
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              color: SasColors.textMutedOf(context),
+            ),
           ),
+          const SizedBox(height: 12),
+          const SmartPassTelemetryPills(),
         ],
+      ),
+    );
+  }
+
+  Widget _buildCameraViewport(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(18),
+      child: Container(
+        height: 310,
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: Colors.black,
+          borderRadius: BorderRadius.circular(18),
+        ),
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            MobileScanner(
+              controller: controller,
+              onDetect: onDetect,
+              errorBuilder: (context, error) => SmartPassCameraError(
+                error: error,
+                onRetry: () => controller.start(),
+              ),
+            ),
+            const ScannerReticleOverlay(guideColor: Color(0xFFF95721)),
+            Positioned(
+              top: 12,
+              right: 12,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ValueListenableBuilder(
+                    valueListenable: controller,
+                    builder: (context, state, child) {
+                      final isTorchOn = state.torchState == TorchState.on;
+                      return _buildIconButton(
+                        icon: isTorchOn
+                            ? Icons.flash_on_rounded
+                            : Icons.flash_off_rounded,
+                        isActive: isTorchOn,
+                        onPressed: () => controller.toggleTorch(),
+                      );
+                    },
+                  ),
+                  const SizedBox(width: 8),
+                  _buildIconButton(
+                    icon: Icons.flip_camera_ios_rounded,
+                    isActive: false,
+                    onPressed: () => controller.switchCamera(),
+                  ),
+                ],
+              ),
+            ),
+            if (isLoading || isProcessing) _buildVerifyingOverlay(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildIconButton({
+    required IconData icon,
+    required bool isActive,
+    required VoidCallback onPressed,
+  }) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(12),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+        child: InkWell(
+          onTap: onPressed,
+          borderRadius: BorderRadius.circular(12),
+          child: Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: isActive
+                  ? const Color(0xFFF95721).withValues(alpha: 0.85)
+                  : Colors.black.withValues(alpha: 0.45),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: isActive
+                    ? const Color(0xFFF95721)
+                    : Colors.white.withValues(alpha: 0.2),
+              ),
+            ),
+            child: Icon(icon, color: Colors.white, size: 20),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildVerifyingOverlay() {
+    return Container(
+      color: Colors.black.withValues(alpha: 0.72),
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(
+              width: 36,
+              height: 36,
+              child: CircularProgressIndicator(
+                strokeWidth: 3,
+                color: Color(0xFFF95721),
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'Verifying Pass...',
+              style: GoogleFonts.plusJakartaSans(
+                color: Colors.white,
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

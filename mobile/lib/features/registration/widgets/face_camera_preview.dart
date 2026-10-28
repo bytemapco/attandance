@@ -1,9 +1,7 @@
 import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:smart_attendance_app/app/theme.dart';
-import 'package:smart_attendance_app/shared/widgets/glass_button.dart';
-import 'package:smart_attendance_app/shared/widgets/glass_card.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class FaceCameraPreview extends StatelessWidget {
   final String? capturedPath;
@@ -23,10 +21,25 @@ class FaceCameraPreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GlassCard(
-      padding: EdgeInsets.zero,
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1E293B) : Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.05),
+            blurRadius: 16,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(23),
         child: capturedPath != null
             ? Image.file(
                 File(capturedPath!),
@@ -37,15 +50,37 @@ class FaceCameraPreview extends StatelessWidget {
             : cameraError != null
                 ? Center(
                     child: Padding(
-                      padding: const EdgeInsets.all(20),
+                      padding: const EdgeInsets.all(24),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(Icons.camera_alt_outlined, color: SasColors.danger, size: 40),
-                          const SizedBox(height: 10),
-                          Text(cameraError!, textAlign: TextAlign.center, style: const TextStyle(color: SasColors.danger, fontSize: 13)),
-                          const SizedBox(height: 14),
-                          GlassButton(label: 'Retry Camera', icon: Icons.refresh_rounded, onPressed: onRetry),
+                          Container(
+                            padding: const EdgeInsets.all(14),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: const Color(0xFFF0445E).withValues(alpha: 0.12),
+                            ),
+                            child: const Icon(Icons.videocam_off_rounded, color: Color(0xFFF0445E), size: 36),
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            cameraError!,
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.plusJakartaSans(
+                              color: const Color(0xFFF0445E),
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          OutlinedButton.icon(
+                            onPressed: onRetry,
+                            icon: const Icon(Icons.refresh_rounded, size: 18),
+                            label: Text(
+                              'Retry Camera',
+                              style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600),
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -57,17 +92,51 @@ class FaceCameraPreview extends StatelessWidget {
                           CameraPreview(cameraController!),
                           Center(
                             child: Container(
-                              width: 200,
-                              height: 260,
+                              width: 210,
+                              height: 275,
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(100),
-                                border: Border.all(color: SasColors.accentEmerald.withValues(alpha: 0.6), width: 2),
+                                borderRadius: BorderRadius.circular(105),
+                                border: Border.all(
+                                  color: const Color(0xFFF95721).withValues(alpha: 0.8),
+                                  width: 2.2,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: const Color(0xFFF95721).withValues(alpha: 0.2),
+                                    blurRadius: 12,
+                                    spreadRadius: 2,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            bottom: 16,
+                            left: 0,
+                            right: 0,
+                            child: Center(
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                                decoration: BoxDecoration(
+                                  color: Colors.black.withValues(alpha: 0.6),
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Text(
+                                  'Fit face in oval',
+                                  style: GoogleFonts.plusJakartaSans(
+                                    color: Colors.white,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
                               ),
                             ),
                           ),
                         ],
                       )
-                    : const Center(child: CircularProgressIndicator(color: SasColors.accentEmerald)),
+                    : const Center(
+                        child: CircularProgressIndicator(color: Color(0xFFF95721)),
+                      ),
       ),
     );
   }

@@ -1,14 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:smart_attendance_app/app/theme.dart';
-import 'package:smart_attendance_app/shared/widgets/glass_card.dart';
 
+/// Executive guidelines card presenting the 3-step verification architecture.
 class SmartPassGuidelinesCard extends StatelessWidget {
   const SmartPassGuidelinesCard({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return GlassCard(
-      padding: const EdgeInsets.all(14),
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardBg = isDark ? SasColors.darkSurface : Colors.white;
+    final borderColor = isDark ? const Color(0x1EFFFFFF) : const Color(0x140F172A);
+
+    return Container(
+      decoration: BoxDecoration(
+        color: cardBg,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: borderColor),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.04),
+            blurRadius: 16,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -17,19 +34,19 @@ class SmartPassGuidelinesCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(6),
                 decoration: BoxDecoration(
-                  color: SasColors.info.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(6),
+                  color: const Color(0xFFF95721).withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(8),
                 ),
                 child: const Icon(
-                  Icons.shield_outlined,
+                  Icons.verified_user_rounded,
                   size: 16,
-                  color: SasColors.info,
+                  color: Color(0xFFF95721),
                 ),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: 10),
               Text(
-                'How Smart Pass Works',
-                style: TextStyle(
+                'Verification Protocol',
+                style: GoogleFonts.plusJakartaSans(
                   fontSize: 13,
                   fontWeight: FontWeight.w700,
                   color: SasColors.textPrimaryOf(context),
@@ -37,39 +54,89 @@ class SmartPassGuidelinesCard extends StatelessWidget {
               ),
             ],
           ),
+          const SizedBox(height: 14),
+          _stepRow(
+            context: context,
+            number: '01',
+            title: 'Dynamic QR',
+            desc: "Scans instructor's time-sensitive attendance token.",
+          ),
           const SizedBox(height: 10),
-          _item('Scan the QR code displayed on the teacher screen.'),
-          _item('Verifies your location in the classroom.'),
-          _item('Confirms your registered device.'),
-          _item('Records your attendance immediately.'),
+          _stepRow(
+            context: context,
+            number: '02',
+            title: 'Classroom Proximity',
+            desc: 'Verifies GPS coordinates match the scheduled hall.',
+          ),
+          const SizedBox(height: 10),
+          _stepRow(
+            context: context,
+            number: '03',
+            title: 'Device Signature',
+            desc: 'Binds attendance to your registered device identifier.',
+            isLast: true,
+          ),
         ],
       ),
     );
   }
 
-  Widget _item(String text) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 6),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Icon(
-            Icons.check_circle_rounded,
-            size: 14,
-            color: SasColors.accentEmerald,
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              text,
-              style: const TextStyle(
-                fontSize: 12,
-                color: SasColors.textSecondary,
-              ),
+  Widget _stepRow({
+    required BuildContext context,
+    required String number,
+    required String title,
+    required String desc,
+    bool isLast = false,
+  }) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: 26,
+          height: 26,
+          decoration: BoxDecoration(
+            color: const Color(0xFFF95721).withValues(alpha: 0.1),
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: const Color(0xFFF95721).withValues(alpha: 0.25),
             ),
           ),
-        ],
-      ),
+          alignment: Alignment.center,
+          child: Text(
+            number,
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 10,
+              fontWeight: FontWeight.w800,
+              color: const Color(0xFFF95721),
+            ),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  color: SasColors.textPrimaryOf(context),
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                desc,
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w500,
+                  color: SasColors.textMutedOf(context),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

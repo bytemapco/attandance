@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smart_attendance_app/app/theme.dart';
 import 'package:smart_attendance_app/app/typography.dart';
 
 /// Left content of compliance card displaying percentage, goal, and warning badge.
@@ -9,7 +10,13 @@ class HomeComplianceInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final isBelowGoal = percentage < 75.0;
+
+    final primaryTextColor =
+        isDark ? SasColors.brilliance : const Color(0xFF0F172A);
+    final subtitleColor =
+        isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -19,33 +26,36 @@ class HomeComplianceInfo extends StatelessWidget {
           children: [
             const Icon(
               Icons.date_range_rounded,
-              size: 18,
+              size: 20,
               color: Color(0xFFF95721),
             ),
             const SizedBox(width: 8),
             Text(
               'Term Compliance',
               style: SasTypography.style(
-                fontSize: 14.5,
-                fontWeight: FontWeight.w600,
-                color: Colors.white,
+                fontSize: 15,
+                fontWeight: FontWeight.w700,
+                color: primaryTextColor,
+                letterSpacing: -0.2,
               ),
             ),
             const SizedBox(width: 6),
             Container(
-              width: 16,
-              height: 16,
+              width: 17,
+              height: 17,
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.18),
+                color: isDark
+                    ? const Color(0xFF334155)
+                    : const Color(0xFFF1F5F9),
                 shape: BoxShape.circle,
               ),
-              child: const Center(
+              child: Center(
                 child: Text(
                   'i',
                   style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 10,
-                    fontWeight: FontWeight.bold,
+                    color: subtitleColor,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
               ),
@@ -58,21 +68,21 @@ class HomeComplianceInfo extends StatelessWidget {
         Text(
           '${percentage.toStringAsFixed(0)}%',
           style: SasTypography.style(
-            fontSize: 54,
+            fontSize: 52,
             fontWeight: FontWeight.w800,
-            color: Colors.white,
+            color: primaryTextColor,
             height: 1.0,
             letterSpacing: -1.5,
           ),
         ),
-        const SizedBox(height: 7),
+        const SizedBox(height: 8),
 
         // Goal 75% Row
         Row(
           children: [
             Container(
               width: 3.5,
-              height: 13,
+              height: 14,
               decoration: BoxDecoration(
                 color: const Color(0xFFF95721),
                 borderRadius: BorderRadius.circular(2),
@@ -82,17 +92,17 @@ class HomeComplianceInfo extends StatelessWidget {
             Text(
               'Goal ',
               style: SasTypography.style(
-                fontSize: 13,
+                fontSize: 13.5,
                 fontWeight: FontWeight.w500,
-                color: const Color(0xFFCBD5E1),
+                color: subtitleColor,
               ),
             ),
             Text(
               '75%',
               style: SasTypography.style(
-                fontSize: 13,
+                fontSize: 13.5,
                 fontWeight: FontWeight.w700,
-                color: Colors.white,
+                color: primaryTextColor,
               ),
             ),
           ],
@@ -101,17 +111,16 @@ class HomeComplianceInfo extends StatelessWidget {
 
         // Status Warning Badge
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: isBelowGoal
+                ? (isDark
+                    ? const Color(0x33F87171)
+                    : const Color(0xFFFEE2E2))
+                : (isDark
+                    ? const Color(0x3334D399)
+                    : const Color(0xFFDCFCE7)),
             borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.12),
-                blurRadius: 10,
-                offset: const Offset(0, 3),
-              ),
-            ],
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -120,20 +129,20 @@ class HomeComplianceInfo extends StatelessWidget {
                 isBelowGoal
                     ? Icons.warning_amber_rounded
                     : Icons.check_circle_rounded,
-                size: 16,
+                size: 15,
                 color: isBelowGoal
-                    ? const Color(0xFFF95721)
-                    : const Color(0xFF10B981),
+                    ? const Color(0xFFEF4444)
+                    : const Color(0xFF16A34A),
               ),
-              const SizedBox(width: 6),
+              const SizedBox(width: 5),
               Text(
                 isBelowGoal ? 'Below 75%' : 'Good Standing',
                 style: SasTypography.style(
-                  fontSize: 12.5,
+                  fontSize: 12,
                   fontWeight: FontWeight.w700,
                   color: isBelowGoal
-                      ? const Color(0xFFF95721)
-                      : const Color(0xFF10B981),
+                      ? const Color(0xFFEF4444)
+                      : const Color(0xFF16A34A),
                 ),
               ),
             ],
@@ -143,3 +152,4 @@ class HomeComplianceInfo extends StatelessWidget {
     );
   }
 }
+

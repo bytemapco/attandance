@@ -5,7 +5,7 @@ import 'package:smart_attendance_app/app/typography.dart';
 import 'package:smart_attendance_app/features/home/providers/session_provider.dart';
 import 'package:smart_attendance_app/features/home/widgets/home_active_session_card.dart';
 
-/// Card showing Today's Classes preview with active session tile and View All button.
+/// Section showing Today's Classes header and active class card matching reference design.
 class HomeTodayClassesCard extends StatelessWidget {
   final List<ClassSession> sessions;
   final VoidCallback onViewAll;
@@ -23,11 +23,10 @@ class HomeTodayClassesCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final cardBg = isDark ? SasColors.darkSurface : Colors.white;
     final primaryTextColor =
         isDark ? SasColors.brilliance : const Color(0xFF0F172A);
     final subtitleColor =
-        isDark ? const Color(0xFFE2E8F0) : const Color(0xFF334155);
+        isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B);
 
     final activeSession = sessions.where((s) => s.isActive).firstOrNull ??
         sessions.firstOrNull;
@@ -53,121 +52,60 @@ class HomeTodayClassesCard extends StatelessWidget {
 
     final formattedDate = DateFormat('EEE, MMM d').format(DateTime.now());
 
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: cardBg,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(
-          color: isDark ? const Color(0x1FFFFFFF) : const Color(0x0F000000),
-          width: 1.0,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.20 : 0.04),
-            blurRadius: 14,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          // Header Row: Today's Classes & Current Date
-          Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Section Header Row: Today's Classes on Left, Calendar + Date on Right
+        Padding(
+          padding: const EdgeInsets.only(left: 2, right: 2, bottom: 12),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Container(
-                width: 28,
-                height: 28,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFFFEDD5),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Icon(
-                  Icons.layers_rounded,
-                  color: Color(0xFFEA580C),
-                  size: 16,
-                ),
-              ),
-              const SizedBox(width: 8),
               Text(
                 "Today's Classes",
                 style: SasTypography.style(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
+                  fontSize: 18.5,
+                  fontWeight: FontWeight.w800,
                   color: primaryTextColor,
-                  letterSpacing: -0.3,
+                  letterSpacing: -0.4,
                 ),
               ),
-              const Spacer(),
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  Icon(
+                    Icons.calendar_today_rounded,
+                    size: 15,
+                    color: subtitleColor,
+                  ),
+                  const SizedBox(width: 6),
                   Text(
                     formattedDate,
                     style: SasTypography.style(
-                      fontSize: 12.5,
+                      fontSize: 13,
                       fontWeight: FontWeight.w600,
                       color: subtitleColor,
                     ),
-                  ),
-                  const SizedBox(width: 4),
-                  Icon(
-                    Icons.calendar_today_rounded,
-                    size: 14,
-                    color: subtitleColor,
                   ),
                 ],
               ),
             ],
           ),
-          const SizedBox(height: 14),
+        ),
 
-          // Active session card matching screenshot
-          HomeActiveSessionCard(
-            courseCode: courseCode,
-            courseTitle: courseTitle,
-            teacherName: teacherName,
-            timeText: '9:56',
-            isSessionOn: isSessionOn,
-            onTap: onViewAll,
-            onSmartPass: onSmartPass,
-            onFaceMatch: onFaceMatch,
-          ),
-          const SizedBox(height: 14),
-
-          // View All Classes Button
-          InkWell(
-            onTap: onViewAll,
-            borderRadius: BorderRadius.circular(14),
-            child: Container(
-              height: 42,
-              decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF1E2838) : const Color(0xFFF1F5F9),
-                borderRadius: BorderRadius.circular(14),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'View All Classes',
-                    style: SasTypography.style(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: primaryTextColor,
-                    ),
-                  ),
-                  const SizedBox(width: 6),
-                  Icon(
-                    Icons.arrow_forward_rounded,
-                    size: 16,
-                    color: primaryTextColor,
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
+        // Active Session Card
+        HomeActiveSessionCard(
+          courseCode: courseCode,
+          courseTitle: courseTitle,
+          teacherName: teacherName,
+          timeText: '9:56',
+          isSessionOn: isSessionOn,
+          onTap: onViewAll,
+          onViewAll: onViewAll,
+          onSmartPass: onSmartPass,
+          onFaceMatch: onFaceMatch,
+        ),
+      ],
     );
   }
 }

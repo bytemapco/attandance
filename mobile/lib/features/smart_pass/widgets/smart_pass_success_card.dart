@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:smart_attendance_app/app/theme.dart';
 import 'package:smart_attendance_app/domain/models/smart_pass.dart';
 import 'package:smart_attendance_app/shared/widgets/glass_button.dart';
-import 'package:smart_attendance_app/shared/widgets/glass_card.dart';
 
-/// Card displayed upon successful Smart Pass attendance verification.
+/// Executive confirmation card displayed upon successful Smart Pass verification.
 class SmartPassSuccessCard extends StatelessWidget {
   final SmartPassScanResult result;
   final VoidCallback onScanAnother;
@@ -17,51 +17,82 @@ class SmartPassSuccessCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GlassCard(
-      padding: const EdgeInsets.all(20),
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardBg = isDark ? SasColors.darkSurface : Colors.white;
+    final borderColor = isDark ? const Color(0x1EFFFFFF) : const Color(0x140F172A);
+
+    return Container(
+      decoration: BoxDecoration(
+        color: cardBg,
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: borderColor),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.05),
+            blurRadius: 18,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.all(22),
       child: Column(
         children: [
           Container(
-            padding: const EdgeInsets.all(12),
+            width: 64,
+            height: 64,
             decoration: BoxDecoration(
-              color: SasColors.accentEmerald.withValues(alpha: 0.15),
+              color: SasColors.accentEmerald.withValues(alpha: 0.12),
               shape: BoxShape.circle,
+              border: Border.all(
+                color: SasColors.accentEmerald.withValues(alpha: 0.3),
+                width: 1.5,
+              ),
             ),
             child: const Icon(
               Icons.check_circle_rounded,
-              size: 48,
+              size: 36,
               color: SasColors.accentEmerald,
             ),
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 16),
           Text(
-            result.message,
+            result.message.isNotEmpty
+                ? result.message
+                : 'Attendance Verified Successfully',
             textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 15,
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 16,
               fontWeight: FontWeight.w700,
-              color: SasColors.textPrimary,
-            ),
-          ),
-          const SizedBox(height: 10),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-            decoration: BoxDecoration(
-              color: SasColors.bgSurface,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Column(
-              children: [
-                _infoRow('Class', result.className),
-                _infoRow('Subject', result.subject),
-                _infoRow('Student', result.studentName),
-                _infoRow('Status', result.attendanceStatus, isHighlight: true),
-              ],
+              color: SasColors.textPrimaryOf(context),
             ),
           ),
           const SizedBox(height: 16),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: isDark ? SasColors.darkElevated : SasColors.polishWhite,
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(
+                color: isDark ? const Color(0x1EFFFFFF) : const Color(0x10000000),
+              ),
+            ),
+            child: Column(
+              children: [
+                _infoRow(context, 'Class', result.className),
+                _infoRow(context, 'Subject', result.subject),
+                _infoRow(context, 'Student', result.studentName),
+                _infoRow(
+                  context,
+                  'Status',
+                  result.attendanceStatus,
+                  isHighlight: true,
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
           GlassButton(
-            label: 'Scan Another Code',
+            label: 'Scan Another Pass',
             icon: Icons.qr_code_scanner_rounded,
             onPressed: onScanAnother,
           ),
@@ -70,24 +101,33 @@ class SmartPassSuccessCard extends StatelessWidget {
     );
   }
 
-  Widget _infoRow(String label, String value, {bool isHighlight = false}) {
+  Widget _infoRow(
+    BuildContext context,
+    String label,
+    String value, {
+    bool isHighlight = false,
+  }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 3),
+      padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
             label,
-            style: const TextStyle(fontSize: 12, color: SasColors.textMuted),
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              color: SasColors.textMutedOf(context),
+            ),
           ),
           Text(
             value,
-            style: TextStyle(
+            style: GoogleFonts.plusJakartaSans(
               fontSize: 12,
               fontWeight: isHighlight ? FontWeight.w800 : FontWeight.w600,
               color: isHighlight
                   ? SasColors.accentEmerald
-                  : SasColors.textPrimary,
+                  : SasColors.textPrimaryOf(context),
             ),
           ),
         ],

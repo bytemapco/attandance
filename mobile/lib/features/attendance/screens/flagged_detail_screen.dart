@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
+import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:smart_attendance_app/app/theme.dart';
-import 'package:smart_attendance_app/core/attendance_utils.dart';
 import 'package:smart_attendance_app/data/api/student_api.dart';
 import 'package:smart_attendance_app/data/repositories/attendance_repository.dart';
 import 'package:smart_attendance_app/domain/models/attendance.dart';
+import 'package:smart_attendance_app/features/attendance/widgets/flagged_hero_card.dart';
 import 'package:smart_attendance_app/features/attendance/widgets/flagged_note_form.dart';
 import 'package:smart_attendance_app/features/attendance/widgets/flagged_score_breakdown.dart';
+import 'package:smart_attendance_app/features/attendance/widgets/flagged_teacher_note_card.dart';
 import 'package:smart_attendance_app/features/attendance/widgets/flagged_troubleshoot_faq.dart';
-import 'package:smart_attendance_app/shared/widgets/animated_background.dart';
-import 'package:smart_attendance_app/shared/widgets/glass_app_bar.dart';
-import 'package:smart_attendance_app/shared/widgets/glass_card.dart';
 
 class FlaggedDetailScreen extends ConsumerStatefulWidget {
   final AttendanceHistoryItem? item;
@@ -65,7 +64,7 @@ class _FlaggedDetailScreenState extends ConsumerState<FlaggedDetailScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Submission failed: $e'), backgroundColor: SasColors.danger),
+          SnackBar(content: Text('Submission failed: $e'), backgroundColor: const Color(0xFFF0445E)),
         );
       }
     } finally {
@@ -73,106 +72,111 @@ class _FlaggedDetailScreenState extends ConsumerState<FlaggedDetailScreen> {
     }
   }
 
+  void _handleBack() {
+    if (context.canPop()) {
+      context.pop();
+    } else {
+      context.go('/home');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     if (_isLoading) {
-      return const Scaffold(
-        appBar: GlassAppBar(title: 'Flagged Record'),
-        body: Center(child: CircularProgressIndicator(color: SasColors.accentEmerald)),
+      return PopScope(
+        canPop: false,
+        onPopInvokedWithResult: (didPop, _) {
+          if (!didPop) _handleBack();
+        },
+        child: Scaffold(
+          backgroundColor: isDark ? SasColors.darkCanvas : const Color(0xFFF4F7FB),
+          appBar: _buildAppBar(context, isDark),
+          body: const Center(child: CircularProgressIndicator(color: Color(0xFFF95721))),
+        ),
       );
     }
 
     if (_item == null) {
-      return const Scaffold(
-        appBar: GlassAppBar(title: 'Flagged Record'),
-        body: Center(child: Text('Record not found', style: TextStyle(color: SasColors.textMuted))),
+      return PopScope(
+        canPop: false,
+        onPopInvokedWithResult: (didPop, _) {
+          if (!didPop) _handleBack();
+        },
+        child: Scaffold(
+          backgroundColor: isDark ? SasColors.darkCanvas : const Color(0xFFF4F7FB),
+          appBar: _buildAppBar(context, isDark),
+          body: Center(
+            child: Text(
+              'Record not found',
+              style: GoogleFonts.plusJakartaSans(color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B)),
+            ),
+          ),
+        ),
       );
     }
 
     final item = _item!;
-    final col = statusColor(item.status);
 
-    return Scaffold(
-      appBar: const GlassAppBar(title: 'Flagged Record'),
-      body: AnimatedBackground(
-        child: SafeArea(
-          child: ListView(
-            padding: const EdgeInsets.all(16),
-            children: [
-              GlassCard(
-                borderColor: col.withValues(alpha: 0.3),
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  children: [
-                    Container(
-                      width: 48,
-                      height: 48,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: col.withValues(alpha: 0.1),
-                      ),
-                      child: Icon(
-                        isPresentOrApproved(item.status) ? Icons.check_circle_rounded : Icons.warning_amber_rounded,
-                        color: col,
-                        size: 24,
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    Text(item.className, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
-                    Text(item.subject, style: const TextStyle(color: SasColors.textMuted, fontSize: 13)),
-                    const SizedBox(height: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: col.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(6),
-                        border: Border.all(color: col.withValues(alpha: 0.3)),
-                      ),
-                      child: Text(item.status, style: TextStyle(color: col, fontSize: 12, fontWeight: FontWeight.w700)),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      DateFormat('EEEE, MMM d · h:mm a').format(item.markedAt),
-                      style: const TextStyle(color: SasColors.textMuted, fontSize: 11),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) _handleBack();
+      },
+      child: Scaffold(
+        backgroundColor: isDark ? SasColors.darkCanvas : const Color(0xFFF4F7FB),
+        appBar: _buildAppBar(context, isDark),
+        body: SafeArea(
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 480),
+              child: ListView(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                children: [
+                  FlaggedHeroCard(item: item),
+                  const SizedBox(height: 16),
+                  FlaggedScoreBreakdown(item: item),
+                  const SizedBox(height: 16),
+                  const FlaggedTroubleshootFaq(),
+                  if (item.teacherNote != null && item.teacherNote!.isNotEmpty) ...[
+                    const SizedBox(height: 16),
+                    FlaggedTeacherNoteCard(note: item.teacherNote!),
+                  ],
+                  if (item.status == 'Flagged') ...[
+                    const SizedBox(height: 16),
+                    FlaggedNoteForm(
+                      controller: _noteController,
+                      isSubmitting: _isSubmitting,
+                      noteSubmitted: _noteSubmitted,
+                      onSubmit: _submitNote,
                     ),
                   ],
-                ),
+                  const SizedBox(height: 24),
+                ],
               ),
-              const SizedBox(height: 14),
-              FlaggedScoreBreakdown(item: item),
-              const SizedBox(height: 14),
-              const FlaggedTroubleshootFaq(),
-              if (item.teacherNote != null && item.teacherNote!.isNotEmpty) ...[
-                const SizedBox(height: 14),
-                GlassCard(
-                  padding: const EdgeInsets.all(12),
-                  borderColor: SasColors.info.withValues(alpha: 0.3),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Icon(Icons.person_rounded, color: SasColors.info, size: 16),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          'Teacher Note: ${item.teacherNote}',
-                          style: const TextStyle(color: SasColors.textSecondary, fontSize: 12),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-              if (item.status == 'Flagged') ...[
-                const SizedBox(height: 14),
-                FlaggedNoteForm(
-                  controller: _noteController,
-                  isSubmitting: _isSubmitting,
-                  noteSubmitted: _noteSubmitted,
-                  onSubmit: _submitNote,
-                ),
-              ],
-            ],
+            ),
           ),
+        ),
+      ),
+    );
+  }
+
+  PreferredSizeWidget _buildAppBar(BuildContext context, bool isDark) {
+    return AppBar(
+      backgroundColor: isDark ? SasColors.darkCanvas : const Color(0xFFF4F7FB),
+      elevation: 0,
+      centerTitle: true,
+      leading: IconButton(
+        icon: Icon(Icons.arrow_back_ios_new_rounded, size: 18, color: isDark ? Colors.white : const Color(0xFF0F172A)),
+        onPressed: _handleBack,
+      ),
+      title: Text(
+        'Flagged Record',
+        style: GoogleFonts.plusJakartaSans(
+          fontSize: 16,
+          fontWeight: FontWeight.w700,
+          color: isDark ? Colors.white : const Color(0xFF0F172A),
         ),
       ),
     );

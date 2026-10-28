@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:smart_attendance_app/app/theme.dart';
 import 'package:smart_attendance_app/data/local/permission_service.dart';
@@ -9,7 +11,6 @@ import 'package:smart_attendance_app/features/smart_pass/widgets/smart_pass_guid
 import 'package:smart_attendance_app/features/smart_pass/widgets/smart_pass_permission_card.dart';
 import 'package:smart_attendance_app/features/smart_pass/widgets/smart_pass_scanner_view.dart';
 import 'package:smart_attendance_app/features/smart_pass/widgets/smart_pass_success_card.dart';
-import 'package:smart_attendance_app/shared/widgets/animated_background.dart';
 import 'package:smart_attendance_app/shared/widgets/glass_app_bar.dart';
 
 class SmartPassScreen extends ConsumerStatefulWidget {
@@ -90,6 +91,14 @@ class _SmartPassScreenState extends ConsumerState<SmartPassScreen>
     }
   }
 
+  void _handleBack() {
+    if (Navigator.of(context).canPop()) {
+      Navigator.of(context).pop();
+    } else {
+      context.go('/home');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final passState = ref.watch(smartPassProvider);
@@ -97,42 +106,57 @@ class _SmartPassScreenState extends ConsumerState<SmartPassScreen>
     final isLocationServiceOn =
         _permissionStatus?.isLocationServiceEnabled ?? true;
 
-    return Scaffold(
-      appBar: const GlassAppBar(title: 'Smart Pass Scanner', showBack: true),
-      body: AnimatedBackground(
-        child: SafeArea(
-          child: ListView(
-            padding: const EdgeInsets.all(16),
-            children: [
-              if (passState.scanResult != null)
-                SmartPassSuccessCard(
-                  result: passState.scanResult!,
-                  onScanAnother: () {
-                    setState(() => _isProcessing = false);
-                    ref.read(smartPassProvider.notifier).resetScan();
-                    _scannerController.start();
-                  },
-                )
-              else if (!hasPermission || !isLocationServiceOn)
-                SmartPassPermissionCard(
-                  permissionStatus: _permissionStatus,
-                  isChecking: _checkingPermission,
-                  onRequestPermissions: _requestPermissions,
-                )
-              else ...[
-                SmartPassScannerView(
-                  controller: _scannerController,
-                  isLoading: passState.isLoading,
-                  isProcessing: _isProcessing,
-                  onDetect: _onDetect,
-                ),
-                const SizedBox(height: 16),
-                if (passState.errorMessage != null)
-                  _buildErrorBanner(passState.errorMessage!),
-              ],
-              const SizedBox(height: 16),
-              const SmartPassGuidelinesCard(),
-            ],
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) _handleBack();
+      },
+      child: Scaffold(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        appBar: GlassAppBar(
+          title: 'Smart Pass Scanner',
+          showBack: true,
+          onBackPressed: _handleBack,
+        ),
+        body: SafeArea(
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 480),
+              child: ListView(
+                physics: const ClampingScrollPhysics(),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                children: [
+                  if (passState.scanResult != null)
+                    SmartPassSuccessCard(
+                      result: passState.scanResult!,
+                      onScanAnother: () {
+                        setState(() => _isProcessing = false);
+                        ref.read(smartPassProvider.notifier).resetScan();
+                        _scannerController.start();
+                      },
+                    )
+                  else if (!hasPermission || !isLocationServiceOn)
+                    SmartPassPermissionCard(
+                      permissionStatus: _permissionStatus,
+                      isChecking: _checkingPermission,
+                      onRequestPermissions: _requestPermissions,
+                    )
+                  else ...[
+                    SmartPassScannerView(
+                      controller: _scannerController,
+                      isLoading: passState.isLoading,
+                      isProcessing: _isProcessing,
+                      onDetect: _onDetect,
+                    ),
+                    const SizedBox(height: 14),
+                    if (passState.errorMessage != null)
+                      _buildErrorBanner(passState.errorMessage!),
+                  ],
+                  const SizedBox(height: 14),
+                  const SmartPassGuidelinesCard(),
+                ],
+              ),
+            ),
           ),
         ),
       ),
@@ -140,35 +164,32 @@ class _SmartPassScreenState extends ConsumerState<SmartPassScreen>
   }
 
   Widget _buildErrorBanner(String error) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: SasColors.danger.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: SasColors.danger.withValues(alpha: 0.3)),
-        ),
-        child: Row(
-          children: [
-            const Icon(
-              Icons.error_outline_rounded,
-              size: 18,
-              color: SasColors.danger,
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Text(
-                error,
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: SasColors.danger,
-                  fontWeight: FontWeight.w500,
-                ),
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: SasColors.danger.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: SasColors.danger.withValues(alpha: 0.3)),
+      ),
+      child: Row(
+        children: [
+          const Icon(
+            Icons.error_outline_rounded,
+            size: 18,
+            color: SasColors.danger,
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              error,
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 12,
+                color: SasColors.danger,
+                fontWeight: FontWeight.w600,
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

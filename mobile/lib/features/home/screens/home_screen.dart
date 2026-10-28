@@ -8,7 +8,6 @@ import 'package:smart_attendance_app/features/auth/providers/auth_provider.dart'
 import 'package:smart_attendance_app/features/history/providers/history_provider.dart';
 import 'package:smart_attendance_app/features/home/providers/session_provider.dart';
 import 'package:smart_attendance_app/features/home/widgets/home_compliance_card.dart';
-import 'package:smart_attendance_app/features/home/widgets/home_header_crest.dart';
 import 'package:smart_attendance_app/features/home/widgets/home_modern_header.dart';
 import 'package:smart_attendance_app/features/home/widgets/home_motivational_banner.dart';
 import 'package:smart_attendance_app/features/home/widgets/home_stat_pills_row.dart';
@@ -74,12 +73,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
       backgroundColor: isDark ? SasColors.darkCanvas : const Color(0xFFF8FAFC),
       body: Stack(
         children: [
-          // Campus header photo fading into the canvas
+          // Campus header photo fading cleanly into the canvas
           Positioned(
             top: 0,
             left: 0,
             right: 0,
-            height: 240,
+            height: 250,
             child: IgnorePointer(
               child: ShaderMask(
                 shaderCallback: (rect) {
@@ -87,10 +86,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      Colors.black.withValues(alpha: isDark ? 0.45 : 0.85),
+                      Colors.black.withValues(alpha: isDark ? 0.45 : 0.90),
                       Colors.transparent,
                     ],
-                    stops: const [0.50, 1.0],
+                    stops: const [0.55, 1.0],
                   ).createShader(rect);
                 },
                 blendMode: BlendMode.dstIn,
@@ -101,15 +100,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 ),
               ),
             ),
-          ),
-
-          // Top-left curved organic orange crest
-          const Positioned(
-            top: 0,
-            left: 0,
-            width: 150,
-            height: 95,
-            child: HomeHeaderCrest(),
           ),
 
           SafeArea(

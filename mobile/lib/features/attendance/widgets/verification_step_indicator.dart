@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smart_attendance_app/app/theme.dart';
+import 'package:smart_attendance_app/app/typography.dart';
 import 'package:smart_attendance_app/features/attendance/providers/attendance_provider.dart';
 
 class VerificationStepIndicator extends StatelessWidget {
@@ -8,6 +9,7 @@ class VerificationStepIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     const steps = ['GPS', 'Camera', 'Preview', 'AI Check', 'Submit'];
 
     final currentIdx = switch (current) {
@@ -20,14 +22,24 @@ class VerificationStepIndicator extends StatelessWidget {
       VerificationStep.done => 4,
     };
 
+    final inactiveTrack = isDark ? const Color(0xFF1E293B) : const Color(0xFFE9EEF5);
+    final borderCol = isDark ? const Color(0x2AFFFFFF) : const Color(0xFFE3E9F1);
+    const orangeCol = Color(0xFFF95721);
+    const emeraldCol = Color(0xFF08A875);
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: List.generate(steps.length, (i) {
         final isCompleted = i < currentIdx;
         final isCurrent = i == currentIdx;
-        final isActive = i <= currentIdx;
         final isLeftLineActive = i > 0 && i <= currentIdx;
         final isRightLineActive = i < steps.length - 1 && i < currentIdx;
+
+        final stepColor = isCompleted
+            ? emeraldCol
+            : isCurrent
+                ? orangeCol
+                : (isDark ? const Color(0xFF64748B) : const Color(0xFF94A3B8));
 
         return Expanded(
           child: Column(
@@ -39,28 +51,32 @@ class VerificationStepIndicator extends StatelessWidget {
                     child: Container(
                       height: 2.5,
                       color: i > 0
-                          ? (isLeftLineActive ? SasColors.accentEmerald : SasColors.glassBorder)
+                          ? (isLeftLineActive ? emeraldCol : inactiveTrack)
                           : Colors.transparent,
                     ),
                   ),
                   Container(
-                    width: 28,
-                    height: 28,
+                    width: 30,
+                    height: 30,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: isCompleted
-                          ? SasColors.accentEmerald
+                          ? emeraldCol
                           : isCurrent
-                              ? SasColors.accentEmerald.withValues(alpha: 0.15)
-                              : SasColors.bgSurface,
+                              ? (isDark ? const Color(0x33F95721) : const Color(0xFFFFEDD5))
+                              : inactiveTrack,
                       border: Border.all(
-                        color: isActive ? SasColors.accentEmerald : SasColors.glassBorder,
-                        width: isCurrent ? 2 : 1,
+                        color: isCompleted
+                            ? emeraldCol
+                            : isCurrent
+                                ? orangeCol
+                                : borderCol,
+                        width: isCurrent ? 2.2 : 1.2,
                       ),
                       boxShadow: isCurrent
                           ? [
                               BoxShadow(
-                                color: SasColors.accentEmerald.withValues(alpha: 0.25),
+                                color: orangeCol.withValues(alpha: 0.25),
                                 blurRadius: 8,
                                 spreadRadius: 1,
                               ),
@@ -69,17 +85,13 @@ class VerificationStepIndicator extends StatelessWidget {
                     ),
                     child: Center(
                       child: isCompleted
-                          ? const Icon(Icons.check_rounded, size: 14, color: Colors.white)
+                          ? const Icon(Icons.check_rounded, size: 16, color: Colors.white)
                           : Text(
                               '${i + 1}',
-                              style: TextStyle(
-                                fontSize: 11,
-                                fontWeight: isCurrent ? FontWeight.bold : FontWeight.w600,
-                                color: isCurrent
-                                    ? SasColors.accentEmerald
-                                    : isActive
-                                        ? SasColors.textPrimary
-                                        : SasColors.textMuted,
+                              style: SasTypography.style(
+                                fontSize: 12,
+                                fontWeight: isCurrent ? FontWeight.w800 : FontWeight.w600,
+                                color: isCurrent ? orangeCol : stepColor,
                               ),
                             ),
                     ),
@@ -88,7 +100,7 @@ class VerificationStepIndicator extends StatelessWidget {
                     child: Container(
                       height: 2.5,
                       color: i < steps.length - 1
-                          ? (isRightLineActive ? SasColors.accentEmerald : SasColors.glassBorder)
+                          ? (isRightLineActive ? emeraldCol : inactiveTrack)
                           : Colors.transparent,
                     ),
                   ),
@@ -98,14 +110,12 @@ class VerificationStepIndicator extends StatelessWidget {
               Text(
                 steps[i],
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 10,
+                style: SasTypography.style(
+                  fontSize: 11,
                   fontWeight: isCurrent ? FontWeight.w700 : FontWeight.w500,
                   color: isCurrent
-                      ? SasColors.accentEmerald
-                      : isActive
-                          ? SasColors.textPrimary
-                          : SasColors.textMuted,
+                      ? (isDark ? SasColors.brilliance : const Color(0xFF0F172A))
+                      : stepColor,
                 ),
               ),
             ],

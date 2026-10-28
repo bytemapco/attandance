@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:smart_attendance_app/app/theme.dart';
 import 'package:smart_attendance_app/features/attendance/providers/geofence_verification_provider.dart';
 import 'package:smart_attendance_app/features/attendance/widgets/geofence_distance_metrics.dart';
 import 'package:smart_attendance_app/features/attendance/widgets/geofence_radar_indicator.dart';
-import 'package:smart_attendance_app/shared/widgets/glass_button.dart';
-import 'package:smart_attendance_app/shared/widgets/glass_card.dart';
 
 class GeofenceStatusCard extends StatelessWidget {
   final GeofenceVerificationState state;
@@ -20,62 +19,106 @@ class GeofenceStatusCard extends StatelessWidget {
   Widget build(BuildContext context) {
     if (state.status == GeofenceStatus.idle) return const SizedBox.shrink();
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardBg = isDark ? SasColors.darkSurface : Colors.white;
+    final borderCol = isDark ? const Color(0x1FFFFFFF) : const Color(0xFFE3E9F1);
+
     Color statusColor;
     String statusTitle;
     String statusDesc;
 
+    final distance = state.distanceMeters;
+    final radius = state.radiusMeters;
+
     switch (state.status) {
       case GeofenceStatus.scanning:
-        statusColor = SasColors.info;
+        statusColor = const Color(0xFF2583E8);
         statusTitle = 'Checking Location';
-        statusDesc = 'Checking your location in the classroom...';
+        statusDesc = 'Finding your GPS position...';
         break;
       case GeofenceStatus.success:
-        statusColor = SasColors.accentEmerald;
-        statusTitle = 'Location Confirmed';
+        statusColor = const Color(0xFF08A875);
+        statusTitle = 'Location Verified';
         statusDesc = 'You are inside the classroom boundary.';
         break;
       case GeofenceStatus.failed:
-        statusColor = SasColors.danger;
-        statusTitle = 'Outside Classroom';
-        statusDesc = state.errorMessage ?? 'You appear to be outside the classroom.';
+        statusColor = const Color(0xFFF0445E);
+        statusTitle = 'Outside Classroom Zone';
+        statusDesc = radius != null
+            ? 'Must be within ${GeofenceDistanceMetrics.formatDistance(radius)} of class to check in.'
+            : 'You are outside the classroom boundary.';
         break;
       default:
-        statusColor = SasColors.textMuted;
+        statusColor = const Color(0xFF64748B);
         statusTitle = 'Checking Location';
         statusDesc = '';
     }
 
-    return GlassCard(
-      borderColor: statusColor.withValues(alpha: 0.35),
-      padding: const EdgeInsets.all(16),
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: cardBg,
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: borderCol),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.20 : 0.04),
+            blurRadius: 14,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           GeofenceRadarIndicator(status: state.status, color: statusColor),
-          const SizedBox(height: 12),
+          const SizedBox(height: 14),
           Text(
             statusTitle,
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: statusColor),
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 16.5,
+              fontWeight: FontWeight.w700,
+              color: statusColor,
+            ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 4),
           Text(
             statusDesc,
-            style: const TextStyle(color: SasColors.textSecondary, fontSize: 12),
+            style: GoogleFonts.plusJakartaSans(
+              color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+            ),
             textAlign: TextAlign.center,
           ),
-          if (state.distanceMeters != null && state.radiusMeters != null) ...[
-            const SizedBox(height: 12),
+          if (distance != null && radius != null) ...[
+            const SizedBox(height: 14),
             GeofenceDistanceMetrics(state: state, statusColor: statusColor),
           ],
           if (state.status == GeofenceStatus.failed) ...[
-            const SizedBox(height: 12),
-            GlassButton(
-              label: 'Retry GPS Verification',
-              icon: Icons.refresh_rounded,
-              isExpanded: true,
-              onPressed: onRetry,
+            const SizedBox(height: 16),
+            SizedBox(
+              width: double.infinity,
+              height: 48,
+              child: ElevatedButton.icon(
+                onPressed: onRetry,
+                icon: const Icon(Icons.refresh_rounded, size: 18, color: Colors.white),
+                label: Text(
+                  'Retry Location',
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 14.5,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFF95721),
+                  elevation: 1,
+                  shadowColor: const Color(0xFFF95721).withValues(alpha: 0.35),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                ),
+              ),
             ),
           ],
         ],
