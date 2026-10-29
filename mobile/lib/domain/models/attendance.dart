@@ -1,4 +1,3 @@
-
 class AttendanceAnalysisResult {
   final double faceScore;
   final double livenessScore;
@@ -139,8 +138,10 @@ class AttendanceHistoryResponse {
         overallAttendancePercentage:
             (json['overall_attendance_percentage'] as num).toDouble(),
         history: (json['history'] as List<dynamic>)
-            .map((item) =>
-                AttendanceHistoryItem.fromJson(item as Map<String, dynamic>))
+            .map(
+              (item) =>
+                  AttendanceHistoryItem.fromJson(item as Map<String, dynamic>),
+            )
             .toList(),
       );
 }
@@ -169,16 +170,16 @@ class StudentClass {
   });
 
   factory StudentClass.fromJson(Map<String, dynamic> json) => StudentClass(
-        classId: json['class_id'] as String,
-        className: json['class_name'] as String,
-        subject: json['subject'] as String,
-        teacherName: json['teacher_name'] as String,
-        activeSessionId: json['active_session_id'] as String?,
-        sessionEndTime: json['session_end_time'] != null
-            ? DateTime.tryParse(json['session_end_time'] as String)
-            : null,
-        latitude: (json['latitude'] as num?)?.toDouble(),
-        longitude: (json['longitude'] as num?)?.toDouble(),
-        radiusMeters: (json['radius_meters'] as num?)?.toDouble(),
-      );
+    classId: json['class_id'] as String,
+    className: json['class_name'] as String,
+    subject: json['subject'] as String,
+    teacherName: json['teacher_name'] as String,
+    activeSessionId: json['active_session_id'] as String?,
+    sessionEndTime: json['session_end_time'] != null
+        ? DateTime.tryParse(json['session_end_time'] as String)
+        : null,
+    latitude: (json['latitude'] as num?)?.toDouble(),
+    longitude: (json['longitude'] as num?)?.toDouble(),
+    radiusMeters: (json['radius_meters'] as num?)?.toDouble(),
+  );
 }

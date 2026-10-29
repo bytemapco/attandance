@@ -37,11 +37,19 @@ class GlassInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final primaryTextColor = isDark ? SasColors.brilliance : SasColors.indianInk;
-    final labelTextColor = isDark ? SasColors.maidenMist : const Color(0xFF474A59);
-    final hintTextColor = isDark ? const Color(0x99BAC0BE) : const Color(0xFF858997);
+    final primaryTextColor = isDark
+        ? SasColors.brilliance
+        : SasColors.indianInk;
+    final labelTextColor = isDark
+        ? SasColors.maidenMist
+        : const Color(0xFF474A59);
+    final hintTextColor = isDark
+        ? const Color(0x99BAC0BE)
+        : const Color(0xFF858997);
     final inputBg = isDark ? SasColors.darkCanvas : SasColors.polishWhite;
-    final inputBorderColor = isDark ? SasColors.indianInk : const Color(0xFFD5D8D7);
+    final inputBorderColor = isDark
+        ? SasColors.indianInk
+        : const Color(0xFFD5D8D7);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -83,11 +91,7 @@ class GlassInput extends StatelessWidget {
             prefixIcon: prefixIcon != null
                 ? Padding(
                     padding: const EdgeInsets.only(left: 14, right: 10),
-                    child: Icon(
-                      prefixIcon,
-                      size: 20,
-                      color: hintTextColor,
-                    ),
+                    child: Icon(prefixIcon, size: 20, color: hintTextColor),
                   )
                 : null,
             prefixIconConstraints: const BoxConstraints(
@@ -97,8 +101,10 @@ class GlassInput extends StatelessWidget {
             suffixIcon: suffix,
             filled: true,
             fillColor: inputBg,
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 15,
+            ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide(color: inputBorderColor),
@@ -116,17 +122,11 @@ class GlassInput extends StatelessWidget {
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(
-                color: SasColors.danger,
-                width: 1.0,
-              ),
+              borderSide: const BorderSide(color: SasColors.danger, width: 1.0),
             ),
             focusedErrorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(
-                color: SasColors.danger,
-                width: 1.5,
-              ),
+              borderSide: const BorderSide(color: SasColors.danger, width: 1.5),
             ),
           ),
         ),

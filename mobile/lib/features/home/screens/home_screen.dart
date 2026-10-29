@@ -54,20 +54,24 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
 
   @override
   Widget build(BuildContext context) {
-    final user = ref.watch(authProvider).user;
+    final user = ref.watch(authProvider.select((s) => s.user));
     final sessionState = ref.watch(sessionProvider);
     final historyState = ref.watch(historyProvider);
     final rawPct = historyState.data?.overallAttendancePercentage ?? 0;
-    final overallPct =
-        (rawPct.isNaN || rawPct.isInfinite) ? 0.0 : rawPct.toDouble();
+    final overallPct = (rawPct.isNaN || rawPct.isInfinite)
+        ? 0.0
+        : rawPct.toDouble();
 
     final historyList = historyState.data?.history ?? [];
     final streakDays = calculateStreak(historyList);
     final classesThisWeek = computeWeekPresent(historyList);
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final notifications = ref.watch(notificationsProvider);
-    final unreadCount = notifications.where((n) => !n.isRead).length;
+    final unreadCount = ref.watch(
+      notificationsProvider.select(
+        (list) => list.where((n) => !n.isRead).length,
+      ),
+    );
 
     return Scaffold(
       backgroundColor: isDark ? SasColors.darkCanvas : const Color(0xFFF8FAFC),
@@ -103,64 +107,72 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           ),
 
           SafeArea(
-            child: SmartPullToRefresh(
-              onRefresh: () async {
-                await ref.read(sessionProvider.notifier).fetchSessions();
-                await ref.read(historyProvider.notifier).fetch();
-              },
-              child: ListView(
-                physics: const AlwaysScrollableScrollPhysics(
-                  parent: BouncingScrollPhysics(),
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 600),
+                child: SmartPullToRefresh(
+                  onRefresh: () async {
+                    await ref.read(sessionProvider.notifier).fetchSessions();
+                    await ref.read(historyProvider.notifier).fetch();
+                  },
+                  child: ListView(
+                    physics: const AlwaysScrollableScrollPhysics(
+                      parent: BouncingScrollPhysics(),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
+                    children: [
+                      // Modern Student Header (Avatar, Hello, Institute, Bell)
+                      HomeModernHeader(
+                        user: user,
+                        unreadCount: unreadCount,
+                        onNotificationTap: () => context.push('/notifications'),
+                      ),
+                      const SizedBox(height: 16),
+
+                      // Hero Term Compliance Gradient Card (0% with Circular Gauge)
+                      HomeComplianceCard(
+                        percentage: overallPct,
+                        onTap: () => context.go('/analytics'),
+                      ),
+                      const SizedBox(height: 14),
+
+                      // Streak & Classes this week pills
+                      HomeStatPillsRow(
+                        streakDays: streakDays,
+                        classesThisWeek: classesThisWeek,
+                        onTapStreak: () => context.go('/history'),
+                        onTapClasses: () => context.go('/history'),
+                      ),
+                      const SizedBox(height: 14),
+
+                      // Today's Classes Card with in-card action buttons
+                      HomeTodayClassesCard(
+                        sessions: sessionState.sessions,
+                        onViewAll: () => context.go('/history'),
+                        onSmartPass: () => context.push('/smart-pass'),
+                        onFaceMatch: () {
+                          final activeSessionId = sessionState.sessions
+                              .where((s) => s.isActive && s.sessionId != null)
+                              .firstOrNull
+                              ?.sessionId;
+                          if (activeSessionId != null) {
+                            context.push('/verify/$activeSessionId');
+                          } else {
+                            context.push('/smart-pass');
+                          }
+                        },
+                      ),
+                      const SizedBox(height: 14),
+
+                      // Bottom Motivational Trophy Banner
+                      const HomeMotivationalBanner(),
+                      const SizedBox(height: 20),
+                    ],
+                  ),
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                children: [
-                  // Modern Student Header (Avatar, Hello, Institute, Bell)
-                  HomeModernHeader(
-                    user: user,
-                    unreadCount: unreadCount,
-                    onNotificationTap: () => context.push('/notifications'),
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Hero Term Compliance Gradient Card (0% with Circular Gauge)
-                  HomeComplianceCard(
-                    percentage: overallPct,
-                    onTap: () => context.go('/analytics'),
-                  ),
-                  const SizedBox(height: 14),
-
-                  // Streak & Classes this week pills
-                  HomeStatPillsRow(
-                    streakDays: streakDays,
-                    classesThisWeek: classesThisWeek > 0 ? classesThisWeek : 1,
-                    onTapStreak: () => context.go('/history'),
-                    onTapClasses: () => context.go('/history'),
-                  ),
-                  const SizedBox(height: 14),
-
-                  // Today's Classes Card with in-card action buttons
-                  HomeTodayClassesCard(
-                    sessions: sessionState.sessions,
-                    onViewAll: () => context.go('/history'),
-                    onSmartPass: () => context.push('/smart-pass'),
-                    onFaceMatch: () {
-                      final activeSessionId = sessionState.sessions
-                          .where((s) => s.isActive && s.sessionId != null)
-                          .firstOrNull
-                          ?.sessionId;
-                      if (activeSessionId != null) {
-                        context.push('/verify/$activeSessionId');
-                      } else {
-                        context.push('/smart-pass');
-                      }
-                    },
-                  ),
-                  const SizedBox(height: 14),
-
-                  // Bottom Motivational Trophy Banner
-                  const HomeMotivationalBanner(),
-                  const SizedBox(height: 20),
-                ],
               ),
             ),
           ),

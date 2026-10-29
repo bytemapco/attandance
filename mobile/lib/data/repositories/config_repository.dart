@@ -5,10 +5,7 @@ import 'package:smart_attendance_app/data/local/hive_service.dart';
 import 'package:smart_attendance_app/domain/models/system_configuration.dart';
 
 final configRepositoryProvider = Provider<ConfigRepository>((ref) {
-  return ConfigRepository(
-    ref.read(dioProvider),
-    ref.read(hiveServiceProvider),
-  );
+  return ConfigRepository(ref.read(dioProvider), ref.read(hiveServiceProvider));
 });
 
 class ConfigRepository {
@@ -21,7 +18,9 @@ class ConfigRepository {
     try {
       final response = await _dio.get('/auth/config');
       if (response.statusCode == 200) {
-        final config = SystemConfiguration.fromJson(response.data as Map<String, dynamic>);
+        final config = SystemConfiguration.fromJson(
+          response.data as Map<String, dynamic>,
+        );
         await _hiveService.cacheSystemConfig(config);
       }
     } catch (e) {

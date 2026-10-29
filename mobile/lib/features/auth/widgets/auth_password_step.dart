@@ -40,13 +40,16 @@ class AuthPasswordStep extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final primaryTextColor =
-        isDark ? SasColors.brilliance : const Color(0xFF0F172A);
-    final subtitleColor =
-        isDark ? SasColors.maidenMist : const Color(0xFF475569);
+    final primaryTextColor = isDark
+        ? SasColors.brilliance
+        : const Color(0xFF0F172A);
+    final subtitleColor = isDark
+        ? SasColors.maidenMist
+        : const Color(0xFF475569);
     final inputBg = isDark ? SasColors.darkElevated : const Color(0xFFF8FAFC);
-    final inputBorder =
-        isDark ? const Color(0x2EFFFFFF) : const Color(0xFFE2E8F0);
+    final inputBorder = isDark
+        ? const Color(0x2EFFFFFF)
+        : const Color(0xFFE2E8F0);
 
     return SizedBox.expand(
       child: ColoredBox(
@@ -61,8 +64,8 @@ class AuthPasswordStep extends StatelessWidget {
               bottom: 0,
               height: 310,
               child: IgnorePointer(
-                child: CustomPaint(
-                  painter: AuthWavePainter(isDark: isDark),
+                child: RepaintBoundary(
+                  child: CustomPaint(painter: AuthWavePainter(isDark: isDark)),
                 ),
               ),
             ),
@@ -73,121 +76,130 @@ class AuthPasswordStep extends StatelessWidget {
                   return SingleChildScrollView(
                     physics: const ClampingScrollPhysics(),
                     child: ConstrainedBox(
-                      constraints:
-                          BoxConstraints(minHeight: constraints.maxHeight),
+                      constraints: BoxConstraints(
+                        minHeight: constraints.maxHeight,
+                      ),
                       child: IntrinsicHeight(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 24, vertical: 12),
-                          child: Form(
-                            key: formKey,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                FadeSlideTransition(
-                                  delay: Duration.zero,
-                                  beginOffset: const Offset(-0.04, 0),
-                                  child: AuthBrandHeader(
-                                    onBackPressed: onBackPressed,
-                                    isLightBackground: !isDark,
-                                  ),
-                                ),
-                                const SizedBox(height: 36),
-                                FadeSlideTransition(
-                                  delay: const Duration(milliseconds: 60),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Welcome Back!',
-                                        style: SasTypography.style(
-                                          fontSize: 28,
-                                          fontWeight: FontWeight.w600,
-                                          letterSpacing: -0.6,
-                                          color: primaryTextColor,
-                                        ),
+                        child: Center(
+                          child: ConstrainedBox(
+                            constraints: const BoxConstraints(maxWidth: 480),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 24,
+                                vertical: 12,
+                              ),
+                              child: Form(
+                                key: formKey,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    FadeSlideTransition(
+                                      delay: Duration.zero,
+                                      beginOffset: const Offset(-0.04, 0),
+                                      child: AuthBrandHeader(
+                                        onBackPressed: onBackPressed,
+                                        isLightBackground: !isDark,
                                       ),
-                                      const SizedBox(height: 6),
-                                      Text(
-                                        'Enter your password to access your account',
-                                        style: SasTypography.style(
-                                          fontSize: 13.5,
-                                          fontWeight: FontWeight.w400,
-                                          color: subtitleColor,
-                                        ),
+                                    ),
+                                    const SizedBox(height: 36),
+                                    FadeSlideTransition(
+                                      delay: const Duration(milliseconds: 60),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            'Welcome Back!',
+                                            style: SasTypography.style(
+                                              fontSize: 28,
+                                              fontWeight: FontWeight.w600,
+                                              letterSpacing: -0.6,
+                                              color: primaryTextColor,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 6),
+                                          Text(
+                                            'Enter your password to access your account',
+                                            style: SasTypography.style(
+                                              fontSize: 13.5,
+                                              fontWeight: FontWeight.w400,
+                                              color: subtitleColor,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    const SizedBox(height: 28),
+                                    FadeSlideTransition(
+                                      delay: const Duration(milliseconds: 110),
+                                      child: AuthStudentIdentityCard(
+                                        studentId: studentId,
+                                        onEdit: onBackPressed,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 28),
+                                    FadeSlideTransition(
+                                      delay: const Duration(milliseconds: 160),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            'Password',
+                                            style: SasTypography.style(
+                                              fontSize: 13.5,
+                                              fontWeight: FontWeight.w600,
+                                              color: primaryTextColor,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 8),
+                                          AuthPasswordInputField(
+                                            controller: controller,
+                                            focusNode: focusNode,
+                                            obscurePassword: obscurePassword,
+                                            onToggleObscurePassword:
+                                                onToggleObscurePassword,
+                                            onSubmit: onSubmit,
+                                            primaryTextColor: primaryTextColor,
+                                            subtitleColor: subtitleColor,
+                                            inputBg: inputBg,
+                                            inputBorder: inputBorder,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    if (errorMessage != null) ...[
+                                      const SizedBox(height: 14),
+                                      LoginErrorBanner(
+                                        errorMessage: errorMessage!,
+                                        email: studentId,
+                                        password: controller.text,
+                                        isFormValid:
+                                            formKey.currentState?.validate() ??
+                                            false,
                                       ),
                                     ],
-                                  ),
-                                ),
-                                const SizedBox(height: 28),
-                                FadeSlideTransition(
-                                  delay: const Duration(milliseconds: 110),
-                                  child: AuthStudentIdentityCard(
-                                    studentId: studentId,
-                                    onEdit: onBackPressed,
-                                  ),
-                                ),
-                                const SizedBox(height: 28),
-                                FadeSlideTransition(
-                                  delay: const Duration(milliseconds: 160),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Password',
-                                        style: SasTypography.style(
-                                          fontSize: 13.5,
-                                          fontWeight: FontWeight.w600,
-                                          color: primaryTextColor,
-                                        ),
+                                    const SizedBox(height: 28),
+                                    FadeSlideTransition(
+                                      delay: const Duration(milliseconds: 210),
+                                      child: AuthGradientButton(
+                                        label: 'Sign In',
+                                        onPressed: onSubmit,
+                                        isLoading: isLoading,
                                       ),
-                                      const SizedBox(height: 8),
-                                      AuthPasswordInputField(
-                                        controller: controller,
-                                        focusNode: focusNode,
-                                        obscurePassword: obscurePassword,
-                                        onToggleObscurePassword:
-                                            onToggleObscurePassword,
-                                        onSubmit: onSubmit,
-                                        primaryTextColor: primaryTextColor,
-                                        subtitleColor: subtitleColor,
-                                        inputBg: inputBg,
-                                        inputBorder: inputBorder,
+                                    ),
+                                    const SizedBox(height: 24),
+                                    FadeSlideTransition(
+                                      delay: const Duration(milliseconds: 240),
+                                      child: AuthSecurityBadge(
+                                        textColor: subtitleColor,
                                       ),
-                                    ],
-                                  ),
+                                    ),
+                                    const Spacer(),
+                                    const SizedBox(height: 32),
+                                  ],
                                 ),
-                                if (errorMessage != null) ...[
-                                  const SizedBox(height: 14),
-                                  LoginErrorBanner(
-                                    errorMessage: errorMessage!,
-                                    email: studentId,
-                                    password: controller.text,
-                                    isFormValid: formKey.currentState
-                                            ?.validate() ??
-                                        false,
-                                  ),
-                                ],
-                                const SizedBox(height: 28),
-                                FadeSlideTransition(
-                                  delay: const Duration(milliseconds: 210),
-                                  child: AuthGradientButton(
-                                    label: 'Sign In',
-                                    onPressed: onSubmit,
-                                    isLoading: isLoading,
-                                  ),
-                                ),
-                                const SizedBox(height: 24),
-                                FadeSlideTransition(
-                                  delay: const Duration(milliseconds: 240),
-                                  child: AuthSecurityBadge(
-                                      textColor: subtitleColor),
-                                ),
-                                const Spacer(),
-                                const SizedBox(height: 32),
-                              ],
+                              ),
                             ),
                           ),
                         ),

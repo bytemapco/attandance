@@ -10,18 +10,20 @@ class HistoryCourseCard extends StatelessWidget {
 
   const HistoryCourseCard({
     super.key,
-    this.courseTitle = 'Distributed Systems',
-    this.courseSubtitle = 'CS-6A • Robert Hayes',
+    this.courseTitle = 'All Enrolled Subjects',
+    this.courseSubtitle = 'Course Overview • Attendance Log',
     this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final primaryTextColor =
-        isDark ? SasColors.brilliance : const Color(0xFF0F172A);
-    final subtitleColor =
-        isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B);
+    final primaryTextColor = isDark
+        ? SasColors.brilliance
+        : const Color(0xFF0F172A);
+    final subtitleColor = isDark
+        ? const Color(0xFF94A3B8)
+        : const Color(0xFF64748B);
 
     return InkWell(
       onTap: onTap,

@@ -9,7 +9,9 @@ import 'package:smart_attendance_app/shared/widgets/animated_background.dart';
 import 'package:smart_attendance_app/shared/widgets/glass_app_bar.dart';
 import 'package:smart_attendance_app/shared/widgets/glass_card.dart';
 
-final leaveHistoryProvider = FutureProvider.autoDispose<List<LeaveRequest>>((ref) async {
+final leaveHistoryProvider = FutureProvider.autoDispose<List<LeaveRequest>>((
+  ref,
+) async {
   final response = await ref.read(studentApiProvider).getMyLeaves();
   final listResponse = LeaveRequestListResponse.fromJson(response);
   return listResponse.leaves;
@@ -26,30 +28,42 @@ class LeaveHistoryScreen extends ConsumerWidget {
       appBar: const GlassAppBar(title: 'Leave History'),
       body: AnimatedBackground(
         child: SafeArea(
-          child: historyAsync.when(
-            data: (leaves) => leaves.isEmpty ? _buildEmpty(context) : _buildList(leaves),
-            loading: () => const Center(child: CircularProgressIndicator(color: SasColors.accentEmerald)),
-            error: (err, _) => _buildError(err.toString()),
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 600),
+              child: historyAsync.when(
+                data: (leaves) => leaves.isEmpty
+                    ? _buildEmpty(context)
+                    : _buildList(context, leaves),
+                loading: () => const Center(
+                  child: CircularProgressIndicator(
+                    color: SasColors.accentEmerald,
+                  ),
+                ),
+                error: (err, _) => _buildError(err.toString()),
+              ),
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildList(List<LeaveRequest> leaves) {
-    final sorted = [...leaves]..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+  Widget _buildList(BuildContext context, List<LeaveRequest> leaves) {
+    final sorted = [...leaves]
+      ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
 
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
         LeaveHistoryStats(leaves: leaves),
         const SizedBox(height: 16),
-        const Text(
+        Text(
           'Submitted Requests',
           style: TextStyle(
             fontSize: 13,
             fontWeight: FontWeight.w700,
-            color: SasColors.textSecondary,
+            color: SasColors.textSecondaryOf(context),
           ),
         ),
         const SizedBox(height: 8),
@@ -67,11 +81,19 @@ class LeaveHistoryScreen extends ConsumerWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.event_busy_rounded, size: 48, color: SasColors.textMuted),
+              Icon(
+                Icons.event_busy_rounded,
+                size: 48,
+                color: SasColors.textMuted,
+              ),
               SizedBox(height: 12),
               Text(
                 'No Leave History',
-                style: TextStyle(fontWeight: FontWeight.w700, fontSize: 15, color: SasColors.textPrimaryOf(context)),
+                style: TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 15,
+                  color: SasColors.textPrimaryOf(context),
+                ),
               ),
               SizedBox(height: 6),
               Text(
@@ -96,17 +118,28 @@ class LeaveHistoryScreen extends ConsumerWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.error_outline_rounded, size: 40, color: SasColors.danger),
+              const Icon(
+                Icons.error_outline_rounded,
+                size: 40,
+                color: SasColors.danger,
+              ),
               const SizedBox(height: 10),
               const Text(
                 'Failed to Load History',
-                style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14, color: SasColors.danger),
+                style: TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 14,
+                  color: SasColors.danger,
+                ),
               ),
               const SizedBox(height: 6),
               Text(
                 error,
                 textAlign: TextAlign.center,
-                style: const TextStyle(color: SasColors.textMuted, fontSize: 11),
+                style: const TextStyle(
+                  color: SasColors.textMuted,
+                  fontSize: 11,
+                ),
               ),
             ],
           ),

@@ -1,4 +1,3 @@
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_attendance_app/data/local/preferences_service.dart';
 
@@ -102,5 +101,5 @@ class PreferencesNotifier extends StateNotifier<PreferencesState> {
 
 final preferencesProvider =
     StateNotifierProvider<PreferencesNotifier, PreferencesState>((ref) {
-  return PreferencesNotifier(ref.read(preferencesServiceProvider));
-});
+      return PreferencesNotifier(ref.read(preferencesServiceProvider));
+    });

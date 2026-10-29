@@ -29,9 +29,7 @@ class ClassSessionInfoRow extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(4),
           decoration: BoxDecoration(
-            color: isDark
-                ? const Color(0x14FFFFFF)
-                : const Color(0x08000000),
+            color: isDark ? const Color(0x14FFFFFF) : const Color(0x08000000),
             shape: BoxShape.circle,
           ),
           child: Icon(
@@ -53,10 +51,7 @@ class ClassSessionInfoRow extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
           ),
         ),
-        if (isActive &&
-            remaining != null &&
-            !isWindowClosed &&
-            !isMarked) ...[
+        if (isActive && remaining != null && !isWindowClosed && !isMarked) ...[
           AnimatedDefaultTextStyle(
             duration: SasDurations.normal,
             style: TextStyle(

@@ -37,100 +37,125 @@ class _SyncStatusScreenState extends ConsumerState<SyncStatusScreen> {
       appBar: const GlassAppBar(title: 'Offline Sync Status'),
       body: AnimatedBackground(
         child: SafeArea(
-          child: ListView(
-            padding: const EdgeInsets.all(16),
-            children: [
-              GlassCard(
-                borderColor: queue.isEmpty
-                    ? SasColors.accentEmerald.withValues(alpha: 0.3)
-                    : SasColors.info.withValues(alpha: 0.3),
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 600),
+              child: ListView(
                 padding: const EdgeInsets.all(16),
-                child: Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: (queue.isEmpty ? SasColors.accentEmerald : SasColors.info)
-                            .withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Icon(
-                        queue.isEmpty ? Icons.cloud_done_rounded : Icons.cloud_sync_rounded,
-                        color: queue.isEmpty ? SasColors.accentEmerald : SasColors.info,
-                        size: 22,
+                children: [
+                  GlassCard(
+                    borderColor: queue.isEmpty
+                        ? SasColors.accentEmerald.withValues(alpha: 0.3)
+                        : SasColors.info.withValues(alpha: 0.3),
+                    padding: const EdgeInsets.all(16),
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color:
+                                (queue.isEmpty
+                                        ? SasColors.accentEmerald
+                                        : SasColors.info)
+                                    .withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Icon(
+                            queue.isEmpty
+                                ? Icons.cloud_done_rounded
+                                : Icons.cloud_sync_rounded,
+                            color: queue.isEmpty
+                                ? SasColors.accentEmerald
+                                : SasColors.info,
+                            size: 22,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                queue.isEmpty
+                                    ? 'All Synced'
+                                    : '${queue.length} Pending Records',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 15,
+                                  color: SasColors.textPrimaryOf(context),
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                queue.isEmpty
+                                    ? 'No offline attendance pending'
+                                    : 'Awaiting network sync connection',
+                                style: TextStyle(
+                                  color: SasColors.textMutedOf(context),
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        if (queue.isNotEmpty)
+                          GlassButton(
+                            label: 'Sync Now',
+                            isLoading: _isSyncing,
+                            icon: Icons.refresh_rounded,
+                            onPressed: _isSyncing ? null : _triggerSync,
+                          ),
+                      ],
+                    ),
+                  ),
+                  if (queue.isNotEmpty) ...[
+                    const SizedBox(height: 16),
+                    Text(
+                      'Queued Submissions',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                        color: SasColors.textSecondaryOf(context),
                       ),
                     ),
-                    const SizedBox(width: 12),
-                    Expanded(
+                    const SizedBox(height: 8),
+                    ...queue.map((p) => SyncQueueItem(payload: p)),
+                  ] else ...[
+                    const SizedBox(height: 48),
+                    Center(
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            queue.isEmpty ? 'All Synced' : '${queue.length} Pending Records',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w700,
-                              fontSize: 15,
-                              color: SasColors.textPrimaryOf(context),
+                          Icon(
+                            Icons.cloud_done_rounded,
+                            size: 48,
+                            color: SasColors.accentEmerald.withValues(
+                              alpha: 0.4,
                             ),
                           ),
-                          const SizedBox(height: 2),
+                          const SizedBox(height: 12),
                           Text(
-                            queue.isEmpty
-                                ? 'No offline attendance pending'
-                                : 'Awaiting network sync connection',
-                            style: const TextStyle(color: SasColors.textMuted, fontSize: 12),
+                            'Up to Date',
+                            style: TextStyle(
+                              color: SasColors.textPrimaryOf(context),
+                              fontSize: 14,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'All check-ins are synchronized with the server.',
+                            style: TextStyle(
+                              color: SasColors.textMutedOf(context),
+                              fontSize: 12,
+                            ),
                           ),
                         ],
                       ),
                     ),
-                    if (queue.isNotEmpty)
-                      GlassButton(
-                        label: 'Sync Now',
-                        isLoading: _isSyncing,
-                        icon: Icons.refresh_rounded,
-                        onPressed: _isSyncing ? null : _triggerSync,
-                      ),
                   ],
-                ),
+                ],
               ),
-              if (queue.isNotEmpty) ...[
-                const SizedBox(height: 16),
-                const Text(
-                  'Queued Submissions',
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
-                    color: SasColors.textSecondary,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                ...queue.map((p) => SyncQueueItem(payload: p)),
-              ] else ...[
-                const SizedBox(height: 48),
-                Center(
-                  child: Column(
-                    children: [
-                      Icon(Icons.cloud_done_rounded,
-                          size: 48, color: SasColors.accentEmerald.withValues(alpha: 0.4)),
-                      const SizedBox(height: 12),
-                      Text(
-                        'Up to Date',
-                        style: TextStyle(
-                          color: SasColors.textPrimaryOf(context),
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      const Text(
-                        'All check-ins are synchronized with the server.',
-                        style: TextStyle(color: SasColors.textMuted, fontSize: 12),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ],
+            ),
           ),
         ),
       ),

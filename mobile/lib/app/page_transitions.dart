@@ -1,12 +1,13 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:go_router/go_router.dart';
 import 'package:smart_attendance_app/app/theme.dart';
 
 /// Slide-up transition for modal-style screens (verification, leave request, smart pass).
-CustomTransitionPage<void> slideUpPage({
-  required LocalKey key,
-  required Widget child,
-}) {
+Page<void> slideUpPage({required LocalKey key, required Widget child}) {
+  if (defaultTargetPlatform == TargetPlatform.iOS) {
+    return CupertinoPage<void>(key: key, child: child, fullscreenDialog: true);
+  }
   return CustomTransitionPage(
     key: key,
     child: child,
@@ -29,11 +30,11 @@ CustomTransitionPage<void> slideUpPage({
   );
 }
 
-/// Slide-right transition for detail/settings screens.
-CustomTransitionPage<void> slideRightPage({
-  required LocalKey key,
-  required Widget child,
-}) {
+/// Slide-right transition for detail/settings screens with iOS interactive back swipe.
+Page<void> slideRightPage({required LocalKey key, required Widget child}) {
+  if (defaultTargetPlatform == TargetPlatform.iOS) {
+    return CupertinoPage<void>(key: key, child: child);
+  }
   return CustomTransitionPage(
     key: key,
     child: child,

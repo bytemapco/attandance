@@ -1,4 +1,3 @@
-
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_attendance_app/core/exceptions.dart';
@@ -27,9 +26,9 @@ class AuthRepository {
     required AuthApi authApi,
     required SecureStorageService storage,
     required HiveService hive,
-  })  : _authApi = authApi,
-        _storage = storage,
-        _hive = hive;
+  }) : _authApi = authApi,
+       _storage = storage,
+       _hive = hive;
 
   AuthStatus _computeAuthStatus(UserProfile profile) {
     if (profile.mustChangePassword) {
@@ -49,7 +48,9 @@ class AuthRepository {
   ) async {
     try {
       final tokenResponse = await _authApi.login(
-        email, password, deviceUuid: deviceUuid,
+        email,
+        password,
+        deviceUuid: deviceUuid,
       );
 
       if (tokenResponse.role != 'STUDENT') {
@@ -123,7 +124,7 @@ class AuthRepository {
         await _storage.clearAll();
         return (profile: null, status: AuthStatus.unauthenticated);
       }
-      
+
       final cached = _hive.getCachedProfile();
       if (cached != null) {
         return (profile: cached, status: _computeAuthStatus(cached));
@@ -136,7 +137,10 @@ class AuthRepository {
     try {
       await _authApi.logout();
     } on DioException catch (e) {
-      AppLogger.warn('Logout API call failed', context: {'error': e.toString()});
+      AppLogger.warn(
+        'Logout API call failed',
+        context: {'error': e.toString()},
+      );
     }
     await _storage.clearAll();
     await _hive.clearAll();

@@ -4,7 +4,9 @@ import 'package:smart_attendance_app/shared/widgets/stat_tile.dart';
 
 void main() {
   group('StatTile Widget', () {
-    testWidgets('renders value and label correctly across variants', (WidgetTester tester) async {
+    testWidgets('renders value and label correctly across variants', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -24,7 +26,9 @@ void main() {
       expect(find.byIcon(Icons.check_circle), findsOneWidget);
     });
 
-    testWidgets('triggers onTap callback when tapped in compact variant', (WidgetTester tester) async {
+    testWidgets('triggers onTap callback when tapped in compact variant', (
+      WidgetTester tester,
+    ) async {
       var wasTapped = false;
 
       await tester.pumpWidget(

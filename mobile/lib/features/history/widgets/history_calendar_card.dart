@@ -29,32 +29,42 @@ class _HistoryCalendarCardState extends State<HistoryCalendarCard> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardBg = isDark ? const Color(0xFF1E2838) : Colors.white;
-    final primaryTextColor =
-        isDark ? SasColors.brilliance : const Color(0xFF0F172A);
-    final subtitleColor =
-        isDark ? const Color(0xFFCBD5E1) : const Color(0xFF64748B);
+    final primaryTextColor = isDark
+        ? SasColors.brilliance
+        : const Color(0xFF0F172A);
+    final subtitleColor = isDark
+        ? const Color(0xFFCBD5E1)
+        : const Color(0xFF64748B);
 
-    final monthItems = widget.history.where((h) =>
-        h.markedAt.year == _focusedMonth.year &&
-        h.markedAt.month == _focusedMonth.month).toList();
+    final monthItems = widget.history
+        .where(
+          (h) =>
+              h.markedAt.year == _focusedMonth.year &&
+              h.markedAt.month == _focusedMonth.month,
+        )
+        .toList();
 
     final presentCount = monthItems.isEmpty
         ? 1
         : monthItems
-            .where((h) =>
-                h.status.toLowerCase() == 'present' ||
-                h.status.toLowerCase() == 'approved')
-            .length;
+              .where(
+                (h) =>
+                    h.status.toLowerCase() == 'present' ||
+                    h.status.toLowerCase() == 'approved',
+              )
+              .length;
     final absentCount = monthItems.isEmpty
         ? 2
         : monthItems.where((h) => h.status.toLowerCase() == 'absent').length;
     final excusedCount = monthItems.isEmpty
         ? 0
         : monthItems
-            .where((h) =>
-                h.status.toLowerCase() == 'excused' ||
-                h.status.toLowerCase() == 'flagged')
-            .length;
+              .where(
+                (h) =>
+                    h.status.toLowerCase() == 'excused' ||
+                    h.status.toLowerCase() == 'flagged',
+              )
+              .length;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),

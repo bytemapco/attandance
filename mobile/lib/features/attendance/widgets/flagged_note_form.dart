@@ -53,13 +53,15 @@ class FlaggedNoteForm extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: const Color(0xFFECFDF5),
                     borderRadius: BorderRadius.circular(14),
-                    border: Border.all(
-                      color: const Color(0xFFBBF7D0),
-                    ),
+                    border: Border.all(color: const Color(0xFFBBF7D0)),
                   ),
                   child: Row(
                     children: [
-                      const Icon(Icons.check_circle_rounded, color: Color(0xFF08A875), size: 20),
+                      const Icon(
+                        Icons.check_circle_rounded,
+                        color: Color(0xFF08A875),
+                        size: 20,
+                      ),
                       const SizedBox(width: 10),
                       Expanded(
                         child: Text(
@@ -88,26 +90,37 @@ class FlaggedNoteForm extends StatelessWidget {
                       decoration: InputDecoration(
                         hintText: 'e.g. Back row seating with dim lighting...',
                         hintStyle: GoogleFonts.plusJakartaSans(
-                          color: isDark ? const Color(0xFF64748B) : const Color(0xFF94A3B8),
+                          color: isDark
+                              ? const Color(0xFF64748B)
+                              : const Color(0xFF94A3B8),
                           fontSize: 13,
                         ),
                         filled: true,
-                        fillColor: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+                        fillColor: isDark
+                            ? const Color(0xFF0F172A)
+                            : const Color(0xFFF8FAFC),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(14),
                           borderSide: BorderSide(
-                            color: isDark ? const Color(0xFF334155) : const Color(0xFFF1F5F9),
+                            color: isDark
+                                ? const Color(0xFF334155)
+                                : const Color(0xFFF1F5F9),
                           ),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(14),
                           borderSide: BorderSide(
-                            color: isDark ? const Color(0xFF334155) : const Color(0xFFF1F5F9),
+                            color: isDark
+                                ? const Color(0xFF334155)
+                                : const Color(0xFFF1F5F9),
                           ),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(14),
-                          borderSide: const BorderSide(color: Color(0xFFF95721), width: 1.5),
+                          borderSide: const BorderSide(
+                            color: Color(0xFFF95721),
+                            width: 1.5,
+                          ),
                         ),
                         contentPadding: const EdgeInsets.all(14),
                       ),
@@ -122,11 +135,20 @@ class FlaggedNoteForm extends StatelessWidget {
                             ? const SizedBox(
                                 width: 18,
                                 height: 18,
-                                child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: Colors.white,
+                                ),
                               )
-                            : const Icon(Icons.send_rounded, size: 18, color: Colors.white),
+                            : const Icon(
+                                Icons.send_rounded,
+                                size: 18,
+                                color: Colors.white,
+                              ),
                         label: Text(
-                          isSubmitting ? 'Sending...' : 'Submit note to instructor',
+                          isSubmitting
+                              ? 'Sending...'
+                              : 'Submit note to instructor',
                           style: GoogleFonts.plusJakartaSans(
                             fontSize: 14.5,
                             fontWeight: FontWeight.w700,
@@ -135,7 +157,9 @@ class FlaggedNoteForm extends StatelessWidget {
                         ),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFFF95721),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
                           elevation: 0,
                         ),
                       ),

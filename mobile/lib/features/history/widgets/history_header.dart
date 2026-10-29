@@ -12,10 +12,12 @@ class HistoryHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final primaryTextColor =
-        isDark ? SasColors.brilliance : const Color(0xFF0F172A);
-    final subtitleColor =
-        isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B);
+    final primaryTextColor = isDark
+        ? SasColors.brilliance
+        : const Color(0xFF0F172A);
+    final subtitleColor = isDark
+        ? const Color(0xFF94A3B8)
+        : const Color(0xFF64748B);
 
     final cleanPct = (percentage.isNaN || percentage.isInfinite)
         ? 0.0
@@ -69,11 +71,13 @@ class HistoryHeader extends StatelessWidget {
           child: Stack(
             alignment: Alignment.center,
             children: [
-              CustomPaint(
-                size: const Size(50, 50),
-                painter: _OverallGaugePainter(
-                  progress: cleanPct / 100.0,
-                  isDark: isDark,
+              RepaintBoundary(
+                child: CustomPaint(
+                  size: const Size(50, 50),
+                  painter: _OverallGaugePainter(
+                    progress: cleanPct / 100.0,
+                    isDark: isDark,
+                  ),
                 ),
               ),
               Column(
@@ -122,9 +126,7 @@ class _OverallGaugePainter extends CustomPainter {
 
     // Track
     final trackPaint = Paint()
-      ..color = isDark
-          ? const Color(0xFF334155)
-          : const Color(0xFFFFDDD2)
+      ..color = isDark ? const Color(0xFF334155) : const Color(0xFFFFDDD2)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 4.0
       ..strokeCap = StrokeCap.round;

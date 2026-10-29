@@ -29,7 +29,11 @@ class ClassSessionActions extends StatelessWidget {
         child: const Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.check_circle_rounded, size: 14, color: SasColors.accentEmerald),
+            Icon(
+              Icons.check_circle_rounded,
+              size: 14,
+              color: SasColors.accentEmerald,
+            ),
             SizedBox(width: 6),
             Text(
               'Attendance Recorded',

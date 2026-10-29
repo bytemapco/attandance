@@ -22,12 +22,16 @@ class HistoryCalendarGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final primaryTextColor =
-        isDark ? SasColors.brilliance : const Color(0xFF0F172A);
+    final primaryTextColor = isDark
+        ? SasColors.brilliance
+        : const Color(0xFF0F172A);
 
     final firstDay = DateTime(focusedMonth.year, focusedMonth.month, 1);
-    final daysInMonth =
-        DateTime(focusedMonth.year, focusedMonth.month + 1, 0).day;
+    final daysInMonth = DateTime(
+      focusedMonth.year,
+      focusedMonth.month + 1,
+      0,
+    ).day;
     final startWeekday = firstDay.weekday; // 1 = Mon, 7 = Sun
     final cells = <Widget>[];
 
@@ -46,7 +50,8 @@ class HistoryCalendarGrid extends StatelessWidget {
         final statuses = items.map((i) => i.status.toLowerCase()).toSet();
         if (statuses.contains('absent')) {
           dotColor = const Color(0xFFEF4444);
-        } else if (statuses.contains('excused') || statuses.contains('flagged')) {
+        } else if (statuses.contains('excused') ||
+            statuses.contains('flagged')) {
           dotColor = const Color(0xFFF59E0B);
         } else {
           dotColor = const Color(0xFF10B981);
@@ -86,7 +91,9 @@ class HistoryCalendarGrid extends StatelessWidget {
                 boxShadow: isSelected
                     ? [
                         BoxShadow(
-                          color: const Color(0xFFF95721).withValues(alpha: 0.35),
+                          color: const Color(
+                            0xFFF95721,
+                          ).withValues(alpha: 0.35),
                           blurRadius: 6,
                           offset: const Offset(0, 2),
                         ),
@@ -100,7 +107,9 @@ class HistoryCalendarGrid extends StatelessWidget {
                     '$day',
                     style: SasTypography.style(
                       fontSize: 13.5,
-                      fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
+                      fontWeight: isSelected
+                          ? FontWeight.w700
+                          : FontWeight.w600,
                       color: isSelected ? Colors.white : primaryTextColor,
                     ),
                   ),

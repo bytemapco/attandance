@@ -35,8 +35,7 @@ class HistorySubjectBreakdown extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         ...subjectStats.values.map((stat) {
-          final pct =
-              stat.total > 0 ? (stat.present / stat.total * 100) : 0.0;
+          final pct = stat.total > 0 ? (stat.present / stat.total * 100) : 0.0;
           final color = pct >= 75
               ? SasColors.success
               : (pct >= 50 ? SasColors.warning : SasColors.danger);
@@ -78,8 +77,10 @@ class HistorySubjectBreakdown extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 3,
+                    ),
                     decoration: BoxDecoration(
                       color: color.withValues(alpha: 0.08),
                       borderRadius: BorderRadius.circular(4),

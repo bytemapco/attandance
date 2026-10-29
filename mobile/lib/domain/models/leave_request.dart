@@ -1,4 +1,3 @@
-
 class LeaveRequest {
   final String id;
   final String studentId;
@@ -8,7 +7,7 @@ class LeaveRequest {
   final DateTime endDate;
   final String reason;
   final String? documentUrl;
-  final String status; 
+  final String status;
   final String? approvedBy;
   final String? approverNote;
   final DateTime createdAt;
@@ -36,15 +35,23 @@ class LeaveRequest {
       studentId: json['student_id'] as String? ?? '',
       studentName: json['student_name'] as String? ?? '',
       enrollmentNumber: json['enrollment_number'] as String? ?? '',
-      startDate: DateTime.tryParse(json['start_date'] as String? ?? '') ?? DateTime.now(),
-      endDate: DateTime.tryParse(json['end_date'] as String? ?? '') ?? DateTime.now(),
+      startDate:
+          DateTime.tryParse(json['start_date'] as String? ?? '') ??
+          DateTime.now(),
+      endDate:
+          DateTime.tryParse(json['end_date'] as String? ?? '') ??
+          DateTime.now(),
       reason: json['reason'] as String? ?? '',
       documentUrl: json['document_url'] as String?,
       status: json['status'] as String? ?? 'PENDING',
       approvedBy: json['approved_by'] as String?,
       approverNote: json['approver_note'] as String?,
-      createdAt: DateTime.tryParse(json['created_at'] as String? ?? '') ?? DateTime.now(),
-      updatedAt: DateTime.tryParse(json['updated_at'] as String? ?? '') ?? DateTime.now(),
+      createdAt:
+          DateTime.tryParse(json['created_at'] as String? ?? '') ??
+          DateTime.now(),
+      updatedAt:
+          DateTime.tryParse(json['updated_at'] as String? ?? '') ??
+          DateTime.now(),
     );
   }
 

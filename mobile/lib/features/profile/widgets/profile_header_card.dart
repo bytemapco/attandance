@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:smart_attendance_app/app/theme.dart';
 import 'package:smart_attendance_app/app/typography.dart';
+import 'package:smart_attendance_app/domain/models/user.dart';
 
 /// User identity card with peach avatar, student metadata, and verification badges.
 class ProfileHeaderCard extends StatelessWidget {
-  final dynamic user;
-  final dynamic profile;
+  final UserProfile? user;
+  final StudentProfile? profile;
 
   const ProfileHeaderCard({
     super.key,
@@ -14,34 +15,48 @@ class ProfileHeaderCard extends StatelessWidget {
   });
 
   String _getInitials() {
-    final String? f = profile?.firstName;
-    final String? l = profile?.lastName;
-    if (f != null && l != null && f.isNotEmpty && l.isNotEmpty) {
+    final f = profile?.firstName?.trim() ?? '';
+    final l = profile?.lastName?.trim() ?? '';
+    if (f.isNotEmpty && l.isNotEmpty) {
       return '${f[0]}${l[0]}'.toUpperCase();
     }
-    return 'AM';
+    if (f.isNotEmpty) return f[0].toUpperCase();
+    if (user != null && user!.email.isNotEmpty) {
+      return user!.email[0].toUpperCase();
+    }
+    return 'ST';
   }
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardBg = isDark ? const Color(0xFF1E2838) : Colors.white;
-    final primaryTextColor =
-        isDark ? SasColors.brilliance : const Color(0xFF0F172A);
-    final subtitleColor =
-        isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B);
+    final primaryTextColor = isDark
+        ? SasColors.brilliance
+        : const Color(0xFF0F172A);
+    final subtitleColor = isDark
+        ? const Color(0xFF94A3B8)
+        : const Color(0xFF64748B);
 
-    final name = (profile?.firstName != null && profile?.lastName != null)
-        ? '${profile.firstName} ${profile.lastName}'
-        : 'Alex Miller';
-    final rollNo = profile?.enrollmentNumber ?? 'EN2024CS001';
-    final branch = profile?.branch ?? 'CS';
-    final semester = profile?.semester ?? 'Sem 6';
-    final department = profile?.departmentName ?? 'Computer Science & Engineering';
-    final institution = (user?.tenantName != null && (user.tenantName as String).isNotEmpty)
-        ? user.tenantName as String
-        : 'Apex Institute of Technology';
-    final isFaceVerified = profile?.faceRegistered ?? true;
+    final String fullName = [profile?.firstName, profile?.lastName]
+        .whereType<String>()
+        .map((s) => s.trim())
+        .where((s) => s.isNotEmpty)
+        .join(' ');
+    final name = fullName.isNotEmpty ? fullName : (user?.email ?? 'Student');
+    final rollNo = profile?.enrollmentNumber ?? '';
+    final branch = profile?.branch ?? '';
+    final semester = profile?.semester != null
+        ? 'Sem ${profile!.semester}'
+        : '';
+    final department = profile?.departmentName ?? '';
+    final metaParts = [
+      branch,
+      semester,
+      department,
+    ].where((s) => s.isNotEmpty).join(' • ');
+    final institution = user?.tenantName?.trim() ?? '';
+    final isFaceVerified = profile?.faceRegistered == true;
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -71,7 +86,9 @@ class ProfileHeaderCard extends StatelessWidget {
               color: isDark ? const Color(0xFF332314) : const Color(0xFFFFE4D6),
               borderRadius: BorderRadius.circular(18),
               border: Border.all(
-                color: isDark ? const Color(0xFF7C2D12) : const Color(0xFFFFD1BD),
+                color: isDark
+                    ? const Color(0xFF7C2D12)
+                    : const Color(0xFFFFD1BD),
                 width: 1.0,
               ),
             ),
@@ -103,49 +120,55 @@ class ProfileHeaderCard extends StatelessWidget {
                     letterSpacing: -0.3,
                   ),
                 ),
-                const SizedBox(height: 3),
-                Text(
-                  'Roll No: $rollNo',
-                  style: SasTypography.style(
-                    color: subtitleColor,
-                    fontSize: 12.5,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  '$branch • $semester • $department',
-                  style: SasTypography.style(
-                    color: subtitleColor,
-                    fontSize: 11.5,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 3),
-                Row(
-                  children: [
-                    Icon(
-                      Icons.account_balance_rounded,
-                      size: 13,
+                if (rollNo.isNotEmpty) ...[
+                  const SizedBox(height: 3),
+                  Text(
+                    'Roll No: $rollNo',
+                    style: SasTypography.style(
                       color: subtitleColor,
+                      fontSize: 12.5,
+                      fontWeight: FontWeight.w500,
                     ),
-                    const SizedBox(width: 4),
-                    Expanded(
-                      child: Text(
-                        institution,
-                        style: SasTypography.style(
-                          color: subtitleColor,
-                          fontSize: 11.5,
-                          fontWeight: FontWeight.w500,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+                if (metaParts.isNotEmpty) ...[
+                  const SizedBox(height: 2),
+                  Text(
+                    metaParts,
+                    style: SasTypography.style(
+                      color: subtitleColor,
+                      fontSize: 11.5,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+                if (institution.isNotEmpty) ...[
+                  const SizedBox(height: 3),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.account_balance_rounded,
+                        size: 13,
+                        color: subtitleColor,
                       ),
-                    ),
-                  ],
-                ),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
+                          institution,
+                          style: SasTypography.style(
+                            color: subtitleColor,
+                            fontSize: 11.5,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
                 const SizedBox(height: 10),
 
                 // Badges Row
@@ -153,9 +176,14 @@ class ProfileHeaderCard extends StatelessWidget {
                   children: [
                     // Student Role Badge
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 3.5,
+                      ),
                       decoration: BoxDecoration(
-                        color: isDark ? const Color(0xFF332314) : const Color(0xFFFFEDD5),
+                        color: isDark
+                            ? const Color(0xFF332314)
+                            : const Color(0xFFFFEDD5),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
@@ -172,9 +200,14 @@ class ProfileHeaderCard extends StatelessWidget {
 
                     // Face ID Verified Badge
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 3.5,
+                      ),
                       decoration: BoxDecoration(
-                        color: isDark ? const Color(0xFF143828) : const Color(0xFFECFDF5),
+                        color: isDark
+                            ? const Color(0xFF143828)
+                            : const Color(0xFFECFDF5),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Row(
@@ -191,7 +224,9 @@ class ProfileHeaderCard extends StatelessWidget {
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            isFaceVerified ? 'Face ID Verified' : 'Face ID Pending',
+                            isFaceVerified
+                                ? 'Face ID Verified'
+                                : 'Face ID Pending',
                             style: SasTypography.style(
                               color: isFaceVerified
                                   ? const Color(0xFF059669)

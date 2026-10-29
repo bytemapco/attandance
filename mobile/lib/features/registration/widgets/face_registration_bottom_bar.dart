@@ -74,17 +74,30 @@ class FaceRegistrationBottomBar extends StatelessWidget {
         child: ElevatedButton.icon(
           onPressed: onPressed,
           icon: isLoading
-              ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+              ? const SizedBox(
+                  width: 18,
+                  height: 18,
+                  child: CircularProgressIndicator(
+                    color: Colors.white,
+                    strokeWidth: 2,
+                  ),
+                )
               : Icon(icon, size: 20, color: Colors.white),
           label: Text(
             isLoading ? 'Uploading...' : label,
-            style: GoogleFonts.plusJakartaSans(fontSize: 15, fontWeight: FontWeight.w600, color: Colors.white),
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 15,
+              fontWeight: FontWeight.w600,
+              color: Colors.white,
+            ),
           ),
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xFFF95721),
             elevation: 1.5,
             shadowColor: const Color(0xFFF95721).withValues(alpha: 0.35),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
           ),
         ),
       );
@@ -94,7 +107,11 @@ class FaceRegistrationBottomBar extends StatelessWidget {
       height: 52,
       child: OutlinedButton.icon(
         onPressed: onPressed,
-        icon: Icon(icon, size: 20, color: isDark ? Colors.white : const Color(0xFF0F172A)),
+        icon: Icon(
+          icon,
+          size: 20,
+          color: isDark ? Colors.white : const Color(0xFF0F172A),
+        ),
         label: Text(
           label,
           style: GoogleFonts.plusJakartaSans(
@@ -104,8 +121,13 @@ class FaceRegistrationBottomBar extends StatelessWidget {
           ),
         ),
         style: OutlinedButton.styleFrom(
-          side: BorderSide(color: isDark ? const Color(0xFF334155) : const Color(0xFFCBD5E1), width: 1.2),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          side: BorderSide(
+            color: isDark ? const Color(0xFF334155) : const Color(0xFFCBD5E1),
+            width: 1.2,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
         ),
       ),
     );

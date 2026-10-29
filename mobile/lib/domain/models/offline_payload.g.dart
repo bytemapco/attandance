@@ -1,4 +1,3 @@
-
 part of 'offline_payload.dart';
 
 class OfflineAttendancePayloadAdapter

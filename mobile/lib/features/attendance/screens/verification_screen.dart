@@ -30,7 +30,12 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen>
   Timer? _transitionTimer;
   bool _showTips = false;
 
-  static const _aiSteps = ['Checking face identity...', 'Verifying liveness...', 'Analyzing background...', 'Computing final score...'];
+  static const _aiSteps = [
+    'Checking face identity...',
+    'Verifying liveness...',
+    'Analyzing background...',
+    'Computing final score...',
+  ];
 
   void _clearTimers() {
     _aiStepTimer?.cancel();
@@ -68,11 +73,13 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (!mounted) return;
-    if (state == AppLifecycleState.inactive || state == AppLifecycleState.paused) {
+    if (state == AppLifecycleState.inactive ||
+        state == AppLifecycleState.paused) {
       setState(() => isCameraReady = false);
       disposeCamera();
     } else if (state == AppLifecycleState.resumed &&
-        ref.read(attendanceVerificationProvider).step == VerificationStep.camera) {
+        ref.read(attendanceVerificationProvider).step ==
+            VerificationStep.camera) {
       initCamera();
     }
   }
@@ -87,12 +94,19 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen>
         t.cancel();
       }
     });
-    await ref.read(attendanceVerificationProvider.notifier).analyze(widget.sessionId);
+    await ref
+        .read(attendanceVerificationProvider.notifier)
+        .analyze(widget.sessionId);
   }
 
   void _retakePhoto() {
     disposeCamera();
-    if (mounted) setState(() { cameraError = null; isCameraReady = false; });
+    if (mounted) {
+      setState(() {
+        cameraError = null;
+        isCameraReady = false;
+      });
+    }
     ref.read(attendanceVerificationProvider.notifier).reset();
     ref.read(geofenceVerificationProvider.notifier).reset();
     initCamera();
@@ -100,13 +114,19 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen>
 
   void _handleLocationVerify() {
     if (!mounted) return;
-    final session = ref.read(sessionProvider).sessions.where((s) => s.sessionId == widget.sessionId).firstOrNull;
+    final session = ref
+        .read(sessionProvider)
+        .sessions
+        .where((s) => s.sessionId == widget.sessionId)
+        .firstOrNull;
     if (session?.latitude != null && session?.longitude != null) {
-      ref.read(geofenceVerificationProvider.notifier).verifyLocation(
-        classLat: session!.latitude!,
-        classLng: session.longitude!,
-        radius: session.radiusMeters ?? 100.0,
-      );
+      ref
+          .read(geofenceVerificationProvider.notifier)
+          .verifyLocation(
+            classLat: session!.latitude!,
+            classLng: session.longitude!,
+            radius: session.radiusMeters ?? 100.0,
+          );
     }
   }
 
@@ -115,13 +135,20 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen>
     _transitionTimer = Timer(const Duration(milliseconds: 1500), () {
       if (!mounted) return;
       final config = ref.read(hiveServiceProvider).getSystemConfig();
-      ref.read(attendanceVerificationProvider.notifier).setGpsLocation(
-        next.position!.latitude, next.position!.longitude, next.position!.accuracy,
-      );
-      if (config.isFaceRecognitionEnabled || config.isAiBackgroundValidationEnabled) {
+      ref
+          .read(attendanceVerificationProvider.notifier)
+          .setGpsLocation(
+            next.position!.latitude,
+            next.position!.longitude,
+            next.position!.accuracy,
+          );
+      if (config.isFaceRecognitionEnabled ||
+          config.isAiBackgroundValidationEnabled) {
         initCamera();
       } else {
-        ref.read(attendanceVerificationProvider.notifier).setImagePath('skipped_camera.jpg');
+        ref
+            .read(attendanceVerificationProvider.notifier)
+            .setImagePath('skipped_camera.jpg');
         _analyzePhoto();
       }
     });
@@ -130,7 +157,9 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen>
   void _onDone() {
     _clearTimers();
     disposeCamera();
-    final id = ref.read(attendanceVerificationProvider.notifier).lastSubmittedSessionId;
+    final id = ref
+        .read(attendanceVerificationProvider.notifier)
+        .lastSubmittedSessionId;
     if (id != null) ref.read(sessionProvider.notifier).markSessionSubmitted(id);
     if (mounted) context.pushReplacement('/result');
   }
@@ -140,13 +169,24 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen>
     final vState = ref.watch(attendanceVerificationProvider);
     final geoState = ref.watch(geofenceVerificationProvider);
 
-    ref.listen<AttendanceVerificationState>(attendanceVerificationProvider, (prev, next) {
+    ref.listen<AttendanceVerificationState>(attendanceVerificationProvider, (
+      prev,
+      next,
+    ) {
       if (next.step == VerificationStep.reviewing) _aiStepTimer?.cancel();
-      if (next.step == VerificationStep.done && prev?.step != VerificationStep.done) _onDone();
+      if (next.step == VerificationStep.done &&
+          prev?.step != VerificationStep.done) {
+        _onDone();
+      }
     });
 
-    ref.listen<GeofenceVerificationState>(geofenceVerificationProvider, (prev, next) {
-      if (vState.step == VerificationStep.gps && next.status == GeofenceStatus.success && prev?.status != GeofenceStatus.success) {
+    ref.listen<GeofenceVerificationState>(geofenceVerificationProvider, (
+      prev,
+      next,
+    ) {
+      if (vState.step == VerificationStep.gps &&
+          next.status == GeofenceStatus.success &&
+          prev?.status != GeofenceStatus.success) {
         _onGpsSuccess(next);
       }
     });
@@ -161,7 +201,9 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen>
         ref.read(attendanceVerificationProvider.notifier).reset();
       },
       child: Scaffold(
-        backgroundColor: isDark ? SasColors.darkCanvas : const Color(0xFFF4F7FB),
+        backgroundColor: isDark
+            ? SasColors.darkCanvas
+            : const Color(0xFFF4F7FB),
         appBar: const VerificationAppBar(),
         body: SafeArea(
           child: Padding(
@@ -171,18 +213,39 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen>
                 VerificationStepIndicator(current: vState.step),
                 const SizedBox(height: 20),
                 VerificationStepContent(
-                  step: vState.step, geoState: geoState, onRetryGeo: _handleLocationVerify,
-                  camera: camera, isCameraReady: isCameraReady, cameraError: cameraError,
-                  showTips: _showTips, onDismissTips: () => setState(() => _showTips = false),
-                  onRetryCamera: () { setState(() { cameraError = null; isCameraReady = false; }); initCamera(); },
-                  imagePath: vState.imagePath, isAnalyzingQuality: isAnalyzingQuality,
-                  brightnessScore: brightnessScore, blurScore: blurScore,
-                  aiStepIndex: _aiStepIndex, aiSteps: _aiSteps, analysisResult: vState.analysisResult,
+                  step: vState.step,
+                  geoState: geoState,
+                  onRetryGeo: _handleLocationVerify,
+                  camera: camera,
+                  isCameraReady: isCameraReady,
+                  cameraError: cameraError,
+                  showTips: _showTips,
+                  onDismissTips: () => setState(() => _showTips = false),
+                  onRetryCamera: () {
+                    setState(() {
+                      cameraError = null;
+                      isCameraReady = false;
+                    });
+                    initCamera();
+                  },
+                  imagePath: vState.imagePath,
+                  isAnalyzingQuality: isAnalyzingQuality,
+                  brightnessScore: brightnessScore,
+                  blurScore: blurScore,
+                  aiStepIndex: _aiStepIndex,
+                  aiSteps: _aiSteps,
+                  analysisResult: vState.analysisResult,
                 ),
                 VerificationStepBottomBar(
-                  step: vState.step, showTips: _showTips, isCameraReady: isCameraReady,
-                  onCapture: capturePhoto, onRetake: _retakePhoto, onAnalyze: _analyzePhoto,
-                  onSubmit: () => ref.read(attendanceVerificationProvider.notifier).confirm(widget.sessionId),
+                  step: vState.step,
+                  showTips: _showTips,
+                  isCameraReady: isCameraReady,
+                  onCapture: capturePhoto,
+                  onRetake: _retakePhoto,
+                  onAnalyze: _analyzePhoto,
+                  onSubmit: () => ref
+                      .read(attendanceVerificationProvider.notifier)
+                      .confirm(widget.sessionId),
                 ),
               ],
             ),

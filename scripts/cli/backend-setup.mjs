@@ -143,9 +143,15 @@ export function setupBackend(rootDir) {
 
   logger.info("Generating Prisma ORM Python client...");
   try {
+    const venvBinDir = path.dirname(pythonExec);
+    const envWithPath = {
+      ...process.env,
+      PATH: `${venvBinDir}${path.delimiter}${process.env.PATH || ""}`,
+    };
     execSync(`${quotedPython} -m prisma generate`, {
       cwd: backendDir,
       stdio: "inherit",
+      env: envWithPath,
     });
     logger.success("Prisma client generated.");
   } catch (error) {

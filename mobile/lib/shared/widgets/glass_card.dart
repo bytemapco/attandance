@@ -38,20 +38,11 @@ class GlassCard extends StatelessWidget {
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
         colors: isDark
-            ? [
-                Color.lerp(bg, Colors.white, 0.04)!,
-                bg,
-              ]
-            : [
-                bg,
-                Color.lerp(bg, Colors.black, 0.015)!,
-              ],
+            ? [Color.lerp(bg, Colors.white, 0.04)!, bg]
+            : [bg, Color.lerp(bg, Colors.black, 0.015)!],
       ),
       borderRadius: BorderRadius.circular(borderRadius),
-      border: Border.all(
-        color: borderColor ?? defaultBorder,
-        width: 0.8,
-      ),
+      border: Border.all(color: borderColor ?? defaultBorder, width: 0.8),
       boxShadow: isDark
           ? [
               BoxShadow(

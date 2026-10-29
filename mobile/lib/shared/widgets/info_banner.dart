@@ -33,11 +33,7 @@ class InfoBanner extends StatelessWidget {
       child: Column(
         children: [
           const SizedBox(height: SasSpacing.sm),
-          Icon(
-            customIcon ?? config.icon,
-            size: 40,
-            color: config.color,
-          ),
+          Icon(customIcon ?? config.icon, size: 40, color: config.color),
           const SizedBox(height: SasSpacing.md),
           Text(
             message,
@@ -64,21 +60,21 @@ class InfoBanner extends StatelessWidget {
   _BannerConfig _resolveConfig() {
     return switch (severity) {
       BannerSeverity.info => _BannerConfig(
-          color: SasColors.info,
-          icon: Icons.info_outline_rounded,
-        ),
+        color: SasColors.info,
+        icon: Icons.info_outline_rounded,
+      ),
       BannerSeverity.success => _BannerConfig(
-          color: SasColors.success,
-          icon: Icons.check_circle_outline_rounded,
-        ),
+        color: SasColors.success,
+        icon: Icons.check_circle_outline_rounded,
+      ),
       BannerSeverity.warning => _BannerConfig(
-          color: SasColors.warning,
-          icon: Icons.warning_amber_rounded,
-        ),
+        color: SasColors.warning,
+        icon: Icons.warning_amber_rounded,
+      ),
       BannerSeverity.danger => _BannerConfig(
-          color: SasColors.danger,
-          icon: Icons.error_outline_rounded,
-        ),
+        color: SasColors.danger,
+        icon: Icons.error_outline_rounded,
+      ),
     };
   }
 }
@@ -128,10 +124,7 @@ class InlineInfoBanner extends StatelessWidget {
           Icon(icon, color: color, size: 16),
           const SizedBox(width: SasSpacing.sm),
           Expanded(
-            child: Text(
-              message,
-              style: TextStyle(color: color, fontSize: 12),
-            ),
+            child: Text(message, style: TextStyle(color: color, fontSize: 12)),
           ),
         ],
       ),

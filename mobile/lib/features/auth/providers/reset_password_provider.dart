@@ -46,10 +46,12 @@ class ResetPasswordState {
 }
 
 final resetPasswordProvider =
-    StateNotifierProvider.autoDispose<ResetPasswordNotifier, ResetPasswordState>(
-        (ref) {
-  return ResetPasswordNotifier(ref.read(authRepositoryProvider));
-});
+    StateNotifierProvider.autoDispose<
+      ResetPasswordNotifier,
+      ResetPasswordState
+    >((ref) {
+      return ResetPasswordNotifier(ref.read(authRepositoryProvider));
+    });
 
 class ResetPasswordNotifier extends StateNotifier<ResetPasswordState> {
   final AuthRepository _repo;
@@ -76,7 +78,9 @@ class ResetPasswordNotifier extends StateNotifier<ResetPasswordState> {
         email: res['email']?.toString(),
         name: res['name']?.toString(),
         role: res['role']?.toString(),
-        errorMessage: valid ? null : (res['message']?.toString() ?? 'Link has expired.'),
+        errorMessage: valid
+            ? null
+            : (res['message']?.toString() ?? 'Link has expired.'),
       );
     } catch (e) {
       state = state.copyWith(

@@ -22,16 +22,16 @@ class LocalNotification {
   }) : id = id ?? '${timestamp.millisecondsSinceEpoch}_${title.hashCode}';
 
   Map<String, dynamic> toMap() => {
-        'id': id,
-        'title': title,
-        'body': body,
-        'timestamp': timestamp.toIso8601String(),
-        'severity': severity,
-        'category': category,
-        'link': link,
-        'source': source,
-        'is_read': isRead,
-      };
+    'id': id,
+    'title': title,
+    'body': body,
+    'timestamp': timestamp.toIso8601String(),
+    'severity': severity,
+    'category': category,
+    'link': link,
+    'source': source,
+    'is_read': isRead,
+  };
 
   factory LocalNotification.fromMap(Map<dynamic, dynamic> map) {
     return LocalNotification(
@@ -50,14 +50,14 @@ class LocalNotification {
   }
 
   LocalNotification copyWith({bool? isRead}) => LocalNotification(
-        id: id,
-        title: title,
-        body: body,
-        timestamp: timestamp,
-        severity: severity,
-        category: category,
-        link: link,
-        source: source,
-        isRead: isRead ?? this.isRead,
-      );
+    id: id,
+    title: title,
+    body: body,
+    timestamp: timestamp,
+    severity: severity,
+    category: category,
+    link: link,
+    source: source,
+    isRead: isRead ?? this.isRead,
+  );
 }

@@ -34,7 +34,11 @@ class VerificationActionButtons extends StatelessWidget {
               child: OutlinedButton.icon(
                 onPressed: onSecondaryPressed,
                 icon: secondaryIcon != null
-                    ? Icon(secondaryIcon, size: 18, color: isDark ? Colors.white : const Color(0xFF0F172A))
+                    ? Icon(
+                        secondaryIcon,
+                        size: 18,
+                        color: isDark ? Colors.white : const Color(0xFF0F172A),
+                      )
                     : const SizedBox.shrink(),
                 label: Text(
                   secondaryLabel!,
@@ -46,10 +50,14 @@ class VerificationActionButtons extends StatelessWidget {
                 ),
                 style: OutlinedButton.styleFrom(
                   side: BorderSide(
-                    color: isDark ? const Color(0xFF334155) : const Color(0xFFCBD5E1),
+                    color: isDark
+                        ? const Color(0xFF334155)
+                        : const Color(0xFFCBD5E1),
                     width: 1.2,
                   ),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
                 ),
               ),
             ),
@@ -76,7 +84,9 @@ class VerificationActionButtons extends StatelessWidget {
                 backgroundColor: const Color(0xFFF95721),
                 elevation: 1,
                 shadowColor: const Color(0xFFF95721).withValues(alpha: 0.35),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
               ),
             ),
           ),

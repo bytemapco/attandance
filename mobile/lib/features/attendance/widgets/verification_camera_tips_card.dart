@@ -12,9 +12,15 @@ class VerificationCameraTipsCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardBg = isDark ? SasColors.darkSurface : Colors.white;
-    final borderCol = isDark ? const Color(0x1FFFFFFF) : const Color(0xFFE3E9F1);
-    final primaryTextColor = isDark ? SasColors.brilliance : const Color(0xFF0F172A);
-    final subtitleColor = isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B);
+    final borderCol = isDark
+        ? const Color(0x1FFFFFFF)
+        : const Color(0xFFE3E9F1);
+    final primaryTextColor = isDark
+        ? SasColors.brilliance
+        : const Color(0xFF0F172A);
+    final subtitleColor = isDark
+        ? const Color(0xFF94A3B8)
+        : const Color(0xFF64748B);
 
     return Container(
       padding: const EdgeInsets.all(20),
@@ -43,7 +49,11 @@ class VerificationCameraTipsCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: const Center(
-                  child: Icon(Icons.tips_and_updates_rounded, color: Color(0xFFEA580C), size: 20),
+                  child: Icon(
+                    Icons.tips_and_updates_rounded,
+                    color: Color(0xFFEA580C),
+                    size: 20,
+                  ),
                 ),
               ),
               const SizedBox(width: 10),

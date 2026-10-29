@@ -1,4 +1,3 @@
-
 class SmartPass {
   final String qrToken;
   final DateTime expiresAt;
@@ -22,7 +21,7 @@ class SmartPass {
   }
 
   bool get isExpired => DateTime.now().isAfter(expiresAt);
-  
+
   Duration get timeRemaining => expiresAt.difference(DateTime.now());
 }
 
@@ -58,9 +57,10 @@ class SmartPassScanResult {
       attendanceStatus: json['attendance_status'] as String? ?? 'Present',
       studentName: json['student_name'] as String? ?? '',
       enrollmentNumber: json['enrollment_number'] as String? ?? '',
-      markedAt: DateTime.tryParse(json['marked_at'] as String? ?? '') ?? DateTime.now(),
+      markedAt:
+          DateTime.tryParse(json['marked_at'] as String? ?? '') ??
+          DateTime.now(),
       message: json['message'] as String? ?? 'Attendance marked successfully',
     );
   }
 }
-

@@ -18,7 +18,8 @@ class LeaveRequestsScreen extends ConsumerStatefulWidget {
   const LeaveRequestsScreen({super.key});
 
   @override
-  ConsumerState<LeaveRequestsScreen> createState() => _LeaveRequestsScreenState();
+  ConsumerState<LeaveRequestsScreen> createState() =>
+      _LeaveRequestsScreenState();
 }
 
 class _LeaveRequestsScreenState extends ConsumerState<LeaveRequestsScreen> {
@@ -85,11 +86,15 @@ class _LeaveRequestsScreenState extends ConsumerState<LeaveRequestsScreen> {
     }
 
     final notes = _notesController.text.trim();
-    final reason = notes.isEmpty ? '$_selectedReason Leave Request' : '$_selectedReason: $notes';
+    final reason = notes.isEmpty
+        ? '$_selectedReason Leave Request'
+        : '$_selectedReason: $notes';
 
     setState(() => _isSubmitting = true);
     try {
-      await ref.read(studentApiProvider).createLeaveRequest(
+      await ref
+          .read(studentApiProvider)
+          .createLeaveRequest(
             startDate: _startDate!,
             endDate: _endDate!,
             reason: reason,
@@ -125,61 +130,73 @@ class _LeaveRequestsScreenState extends ConsumerState<LeaveRequestsScreen> {
       appBar: const GlassAppBar(title: 'Request Leave'),
       body: AnimatedBackground(
         child: SafeArea(
-          child: ListView(
-            padding: const EdgeInsets.all(16),
-            children: [
-              LeavePeriodPicker(
-                startDate: _startDate,
-                endDate: _endDate,
-                onSelectStart: () => _pickDate(true),
-                onSelectEnd: () => _pickDate(false),
-              ),
-              const SizedBox(height: 16),
-              LeaveCategorySelector(
-                selectedCategory: _selectedReason,
-                onSelected: (cat) => setState(() => _selectedReason = cat),
-              ),
-              const SizedBox(height: 16),
-              LeaveDocumentUploader(
-                selectedDocument: _selectedDocument,
-                onPick: _pickDocument,
-                onClear: () => setState(() => _selectedDocument = null),
-              ),
-              const SizedBox(height: 16),
-              const Text(
-                'Reason Details & Notes',
-                style: TextStyle(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 13,
-                  color: SasColors.textSecondary,
-                ),
-              ),
-              const SizedBox(height: 8),
-              GlassCard(
-                padding: const EdgeInsets.all(12),
-                child: TextField(
-                  controller: _notesController,
-                  maxLines: 3,
-                  maxLength: 300,
-                  style: TextStyle(color: SasColors.textPrimaryOf(context), fontSize: 13),
-                  decoration: const InputDecoration(
-                    hintText: 'Provide additional context for your instructor...',
-                    hintStyle: TextStyle(color: SasColors.textMuted, fontSize: 12),
-                    border: InputBorder.none,
-                    isDense: true,
-                    contentPadding: EdgeInsets.zero,
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 600),
+              child: ListView(
+                padding: const EdgeInsets.all(16),
+                children: [
+                  LeavePeriodPicker(
+                    startDate: _startDate,
+                    endDate: _endDate,
+                    onSelectStart: () => _pickDate(true),
+                    onSelectEnd: () => _pickDate(false),
                   ),
-                ),
+                  const SizedBox(height: 16),
+                  LeaveCategorySelector(
+                    selectedCategory: _selectedReason,
+                    onSelected: (cat) => setState(() => _selectedReason = cat),
+                  ),
+                  const SizedBox(height: 16),
+                  LeaveDocumentUploader(
+                    selectedDocument: _selectedDocument,
+                    onPick: _pickDocument,
+                    onClear: () => setState(() => _selectedDocument = null),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Reason Details & Notes',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 13,
+                      color: SasColors.textSecondaryOf(context),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  GlassCard(
+                    padding: const EdgeInsets.all(12),
+                    child: TextField(
+                      controller: _notesController,
+                      maxLines: 3,
+                      maxLength: 300,
+                      style: TextStyle(
+                        color: SasColors.textPrimaryOf(context),
+                        fontSize: 13,
+                      ),
+                      decoration: const InputDecoration(
+                        hintText:
+                            'Provide additional context for your instructor...',
+                        hintStyle: TextStyle(
+                          color: SasColors.textMuted,
+                          fontSize: 12,
+                        ),
+                        border: InputBorder.none,
+                        isDense: true,
+                        contentPadding: EdgeInsets.zero,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  GlassButton(
+                    label: 'Submit Leave Request',
+                    isExpanded: true,
+                    isLoading: _isSubmitting,
+                    icon: Icons.send_rounded,
+                    onPressed: _isSubmitting ? null : _submit,
+                  ),
+                ],
               ),
-              const SizedBox(height: 20),
-              GlassButton(
-                label: 'Submit Leave Request',
-                isExpanded: true,
-                isLoading: _isSubmitting,
-                icon: Icons.send_rounded,
-                onPressed: _isSubmitting ? null : _submit,
-              ),
-            ],
+            ),
           ),
         ),
       ),

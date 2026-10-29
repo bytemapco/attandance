@@ -1,4 +1,3 @@
-
 import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -40,7 +39,7 @@ class SessionState {
   final List<ClassSession> sessions;
   final bool isLoading;
   final String? errorMessage;
-  
+
   final Set<String> markedSessionIds;
 
   const SessionState({
@@ -66,7 +65,7 @@ class SessionNotifier extends StateNotifier<SessionState> {
   void _schedulePoll() {
     _pollTimer?.cancel();
     _pollTimer = Timer(_currentInterval, () {
-      fetchSessions();
+      fetchSessions(isPolling: true);
       _schedulePoll();
     });
   }
@@ -77,32 +76,39 @@ class SessionNotifier extends StateNotifier<SessionState> {
       _currentInterval = kSessionPollMinInterval;
     } else {
       _currentInterval = Duration(
-        seconds: (_currentInterval.inSeconds * 2)
-            .clamp(kSessionPollMinInterval.inSeconds, kSessionPollMaxInterval.inSeconds),
+        seconds: (_currentInterval.inSeconds * 2).clamp(
+          kSessionPollMinInterval.inSeconds,
+          kSessionPollMaxInterval.inSeconds,
+        ),
       );
     }
   }
 
-  List<ClassSession> _mapClasses(List<StudentClass> classes) =>
-      classes.map((c) => ClassSession(
-            classId: c.classId,
-            className: c.className,
-            subject: c.subject,
-            teacherName: c.teacherName,
-            sessionId: c.activeSessionId,
-            isActive: c.activeSessionId != null,
-            sessionEndTime: c.sessionEndTime,
-            latitude: c.latitude,
-            longitude: c.longitude,
-            radiusMeters: c.radiusMeters,
-          )).toList();
+  List<ClassSession> _mapClasses(List<StudentClass> classes) => classes
+      .map(
+        (c) => ClassSession(
+          classId: c.classId,
+          className: c.className,
+          subject: c.subject,
+          teacherName: c.teacherName,
+          sessionId: c.activeSessionId,
+          isActive: c.activeSessionId != null,
+          sessionEndTime: c.sessionEndTime,
+          latitude: c.latitude,
+          longitude: c.longitude,
+          radiusMeters: c.radiusMeters,
+        ),
+      )
+      .toList();
 
-  Future<void> fetchSessions() async {
-    state = SessionState(
-      sessions: state.sessions,
-      isLoading: true,
-      markedSessionIds: state.markedSessionIds,
-    );
+  Future<void> fetchSessions({bool isPolling = false}) async {
+    if (!isPolling && state.sessions.isEmpty) {
+      state = SessionState(
+        sessions: state.sessions,
+        isLoading: true,
+        markedSessionIds: state.markedSessionIds,
+      );
+    }
     try {
       final classSessions = _mapClasses(await _api.getMyClasses());
       _adjustPollInterval(classSessions);
@@ -146,10 +152,11 @@ class SessionNotifier extends StateNotifier<SessionState> {
   }
 }
 
-final sessionProvider =
-    StateNotifierProvider<SessionNotifier, SessionState>((ref) {
+final sessionProvider = StateNotifierProvider<SessionNotifier, SessionState>((
+  ref,
+) {
   final notifier = SessionNotifier(ref.read(studentApiProvider));
-  
+
   ref.listen(authProvider, (previous, next) {
     if (next.status != AuthStatus.authenticated) {
       notifier.stopPolling();

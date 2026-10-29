@@ -4,6 +4,7 @@ import 'package:smart_attendance_app/app/theme.dart';
 import 'package:smart_attendance_app/app/typography.dart';
 import 'package:smart_attendance_app/features/home/providers/session_provider.dart';
 import 'package:smart_attendance_app/features/home/widgets/home_active_session_card.dart';
+import 'package:smart_attendance_app/features/home/widgets/home_empty_classes.dart';
 
 /// Section showing Today's Classes header and active class card matching reference design.
 class HomeTodayClassesCard extends StatelessWidget {
@@ -23,32 +24,42 @@ class HomeTodayClassesCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final primaryTextColor =
-        isDark ? SasColors.brilliance : const Color(0xFF0F172A);
-    final subtitleColor =
-        isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B);
+    final primaryTextColor = isDark
+        ? SasColors.brilliance
+        : const Color(0xFF0F172A);
+    final subtitleColor = isDark
+        ? const Color(0xFF94A3B8)
+        : const Color(0xFF64748B);
 
-    final activeSession = sessions.where((s) => s.isActive).firstOrNull ??
-        sessions.firstOrNull;
+    final activeSession =
+        sessions.where((s) => s.isActive).firstOrNull ?? sessions.firstOrNull;
 
-    final isSessionOn = activeSession != null ? activeSession.isActive : true;
+    final isSessionOn = activeSession?.isActive ?? false;
 
-    final courseCode =
-        activeSession != null && activeSession.className.contains(':')
-            ? activeSession.className.split(':').first.trim()
-            : 'CS-6A';
+    final courseCode = activeSession != null
+        ? (activeSession.className.contains(':')
+              ? activeSession.className.split(':').first.trim()
+              : activeSession.className)
+        : 'Class';
 
     final courseTitle = activeSession != null
         ? (activeSession.className.contains(':')
-            ? activeSession.className.split(':').sublist(1).join(':').trim()
-            : activeSession.subject.isNotEmpty
-                ? activeSession.subject
-                : activeSession.className)
-        : 'Distributed Systems';
+              ? activeSession.className.split(':').sublist(1).join(':').trim()
+              : activeSession.subject.isNotEmpty
+              ? activeSession.subject
+              : activeSession.className)
+        : 'Scheduled Class';
 
     final teacherName = activeSession?.teacherName.isNotEmpty == true
         ? activeSession!.teacherName
-        : 'Robert Hayes';
+        : 'Instructor';
+
+    final String timeText;
+    if (activeSession?.sessionEndTime != null) {
+      timeText = DateFormat('h:mm a').format(activeSession!.sessionEndTime!);
+    } else {
+      timeText = DateFormat('h:mm a').format(DateTime.now());
+    }
 
     final formattedDate = DateFormat('EEE, MMM d').format(DateTime.now());
 
@@ -93,18 +104,21 @@ class HomeTodayClassesCard extends StatelessWidget {
           ),
         ),
 
-        // Active Session Card
-        HomeActiveSessionCard(
-          courseCode: courseCode,
-          courseTitle: courseTitle,
-          teacherName: teacherName,
-          timeText: '9:56',
-          isSessionOn: isSessionOn,
-          onTap: onViewAll,
-          onViewAll: onViewAll,
-          onSmartPass: onSmartPass,
-          onFaceMatch: onFaceMatch,
-        ),
+        // Active Session Card or Empty State
+        if (sessions.isEmpty)
+          const HomeEmptyClasses()
+        else
+          HomeActiveSessionCard(
+            courseCode: courseCode,
+            courseTitle: courseTitle,
+            teacherName: teacherName,
+            timeText: timeText,
+            isSessionOn: isSessionOn,
+            onTap: onViewAll,
+            onViewAll: onViewAll,
+            onSmartPass: onSmartPass,
+            onFaceMatch: onFaceMatch,
+          ),
       ],
     );
   }

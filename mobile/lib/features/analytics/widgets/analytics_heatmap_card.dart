@@ -13,10 +13,12 @@ class AnalyticsHeatmapCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardBg = isDark ? const Color(0xFF1E2838) : Colors.white;
-    final primaryTextColor =
-        isDark ? SasColors.brilliance : const Color(0xFF0F172A);
-    final subtitleColor =
-        isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B);
+    final primaryTextColor = isDark
+        ? SasColors.brilliance
+        : const Color(0xFF0F172A);
+    final subtitleColor = isDark
+        ? const Color(0xFF94A3B8)
+        : const Color(0xFF64748B);
 
     const weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
     const columns = 14;
@@ -25,10 +27,10 @@ class AnalyticsHeatmapCard extends StatelessWidget {
     final grid = List.generate(5, (_) => List.filled(columns, 0));
 
     // Fallback baseline positions matching screenshot
-    grid[0][8] = 1;  // Mon: Green
+    grid[0][8] = 1; // Mon: Green
     grid[0][12] = 2; // Mon: Red
-    grid[1][9] = 2;  // Tue: Red
-    grid[3][7] = 1;  // Thu: Green
+    grid[1][9] = 2; // Tue: Red
+    grid[3][7] = 1; // Thu: Green
 
     // Map dynamic items if available
     for (final item in data.history) {
@@ -125,9 +127,13 @@ class AnalyticsHeatmapCard extends StatelessWidget {
                             final state = grid[r][c];
                             Color cellColor;
                             if (state == 1) {
-                              cellColor = const Color(0xFF10B981); // Present (Green)
+                              cellColor = const Color(
+                                0xFF10B981,
+                              ); // Present (Green)
                             } else if (state == 2) {
-                              cellColor = const Color(0xFFF87171); // Absent (Red)
+                              cellColor = const Color(
+                                0xFFF87171,
+                              ); // Absent (Red)
                             } else {
                               cellColor = isDark
                                   ? const Color(0xFF334155)

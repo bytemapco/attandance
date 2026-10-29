@@ -59,7 +59,9 @@ class HomeMotivationalBanner extends StatelessWidget {
                   style: SasTypography.style(
                     fontSize: 15,
                     fontWeight: FontWeight.w700,
-                    color: isDark ? SasColors.brilliance : const Color(0xFF0F172A),
+                    color: isDark
+                        ? SasColors.brilliance
+                        : const Color(0xFF0F172A),
                     letterSpacing: -0.2,
                   ),
                 ),
@@ -69,7 +71,9 @@ class HomeMotivationalBanner extends StatelessWidget {
                   style: SasTypography.style(
                     fontSize: 12.5,
                     fontWeight: FontWeight.w500,
-                    color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
+                    color: isDark
+                        ? const Color(0xFF94A3B8)
+                        : const Color(0xFF64748B),
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,

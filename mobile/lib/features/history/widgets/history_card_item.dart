@@ -27,10 +27,12 @@ class HistoryCardItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardBg = isDark ? const Color(0xFF1E2838) : Colors.white;
-    final primaryTextColor =
-        isDark ? SasColors.brilliance : const Color(0xFF0F172A);
-    final subtitleColor =
-        isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B);
+    final primaryTextColor = isDark
+        ? SasColors.brilliance
+        : const Color(0xFF0F172A);
+    final subtitleColor = isDark
+        ? const Color(0xFF94A3B8)
+        : const Color(0xFF64748B);
 
     final normalizedStatus = _formatStatus(status);
     final isPresent = normalizedStatus == 'Present';
@@ -71,7 +73,9 @@ class HistoryCardItem extends StatelessWidget {
               width: 50,
               height: 52,
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF1F5F9),
+                color: isDark
+                    ? const Color(0xFF0F172A)
+                    : const Color(0xFFF1F5F9),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Column(
@@ -176,6 +180,8 @@ class HistoryCardItem extends StatelessWidget {
     if (lower == 'present' || lower == 'approved') return 'Present';
     if (lower == 'absent') return 'Absent';
     if (lower == 'excused' || lower == 'flagged') return 'Excused';
-    return s.isNotEmpty ? s[0].toUpperCase() + s.substring(1).toLowerCase() : 'Present';
+    return s.isNotEmpty
+        ? s[0].toUpperCase() + s.substring(1).toLowerCase()
+        : 'Present';
   }
 }

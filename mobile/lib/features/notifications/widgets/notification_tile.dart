@@ -50,7 +50,9 @@ class NotificationTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final sev = _getSeverity(notification.severity);
-    final isBroadcast = notification.source == 'broadcast' || notification.category == 'broadcast';
+    final isBroadcast =
+        notification.source == 'broadcast' ||
+        notification.category == 'broadcast';
 
     return Dismissible(
       key: ValueKey(notification.id),
@@ -63,7 +65,11 @@ class NotificationTile extends StatelessWidget {
           color: SasColors.danger.withValues(alpha: 0.15),
           borderRadius: BorderRadius.circular(12),
         ),
-        child: const Icon(Icons.delete_outline_rounded, color: SasColors.danger, size: 22),
+        child: const Icon(
+          Icons.delete_outline_rounded,
+          color: SasColors.danger,
+          size: 22,
+        ),
       ),
       child: Padding(
         padding: const EdgeInsets.only(bottom: 8),
@@ -72,7 +78,9 @@ class NotificationTile extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           child: GlassCard(
             padding: const EdgeInsets.all(12),
-            borderColor: !notification.isRead ? sev.color.withValues(alpha: 0.3) : null,
+            borderColor: !notification.isRead
+                ? sev.color.withValues(alpha: 0.3)
+                : null,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -105,7 +113,9 @@ class NotificationTile extends StatelessWidget {
                             child: Text(
                               notification.title,
                               style: TextStyle(
-                                fontWeight: notification.isRead ? FontWeight.w600 : FontWeight.w700,
+                                fontWeight: notification.isRead
+                                    ? FontWeight.w600
+                                    : FontWeight.w700,
                                 fontSize: 13,
                                 color: SasColors.textPrimaryOf(context),
                               ),
@@ -113,29 +123,65 @@ class NotificationTile extends StatelessWidget {
                           ),
                           if (isBroadcast)
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 5,
+                                vertical: 2,
+                              ),
                               decoration: BoxDecoration(
-                                color: SasColors.accentEmerald.withValues(alpha: 0.1),
+                                color: SasColors.accentEmerald.withValues(
+                                  alpha: 0.1,
+                                ),
                                 borderRadius: BorderRadius.circular(4),
                               ),
-                              child: const Text('BROADCAST', style: TextStyle(color: SasColors.accentEmerald, fontSize: 9, fontWeight: FontWeight.w700)),
+                              child: const Text(
+                                'BROADCAST',
+                                style: TextStyle(
+                                  color: SasColors.accentEmerald,
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
                             ),
                         ],
                       ),
                       const SizedBox(height: 3),
-                      Text(notification.body, style: const TextStyle(color: SasColors.textSecondary, fontSize: 12)),
+                      Text(
+                        notification.body,
+                        style: TextStyle(
+                          color: SasColors.textSecondaryOf(context),
+                          fontSize: 12,
+                        ),
+                      ),
                       const SizedBox(height: 6),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(notification.timestamp.formattedDateTime, style: const TextStyle(color: SasColors.textMuted, fontSize: 10)),
-                          if (notification.link != null && notification.link!.isNotEmpty)
+                          Text(
+                            notification.timestamp.formattedDateTime,
+                            style: TextStyle(
+                              color: SasColors.textMutedOf(context),
+                              fontSize: 10,
+                            ),
+                          ),
+                          if (notification.link != null &&
+                              notification.link!.isNotEmpty)
                             Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Text('View details', style: TextStyle(color: sev.color, fontSize: 10, fontWeight: FontWeight.w600)),
+                                Text(
+                                  'View details',
+                                  style: TextStyle(
+                                    color: sev.color,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
                                 const SizedBox(width: 2),
-                                Icon(Icons.arrow_forward_ios_rounded, size: 9, color: sev.color),
+                                Icon(
+                                  Icons.arrow_forward_ios_rounded,
+                                  size: 9,
+                                  color: sev.color,
+                                ),
                               ],
                             ),
                         ],

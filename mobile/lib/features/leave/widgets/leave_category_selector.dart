@@ -21,15 +21,19 @@ class LeaveCategorySelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textSecondary = SasColors.textSecondaryOf(context);
+    final chipBg = isDark ? SasColors.darkSurface : SasColors.bgSecondary;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Leave Category',
           style: TextStyle(
             fontWeight: FontWeight.w700,
             fontSize: 13,
-            color: SasColors.textSecondary,
+            color: textSecondary,
           ),
         ),
         const SizedBox(height: 8),
@@ -43,16 +47,20 @@ class LeaveCategorySelector extends StatelessWidget {
               selected: isSelected,
               onSelected: (_) => onSelected(cat),
               selectedColor: SasColors.accentEmerald.withValues(alpha: 0.15),
-              backgroundColor: SasColors.bgSecondary,
+              backgroundColor: chipBg,
               labelStyle: TextStyle(
                 fontSize: 12,
                 fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                color: isSelected ? SasColors.accentEmerald : SasColors.textSecondary,
+                color: isSelected ? SasColors.accentEmerald : textSecondary,
               ),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
                 side: BorderSide(
-                  color: isSelected ? SasColors.accentEmerald : SasColors.glassBorder,
+                  color: isSelected
+                      ? SasColors.accentEmerald
+                      : (isDark
+                            ? const Color(0x2AFFFFFF)
+                            : const Color(0xFFE2E8F0)),
                 ),
               ),
             );

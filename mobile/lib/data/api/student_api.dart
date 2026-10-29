@@ -1,4 +1,3 @@
-
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,13 +16,17 @@ class StudentApi {
 
   const StudentApi(this._dio);
 
-  Future<void> submitBiometricConsent({String policyVersion = '2026.1-BIPA'}) async {
+  Future<void> submitBiometricConsent({
+    String policyVersion = '2026.1-BIPA',
+  }) async {
     final formData = FormData.fromMap({'policy_version': policyVersion});
     await _dio.post<void>('/student/biometric/consent', data: formData);
   }
 
   Future<Map<String, dynamic>> getBiometricConsentStatus() async {
-    final response = await _dio.get<Map<String, dynamic>>('/student/biometric/consent-status');
+    final response = await _dio.get<Map<String, dynamic>>(
+      '/student/biometric/consent-status',
+    );
     return response.data!;
   }
 
@@ -50,14 +53,14 @@ class StudentApi {
       'longitude': longitude.toString(),
       'accuracy': accuracy.toString(),
     };
-    
+
     if (File(imagePath).existsSync()) {
       formDataMap['image'] = await MultipartFile.fromFile(
         imagePath,
         contentType: MediaType('image', 'jpeg'),
       );
     }
-    
+
     final formData = FormData.fromMap(formDataMap);
     final response = await _dio.post<Map<String, dynamic>>(
       '/student/attendance/mark',
@@ -79,7 +82,7 @@ class StudentApi {
       'longitude': longitude.toString(),
       'accuracy': accuracy.toString(),
     };
-    
+
     if (File(imagePath).existsSync()) {
       formDataMap['image'] = await MultipartFile.fromFile(
         imagePath,
@@ -98,9 +101,7 @@ class StudentApi {
   Future<AttendanceResult> confirmAttendance({
     required String reviewToken,
   }) async {
-    final formData = FormData.fromMap({
-      'review_token': reviewToken,
-    });
+    final formData = FormData.fromMap({'review_token': reviewToken});
     final response = await _dio.post<Map<String, dynamic>>(
       '/student/attendance/confirm',
       data: formData,
@@ -109,8 +110,9 @@ class StudentApi {
   }
 
   Future<AttendanceHistoryResponse> getMyAttendance() async {
-    final response =
-        await _dio.get<Map<String, dynamic>>('/student/my-attendance');
+    final response = await _dio.get<Map<String, dynamic>>(
+      '/student/my-attendance',
+    );
     return AttendanceHistoryResponse.fromJson(response.data!);
   }
 
@@ -122,10 +124,7 @@ class StudentApi {
   }
 
   Future<void> registerFcmToken(String token) async {
-    await _dio.post<void>(
-      '/student/fcm-token',
-      data: {'token': token},
-    );
+    await _dio.post<void>('/student/fcm-token', data: {'token': token});
   }
 
   Future<void> submitFlaggedNote(String attendanceId, String note) async {
@@ -181,7 +180,9 @@ class StudentApi {
   }
 
   Future<Map<String, dynamic>> getSmartPass() async {
-    final response = await _dio.get<Map<String, dynamic>>('/student/smart-pass');
+    final response = await _dio.get<Map<String, dynamic>>(
+      '/student/smart-pass',
+    );
     return response.data!;
   }
 
@@ -210,9 +211,10 @@ class StudentApi {
     return response.data!;
   }
 
-
   Future<LeaderboardResponse> getLeaderboard() async {
-    final response = await _dio.get<Map<String, dynamic>>('/student/leaderboard');
+    final response = await _dio.get<Map<String, dynamic>>(
+      '/student/leaderboard',
+    );
     return LeaderboardResponse.fromJson(response.data!);
   }
 }

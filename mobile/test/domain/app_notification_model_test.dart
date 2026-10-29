@@ -48,7 +48,10 @@ void main() {
 
   group('inferNotificationSeverity', () {
     test('categorizes low attendance and anomalies as danger', () {
-      expect(inferNotificationSeverity({'type': 'low_attendance'}), kSeverityDanger);
+      expect(
+        inferNotificationSeverity({'type': 'low_attendance'}),
+        kSeverityDanger,
+      );
       expect(inferNotificationSeverity({'type': 'anomaly'}), kSeverityDanger);
     });
 

@@ -57,7 +57,9 @@ class VerificationQualityBar extends StatelessWidget {
           borderRadius: BorderRadius.circular(4),
           child: LinearProgressIndicator(
             value: clamped,
-            backgroundColor: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
+            backgroundColor: isDark
+                ? const Color(0xFF334155)
+                : const Color(0xFFE2E8F0),
             valueColor: AlwaysStoppedAnimation<Color>(color),
             minHeight: 5,
           ),

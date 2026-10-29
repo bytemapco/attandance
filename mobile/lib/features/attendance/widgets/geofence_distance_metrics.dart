@@ -31,9 +31,15 @@ class GeofenceDistanceMetrics extends StatelessWidget {
     final radius = state.radiusMeters ?? 100;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    final containerBg = isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC);
-    final borderCol = isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0);
-    final mutedTextCol = isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B);
+    final containerBg = isDark
+        ? const Color(0xFF0F172A)
+        : const Color(0xFFF8FAFC);
+    final borderCol = isDark
+        ? const Color(0xFF334155)
+        : const Color(0xFFE2E8F0);
+    final mutedTextCol = isDark
+        ? const Color(0xFF94A3B8)
+        : const Color(0xFF64748B);
 
     return Container(
       padding: const EdgeInsets.all(12),
@@ -62,7 +68,9 @@ class GeofenceDistanceMetrics extends StatelessWidget {
                   label: 'Allowed Radius',
                   meters: radius,
                   icon: Icons.radio_button_checked_rounded,
-                  accentColor: isDark ? const Color(0xFFCBD5E1) : const Color(0xFF475569),
+                  accentColor: isDark
+                      ? const Color(0xFFCBD5E1)
+                      : const Color(0xFF475569),
                   isDark: isDark,
                   borderColor: borderCol,
                 ),

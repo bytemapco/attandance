@@ -18,10 +18,12 @@ class AnalyticsRateCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardBg = isDark ? const Color(0xFF1E2838) : Colors.white;
-    final primaryTextColor =
-        isDark ? SasColors.brilliance : const Color(0xFF0F172A);
-    final subtitleColor =
-        isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B);
+    final primaryTextColor = isDark
+        ? SasColors.brilliance
+        : const Color(0xFF0F172A);
+    final subtitleColor = isDark
+        ? const Color(0xFF94A3B8)
+        : const Color(0xFF64748B);
 
     final cleanPct = (percentage.isNaN || percentage.isInfinite)
         ? 0.0
@@ -80,11 +82,13 @@ class AnalyticsRateCard extends StatelessWidget {
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
-                    CustomPaint(
-                      size: const Size(104, 104),
-                      painter: _AttendanceRateGaugePainter(
-                        progress: cleanPct / 100.0,
-                        isDark: isDark,
+                    RepaintBoundary(
+                      child: CustomPaint(
+                        size: const Size(104, 104),
+                        painter: _AttendanceRateGaugePainter(
+                          progress: cleanPct / 100.0,
+                          isDark: isDark,
+                        ),
                       ),
                     ),
                     Column(
@@ -151,13 +155,21 @@ class AnalyticsRateCard extends StatelessWidget {
                       ),
                       decoration: BoxDecoration(
                         color: isBelow
-                            ? (isDark ? const Color(0xFF3F1D24) : const Color(0xFFFFF1F2))
-                            : (isDark ? const Color(0xFF143828) : const Color(0xFFF0FDF4)),
+                            ? (isDark
+                                  ? const Color(0xFF3F1D24)
+                                  : const Color(0xFFFFF1F2))
+                            : (isDark
+                                  ? const Color(0xFF143828)
+                                  : const Color(0xFFF0FDF4)),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
                           color: isBelow
-                              ? (isDark ? const Color(0xFF7F1D1D) : const Color(0xFFFECDD3))
-                              : (isDark ? const Color(0xFF15803D) : const Color(0xFFBBF7D0)),
+                              ? (isDark
+                                    ? const Color(0xFF7F1D1D)
+                                    : const Color(0xFFFECDD3))
+                              : (isDark
+                                    ? const Color(0xFF15803D)
+                                    : const Color(0xFFBBF7D0)),
                           width: 1.0,
                         ),
                       ),
@@ -236,11 +248,7 @@ class _AttendanceRateGaugePainter extends CustomPainter {
       final pipPaint = Paint()
         ..color = const Color(0xFFF95721)
         ..style = PaintingStyle.fill;
-      canvas.drawCircle(
-        Offset(center.dx, center.dy - radius),
-        4.0,
-        pipPaint,
-      );
+      canvas.drawCircle(Offset(center.dx, center.dy - radius), 4.0, pipPaint);
     } else {
       final sweep = progress.clamp(0.02, 1.0) * 2 * math.pi;
       final rect = Rect.fromCircle(center: center, radius: radius);

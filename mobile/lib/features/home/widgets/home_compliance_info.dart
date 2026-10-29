@@ -13,10 +13,12 @@ class HomeComplianceInfo extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final isBelowGoal = percentage < 75.0;
 
-    final primaryTextColor =
-        isDark ? SasColors.brilliance : const Color(0xFF0F172A);
-    final subtitleColor =
-        isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B);
+    final primaryTextColor = isDark
+        ? SasColors.brilliance
+        : const Color(0xFF0F172A);
+    final subtitleColor = isDark
+        ? const Color(0xFF94A3B8)
+        : const Color(0xFF64748B);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -114,12 +116,8 @@ class HomeComplianceInfo extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
             color: isBelowGoal
-                ? (isDark
-                    ? const Color(0x33F87171)
-                    : const Color(0xFFFEE2E2))
-                : (isDark
-                    ? const Color(0x3334D399)
-                    : const Color(0xFFDCFCE7)),
+                ? (isDark ? const Color(0x33F87171) : const Color(0xFFFEE2E2))
+                : (isDark ? const Color(0x3334D399) : const Color(0xFFDCFCE7)),
             borderRadius: BorderRadius.circular(16),
           ),
           child: Row(
@@ -152,4 +150,3 @@ class HomeComplianceInfo extends StatelessWidget {
     );
   }
 }
-

@@ -11,7 +11,8 @@ class NotificationsScreen extends ConsumerStatefulWidget {
   const NotificationsScreen({super.key});
 
   @override
-  ConsumerState<NotificationsScreen> createState() => _NotificationsScreenState();
+  ConsumerState<NotificationsScreen> createState() =>
+      _NotificationsScreenState();
 }
 
 class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
@@ -24,8 +25,12 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
     final unread = notifications.where((n) => !n.isRead).length;
 
     final filtered = notifications.where((n) {
-      if (_selectedFilter == 'broadcasts') return n.source == 'broadcast' || n.category == 'broadcast';
-      if (_selectedFilter == 'unread') return !n.isRead;
+      if (_selectedFilter == 'broadcasts') {
+        return n.source == 'broadcast' || n.category == 'broadcast';
+      }
+      if (_selectedFilter == 'unread') {
+        return !n.isRead;
+      }
       return true;
     }).toList();
 
@@ -35,12 +40,21 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
         actions: [
           if (notifications.isNotEmpty) ...[
             IconButton(
-              icon: const Icon(Icons.done_all_rounded, color: SasColors.textMuted, size: 20),
-              onPressed: () => ref.read(notificationsProvider.notifier).markAllRead(),
+              icon: const Icon(
+                Icons.done_all_rounded,
+                color: SasColors.textMuted,
+                size: 20,
+              ),
+              onPressed: () =>
+                  ref.read(notificationsProvider.notifier).markAllRead(),
               tooltip: 'Mark All Read',
             ),
             IconButton(
-              icon: const Icon(Icons.clear_all_rounded, color: SasColors.textMuted, size: 20),
+              icon: const Icon(
+                Icons.clear_all_rounded,
+                color: SasColors.textMuted,
+                size: 20,
+              ),
               onPressed: () => ref.read(notificationsProvider.notifier).clear(),
               tooltip: 'Clear All',
             ),
@@ -51,41 +65,75 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                 decoration: BoxDecoration(
                   color: SasColors.accentEmerald.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: SasColors.accentEmerald.withValues(alpha: 0.3)),
+                  border: Border.all(
+                    color: SasColors.accentEmerald.withValues(alpha: 0.3),
+                  ),
                 ),
-                child: Text('$unread', style: const TextStyle(color: SasColors.accentEmerald, fontSize: 11, fontWeight: FontWeight.w700)),
+                child: Text(
+                  '$unread',
+                  style: const TextStyle(
+                    color: SasColors.accentEmerald,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
               ),
           ],
         ],
       ),
       body: AnimatedBackground(
         child: SafeArea(
-          child: Column(
-            children: [
-              _buildFilterChips(notifications),
-              Expanded(
-                child: RefreshIndicator(
-                  color: SasColors.accentEmerald,
-                  backgroundColor: SasColors.bgSecondary,
-                  onRefresh: () => ref.read(notificationsProvider.notifier).load(),
-                  child: ListView(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    children: [
-                      if (isLoading && notifications.isEmpty)
-                        const Center(child: Padding(padding: EdgeInsets.all(32), child: CircularProgressIndicator(color: SasColors.accentEmerald)))
-                      else if (filtered.isEmpty)
-                        _buildEmpty()
-                      else
-                        ...filtered.map((n) => NotificationTile(
-                              notification: n,
-                              onMarkRead: () => ref.read(notificationsProvider.notifier).markRead(n.id),
-                              onDelete: () => ref.read(notificationsProvider.notifier).deleteNotification(n.id),
-                            )),
-                    ],
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 600),
+              child: Column(
+                children: [
+                  _buildFilterChips(notifications),
+                  Expanded(
+                    child: RefreshIndicator(
+                      color: SasColors.accentEmerald,
+                      backgroundColor:
+                          Theme.of(context).brightness == Brightness.dark
+                          ? SasColors.darkSurface
+                          : SasColors.bgSecondary,
+                      onRefresh: () =>
+                          ref.read(notificationsProvider.notifier).load(),
+                      child: ListView(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+                        children: [
+                          if (isLoading && notifications.isEmpty)
+                            const Center(
+                              child: Padding(
+                                padding: EdgeInsets.all(32),
+                                child: CircularProgressIndicator(
+                                  color: SasColors.accentEmerald,
+                                ),
+                              ),
+                            )
+                          else if (filtered.isEmpty)
+                            _buildEmpty()
+                          else
+                            ...filtered.map(
+                              (n) => NotificationTile(
+                                notification: n,
+                                onMarkRead: () => ref
+                                    .read(notificationsProvider.notifier)
+                                    .markRead(n.id),
+                                onDelete: () => ref
+                                    .read(notificationsProvider.notifier)
+                                    .deleteNotification(n.id),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),
@@ -93,7 +141,9 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
   }
 
   Widget _buildFilterChips(List<LocalNotification> all) {
-    final broadcastCount = all.where((n) => n.source == 'broadcast' || n.category == 'broadcast').length;
+    final broadcastCount = all
+        .where((n) => n.source == 'broadcast' || n.category == 'broadcast')
+        .length;
     final unreadCount = all.where((n) => !n.isRead).length;
 
     return SingleChildScrollView(
@@ -112,6 +162,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
   }
 
   Widget _buildFilterChip(String key, String label) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final isSelected = _selectedFilter == key;
     return InkWell(
       onTap: () => setState(() => _selectedFilter = key),
@@ -119,16 +170,22 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
-          color: isSelected ? SasColors.accentEmerald : SasColors.bgSecondary,
+          color: isSelected
+              ? SasColors.accentEmerald
+              : (isDark ? SasColors.darkSurface : SasColors.bgSecondary),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: isSelected ? SasColors.accentEmerald : SasColors.glassBorder,
+            color: isSelected
+                ? SasColors.accentEmerald
+                : (isDark ? const Color(0x2AFFFFFF) : const Color(0xFFE2E8F0)),
           ),
         ),
         child: Text(
           label,
           style: TextStyle(
-            color: isSelected ? Colors.white : SasColors.textSecondary,
+            color: isSelected
+                ? Colors.white
+                : SasColors.textSecondaryOf(context),
             fontSize: 12,
             fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
           ),
@@ -142,12 +199,29 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
       padding: const EdgeInsets.all(32),
       child: Column(
         children: [
-          const Icon(Icons.notifications_none_rounded, size: 44, color: SasColors.textMuted),
+          Icon(
+            Icons.notifications_none_rounded,
+            size: 44,
+            color: SasColors.textMutedOf(context),
+          ),
           const SizedBox(height: 10),
-          Text('No notifications', style: TextStyle(color: SasColors.textPrimaryOf(context), fontSize: 14, fontWeight: FontWeight.w700)),
+          Text(
+            'No notifications',
+            style: TextStyle(
+              color: SasColors.textPrimaryOf(context),
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
           const SizedBox(height: 4),
-          const Text('Broadcast announcements and classroom alerts will appear here.',
-              textAlign: TextAlign.center, style: TextStyle(color: SasColors.textMuted, fontSize: 12)),
+          Text(
+            'Broadcast announcements and classroom alerts will appear here.',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: SasColors.textMutedOf(context),
+              fontSize: 12,
+            ),
+          ),
         ],
       ),
     );

@@ -26,4 +26,3 @@ const String kSeverityDanger = 'danger';
 const String kSeverityWarning = 'warning';
 const String kSeveritySuccess = 'success';
 const String kSeverityInfo = 'info';
-

@@ -1,4 +1,3 @@
-
 import 'package:hive/hive.dart';
 
 part 'offline_payload.g.dart';

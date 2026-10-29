@@ -51,5 +51,5 @@ class LeaderboardNotifier extends StateNotifier<LeaderboardState> {
 
 final leaderboardProvider =
     StateNotifierProvider<LeaderboardNotifier, LeaderboardState>((ref) {
-  return LeaderboardNotifier(ref.read(studentApiProvider));
-});
+      return LeaderboardNotifier(ref.read(studentApiProvider));
+    });

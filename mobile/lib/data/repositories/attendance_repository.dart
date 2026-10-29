@@ -1,4 +1,3 @@
-
 library;
 
 import 'dart:io';
@@ -43,9 +42,9 @@ class AttendanceRepository {
     required Ref ref,
     required StudentApi studentApi,
     required HiveService hive,
-  })  : _ref = ref,
-        _studentApi = studentApi,
-        _hive = hive;
+  }) : _ref = ref,
+       _studentApi = studentApi,
+       _hive = hive;
 
   Future<AttendanceSubmitResult> submitAttendance({
     required String sessionId,
@@ -55,7 +54,6 @@ class AttendanceRepository {
     required String imagePath,
     String? className,
   }) async {
-    
     final savedImagePath = await _saveImageToAppDocs(imagePath);
 
     final connectivity = await Connectivity().checkConnectivity();
@@ -72,18 +70,18 @@ class AttendanceRepository {
         );
         return OnlineResult(result);
       } on DioException catch (e) {
-        
         final isNetworkError = [
           DioExceptionType.connectionTimeout,
           DioExceptionType.sendTimeout,
           DioExceptionType.receiveTimeout,
           DioExceptionType.connectionError,
         ].contains(e.type);
-        
-        final isServerError = e.response != null && e.response!.statusCode! >= 500;
+
+        final isServerError =
+            e.response != null && e.response!.statusCode! >= 500;
 
         if (!isNetworkError && !isServerError) {
-          throw mapDioError(e); 
+          throw mapDioError(e);
         }
       }
     }
@@ -142,7 +140,9 @@ class AttendanceRepository {
 
     if (isOnline) {
       try {
-        final result = await _studentApi.confirmAttendance(reviewToken: reviewToken);
+        final result = await _studentApi.confirmAttendance(
+          reviewToken: reviewToken,
+        );
         return OnlineResult(result);
       } on DioException catch (e) {
         final isNetworkError = [
@@ -151,7 +151,8 @@ class AttendanceRepository {
           DioExceptionType.receiveTimeout,
           DioExceptionType.connectionError,
         ].contains(e.type);
-        final isServerError = e.response != null && e.response!.statusCode! >= 500;
+        final isServerError =
+            e.response != null && e.response!.statusCode! >= 500;
         if (!isNetworkError && !isServerError) {
           throw mapDioError(e);
         }
@@ -192,9 +193,11 @@ class AttendanceRepository {
   Future<Map<String, dynamic>> getBiometricConsentStatus() =>
       _studentApi.getBiometricConsentStatus();
 
-  Future<void> registerFace(String imagePath) => _studentApi.registerFace(imagePath);
+  Future<void> registerFace(String imagePath) =>
+      _studentApi.registerFace(imagePath);
 
-  Future<AttendanceHistoryResponse> getHistory() => _studentApi.getMyAttendance();
+  Future<AttendanceHistoryResponse> getHistory() =>
+      _studentApi.getMyAttendance();
 
   int get pendingOfflineCount => _hive.pendingCount;
 }

@@ -6,11 +6,7 @@ class HomeComplianceArc extends StatelessWidget {
   final double progress;
   final double size;
 
-  const HomeComplianceArc({
-    super.key,
-    required this.progress,
-    this.size = 124,
-  });
+  const HomeComplianceArc({super.key, required this.progress, this.size = 124});
 
   @override
   Widget build(BuildContext context) {
@@ -18,12 +14,9 @@ class HomeComplianceArc extends StatelessWidget {
     final trackColor = isDark
         ? const Color(0xFF334155)
         : const Color(0xFFEEF2F6);
-    final iconColor = isDark
-        ? Colors.white
-        : const Color(0xFF475569);
+    final iconColor = isDark ? Colors.white : const Color(0xFF475569);
 
-    // Show at least a small segment if 0% or clamp actual progress
-    final displayProgress = progress > 0 ? progress : 0.18;
+    final displayProgress = progress.clamp(0.0, 1.0);
 
     return SizedBox(
       width: size,
@@ -32,21 +25,19 @@ class HomeComplianceArc extends StatelessWidget {
         alignment: Alignment.center,
         children: [
           // Track and active orange progress arc
-          CustomPaint(
-            size: Size(size, size),
-            painter: _ArcPainter(
-              progress: displayProgress,
-              trackColor: trackColor,
-              strokeWidth: 10.0,
+          RepaintBoundary(
+            child: CustomPaint(
+              size: Size(size, size),
+              painter: _ArcPainter(
+                progress: displayProgress,
+                trackColor: trackColor,
+                strokeWidth: 10.0,
+              ),
             ),
           ),
 
           // Clean calendar with checkmark outline icon
-          Icon(
-            Icons.event_available_rounded,
-            color: iconColor,
-            size: 28,
-          ),
+          Icon(Icons.event_available_rounded, color: iconColor, size: 28),
         ],
       ),
     );
@@ -85,13 +76,7 @@ class _ArcPainter extends CustomPainter {
       ..strokeCap = StrokeCap.round;
 
     final rect = Rect.fromCircle(center: center, radius: radius);
-    canvas.drawArc(
-      rect,
-      -math.pi / 4,
-      math.pi * 2 * progress,
-      false,
-      arcPaint,
-    );
+    canvas.drawArc(rect, -math.pi / 4, math.pi * 2 * progress, false, arcPaint);
   }
 
   @override
@@ -100,4 +85,3 @@ class _ArcPainter extends CustomPainter {
       old.trackColor != trackColor ||
       old.strokeWidth != strokeWidth;
 }
-

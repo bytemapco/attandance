@@ -46,10 +46,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   Future<void> _handleLogin() async {
     if (!_passwordFormKey.currentState!.validate()) return;
-    await ref.read(authProvider.notifier).login(
-          _identifierController.text.trim(),
-          _passwordController.text,
-        );
+    await ref
+        .read(authProvider.notifier)
+        .login(_identifierController.text.trim(), _passwordController.text);
   }
 
   @override
@@ -67,30 +66,30 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       },
       child: Scaffold(
         backgroundColor: isDark ? SasColors.darkCanvas : Colors.white,
-        resizeToAvoidBottomInset: _step == _LoginStep.identifier,
+        resizeToAvoidBottomInset: true,
         body: Stack(
           fit: StackFit.expand,
           children: [
             SizedBox.expand(
               child: AnimatedSwitcher(
                 duration: const Duration(milliseconds: 320),
-              switchInCurve: Curves.easeOutCubic,
-              switchOutCurve: Curves.easeInCubic,
-              transitionBuilder: (child, animation) {
-                return FadeTransition(
-                  opacity: animation,
-                  child: SlideTransition(
-                    position: Tween<Offset>(
-                      begin: const Offset(0.04, 0),
-                      end: Offset.zero,
-                    ).animate(animation),
-                    child: child,
-                  ),
-                );
-              },
-              child: _step == _LoginStep.identifier
-                  ? _buildIdentifierScreen(isDark)
-                  : _buildPasswordScreen(authState, isLoading),
+                switchInCurve: Curves.easeOutCubic,
+                switchOutCurve: Curves.easeInCubic,
+                transitionBuilder: (child, animation) {
+                  return FadeTransition(
+                    opacity: animation,
+                    child: SlideTransition(
+                      position: Tween<Offset>(
+                        begin: const Offset(0.04, 0),
+                        end: Offset.zero,
+                      ).animate(animation),
+                      child: child,
+                    ),
+                  );
+                },
+                child: _step == _LoginStep.identifier
+                    ? _buildIdentifierScreen(isDark)
+                    : _buildPasswordScreen(authState, isLoading),
               ),
             ),
             if (isLoading) const LoadingOverlay(message: 'Signing in...'),
@@ -101,6 +100,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   Widget _buildIdentifierScreen(bool isDark) {
+    final isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
     return KeyedSubtree(
       key: const ValueKey('step_identifier'),
       child: Stack(
@@ -118,17 +118,22 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           // Protective subtle tint in dark mode
           if (isDark)
             Positioned.fill(
-              child: ColoredBox(
-                color: Colors.black.withValues(alpha: 0.35),
-              ),
+              child: ColoredBox(color: Colors.black.withValues(alpha: 0.35)),
             ),
 
           // Top Hero Section with brand logo, headline & 3-feature card
-          const Positioned(
+          Positioned(
             top: 0,
             left: 0,
             right: 0,
-            child: AuthHeroSection(),
+            child: AnimatedOpacity(
+              duration: const Duration(milliseconds: 200),
+              opacity: isKeyboardOpen ? 0.0 : 1.0,
+              child: IgnorePointer(
+                ignoring: isKeyboardOpen,
+                child: const AuthHeroSection(),
+              ),
+            ),
           ),
 
           // Bottom Sign In Sheet

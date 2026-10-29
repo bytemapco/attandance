@@ -1,4 +1,3 @@
-
 library;
 
 import 'dart:async';
@@ -17,7 +16,7 @@ import 'package:smart_attendance_app/data/local/pending_count_provider.dart';
 import 'package:smart_attendance_app/utils/logger.dart';
 
 final offlineSyncServiceProvider = Provider<OfflineSyncService>((ref) {
-  return OfflineSyncService(
+  final service = OfflineSyncService(
     ref: ref,
     studentApi: ref.read(studentApiProvider),
     hive: ref.read(hiveServiceProvider),
@@ -25,6 +24,8 @@ final offlineSyncServiceProvider = Provider<OfflineSyncService>((ref) {
     notificationsNotifier: ref.read(notificationsProvider.notifier),
     dio: ref.read(dioProvider),
   );
+  ref.onDispose(service.dispose);
+  return service;
 });
 
 class OfflineSyncService {
@@ -44,17 +45,17 @@ class OfflineSyncService {
     required NotificationService notificationService,
     required NotificationsNotifier notificationsNotifier,
     required Dio dio,
-  })  : _ref = ref,
-        _studentApi = studentApi,
-        _hive = hive,
-        _notificationService = notificationService,
-        _notificationsNotifier = notificationsNotifier,
-        _dio = dio;
+  }) : _ref = ref,
+       _studentApi = studentApi,
+       _hive = hive,
+       _notificationService = notificationService,
+       _notificationsNotifier = notificationsNotifier,
+       _dio = dio;
 
   void startListening() {
-    _connectivitySub = Connectivity()
-        .onConnectivityChanged
-        .listen((List<ConnectivityResult> results) {
+    _connectivitySub = Connectivity().onConnectivityChanged.listen((
+      List<ConnectivityResult> results,
+    ) {
       final isOnline = results.any((r) => r != ConnectivityResult.none);
       if (isOnline) {
         syncQueue();
@@ -65,7 +66,11 @@ class OfflineSyncService {
   String _className(OfflineAttendancePayload p) => p.className ?? 'a class';
 
   Future<void> _notify(String title, String body, String severity) =>
-      _notificationService.addNotification(title: title, body: body, severity: severity);
+      _notificationService.addNotification(
+        title: title,
+        body: body,
+        severity: severity,
+      );
 
   Future<void> _removePayload(dynamic payload) async {
     final key = payload.key;
@@ -91,7 +96,10 @@ class OfflineSyncService {
     try {
       final response = await _dio.get<Map<String, dynamic>>('/health');
       final healthStatus = response.data?['status'] as String?;
-      if (response.statusCode != 200 || (healthStatus != 'healthy' && healthStatus != 'degraded')) return 0;
+      if (response.statusCode != 200 ||
+          (healthStatus != 'healthy' && healthStatus != 'degraded')) {
+        return 0;
+      }
     } catch (_) {
       return 0;
     }
@@ -116,9 +124,11 @@ class OfflineSyncService {
     if (age > kOfflinePayloadMaxAge) {
       await _removePayload(payload);
       await _deleteImageFile(payload.imagePath);
-      await _notify('Submission Expired',
-          'Attendance for ${_className(payload)} was captured ${age.inMinutes} minutes ago and has expired.',
-          kSeverityWarning);
+      await _notify(
+        'Submission Expired',
+        'Attendance for ${_className(payload)} was captured ${age.inMinutes} minutes ago and has expired.',
+        kSeverityWarning,
+      );
       return false;
     }
 
@@ -132,18 +142,22 @@ class OfflineSyncService {
       );
       await _removePayload(payload);
       await _deleteImageFile(payload.imagePath);
-      await _notify('Offline Sync Complete',
-          'Successfully synced offline attendance for ${_className(payload)}.',
-          kSeveritySuccess);
+      await _notify(
+        'Offline Sync Complete',
+        'Successfully synced offline attendance for ${_className(payload)}.',
+        kSeveritySuccess,
+      );
       return true;
     } on DioException catch (e) {
       final statusCode = e.response?.statusCode ?? 0;
       if (statusCode >= 400 && statusCode < 500) {
         await _removePayload(payload);
         await _deleteImageFile(payload.imagePath);
-        await _notify('Submission Rejected',
-            'Attendance for ${_className(payload)} was rejected by the server ($statusCode).',
-            kSeverityDanger);
+        await _notify(
+          'Submission Rejected',
+          'Attendance for ${_className(payload)} was rejected by the server ($statusCode).',
+          kSeverityDanger,
+        );
         return false;
       }
       _handleSyncError(payload);
@@ -157,9 +171,11 @@ class OfflineSyncService {
 
   Future<void> _handleSyncError(OfflineAttendancePayload payload) async {
     AppLogger.error('Sync failed for ${_className(payload)}');
-    await _notify('Sync Failed',
-        'Could not sync attendance for ${_className(payload)}. Will retry automatically.',
-        kSeverityWarning);
+    await _notify(
+      'Sync Failed',
+      'Could not sync attendance for ${_className(payload)}. Will retry automatically.',
+      kSeverityWarning,
+    );
   }
 
   void dispose() {

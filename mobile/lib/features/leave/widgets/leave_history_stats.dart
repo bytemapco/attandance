@@ -11,9 +11,17 @@ class LeaveHistoryStats extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final pending = leaves.where((l) => l.status == kStatusPending || l.status == 'PENDING').length;
-    final approved = leaves.where((l) => l.status == kStatusApprovedUpper || l.status == 'APPROVED').length;
-    final rejected = leaves.where((l) => l.status == kStatusRejected || l.status == 'REJECTED').length;
+    final pending = leaves
+        .where((l) => l.status == kStatusPending || l.status == 'PENDING')
+        .length;
+    final approved = leaves
+        .where(
+          (l) => l.status == kStatusApprovedUpper || l.status == 'APPROVED',
+        )
+        .length;
+    final rejected = leaves
+        .where((l) => l.status == kStatusRejected || l.status == 'REJECTED')
+        .length;
 
     return GlassCard(
       padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
@@ -21,7 +29,9 @@ class LeaveHistoryStats extends StatelessWidget {
         children: [
           Expanded(child: _buildItem('Pending', pending, SasColors.warning)),
           Container(width: 1, height: 32, color: SasColors.glassBorder),
-          Expanded(child: _buildItem('Approved', approved, SasColors.accentEmerald)),
+          Expanded(
+            child: _buildItem('Approved', approved, SasColors.accentEmerald),
+          ),
           Container(width: 1, height: 32, color: SasColors.glassBorder),
           Expanded(child: _buildItem('Rejected', rejected, SasColors.danger)),
         ],

@@ -14,7 +14,8 @@ class FlaggedHeroCard extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final isFlagged = item.status == 'Flagged';
     final col = isFlagged ? const Color(0xFFF95721) : statusColor(item.status);
-    final hasSubject = item.subject.isNotEmpty &&
+    final hasSubject =
+        item.subject.isNotEmpty &&
         !item.className.toLowerCase().contains(item.subject.toLowerCase()) &&
         !item.subject.toLowerCase().contains(item.className.toLowerCase());
 
@@ -23,7 +24,9 @@ class FlaggedHeroCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(22),
-        border: Border.all(color: isDark ? const Color(0xFF334155) : const Color(0xFFF1F5F9)),
+        border: Border.all(
+          color: isDark ? const Color(0xFF334155) : const Color(0xFFF1F5F9),
+        ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.03),
@@ -40,10 +43,15 @@ class FlaggedHeroCard extends StatelessWidget {
             decoration: BoxDecoration(
               color: col.withValues(alpha: isDark ? 0.16 : 0.10),
               borderRadius: BorderRadius.circular(18),
-              border: Border.all(color: col.withValues(alpha: 0.22), width: 1.2),
+              border: Border.all(
+                color: col.withValues(alpha: 0.22),
+                width: 1.2,
+              ),
             ),
             child: Icon(
-              isPresentOrApproved(item.status) ? Icons.check_circle_rounded : Icons.schedule_rounded,
+              isPresentOrApproved(item.status)
+                  ? Icons.check_circle_rounded
+                  : Icons.schedule_rounded,
               color: col,
               size: 28,
             ),
@@ -64,7 +72,9 @@ class FlaggedHeroCard extends StatelessWidget {
             Text(
               item.subject,
               style: GoogleFonts.plusJakartaSans(
-                color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
+                color: isDark
+                    ? const Color(0xFF94A3B8)
+                    : const Color(0xFF64748B),
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
               ),

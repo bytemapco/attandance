@@ -5,10 +5,7 @@ import 'package:smart_attendance_app/app/typography.dart';
 class AuthSecurityBadge extends StatelessWidget {
   final Color textColor;
 
-  const AuthSecurityBadge({
-    super.key,
-    required this.textColor,
-  });
+  const AuthSecurityBadge({super.key, required this.textColor});
 
   @override
   Widget build(BuildContext context) {
@@ -16,11 +13,7 @@ class AuthSecurityBadge extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            Icons.lock_outline_rounded,
-            size: 14,
-            color: textColor,
-          ),
+          Icon(Icons.lock_outline_rounded, size: 14, color: textColor),
           const SizedBox(width: 6),
           Text(
             'Secure student sign-in',

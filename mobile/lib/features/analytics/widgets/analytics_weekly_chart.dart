@@ -16,10 +16,12 @@ class AnalyticsWeeklyChart extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardBg = isDark ? const Color(0xFF1E2838) : Colors.white;
-    final primaryTextColor =
-        isDark ? SasColors.brilliance : const Color(0xFF0F172A);
-    final subtitleColor =
-        isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B);
+    final primaryTextColor = isDark
+        ? SasColors.brilliance
+        : const Color(0xFF0F172A);
+    final subtitleColor = isDark
+        ? const Color(0xFF94A3B8)
+        : const Color(0xFF64748B);
 
     final weeks = ['Oct 5', 'Oct 12', 'Oct 19', 'Oct 26'];
     final presentCounts = [0.0, 0.0, 0.0, 1.0];
@@ -36,7 +38,9 @@ class AnalyticsWeeklyChart extends StatelessWidget {
         weeks[i] = label;
 
         final weekItems = data.history.where((h) {
-          return h.markedAt.isAfter(weekStart.subtract(const Duration(days: 1))) &&
+          return h.markedAt.isAfter(
+                weekStart.subtract(const Duration(days: 1)),
+              ) &&
               h.markedAt.isBefore(weekEnd.add(const Duration(days: 1)));
         }).toList();
 
@@ -91,7 +95,9 @@ class AnalyticsWeeklyChart extends StatelessWidget {
               _LegendDot(color: const Color(0xFF10B981), label: 'Present'),
               const SizedBox(width: 12),
               _LegendDot(
-                color: isDark ? const Color(0xFF64748B) : const Color(0xFFCBD5E1),
+                color: isDark
+                    ? const Color(0xFF64748B)
+                    : const Color(0xFFCBD5E1),
                 label: 'Scheduled',
               ),
             ],
@@ -105,8 +111,12 @@ class AnalyticsWeeklyChart extends StatelessWidget {
               BarChartData(
                 maxY: 6.0,
                 titlesData: FlTitlesData(
-                  topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                  rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  topTitles: const AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
+                  rightTitles: const AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
                   leftTitles: AxisTitles(
                     sideTitles: SideTitles(
                       showTitles: true,
@@ -127,7 +137,9 @@ class AnalyticsWeeklyChart extends StatelessWidget {
                       showTitles: true,
                       getTitlesWidget: (v, _) {
                         final idx = v.toInt();
-                        if (idx < 0 || idx >= weeks.length) return const SizedBox.shrink();
+                        if (idx < 0 || idx >= weeks.length) {
+                          return const SizedBox.shrink();
+                        }
                         return Padding(
                           padding: const EdgeInsets.only(top: 6),
                           child: Text(
@@ -148,7 +160,9 @@ class AnalyticsWeeklyChart extends StatelessWidget {
                   drawVerticalLine: false,
                   horizontalInterval: 2,
                   getDrawingHorizontalLine: (_) => FlLine(
-                    color: isDark ? const Color(0x1FFFFFFF) : const Color(0xFFE2E8F0),
+                    color: isDark
+                        ? const Color(0x1FFFFFFF)
+                        : const Color(0xFFE2E8F0),
                     strokeWidth: 1,
                     dashArray: [4, 4],
                   ),
@@ -162,13 +176,19 @@ class AnalyticsWeeklyChart extends StatelessWidget {
                         toY: presentCounts[i],
                         color: const Color(0xFF10B981),
                         width: 12,
-                        borderRadius: const BorderRadius.vertical(top: Radius.circular(3)),
+                        borderRadius: const BorderRadius.vertical(
+                          top: Radius.circular(3),
+                        ),
                       ),
                       BarChartRodData(
                         toY: scheduledCounts[i],
-                        color: isDark ? const Color(0xFF475569) : const Color(0xFFCBD5E1),
+                        color: isDark
+                            ? const Color(0xFF475569)
+                            : const Color(0xFFCBD5E1),
                         width: 14,
-                        borderRadius: const BorderRadius.vertical(top: Radius.circular(3)),
+                        borderRadius: const BorderRadius.vertical(
+                          top: Radius.circular(3),
+                        ),
                       ),
                     ],
                     barsSpace: 4,
@@ -192,7 +212,9 @@ class _LegendDot extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textColor = isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B);
+    final textColor = isDark
+        ? const Color(0xFF94A3B8)
+        : const Color(0xFF64748B);
 
     return Row(
       mainAxisSize: MainAxisSize.min,

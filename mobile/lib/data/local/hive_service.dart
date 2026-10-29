@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 
 import 'package:hive_flutter/hive_flutter.dart';
@@ -52,9 +51,7 @@ class HiveService {
   UserProfile? getCachedProfile() {
     final raw = _profileBox?.get('user_profile');
     if (raw == null) return null;
-    return UserProfile.fromJson(
-      jsonDecode(raw) as Map<String, dynamic>,
-    );
+    return UserProfile.fromJson(jsonDecode(raw) as Map<String, dynamic>);
   }
 
   Future<void> cacheSystemConfig(SystemConfiguration config) async {

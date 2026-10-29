@@ -39,12 +39,15 @@ class _DeviceChangeDialogState extends ConsumerState<DeviceChangeDialog> {
       final deviceService = ref.read(deviceServiceProvider);
       final newDeviceUuid = await deviceService.getDeviceUUID();
 
-      await dio.post('/auth/request-device-change', data: {
-        'email': widget.email,
-        'password': widget.password,
-        'new_device_uuid': newDeviceUuid,
-        'reason': _reasonController.text.trim(),
-      });
+      await dio.post(
+        '/auth/request-device-change',
+        data: {
+          'email': widget.email,
+          'password': widget.password,
+          'new_device_uuid': newDeviceUuid,
+          'reason': _reasonController.text.trim(),
+        },
+      );
 
       if (!mounted) return;
       Navigator.of(context).pop(true);
@@ -82,7 +85,12 @@ class _DeviceChangeDialogState extends ConsumerState<DeviceChangeDialog> {
         children: [
           Icon(Icons.smartphone, color: SasColors.accentEmerald),
           SizedBox(width: 8),
-          Expanded(child: Text('Device Binding Error', style: TextStyle(color: SasColors.textPrimary))),
+          Expanded(
+            child: Text(
+              'Device Binding Error',
+              style: TextStyle(color: SasColors.textPrimary),
+            ),
+          ),
         ],
       ),
       content: Column(
@@ -104,7 +112,10 @@ class _DeviceChangeDialogState extends ConsumerState<DeviceChangeDialog> {
       actions: [
         TextButton(
           onPressed: _isLoading ? null : () => Navigator.of(context).pop(false),
-          child: const Text('Cancel', style: TextStyle(color: SasColors.textMuted)),
+          child: const Text(
+            'Cancel',
+            style: TextStyle(color: SasColors.textMuted),
+          ),
         ),
         GlassButton(
           label: 'Request',

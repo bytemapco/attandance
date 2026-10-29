@@ -23,13 +23,16 @@ class AuthIdentifierStep extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final sheetBg = isDark ? SasColors.darkSurface : Colors.white;
-    final primaryTextColor =
-        isDark ? SasColors.brilliance : const Color(0xFF0F172A);
-    final subtitleColor =
-        isDark ? SasColors.maidenMist : const Color(0xFF475569);
+    final primaryTextColor = isDark
+        ? SasColors.brilliance
+        : const Color(0xFF0F172A);
+    final subtitleColor = isDark
+        ? SasColors.maidenMist
+        : const Color(0xFF475569);
     final inputBg = isDark ? SasColors.darkElevated : const Color(0xFFF8FAFC);
-    final inputBorder =
-        isDark ? const Color(0x2EFFFFFF) : const Color(0xFFE2E8F0);
+    final inputBorder = isDark
+        ? const Color(0x2EFFFFFF)
+        : const Color(0xFFE2E8F0);
 
     return Align(
       alignment: Alignment.bottomCenter,
@@ -48,145 +51,165 @@ class AuthIdentifierStep extends StatelessWidget {
               ),
             ],
           ),
-      child: ClipRRect(
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
-        child: Stack(
-          children: [
-            // Soft organic wave background at bottom edge
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: 0,
-              height: 75,
-              child: IgnorePointer(
-                child: CustomPaint(
-                  painter: AuthWavePainter(isDark: isDark),
-                ),
-              ),
-            ),
-
-            SafeArea(
-              top: false,
-              bottom: true,
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(
-                  22,
-                  10,
-                  22,
-                  16 + (MediaQuery.of(context).viewInsets.bottom > 0 ? 6 : 10),
-                ),
-                child: Form(
-                  key: formKey,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      // Top grab handle
-                      Center(
-                        child: Container(
-                          width: 36,
-                          height: 4,
-                          decoration: BoxDecoration(
-                            color: isDark
-                                ? const Color(0xFF334155)
-                                : const Color(0xFFCBD5E1),
-                            borderRadius: BorderRadius.circular(2),
-                          ),
-                        ),
+          child: ClipRRect(
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+            child: Stack(
+              children: [
+                // Soft organic wave background at bottom edge
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  height: 75,
+                  child: IgnorePointer(
+                    child: RepaintBoundary(
+                      child: CustomPaint(
+                        painter: AuthWavePainter(isDark: isDark),
                       ),
-                      const SizedBox(height: 10),
-
-                      // Title & Subtitle
-                      Text(
-                        'Sign in',
-                        style: SasTypography.style(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: -0.5,
-                          color: primaryTextColor,
-                        ),
-                      ),
-                      const SizedBox(height: 3),
-                      Text(
-                        'Enter your student ID or email to continue',
-                        style: SasTypography.style(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w400,
-                          color: subtitleColor,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-
-                      // Input Label (w600)
-                      Text(
-                        'Student ID or Email',
-                        style: SasTypography.style(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: primaryTextColor,
-                        ),
-                      ),
-                      const SizedBox(height: 6),
-
-                      // Text Field
-                      TextFormField(
-                        controller: controller,
-                        focusNode: focusNode,
-                        textInputAction: TextInputAction.done,
-                        keyboardType: TextInputType.emailAddress,
-                        onFieldSubmitted: (_) => onContinue(),
-                        style: SasTypography.style(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: primaryTextColor,
-                        ),
-                        decoration: InputDecoration(
-                          hintText: 'STU-2026-001 or email',
-                          hintStyle: SasTypography.style(
-                            fontSize: 13.5,
-                            fontWeight: FontWeight.w400,
-                            color: subtitleColor,
-                          ),
-                          prefixIcon: Icon(
-                            Icons.person_outline_rounded,
-                            size: 19,
-                            color: subtitleColor,
-                          ),
-                          filled: true,
-                          fillColor: inputBg,
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide(color: inputBorder)),
-                          enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide(color: inputBorder)),
-                          focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: const BorderSide(color: Color(0xFFF95721), width: 1.5)),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.trim().isEmpty) {
-                            return 'Please enter your student ID or email';
-                          }
-                          if (value.trim().length < 3) {
-                            return 'Identifier must be at least 3 characters';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 12),
-
-                      // Continue Button
-                      AuthGradientButton(
-                        label: 'Continue',
-                        onPressed: onContinue,
-                      ),
-                      const SizedBox(height: 4),
-                    ],
+                    ),
                   ),
                 ),
-              ),
+
+                SafeArea(
+                  top: false,
+                  bottom: true,
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(
+                      22,
+                      10,
+                      22,
+                      16 +
+                          (MediaQuery.of(context).viewInsets.bottom > 0
+                              ? 6
+                              : 10),
+                    ),
+                    child: Form(
+                      key: formKey,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          // Top grab handle
+                          Center(
+                            child: Container(
+                              width: 36,
+                              height: 4,
+                              decoration: BoxDecoration(
+                                color: isDark
+                                    ? const Color(0xFF334155)
+                                    : const Color(0xFFCBD5E1),
+                                borderRadius: BorderRadius.circular(2),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+
+                          // Title & Subtitle
+                          Text(
+                            'Sign in',
+                            style: SasTypography.style(
+                              fontSize: 24,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: -0.5,
+                              color: primaryTextColor,
+                            ),
+                          ),
+                          const SizedBox(height: 3),
+                          Text(
+                            'Enter your student ID or email to continue',
+                            style: SasTypography.style(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w400,
+                              color: subtitleColor,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+
+                          // Input Label (w600)
+                          Text(
+                            'Student ID or Email',
+                            style: SasTypography.style(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                              color: primaryTextColor,
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+
+                          // Text Field
+                          TextFormField(
+                            controller: controller,
+                            focusNode: focusNode,
+                            textInputAction: TextInputAction.done,
+                            keyboardType: TextInputType.emailAddress,
+                            onFieldSubmitted: (_) => onContinue(),
+                            style: SasTypography.style(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: primaryTextColor,
+                            ),
+                            decoration: InputDecoration(
+                              hintText: 'STU-2026-001 or email',
+                              hintStyle: SasTypography.style(
+                                fontSize: 13.5,
+                                fontWeight: FontWeight.w400,
+                                color: subtitleColor,
+                              ),
+                              prefixIcon: Icon(
+                                Icons.person_outline_rounded,
+                                size: 19,
+                                color: subtitleColor,
+                              ),
+                              filled: true,
+                              fillColor: inputBg,
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 14,
+                                vertical: 10,
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(16),
+                                borderSide: BorderSide(color: inputBorder),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(16),
+                                borderSide: BorderSide(color: inputBorder),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(16),
+                                borderSide: const BorderSide(
+                                  color: Color(0xFFF95721),
+                                  width: 1.5,
+                                ),
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.trim().isEmpty) {
+                                return 'Please enter your student ID or email';
+                              }
+                              if (value.trim().length < 3) {
+                                return 'Identifier must be at least 3 characters';
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 12),
+
+                          // Continue Button
+                          AuthGradientButton(
+                            label: 'Continue',
+                            onPressed: onContinue,
+                          ),
+                          const SizedBox(height: 4),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
-    ),
-    ),
     );
   }
 }

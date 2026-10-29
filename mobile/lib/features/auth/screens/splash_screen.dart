@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_attendance_app/app/theme.dart';
+import 'package:smart_attendance_app/app/typography.dart';
 import 'package:smart_attendance_app/features/auth/providers/auth_provider.dart';
 import 'package:smart_attendance_app/features/auth/widgets/splash_dots_loader.dart';
 
@@ -48,15 +49,14 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
         curve: const Interval(0.0, 0.5, curve: Curves.easeOut),
       ),
     );
-    _textFade = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _textController, curve: Curves.easeOut),
-    );
-    _textSlide = Tween<Offset>(
-      begin: const Offset(0, 0.3),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(parent: _textController, curve: Curves.easeOutCubic),
-    );
+    _textFade = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _textController, curve: Curves.easeOut));
+    _textSlide = Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero)
+        .animate(
+          CurvedAnimation(parent: _textController, curve: Curves.easeOutCubic),
+        );
 
     _logoController.forward();
     Future.delayed(const Duration(milliseconds: 400), () {
@@ -65,9 +65,10 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
 
     Future.delayed(const Duration(milliseconds: 600), () async {
       try {
-        await ref.read(authProvider.notifier).checkInitialAuth().timeout(
-          const Duration(seconds: 10),
-        );
+        await ref
+            .read(authProvider.notifier)
+            .checkInitialAuth()
+            .timeout(const Duration(seconds: 10));
       } catch (_) {
         if (mounted) ref.read(authProvider.notifier).logout();
       }
@@ -154,7 +155,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                     children: [
                       Text(
                         'Smart Attendance',
-                        style: TextStyle(
+                        style: SasTypography.style(
                           color: SasColors.brilliance,
                           fontSize: 28,
                           fontWeight: FontWeight.w800,
@@ -165,7 +166,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                       const SizedBox(height: 8),
                       Text(
                         'AI-Powered Verification',
-                        style: TextStyle(
+                        style: SasTypography.style(
                           color: SasColors.maidenMist,
                           fontSize: 14,
                           fontWeight: FontWeight.w500,

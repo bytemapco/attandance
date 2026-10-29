@@ -49,11 +49,7 @@ class SmartPassCameraError extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 14),
-            GlassButton(
-              label: 'Start Camera',
-              height: 38,
-              onPressed: onRetry,
-            ),
+            GlassButton(label: 'Start Camera', height: 38, onPressed: onRetry),
           ],
         ),
       ),

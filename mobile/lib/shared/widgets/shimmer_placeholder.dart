@@ -24,7 +24,9 @@ class ShimmerPlaceholder extends StatelessWidget {
         children: List.generate(
           itemCount,
           (index) => Padding(
-            padding: EdgeInsets.only(bottom: index < itemCount - 1 ? spacing : 0),
+            padding: EdgeInsets.only(
+              bottom: index < itemCount - 1 ? spacing : 0,
+            ),
             child: Container(
               height: itemHeight,
               decoration: BoxDecoration(

@@ -23,7 +23,9 @@ class SmartPassPermissionCard extends StatelessWidget {
     final isGpsOff = !(permissionStatus?.isLocationServiceEnabled ?? true);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardBg = isDark ? SasColors.darkSurface : Colors.white;
-    final borderColor = isDark ? const Color(0x1EFFFFFF) : const Color(0x140F172A);
+    final borderColor = isDark
+        ? const Color(0x1EFFFFFF)
+        : const Color(0x140F172A);
 
     return Container(
       decoration: BoxDecoration(
@@ -72,8 +74,8 @@ class SmartPassPermissionCard extends StatelessWidget {
             isGpsOff
                 ? 'Please enable GPS/Location services on your device to verify class attendance.'
                 : isPermanent
-                    ? 'Location access is permanently disabled. Please tap below to open App Settings and grant permission.'
-                    : 'Classroom verification requires physical location proximity using GPS.',
+                ? 'Location access is permanently disabled. Please tap below to open App Settings and grant permission.'
+                : 'Classroom verification requires physical location proximity using GPS.',
             textAlign: TextAlign.center,
             style: GoogleFonts.plusJakartaSans(
               fontSize: 12,
@@ -86,8 +88,8 @@ class SmartPassPermissionCard extends StatelessWidget {
             label: isPermanent
                 ? 'Open App Settings'
                 : isGpsOff
-                    ? 'Turn On GPS'
-                    : 'Grant Permission',
+                ? 'Turn On GPS'
+                : 'Grant Permission',
             icon: Icons.check_circle_outline_rounded,
             isLoading: isChecking,
             onPressed: isChecking ? null : onRequestPermissions,

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_attendance_app/app/router.dart';
 import 'package:smart_attendance_app/app/theme.dart';
@@ -36,7 +37,9 @@ class _SmartAttendanceAppState extends ConsumerState<SmartAttendanceApp> {
   void initState() {
     super.initState();
     ref.read(offlineSyncServiceProvider).startListening();
-    Future.microtask(() => ref.read(configRepositoryProvider).fetchAndCacheConfig());
+    Future.microtask(
+      () => ref.read(configRepositoryProvider).fetchAndCacheConfig(),
+    );
     _initializeFcm();
   }
 
@@ -74,7 +77,9 @@ class _SmartAttendanceAppState extends ConsumerState<SmartAttendanceApp> {
 
   Future<void> _initializeFcm() async {
     if (Firebase.apps.isEmpty) {
-      AppLogger.warn('Firebase not initialized; push notification listeners skipped');
+      AppLogger.warn(
+        'Firebase not initialized; push notification listeners skipped',
+      );
       return;
     }
     try {
@@ -116,7 +121,8 @@ class _SmartAttendanceAppState extends ConsumerState<SmartAttendanceApp> {
         _handleNotificationClick(message);
       });
 
-      final initialMessage = await FirebaseMessaging.instance.getInitialMessage();
+      final initialMessage = await FirebaseMessaging.instance
+          .getInitialMessage();
       if (initialMessage != null) {
         _handleNotificationClick(initialMessage);
       }
@@ -157,6 +163,32 @@ class _SmartAttendanceAppState extends ConsumerState<SmartAttendanceApp> {
       darkTheme: buildSasTheme(brightness: Brightness.dark),
       themeMode: themeMode,
       routerConfig: router,
+      builder: (context, child) {
+        final brightness = MediaQuery.platformBrightnessOf(context);
+        final isDark =
+            themeMode == ThemeMode.dark ||
+            (themeMode == ThemeMode.system && brightness == Brightness.dark);
+        return AnnotatedRegion<SystemUiOverlayStyle>(
+          value: SystemUiOverlayStyle(
+            statusBarColor: Colors.transparent,
+            statusBarIconBrightness: isDark
+                ? Brightness.light
+                : Brightness.dark,
+            statusBarBrightness: isDark ? Brightness.dark : Brightness.light,
+            systemNavigationBarColor: isDark
+                ? SasColors.darkCanvas
+                : Colors.white,
+            systemNavigationBarIconBrightness: isDark
+                ? Brightness.light
+                : Brightness.dark,
+          ),
+          child: GestureDetector(
+            onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+            behavior: HitTestBehavior.translucent,
+            child: child ?? const SizedBox.shrink(),
+          ),
+        );
+      },
     );
   }
 }

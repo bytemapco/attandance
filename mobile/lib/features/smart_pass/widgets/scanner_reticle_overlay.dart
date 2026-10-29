@@ -97,10 +97,7 @@ class _ViewfinderScrimPainter extends CustomPainter {
   final Rect cutoutRect;
   final Color guideColor;
 
-  _ViewfinderScrimPainter({
-    required this.cutoutRect,
-    required this.guideColor,
-  });
+  _ViewfinderScrimPainter({required this.cutoutRect, required this.guideColor});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -111,7 +108,9 @@ class _ViewfinderScrimPainter extends CustomPainter {
     final backgroundPath = Path()
       ..addRect(Rect.fromLTWH(0, 0, size.width, size.height));
     final cutoutPath = Path()
-      ..addRRect(RRect.fromRectAndRadius(cutoutRect, const Radius.circular(16)));
+      ..addRRect(
+        RRect.fromRectAndRadius(cutoutRect, const Radius.circular(16)),
+      );
 
     final finalPath = Path.combine(
       PathOperation.difference,
@@ -130,24 +129,57 @@ class _ViewfinderScrimPainter extends CustomPainter {
     final r = cutoutRect;
 
     // Top-left corner
-    canvas.drawLine(Offset(r.left, r.top + cornerLength), Offset(r.left, r.top), bracketPaint);
-    canvas.drawLine(Offset(r.left, r.top), Offset(r.left + cornerLength, r.top), bracketPaint);
+    canvas.drawLine(
+      Offset(r.left, r.top + cornerLength),
+      Offset(r.left, r.top),
+      bracketPaint,
+    );
+    canvas.drawLine(
+      Offset(r.left, r.top),
+      Offset(r.left + cornerLength, r.top),
+      bracketPaint,
+    );
 
     // Top-right corner
-    canvas.drawLine(Offset(r.right - cornerLength, r.top), Offset(r.right, r.top), bracketPaint);
-    canvas.drawLine(Offset(r.right, r.top), Offset(r.right, r.top + cornerLength), bracketPaint);
+    canvas.drawLine(
+      Offset(r.right - cornerLength, r.top),
+      Offset(r.right, r.top),
+      bracketPaint,
+    );
+    canvas.drawLine(
+      Offset(r.right, r.top),
+      Offset(r.right, r.top + cornerLength),
+      bracketPaint,
+    );
 
     // Bottom-left corner
-    canvas.drawLine(Offset(r.left, r.bottom - cornerLength), Offset(r.left, r.bottom), bracketPaint);
-    canvas.drawLine(Offset(r.left, r.bottom), Offset(r.left + cornerLength, r.bottom), bracketPaint);
+    canvas.drawLine(
+      Offset(r.left, r.bottom - cornerLength),
+      Offset(r.left, r.bottom),
+      bracketPaint,
+    );
+    canvas.drawLine(
+      Offset(r.left, r.bottom),
+      Offset(r.left + cornerLength, r.bottom),
+      bracketPaint,
+    );
 
     // Bottom-right corner
-    canvas.drawLine(Offset(r.right - cornerLength, r.bottom), Offset(r.right, r.bottom), bracketPaint);
-    canvas.drawLine(Offset(r.right, r.bottom), Offset(r.right, r.bottom - cornerLength), bracketPaint);
+    canvas.drawLine(
+      Offset(r.right - cornerLength, r.bottom),
+      Offset(r.right, r.bottom),
+      bracketPaint,
+    );
+    canvas.drawLine(
+      Offset(r.right, r.bottom),
+      Offset(r.right, r.bottom - cornerLength),
+      bracketPaint,
+    );
   }
 
   @override
   bool shouldRepaint(covariant _ViewfinderScrimPainter oldDelegate) {
-    return oldDelegate.cutoutRect != cutoutRect || oldDelegate.guideColor != guideColor;
+    return oldDelegate.cutoutRect != cutoutRect ||
+        oldDelegate.guideColor != guideColor;
   }
 }

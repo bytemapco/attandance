@@ -126,8 +126,9 @@ class _TabLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final inactiveColor =
-        isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B);
+    final inactiveColor = isDark
+        ? const Color(0xFF94A3B8)
+        : const Color(0xFF64748B);
     final targetColor = selected ? Colors.white : inactiveColor;
 
     return Expanded(

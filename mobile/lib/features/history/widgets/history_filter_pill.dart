@@ -25,12 +25,13 @@ class HistoryFilterPill<T> extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final isSelected = value == current;
 
-    final bg = unselectedBgColor ??
+    final bg =
+        unselectedBgColor ??
         (isDark ? const Color(0xFF1E2838) : const Color(0xFFF1F5F9));
     final textColor = isSelected
         ? Colors.white
         : (unselectedTextColor ??
-            (isDark ? const Color(0xFFCBD5E1) : const Color(0xFF64748B)));
+              (isDark ? const Color(0xFFCBD5E1) : const Color(0xFF64748B)));
 
     return GestureDetector(
       onTap: onTap,

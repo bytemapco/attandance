@@ -4,7 +4,9 @@ import 'package:smart_attendance_app/shared/widgets/info_banner.dart';
 
 void main() {
   group('InfoBanner Widget', () {
-    testWidgets('renders message and custom action button when provided', (WidgetTester tester) async {
+    testWidgets('renders message and custom action button when provided', (
+      WidgetTester tester,
+    ) async {
       var actionTriggered = false;
 
       await tester.pumpWidget(
@@ -22,7 +24,10 @@ void main() {
         ),
       );
 
-      expect(find.text('Location permission is required to check in'), findsOneWidget);
+      expect(
+        find.text('Location permission is required to check in'),
+        findsOneWidget,
+      );
       expect(find.text('Grant Access'), findsOneWidget);
 
       await tester.tap(find.text('Grant Access'));
@@ -31,7 +36,9 @@ void main() {
       expect(actionTriggered, isTrue);
     });
 
-    testWidgets('renders banner without action button when onAction is null', (WidgetTester tester) async {
+    testWidgets('renders banner without action button when onAction is null', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(

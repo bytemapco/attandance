@@ -53,7 +53,9 @@ final routerProvider = Provider<GoRouter>((ref) {
     refreshListenable: notifier,
     redirect: (context, state) {
       final token = state.uri.queryParameters['token'];
-      if (token != null && token.isNotEmpty && state.uri.path != '/reset-password') {
+      if (token != null &&
+          token.isNotEmpty &&
+          state.uri.path != '/reset-password') {
         return '/reset-password?token=$token';
       }
       if (state.uri.path == '/') return '/splash';
@@ -71,19 +73,49 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/reset-password',
         pageBuilder: (_, state) => slideUpPage(
           key: state.pageKey,
-          child: ResetPasswordScreen(token: state.uri.queryParameters['token'] ?? ''),
+          child: ResetPasswordScreen(
+            token: state.uri.queryParameters['token'] ?? '',
+          ),
         ),
       ),
-      GoRoute(path: '/change-password', builder: (_, __) => const ForceChangePasswordScreen()),
-      GoRoute(path: '/register-face', builder: (_, __) => const FaceRegistrationScreen()),
+      GoRoute(
+        path: '/change-password',
+        builder: (_, __) => const ForceChangePasswordScreen(),
+      ),
+      GoRoute(
+        path: '/register-face',
+        builder: (_, __) => const FaceRegistrationScreen(),
+      ),
       ShellRoute(
         navigatorKey: shellNavigatorKey,
         builder: (context, state, child) => ShellScaffold(child: child),
         routes: [
-          GoRoute(path: '/home', pageBuilder: (_, state) => NoTransitionPage(key: state.pageKey, child: const HomeScreen())),
-          GoRoute(path: '/history', pageBuilder: (_, state) => NoTransitionPage(key: state.pageKey, child: const HistoryScreen())),
-          GoRoute(path: '/analytics', pageBuilder: (_, state) => NoTransitionPage(key: state.pageKey, child: const AnalyticsScreen())),
-          GoRoute(path: '/more', pageBuilder: (_, state) => NoTransitionPage(key: state.pageKey, child: const ProfileScreen())),
+          GoRoute(
+            path: '/home',
+            pageBuilder: (_, state) =>
+                NoTransitionPage(key: state.pageKey, child: const HomeScreen()),
+          ),
+          GoRoute(
+            path: '/history',
+            pageBuilder: (_, state) => NoTransitionPage(
+              key: state.pageKey,
+              child: const HistoryScreen(),
+            ),
+          ),
+          GoRoute(
+            path: '/analytics',
+            pageBuilder: (_, state) => NoTransitionPage(
+              key: state.pageKey,
+              child: const AnalyticsScreen(),
+            ),
+          ),
+          GoRoute(
+            path: '/more',
+            pageBuilder: (_, state) => NoTransitionPage(
+              key: state.pageKey,
+              child: const ProfileScreen(),
+            ),
+          ),
         ],
       ),
       GoRoute(
@@ -91,18 +123,24 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/verify/:sessionId',
         pageBuilder: (context, state) => slideUpPage(
           key: state.pageKey,
-          child: VerificationScreen(sessionId: state.pathParameters['sessionId']!),
+          child: VerificationScreen(
+            sessionId: state.pathParameters['sessionId']!,
+          ),
         ),
       ),
       GoRoute(
         parentNavigatorKey: rootNavigatorKey,
         path: '/result',
-        pageBuilder: (_, state) => slideUpPage(key: state.pageKey, child: const ResultScreen()),
+        pageBuilder: (_, state) =>
+            slideUpPage(key: state.pageKey, child: const ResultScreen()),
       ),
       GoRoute(
         parentNavigatorKey: rootNavigatorKey,
         path: '/notifications',
-        pageBuilder: (_, state) => slideRightPage(key: state.pageKey, child: const NotificationsScreen()),
+        pageBuilder: (_, state) => slideRightPage(
+          key: state.pageKey,
+          child: const NotificationsScreen(),
+        ),
       ),
       GoRoute(
         parentNavigatorKey: rootNavigatorKey,
@@ -118,7 +156,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         parentNavigatorKey: rootNavigatorKey,
         path: '/leaderboard',
-        pageBuilder: (_, state) => slideRightPage(key: state.pageKey, child: const LeaderboardScreen()),
+        pageBuilder: (_, state) => slideRightPage(
+          key: state.pageKey,
+          child: const LeaderboardScreen(),
+        ),
       ),
       GoRoute(
         parentNavigatorKey: rootNavigatorKey,
@@ -131,37 +172,48 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         parentNavigatorKey: rootNavigatorKey,
         path: '/settings/goals',
-        pageBuilder: (_, state) => slideRightPage(key: state.pageKey, child: const GoalsScreen()),
+        pageBuilder: (_, state) =>
+            slideRightPage(key: state.pageKey, child: const GoalsScreen()),
       ),
       GoRoute(
         parentNavigatorKey: rootNavigatorKey,
         path: '/settings/notifications',
-        pageBuilder: (_, state) => slideRightPage(key: state.pageKey, child: const NotificationPrefsScreen()),
+        pageBuilder: (_, state) => slideRightPage(
+          key: state.pageKey,
+          child: const NotificationPrefsScreen(),
+        ),
       ),
       GoRoute(
         parentNavigatorKey: rootNavigatorKey,
         path: '/settings/help',
-        pageBuilder: (_, state) => slideRightPage(key: state.pageKey, child: const HelpScreen()),
+        pageBuilder: (_, state) =>
+            slideRightPage(key: state.pageKey, child: const HelpScreen()),
       ),
       GoRoute(
         parentNavigatorKey: rootNavigatorKey,
         path: '/settings/sync',
-        pageBuilder: (_, state) => slideRightPage(key: state.pageKey, child: const SyncStatusScreen()),
+        pageBuilder: (_, state) =>
+            slideRightPage(key: state.pageKey, child: const SyncStatusScreen()),
       ),
       GoRoute(
         parentNavigatorKey: rootNavigatorKey,
         path: '/smart-pass',
-        pageBuilder: (_, state) => slideUpPage(key: state.pageKey, child: const SmartPassScreen()),
+        pageBuilder: (_, state) =>
+            slideUpPage(key: state.pageKey, child: const SmartPassScreen()),
       ),
       GoRoute(
         parentNavigatorKey: rootNavigatorKey,
         path: '/leave/request',
-        pageBuilder: (_, state) => slideUpPage(key: state.pageKey, child: const LeaveRequestsScreen()),
+        pageBuilder: (_, state) =>
+            slideUpPage(key: state.pageKey, child: const LeaveRequestsScreen()),
       ),
       GoRoute(
         parentNavigatorKey: rootNavigatorKey,
         path: '/leave/history',
-        pageBuilder: (_, state) => slideRightPage(key: state.pageKey, child: const LeaveHistoryScreen()),
+        pageBuilder: (_, state) => slideRightPage(
+          key: state.pageKey,
+          child: const LeaveHistoryScreen(),
+        ),
       ),
     ],
   );

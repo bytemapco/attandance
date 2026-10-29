@@ -48,17 +48,24 @@ class FlaggedScoreBreakdown extends StatelessWidget {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
                   color: isPass
                       ? const Color(0xFFECFDF5)
-                      : (isDark ? const Color(0xFF3B1E24) : const Color(0xFFFFEEEE)),
+                      : (isDark
+                            ? const Color(0xFF3B1E24)
+                            : const Color(0xFFFFEEEE)),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
                   '$overallPct% · ${isPass ? "Passed" : "Needs review"}',
                   style: GoogleFonts.plusJakartaSans(
-                    color: isPass ? const Color(0xFF08A875) : const Color(0xFFF0445E),
+                    color: isPass
+                        ? const Color(0xFF08A875)
+                        : const Color(0xFFF0445E),
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
                   ),
@@ -71,7 +78,9 @@ class FlaggedScoreBreakdown extends StatelessWidget {
             borderRadius: BorderRadius.circular(10),
             child: LinearProgressIndicator(
               value: overall.clamp(0.0, 1.0),
-              backgroundColor: isDark ? const Color(0xFF334155) : const Color(0xFFE9EEF5),
+              backgroundColor: isDark
+                  ? const Color(0xFF334155)
+                  : const Color(0xFFE9EEF5),
               valueColor: AlwaysStoppedAnimation<Color>(overallCol),
               minHeight: 7,
             ),

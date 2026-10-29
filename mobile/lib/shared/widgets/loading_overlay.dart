@@ -21,7 +21,9 @@ class LoadingOverlay extends StatelessWidget {
                 height: 40,
                 child: CircularProgressIndicator(
                   strokeWidth: 3,
-                  valueColor: AlwaysStoppedAnimation<Color>(SasColors.accentEmerald),
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    SasColors.accentEmerald,
+                  ),
                 ),
               ),
               if (message != null) ...[

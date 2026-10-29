@@ -23,48 +23,58 @@ class SubjectDetailScreen extends ConsumerWidget {
     final items = allItems.where((h) => h.classId == classId).toList()
       ..sort((a, b) => b.markedAt.compareTo(a.markedAt));
 
-    final subjectName = items.isNotEmpty ? items.first.subject : 'Subject Details';
+    final subjectName = items.isNotEmpty
+        ? items.first.subject
+        : 'Subject Details';
     final className = items.isNotEmpty ? items.first.className : '';
 
     return Scaffold(
       appBar: GlassAppBar(title: subjectName),
       body: AnimatedBackground(
         child: SafeArea(
-          child: ListView(
-            padding: const EdgeInsets.all(16),
-            children: [
-              SubjectDetailSummary(
-                subjectName: subjectName,
-                className: className,
-                items: items,
-                target: target,
-              ),
-              const SizedBox(height: 16),
-              if (items.isEmpty)
-                const GlassCard(
-                  child: Center(
-                    child: Padding(
-                      padding: EdgeInsets.all(16),
-                      child: Text(
-                        'No attendance records found for this course.',
-                        style: TextStyle(color: SasColors.textMuted, fontSize: 13),
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 600),
+              child: ListView(
+                padding: const EdgeInsets.all(16),
+                children: [
+                  SubjectDetailSummary(
+                    subjectName: subjectName,
+                    className: className,
+                    items: items,
+                    target: target,
+                  ),
+                  const SizedBox(height: 16),
+                  if (items.isEmpty)
+                    GlassCard(
+                      child: Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Text(
+                            'No attendance records found for this course.',
+                            style: TextStyle(
+                              color: SasColors.textMutedOf(context),
+                              fontSize: 13,
+                            ),
+                          ),
+                        ),
+                      ),
+                    )
+                  else ...[
+                    Text(
+                      'Session Timeline',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                        color: SasColors.textSecondaryOf(context),
                       ),
                     ),
-                  ),
-                )
-              else ...[
-                const Text(
-                  'Session Timeline',
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
-                    color: SasColors.textSecondary,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                ...items.map((item) => SubjectSessionRow(item: item)),
-              ],
-            ],
+                    const SizedBox(height: 8),
+                    ...items.map((item) => SubjectSessionRow(item: item)),
+                  ],
+                ],
+              ),
+            ),
           ),
         ),
       ),

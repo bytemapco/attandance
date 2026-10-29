@@ -25,26 +25,10 @@ class ResultHeroIcon extends StatelessWidget {
               color: primaryCol.withValues(alpha: isDark ? 0.14 : 0.10),
             ),
           ),
-          Positioned(
-            left: 20,
-            top: 26,
-            child: _buildDot(primaryCol, 6),
-          ),
-          Positioned(
-            right: 18,
-            bottom: 30,
-            child: _buildDot(primaryCol, 8),
-          ),
-          Positioned(
-            left: 34,
-            bottom: 22,
-            child: _buildDot(primaryCol, 4),
-          ),
-          Positioned(
-            right: 32,
-            top: 22,
-            child: _buildDot(primaryCol, 5),
-          ),
+          Positioned(left: 20, top: 26, child: _buildDot(primaryCol, 6)),
+          Positioned(right: 18, bottom: 30, child: _buildDot(primaryCol, 8)),
+          Positioned(left: 34, bottom: 22, child: _buildDot(primaryCol, 4)),
+          Positioned(right: 32, top: 22, child: _buildDot(primaryCol, 5)),
           Container(
             width: 60,
             height: 60,
@@ -52,7 +36,9 @@ class ResultHeroIcon extends StatelessWidget {
               shape: BoxShape.circle,
               color: isDark ? const Color(0xFF1E293B) : Colors.white,
               border: Border.all(
-                color: isDark ? const Color(0xFF334155) : primaryCol.withValues(alpha: 0.20),
+                color: isDark
+                    ? const Color(0xFF334155)
+                    : primaryCol.withValues(alpha: 0.20),
                 width: 1.5,
               ),
               boxShadow: [
@@ -64,11 +50,7 @@ class ResultHeroIcon extends StatelessWidget {
               ],
             ),
             child: Center(
-              child: Icon(
-                config.icon,
-                size: 28,
-                color: primaryCol,
-              ),
+              child: Icon(config.icon, size: 28, color: primaryCol),
             ),
           ),
         ],

@@ -46,17 +46,24 @@ class ResultMetricsCard extends StatelessWidget {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
                   color: isPass
                       ? const Color(0xFFECFDF5)
-                      : (isDark ? const Color(0xFF3B1E24) : const Color(0xFFFFEEEE)),
+                      : (isDark
+                            ? const Color(0xFF3B1E24)
+                            : const Color(0xFFFFEEEE)),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
                   '$overallPct% · ${isPass ? "Passed" : "Needs review"}',
                   style: GoogleFonts.plusJakartaSans(
-                    color: isPass ? const Color(0xFF08A875) : const Color(0xFFF0445E),
+                    color: isPass
+                        ? const Color(0xFF08A875)
+                        : const Color(0xFFF0445E),
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
                   ),
@@ -69,7 +76,9 @@ class ResultMetricsCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(10),
             child: LinearProgressIndicator(
               value: scores.overall.clamp(0.0, 1.0),
-              backgroundColor: isDark ? const Color(0xFF334155) : const Color(0xFFE9EEF5),
+              backgroundColor: isDark
+                  ? const Color(0xFF334155)
+                  : const Color(0xFFE9EEF5),
               valueColor: AlwaysStoppedAnimation<Color>(overallCol),
               minHeight: 7,
             ),
@@ -113,13 +122,17 @@ class ResultMetricsCard extends StatelessWidget {
                 height: 22,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: isDark ? const Color(0xFF0C4A6E) : const Color(0xFFE0F2FE),
+                  color: isDark
+                      ? const Color(0xFF0C4A6E)
+                      : const Color(0xFFE0F2FE),
                 ),
                 child: Center(
                   child: Icon(
                     Icons.info_outline_rounded,
                     size: 14,
-                    color: isDark ? const Color(0xFF38BDF8) : const Color(0xFF0284C7),
+                    color: isDark
+                        ? const Color(0xFF38BDF8)
+                        : const Color(0xFF0284C7),
                   ),
                 ),
               ),
@@ -132,7 +145,9 @@ class ResultMetricsCard extends StatelessWidget {
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 12.5,
                     fontWeight: FontWeight.w500,
-                    color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
+                    color: isDark
+                        ? const Color(0xFF94A3B8)
+                        : const Color(0xFF64748B),
                   ),
                 ),
               ),

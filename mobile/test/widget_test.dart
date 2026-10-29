@@ -3,7 +3,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:smart_attendance_app/shared/widgets/status_chip.dart';
 
 void main() {
-  testWidgets('StatusChip renders label and responds to tap', (WidgetTester tester) async {
+  testWidgets('StatusChip renders label and responds to tap', (
+    WidgetTester tester,
+  ) async {
     var isTapped = false;
 
     await tester.pumpWidget(
@@ -28,4 +30,3 @@ void main() {
     expect(isTapped, isTrue);
   });
 }
-

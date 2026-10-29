@@ -15,10 +15,12 @@ class ProfileSettingsList extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardBg = isDark ? const Color(0xFF1E2838) : Colors.white;
-    final primaryTextColor =
-        isDark ? SasColors.brilliance : const Color(0xFF0F172A);
-    final dividerColor =
-        isDark ? const Color(0x1FFFFFFF) : const Color(0xFFF1F5F9);
+    final primaryTextColor = isDark
+        ? SasColors.brilliance
+        : const Color(0xFF0F172A);
+    final dividerColor = isDark
+        ? const Color(0x1FFFFFFF)
+        : const Color(0xFFF1F5F9);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -59,7 +61,9 @@ class ProfileSettingsList extends StatelessWidget {
               _SettingItemRow(
                 icon: Icons.track_changes_rounded,
                 iconColor: const Color(0xFF10B981),
-                iconBgColor: isDark ? const Color(0xFF143828) : const Color(0xFFECFDF5),
+                iconBgColor: isDark
+                    ? const Color(0xFF143828)
+                    : const Color(0xFFECFDF5),
                 title: 'Goals & Targets',
                 subtitle: 'Set minimum attendance threshold',
                 onTap: () => context.push('/settings/goals'),
@@ -70,7 +74,9 @@ class ProfileSettingsList extends StatelessWidget {
               _SettingItemRow(
                 icon: Icons.notifications_rounded,
                 iconColor: const Color(0xFFF59E0B),
-                iconBgColor: isDark ? const Color(0xFF3B2D12) : const Color(0xFFFFFBEB),
+                iconBgColor: isDark
+                    ? const Color(0xFF3B2D12)
+                    : const Color(0xFFFFFBEB),
                 title: 'Notification Preferences',
                 subtitle: 'Configure class & attendance alerts',
                 onTap: () => context.push('/settings/notifications'),
@@ -81,7 +87,9 @@ class ProfileSettingsList extends StatelessWidget {
               _SettingItemRow(
                 icon: Icons.cloud_outlined,
                 iconColor: const Color(0xFF0284C7),
-                iconBgColor: isDark ? const Color(0xFF142E47) : const Color(0xFFF0F9FF),
+                iconBgColor: isDark
+                    ? const Color(0xFF142E47)
+                    : const Color(0xFFF0F9FF),
                 title: 'Offline Sync Status',
                 subtitle: pendingCount > 0
                     ? '$pendingCount records queued for sync'
@@ -99,7 +107,9 @@ class ProfileSettingsList extends StatelessWidget {
               _SettingItemRow(
                 icon: Icons.help_outline_rounded,
                 iconColor: const Color(0xFF8B5CF6),
-                iconBgColor: isDark ? const Color(0xFF2E1B4E) : const Color(0xFFF5F3FF),
+                iconBgColor: isDark
+                    ? const Color(0xFF2E1B4E)
+                    : const Color(0xFFF5F3FF),
                 title: 'Help & FAQ',
                 subtitle: 'Support guide and common questions',
                 onTap: () => context.push('/settings/help'),
@@ -134,10 +144,12 @@ class _SettingItemRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final primaryTextColor =
-        isDark ? SasColors.brilliance : const Color(0xFF0F172A);
-    final subtitleColor =
-        isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B);
+    final primaryTextColor = isDark
+        ? SasColors.brilliance
+        : const Color(0xFF0F172A);
+    final subtitleColor = isDark
+        ? const Color(0xFF94A3B8)
+        : const Color(0xFF64748B);
 
     return InkWell(
       onTap: () {

@@ -1,4 +1,3 @@
-
 enum AuthStatus {
   loading,
   authenticated,

@@ -3,7 +3,8 @@ library;
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-const String kDefaultProductionApiBaseUrl = 'https://attendance-backend.bytemap.in/api/v1';
+const String kDefaultProductionApiBaseUrl =
+    'https://attendance-backend.bytemap.in/api/v1';
 
 String get kApiBaseUrl {
   const defineUrl = String.fromEnvironment('API_BASE_URL', defaultValue: '');
@@ -21,7 +22,10 @@ String get kApiBaseUrl {
 
 String _sanitizeApiUrl(String rawUrl) {
   var url = rawUrl.trim();
-  if (kReleaseMode && url.startsWith('http://') && !url.contains('localhost') && !url.contains('10.0.2.2')) {
+  if (kReleaseMode &&
+      url.startsWith('http://') &&
+      !url.contains('localhost') &&
+      !url.contains('10.0.2.2')) {
     url = url.replaceFirst('http://', 'https://');
   }
   return url;

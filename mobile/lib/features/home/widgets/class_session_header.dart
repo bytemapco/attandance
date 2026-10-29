@@ -28,7 +28,9 @@ class ClassSessionHeader extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
             decoration: BoxDecoration(
-              color: SasColors.osageOrange.withValues(alpha: isDark ? 0.18 : 0.10),
+              color: SasColors.osageOrange.withValues(
+                alpha: isDark ? 0.18 : 0.10,
+              ),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
@@ -62,9 +64,7 @@ class ClassSessionHeader extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
             decoration: BoxDecoration(
-              color: isDark
-                  ? const Color(0x14FFFFFF)
-                  : const Color(0x08000000),
+              color: isDark ? const Color(0x14FFFFFF) : const Color(0x08000000),
               borderRadius: BorderRadius.circular(7),
               border: Border.all(
                 color: isDark

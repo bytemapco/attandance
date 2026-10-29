@@ -44,6 +44,9 @@ class LeaderboardScreen extends ConsumerWidget {
       );
     }
 
+    final textMuted = SasColors.textMutedOf(context);
+    final textSecondary = SasColors.textSecondaryOf(context);
+
     if (state.errorMessage != null && state.data == null) {
       return Center(
         child: Padding(
@@ -59,10 +62,7 @@ class LeaderboardScreen extends ConsumerWidget {
               const SizedBox(height: 12),
               Text(
                 state.errorMessage!,
-                style: const TextStyle(
-                  color: SasColors.textSecondary,
-                  fontSize: 13,
-                ),
+                style: TextStyle(color: textSecondary, fontSize: 13),
                 textAlign: TextAlign.center,
               ),
             ],
@@ -73,50 +73,61 @@ class LeaderboardScreen extends ConsumerWidget {
 
     final response = state.data;
     if (response == null || response.leaderboard.isEmpty) {
-      return const Center(
+      return Center(
         child: Text(
           'No leaderboard rankings available.',
-          style: TextStyle(color: SasColors.textMuted, fontSize: 13),
+          style: TextStyle(color: textMuted, fontSize: 13),
         ),
       );
     }
 
-    return ListView(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      physics: const AlwaysScrollableScrollPhysics(),
-      children: [
-        _buildUserSummaryCard(context, response),
-        const SizedBox(height: 16),
-        const Text(
-          'TOP PERFORMERS',
-          style: TextStyle(
-            color: SasColors.textMuted,
-            fontSize: 11,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 1.0,
-          ),
-        ),
-        const SizedBox(height: 8),
-        ...response.leaderboard.asMap().entries.map((entry) {
-          final index = entry.key;
-          final item = entry.value;
-          final isCurrentUser = item.studentId == currentStudentId;
-          return Padding(
-            padding: const EdgeInsets.only(bottom: 8),
-            child: LeaderboardItemCard(
-              rank: index + 1,
-              entry: item,
-              isCurrentUser: isCurrentUser,
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 600),
+        child: ListView(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          physics: const AlwaysScrollableScrollPhysics(),
+          children: [
+            _buildUserSummaryCard(context, response),
+            const SizedBox(height: 16),
+            Text(
+              'TOP PERFORMERS',
+              style: TextStyle(
+                color: textMuted,
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 1.0,
+              ),
             ),
-          );
-        }),
-      ],
+            const SizedBox(height: 8),
+            ...response.leaderboard.asMap().entries.map((entry) {
+              final index = entry.key;
+              final item = entry.value;
+              final isCurrentUser = item.studentId == currentStudentId;
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: LeaderboardItemCard(
+                  rank: index + 1,
+                  entry: item,
+                  isCurrentUser: isCurrentUser,
+                ),
+              );
+            }),
+          ],
+        ),
+      ),
     );
   }
 
-  Widget _buildUserSummaryCard(BuildContext context, LeaderboardResponse response) {
-    final rankText =
-        response.userRank != null ? '#${response.userRank}' : 'N/A';
+  Widget _buildUserSummaryCard(
+    BuildContext context,
+    LeaderboardResponse response,
+  ) {
+    final rankText = response.userRank != null
+        ? '#${response.userRank}'
+        : 'N/A';
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textMuted = SasColors.textMutedOf(context);
 
     return GlassCard(
       borderColor: SasColors.accentAmber.withValues(alpha: 0.3),
@@ -126,12 +137,12 @@ class LeaderboardScreen extends ConsumerWidget {
         children: [
           Column(
             children: [
-              const Text(
+              Text(
                 'YOUR RANK',
                 style: TextStyle(
                   fontSize: 10,
                   fontWeight: FontWeight.w700,
-                  color: SasColors.textMuted,
+                  color: textMuted,
                   letterSpacing: 0.8,
                 ),
               ),
@@ -149,16 +160,16 @@ class LeaderboardScreen extends ConsumerWidget {
           Container(
             height: 36,
             width: 1,
-            color: SasColors.glassBorder,
+            color: isDark ? const Color(0x2AFFFFFF) : const Color(0xFFE2E8F0),
           ),
           Column(
             children: [
-              const Text(
+              Text(
                 'TOTAL POINTS',
                 style: TextStyle(
                   fontSize: 10,
                   fontWeight: FontWeight.w700,
-                  color: SasColors.textMuted,
+                  color: textMuted,
                   letterSpacing: 0.8,
                 ),
               ),

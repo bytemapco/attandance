@@ -55,8 +55,9 @@ class _SmartPassScreenState extends ConsumerState<SmartPassScreen>
 
   Future<void> _checkPermissions() async {
     setState(() => _checkingPermission = true);
-    final status =
-        await ref.read(permissionServiceProvider).checkAttendancePermissions();
+    final status = await ref
+        .read(permissionServiceProvider)
+        .checkAttendancePermissions();
     if (mounted) {
       setState(() {
         _permissionStatus = status;
@@ -66,8 +67,9 @@ class _SmartPassScreenState extends ConsumerState<SmartPassScreen>
   }
 
   Future<void> _requestPermissions() async {
-    final status =
-        await ref.read(permissionServiceProvider).requestLocationPermission();
+    final status = await ref
+        .read(permissionServiceProvider)
+        .requestLocationPermission();
     if (mounted) {
       setState(() => _permissionStatus = status);
     }
@@ -83,9 +85,12 @@ class _SmartPassScreenState extends ConsumerState<SmartPassScreen>
       if (code != null && code.isNotEmpty) {
         setState(() => _isProcessing = true);
         HapticFeedback.mediumImpact();
-        ref.read(smartPassProvider.notifier).scanAndVerifyPass(code).then((_) {
-          if (mounted) setState(() => _isProcessing = false);
-        });
+        ref
+            .read(smartPassProvider.notifier)
+            .scanAndVerifyPass(code)
+            .whenComplete(() {
+              if (mounted) setState(() => _isProcessing = false);
+            });
         break;
       }
     }
@@ -124,7 +129,10 @@ class _SmartPassScreenState extends ConsumerState<SmartPassScreen>
               constraints: const BoxConstraints(maxWidth: 480),
               child: ListView(
                 physics: const ClampingScrollPhysics(),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
                 children: [
                   if (passState.scanResult != null)
                     SmartPassSuccessCard(

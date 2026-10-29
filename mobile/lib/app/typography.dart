@@ -33,10 +33,10 @@ class SasTypography {
 TextTheme buildSasTextTheme(Brightness brightness) {
   final isDark = brightness == Brightness.dark;
   final primaryColor = isDark ? SasColors.brilliance : const Color(0xFF0F172A);
-  final secondaryColor =
-      isDark ? const Color(0xFFE2E8F0) : const Color(0xFF334155);
-  final mutedColor =
-      isDark ? const Color(0xFFCBD5E1) : const Color(0xFF475569);
+  final secondaryColor = isDark
+      ? const Color(0xFFE2E8F0)
+      : const Color(0xFF334155);
+  final mutedColor = isDark ? const Color(0xFFCBD5E1) : const Color(0xFF475569);
 
   return TextTheme(
     displayLarge: SasTypography.style(

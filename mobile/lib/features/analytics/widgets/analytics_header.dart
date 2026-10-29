@@ -11,10 +11,12 @@ class AnalyticsHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final primaryTextColor =
-        isDark ? SasColors.brilliance : const Color(0xFF0F172A);
-    final subtitleColor =
-        isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B);
+    final primaryTextColor = isDark
+        ? SasColors.brilliance
+        : const Color(0xFF0F172A);
+    final subtitleColor = isDark
+        ? const Color(0xFF94A3B8)
+        : const Color(0xFF64748B);
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -75,7 +77,9 @@ class AnalyticsHeader extends StatelessWidget {
                 Icon(
                   Icons.calendar_today_outlined,
                   size: 14,
-                  color: isDark ? SasColors.brilliance : const Color(0xFF0F172A),
+                  color: isDark
+                      ? SasColors.brilliance
+                      : const Color(0xFF0F172A),
                 ),
                 const SizedBox(width: 6),
                 Text(

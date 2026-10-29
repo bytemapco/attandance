@@ -1,4 +1,3 @@
-
 library;
 
 import 'dart:async';
@@ -52,19 +51,20 @@ class WebSocketService {
   static const Duration _pingInterval = Duration(seconds: 30);
 
   WebSocketService({required SecureStorageService secureStorage})
-      : _secureStorage = secureStorage;
+    : _secureStorage = secureStorage;
 
   WebSocketStatus get status => _status;
   Stream<Map<String, dynamic>> get messageStream => _messageController.stream;
 
   Future<void> connect() async {
-    if (_status == WebSocketStatus.connected || _status == WebSocketStatus.connecting) {
+    if (_status == WebSocketStatus.connected ||
+        _status == WebSocketStatus.connecting) {
       return;
     }
 
     _status = WebSocketStatus.connecting;
     final token = await _secureStorage.getToken();
-    
+
     if (token == null) {
       _status = WebSocketStatus.error;
       return;
@@ -81,9 +81,9 @@ class WebSocketService {
           ? wsBaseUrl
           : '$wsBaseUrl/ws/connect';
       final uri = Uri.parse(wsPath);
-      
+
       _channel = WebSocketChannel.connect(uri);
-      
+
       _subscription = _channel!.stream.listen(
         _onMessage,
         onError: _onError,
@@ -132,9 +132,9 @@ class WebSocketService {
 
     _reconnectTimer?.cancel();
     _reconnectAttempts++;
-    
+
     final delay = _reconnectDelay * _reconnectAttempts;
-    
+
     _reconnectTimer = Timer(delay, () {
       connect();
     });

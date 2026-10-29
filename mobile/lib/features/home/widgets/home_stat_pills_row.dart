@@ -26,7 +26,7 @@ class HomeStatPillsRow extends StatelessWidget {
             icon: Icons.local_fire_department_rounded,
             iconColor: const Color(0xFFF95721),
             iconBg: const Color(0xFFFFEDD5),
-            title: '$streakDays Day',
+            title: '$streakDays ${streakDays == 1 ? "Day" : "Days"}',
             subtitle: 'Streak',
             onTap: onTapStreak,
           ),
@@ -37,7 +37,8 @@ class HomeStatPillsRow extends StatelessWidget {
             icon: Icons.school_rounded,
             iconColor: const Color(0xFF2563EB),
             iconBg: const Color(0xFFDBEAFE),
-            title: '$classesThisWeek ${classesThisWeek == 1 ? "Class" : "Classes"}',
+            title:
+                '$classesThisWeek ${classesThisWeek == 1 ? "Class" : "Classes"}',
             subtitle: 'This Week',
             onTap: onTapClasses,
           ),
@@ -68,10 +69,12 @@ class _StatPillCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardBg = isDark ? SasColors.darkSurface : Colors.white;
-    final primaryTextColor =
-        isDark ? SasColors.brilliance : const Color(0xFF0F172A);
-    final subtitleColor =
-        isDark ? const Color(0xFFE2E8F0) : const Color(0xFF475569);
+    final primaryTextColor = isDark
+        ? SasColors.brilliance
+        : const Color(0xFF0F172A);
+    final subtitleColor = isDark
+        ? const Color(0xFFE2E8F0)
+        : const Color(0xFF475569);
 
     return InkWell(
       onTap: onTap,
@@ -99,13 +102,8 @@ class _StatPillCard extends StatelessWidget {
             Container(
               width: 44,
               height: 44,
-              decoration: BoxDecoration(
-                color: iconBg,
-                shape: BoxShape.circle,
-              ),
-              child: Center(
-                child: Icon(icon, color: iconColor, size: 22),
-              ),
+              decoration: BoxDecoration(color: iconBg, shape: BoxShape.circle),
+              child: Center(child: Icon(icon, color: iconColor, size: 22)),
             ),
             const SizedBox(width: 10),
 
@@ -142,11 +140,7 @@ class _StatPillCard extends StatelessWidget {
             ),
 
             // Subtle Chevron matching goal UI
-            Icon(
-              Icons.chevron_right_rounded,
-              size: 20,
-              color: subtitleColor,
-            ),
+            Icon(Icons.chevron_right_rounded, size: 20, color: subtitleColor),
           ],
         ),
       ),

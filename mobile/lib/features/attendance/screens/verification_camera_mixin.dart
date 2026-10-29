@@ -6,7 +6,8 @@ import 'package:smart_attendance_app/features/attendance/providers/attendance_pr
 import 'package:smart_attendance_app/utils/image_quality.dart';
 import 'package:smart_attendance_app/utils/logger.dart';
 
-mixin VerificationCameraMixin<T extends ConsumerStatefulWidget> on ConsumerState<T> {
+mixin VerificationCameraMixin<T extends ConsumerStatefulWidget>
+    on ConsumerState<T> {
   CameraController? camera;
   bool isCameraReady = false;
   String? cameraError;
@@ -16,7 +17,9 @@ mixin VerificationCameraMixin<T extends ConsumerStatefulWidget> on ConsumerState
   bool _isInitializing = false;
 
   Future<void> initCamera() async {
-    if (_isInitializing || (camera != null && camera!.value.isInitialized)) return;
+    if (_isInitializing || (camera != null && camera!.value.isInitialized)) {
+      return;
+    }
     _isInitializing = true;
     try {
       camera?.dispose().catchError((e) => null);
@@ -31,11 +34,18 @@ mixin VerificationCameraMixin<T extends ConsumerStatefulWidget> on ConsumerState
         (c) => c.lensDirection == CameraLensDirection.front,
         orElse: () => cameras.first,
       );
-      final ctrl = CameraController(front, ResolutionPreset.high, enableAudio: false);
+      final ctrl = CameraController(
+        front,
+        ResolutionPreset.high,
+        enableAudio: false,
+      );
       camera = ctrl;
       await ctrl.initialize();
       if (mounted && camera == ctrl) {
-        setState(() { isCameraReady = true; cameraError = null; });
+        setState(() {
+          isCameraReady = true;
+          cameraError = null;
+        });
       } else {
         await ctrl.dispose().catchError((e) => null);
       }

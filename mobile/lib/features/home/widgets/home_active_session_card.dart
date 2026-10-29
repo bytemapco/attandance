@@ -26,10 +26,12 @@ class HomeActiveSessionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardBg = isDark ? SasColors.darkSurface : Colors.white;
-    final primaryTextColor =
-        isDark ? SasColors.brilliance : const Color(0xFF0F172A);
-    final subtitleColor =
-        isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B);
+    final primaryTextColor = isDark
+        ? SasColors.brilliance
+        : const Color(0xFF0F172A);
+    final subtitleColor = isDark
+        ? const Color(0xFF94A3B8)
+        : const Color(0xFF64748B);
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -55,7 +57,10 @@ class HomeActiveSessionCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 5,
+                ),
                 decoration: BoxDecoration(
                   color: const Color(0xFFFFEDD5),
                   borderRadius: BorderRadius.circular(12),
@@ -71,7 +76,10 @@ class HomeActiveSessionCard extends StatelessWidget {
               ),
               if (isSessionOn)
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: const Color(0xFFDCFCE7),
                     borderRadius: BorderRadius.circular(12),
@@ -135,7 +143,11 @@ class HomeActiveSessionCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
-              const Icon(Icons.access_time_rounded, size: 15, color: Color(0xFFF97316)),
+              const Icon(
+                Icons.access_time_rounded,
+                size: 15,
+                color: Color(0xFFF97316),
+              ),
               const SizedBox(width: 4),
               Text(
                 timeText,
@@ -165,7 +177,9 @@ class HomeActiveSessionCard extends StatelessWidget {
             child: Container(
               height: 44,
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF1E2838) : const Color(0xFFF1F5F9),
+                color: isDark
+                    ? const Color(0xFF1E2838)
+                    : const Color(0xFFF1F5F9),
                 borderRadius: BorderRadius.circular(14),
               ),
               child: Row(
@@ -180,7 +194,11 @@ class HomeActiveSessionCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 6),
-                  Icon(Icons.arrow_forward_rounded, size: 16, color: primaryTextColor),
+                  Icon(
+                    Icons.arrow_forward_rounded,
+                    size: 16,
+                    color: primaryTextColor,
+                  ),
                 ],
               ),
             ),

@@ -11,9 +11,18 @@ class SystemConfiguration {
 
   factory SystemConfiguration.fromJson(Map<String, dynamic> json) {
     return SystemConfiguration(
-      isFaceRecognitionEnabled: (json['isFaceRecognitionEnabled'] ?? json['is_face_recognition_enabled']) ?? true,
-      isGpsVerificationEnabled: (json['isGpsVerificationEnabled'] ?? json['is_gps_verification_enabled']) ?? true,
-      isAiBackgroundValidationEnabled: (json['isAiBackgroundValidationEnabled'] ?? json['is_ai_background_validation_enabled']) ?? true,
+      isFaceRecognitionEnabled:
+          (json['isFaceRecognitionEnabled'] ??
+              json['is_face_recognition_enabled']) ??
+          true,
+      isGpsVerificationEnabled:
+          (json['isGpsVerificationEnabled'] ??
+              json['is_gps_verification_enabled']) ??
+          true,
+      isAiBackgroundValidationEnabled:
+          (json['isAiBackgroundValidationEnabled'] ??
+              json['is_ai_background_validation_enabled']) ??
+          true,
     );
   }
 

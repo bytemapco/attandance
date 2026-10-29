@@ -91,10 +91,12 @@ class _KpiMetricCard extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardBg = isDark ? const Color(0xFF1E2838) : lightBgColor;
     final borderColor = isDark ? const Color(0x1FFFFFFF) : lightBorderColor;
-    final primaryTextColor =
-        isDark ? SasColors.brilliance : const Color(0xFF0F172A);
-    final subtitleColor =
-        isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B);
+    final primaryTextColor = isDark
+        ? SasColors.brilliance
+        : const Color(0xFF0F172A);
+    final subtitleColor = isDark
+        ? const Color(0xFF94A3B8)
+        : const Color(0xFF64748B);
 
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),

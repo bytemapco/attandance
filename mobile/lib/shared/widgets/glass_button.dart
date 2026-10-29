@@ -90,8 +90,7 @@ class GlassButton extends StatelessWidget {
               splashColor: colors.foreground.withValues(alpha: 0.08),
               highlightColor: colors.foreground.withValues(alpha: 0.04),
               child: Padding(
-                padding: padding ??
-                    const EdgeInsets.symmetric(horizontal: 16),
+                padding: padding ?? const EdgeInsets.symmetric(horizontal: 16),
                 child: child,
               ),
             ),
@@ -107,7 +106,7 @@ class GlassButton extends StatelessWidget {
       case GlassButtonVariant.primary:
         return _ButtonColors(
           background: SasColors.osageOrange,
-          foreground: Colors.white,  // Fixed: was darkCanvas (2.8:1 fail)
+          foreground: Colors.white, // Fixed: was darkCanvas (2.8:1 fail)
           border: Colors.transparent,
           shadow: [
             BoxShadow(
@@ -119,13 +118,9 @@ class GlassButton extends StatelessWidget {
         );
       case GlassButtonVariant.secondary:
         return _ButtonColors(
-          background: isDark
-              ? SasColors.darkElevated
-              : SasColors.lightSurface,
+          background: isDark ? SasColors.darkElevated : SasColors.lightSurface,
           foreground: isDark ? SasColors.brilliance : SasColors.indianInk,
-          border: isDark
-              ? const Color(0x1EFFFFFF)
-              : const Color(0x18000000),
+          border: isDark ? const Color(0x1EFFFFFF) : const Color(0x18000000),
           shadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.06),
@@ -150,8 +145,7 @@ class GlassButton extends StatelessWidget {
       case GlassButtonVariant.ghost:
         return _ButtonColors(
           background: Colors.transparent,
-          foreground:
-              isDark ? SasColors.maidenMist : SasColors.textSecondary,
+          foreground: isDark ? SasColors.maidenMist : SasColors.textSecondary,
           border: Colors.transparent,
           shadow: null,
         );

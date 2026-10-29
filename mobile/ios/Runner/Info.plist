@@ -66,5 +66,30 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSCameraUsageDescription</key>
+	<string>Smart Attendance requires camera access for biometric face registration and attendance verification.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Smart Attendance requires location access to verify classroom presence within geofence boundaries.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Smart Attendance uses location to verify your attendance inside designated lecture halls.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Smart Attendance allows attaching medical certificates or leave request documents from your photo library.</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>in.bytemap.smartattendance</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>smartattendance</string>
+			</array>
+		</dict>
+	</array>
+	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<false/>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 </dict>
 </plist>

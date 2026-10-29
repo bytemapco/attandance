@@ -36,8 +36,9 @@ class _LegendItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textColor =
-        isDark ? const Color(0xFFCBD5E1) : const Color(0xFF64748B);
+    final textColor = isDark
+        ? const Color(0xFFCBD5E1)
+        : const Color(0xFF64748B);
 
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -112,8 +113,9 @@ class _StatCountColumn extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final subtitleColor =
-        isDark ? const Color(0xFFCBD5E1) : const Color(0xFF64748B);
+    final subtitleColor = isDark
+        ? const Color(0xFFCBD5E1)
+        : const Color(0xFF64748B);
 
     return Expanded(
       child: Column(

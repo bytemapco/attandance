@@ -19,10 +19,12 @@ class AnalyticsCourseProgressCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardBg = isDark ? const Color(0xFF1E2838) : Colors.white;
-    final primaryTextColor =
-        isDark ? SasColors.brilliance : const Color(0xFF0F172A);
-    final subtitleColor =
-        isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B);
+    final primaryTextColor = isDark
+        ? SasColors.brilliance
+        : const Color(0xFF0F172A);
+    final subtitleColor = isDark
+        ? const Color(0xFF94A3B8)
+        : const Color(0xFF64748B);
 
     final history = data.history;
     final total = history.isEmpty ? 5 : history.length;
@@ -88,12 +90,19 @@ class AnalyticsCourseProgressCard extends StatelessWidget {
             children: [
               // CS-6A Badge
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 7,
+                ),
                 decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF332314) : const Color(0xFFFFF7ED),
+                  color: isDark
+                      ? const Color(0xFF332314)
+                      : const Color(0xFFFFF7ED),
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(
-                    color: isDark ? const Color(0xFF7C2D12) : const Color(0xFFFED7AA),
+                    color: isDark
+                        ? const Color(0xFF7C2D12)
+                        : const Color(0xFFFED7AA),
                     width: 1.0,
                   ),
                 ),

@@ -10,10 +10,15 @@ class VerificationAiReviewCard extends StatefulWidget {
   final AttendanceAnalysisResult analysis;
   final String? imagePath;
 
-  const VerificationAiReviewCard({super.key, required this.analysis, this.imagePath});
+  const VerificationAiReviewCard({
+    super.key,
+    required this.analysis,
+    this.imagePath,
+  });
 
   @override
-  State<VerificationAiReviewCard> createState() => _VerificationAiReviewCardState();
+  State<VerificationAiReviewCard> createState() =>
+      _VerificationAiReviewCardState();
 }
 
 class _VerificationAiReviewCardState extends State<VerificationAiReviewCard>
@@ -24,8 +29,14 @@ class _VerificationAiReviewCardState extends State<VerificationAiReviewCard>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 900));
-    _progressAnim = CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic);
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 900),
+    );
+    _progressAnim = CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeOutCubic,
+    );
     Future.delayed(const Duration(milliseconds: 150), () {
       if (mounted) _controller.forward();
     });
@@ -44,8 +55,12 @@ class _VerificationAiReviewCardState extends State<VerificationAiReviewCard>
     final isPresent = a.wouldBePresent;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardBg = isDark ? SasColors.darkSurface : Colors.white;
-    final borderCol = isDark ? const Color(0x1FFFFFFF) : const Color(0xFFE3E9F1);
-    final primaryTextColor = isDark ? SasColors.brilliance : const Color(0xFF0F172A);
+    final borderCol = isDark
+        ? const Color(0x1FFFFFFF)
+        : const Color(0xFFE3E9F1);
+    final primaryTextColor = isDark
+        ? SasColors.brilliance
+        : const Color(0xFF0F172A);
 
     return Container(
       padding: const EdgeInsets.all(18),
@@ -74,7 +89,9 @@ class _VerificationAiReviewCardState extends State<VerificationAiReviewCard>
                   color: overallColor.withValues(alpha: 0.12),
                 ),
                 child: Icon(
-                  isPresent ? Icons.check_circle_rounded : Icons.warning_amber_rounded,
+                  isPresent
+                      ? Icons.check_circle_rounded
+                      : Icons.warning_amber_rounded,
                   color: overallColor,
                   size: 24,
                 ),
@@ -94,7 +111,9 @@ class _VerificationAiReviewCardState extends State<VerificationAiReviewCard>
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      isPresent ? 'High Confidence — Ready to Submit' : 'Borderline Score — Will Be Flagged',
+                      isPresent
+                          ? 'High Confidence — Ready to Submit'
+                          : 'Borderline Score — Will Be Flagged',
                       style: SasTypography.style(
                         fontSize: 12,
                         color: overallColor,
@@ -105,7 +124,10 @@ class _VerificationAiReviewCardState extends State<VerificationAiReviewCard>
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 5,
+                ),
                 decoration: BoxDecoration(
                   color: overallColor.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(10),
@@ -161,7 +183,11 @@ class _VerificationAiReviewCardState extends State<VerificationAiReviewCard>
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.info_outline_rounded, color: Color(0xFFD97706), size: 16),
+                  const Icon(
+                    Icons.info_outline_rounded,
+                    color: Color(0xFFD97706),
+                    size: 16,
+                  ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
@@ -182,7 +208,18 @@ class _VerificationAiReviewCardState extends State<VerificationAiReviewCard>
     );
   }
 
-  String _faceHint(double s) => s >= 0.85 ? 'Strong match' : s >= kGoodScoreThreshold ? 'Good match' : s >= 0.5 ? 'Weak match' : 'Poor lighting';
-  String _livenessHint(double s) => s >= 0.8 ? 'Confirmed live' : s >= 0.6 ? 'Likely live' : 'Check lighting';
-  String _backgroundHint(double s) => s >= kGoodScoreThreshold ? 'Classroom verified' : 'Unfamiliar background';
+  String _faceHint(double s) => s >= 0.85
+      ? 'Strong match'
+      : s >= kGoodScoreThreshold
+      ? 'Good match'
+      : s >= 0.5
+      ? 'Weak match'
+      : 'Poor lighting';
+  String _livenessHint(double s) => s >= 0.8
+      ? 'Confirmed live'
+      : s >= 0.6
+      ? 'Likely live'
+      : 'Check lighting';
+  String _backgroundHint(double s) =>
+      s >= kGoodScoreThreshold ? 'Classroom verified' : 'Unfamiliar background';
 }

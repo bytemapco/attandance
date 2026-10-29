@@ -35,9 +35,9 @@ class _ForceChangePasswordScreenState
 
   Future<void> _handleSubmit() async {
     if (!_formKey.currentState!.validate()) return;
-    final success = await ref.read(authProvider.notifier).changePassword(
-          _newPasswordController.text,
-        );
+    final success = await ref
+        .read(authProvider.notifier)
+        .changePassword(_newPasswordController.text);
     if (success && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -60,7 +60,10 @@ class _ForceChangePasswordScreenState
             child: SafeArea(
               child: Center(
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 16,
+                  ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -71,7 +74,9 @@ class _ForceChangePasswordScreenState
                           borderRadius: BorderRadius.circular(16),
                           color: SasColors.osageOrange.withValues(alpha: 0.12),
                           border: Border.all(
-                            color: SasColors.osageOrange.withValues(alpha: 0.35),
+                            color: SasColors.osageOrange.withValues(
+                              alpha: 0.35,
+                            ),
                             width: 1.2,
                           ),
                         ),
@@ -84,15 +89,17 @@ class _ForceChangePasswordScreenState
                       const SizedBox(height: 16),
                       Text(
                         'Set Permanent Password',
-                        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                              fontWeight: FontWeight.w800,
-                            ),
+                        style: Theme.of(context).textTheme.headlineMedium
+                            ?.copyWith(fontWeight: FontWeight.w800),
                       ),
                       const SizedBox(height: 6),
                       const Text(
                         'Create a secure password to activate and protect your account',
                         textAlign: TextAlign.center,
-                        style: TextStyle(color: SasColors.textMuted, fontSize: 13),
+                        style: TextStyle(
+                          color: SasColors.textMuted,
+                          fontSize: 13,
+                        ),
                       ),
                       const SizedBox(height: 24),
                       GlassCard(
@@ -116,11 +123,17 @@ class _ForceChangePasswordScreenState
                                     color: SasColors.textMuted,
                                     size: 20,
                                   ),
-                                  onPressed: () => setState(() => _obscureNew = !_obscureNew),
+                                  onPressed: () => setState(
+                                    () => _obscureNew = !_obscureNew,
+                                  ),
                                 ),
                                 validator: (v) {
-                                  if (v == null || v.isEmpty) return 'New password is required';
-                                  if (v.length < 8) return 'Must be at least 8 characters';
+                                  if (v == null || v.isEmpty) {
+                                    return 'New password is required';
+                                  }
+                                  if (v.length < 8) {
+                                    return 'Must be at least 8 characters';
+                                  }
                                   return null;
                                 },
                               ),
@@ -139,10 +152,14 @@ class _ForceChangePasswordScreenState
                                     color: SasColors.textMuted,
                                     size: 20,
                                   ),
-                                  onPressed: () => setState(() => _obscureConfirm = !_obscureConfirm),
+                                  onPressed: () => setState(
+                                    () => _obscureConfirm = !_obscureConfirm,
+                                  ),
                                 ),
                                 validator: (v) {
-                                  if (v != _newPasswordController.text) return 'Passwords do not match';
+                                  if (v != _newPasswordController.text) {
+                                    return 'Passwords do not match';
+                                  }
                                   return null;
                                 },
                               ),
@@ -150,7 +167,10 @@ class _ForceChangePasswordScreenState
                                 const SizedBox(height: 16),
                                 Text(
                                   authState.errorMessage!,
-                                  style: const TextStyle(color: SasColors.danger, fontSize: 13),
+                                  style: const TextStyle(
+                                    color: SasColors.danger,
+                                    fontSize: 13,
+                                  ),
                                 ),
                               ],
                               const SizedBox(height: 24),
@@ -163,10 +183,14 @@ class _ForceChangePasswordScreenState
                               ),
                               const SizedBox(height: 12),
                               TextButton(
-                                onPressed: () => ref.read(authProvider.notifier).logout(),
+                                onPressed: () =>
+                                    ref.read(authProvider.notifier).logout(),
                                 child: const Text(
                                   'Sign In with Different Account',
-                                  style: TextStyle(color: SasColors.textMuted, fontSize: 13),
+                                  style: TextStyle(
+                                    color: SasColors.textMuted,
+                                    fontSize: 13,
+                                  ),
                                 ),
                               ),
                             ],

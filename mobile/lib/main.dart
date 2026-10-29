@@ -19,7 +19,8 @@ class AppHttpOverrides extends HttpOverrides {
   HttpClient createHttpClient(SecurityContext? context) {
     final client = super.createHttpClient(context);
     if (!kReleaseMode) {
-      client.badCertificateCallback = (X509Certificate cert, String host, int port) {
+      client
+          .badCertificateCallback = (X509Certificate cert, String host, int port) {
         // Permit loopback exclusively for local development testing in non-release mode
         if (host == 'localhost' || host == '10.0.2.2' || host == '127.0.0.1') {
           return true;
@@ -75,85 +76,100 @@ void callbackDispatcher() {
 
       final syncService = container.read(offlineSyncServiceProvider);
       await syncService.syncQueue();
-      return Future.value(true);
+      return true;
     } catch (e) {
       AppLogger.error('Workmanager sync failed: $e');
-      return Future.value(false);
+      return false;
     }
   });
 }
 
 Future<void> main() async {
-  await runZonedGuarded(() async {
-    WidgetsFlutterBinding.ensureInitialized();
-    HttpOverrides.global = AppHttpOverrides();
+  await runZonedGuarded(
+    () async {
+      WidgetsFlutterBinding.ensureInitialized();
+      HttpOverrides.global = AppHttpOverrides();
 
-    try {
-      await dotenv.load(fileName: ".env");
-    } catch (e) {
-      AppLogger.warn('Could not load .env file, using default configuration: $e');
-    }
-
-    FlutterError.onError = (FlutterErrorDetails details) {
-      FlutterError.presentError(details);
-      AppLogger.error(
-        'Uncaught Flutter framework error: ${details.exception}',
-        context: {'stack': details.stack?.toString()},
-      );
-      if (kReleaseMode) {
-        Zone.current.handleUncaughtError(
-          details.exception,
-          details.stack ?? StackTrace.current,
+      try {
+        await dotenv.load(fileName: ".env");
+      } catch (e) {
+        AppLogger.warn(
+          'Could not load .env file, using default configuration: $e',
         );
       }
-    };
 
-    await SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-    ]);
+      FlutterError.onError = (FlutterErrorDetails details) {
+        FlutterError.presentError(details);
+        AppLogger.error(
+          'Uncaught Flutter framework error: ${details.exception}',
+          context: {'stack': details.stack?.toString()},
+        );
+        if (kReleaseMode) {
+          Zone.current.handleUncaughtError(
+            details.exception,
+            details.stack ?? StackTrace.current,
+          );
+        }
+      };
 
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.light,
-      systemNavigationBarColor: Colors.black,
-      systemNavigationBarIconBrightness: Brightness.light,
-    ));
+      await SystemChrome.setPreferredOrientations([
+        DeviceOrientation.portraitUp,
+      ]);
 
-    final hiveService = HiveService();
-    await hiveService.initialize();
+      SystemChrome.setSystemUIOverlayStyle(
+        const SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.light,
+          systemNavigationBarColor: Colors.black,
+          systemNavigationBarIconBrightness: Brightness.light,
+        ),
+      );
 
-    final notificationService = NotificationService();
-    await notificationService.initialize();
+      final hiveService = HiveService();
+      await hiveService.initialize();
 
-    try {
-      await Firebase.initializeApp();
-      FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-      await FirebaseMessaging.instance.requestPermission();
-    } catch (e) {
-      AppLogger.error('Firebase init failed: $e');
-    }
+      final notificationService = NotificationService();
+      await notificationService.initialize();
 
-    Workmanager().initialize(callbackDispatcher);
-    Workmanager().registerPeriodicTask(
-      "offline-sync-task",
-      "syncQueue",
-      frequency: const Duration(minutes: 15),
-      constraints: Constraints(networkType: NetworkType.connected),
-    );
+      try {
+        await Firebase.initializeApp();
+        FirebaseMessaging.onBackgroundMessage(
+          _firebaseMessagingBackgroundHandler,
+        );
+        await FirebaseMessaging.instance.requestPermission();
+      } catch (e) {
+        AppLogger.error('Firebase init failed: $e');
+      }
 
-    runApp(
-      ProviderScope(
-        overrides: [
-          hiveServiceProvider.overrideWithValue(hiveService),
-          notificationServiceProvider.overrideWithValue(notificationService),
-        ],
-        child: const SmartAttendanceApp(),
-      ),
-    );
-  }, (error, stackTrace) {
-    AppLogger.error(
-      'Unhandled zoned error: $error',
-      context: {'stack': stackTrace.toString()},
-    );
-  });
+      if (!kIsWeb && Platform.isAndroid) {
+        try {
+          Workmanager().initialize(callbackDispatcher);
+          Workmanager().registerPeriodicTask(
+            "offline-sync-task",
+            "syncQueue",
+            frequency: const Duration(minutes: 15),
+            constraints: Constraints(networkType: NetworkType.connected),
+          );
+        } catch (e) {
+          AppLogger.error('Workmanager init failed: $e');
+        }
+      }
+
+      runApp(
+        ProviderScope(
+          overrides: [
+            hiveServiceProvider.overrideWithValue(hiveService),
+            notificationServiceProvider.overrideWithValue(notificationService),
+          ],
+          child: const SmartAttendanceApp(),
+        ),
+      );
+    },
+    (error, stackTrace) {
+      AppLogger.error(
+        'Unhandled zoned error: $error',
+        context: {'stack': stackTrace.toString()},
+      );
+    },
+  );
 }

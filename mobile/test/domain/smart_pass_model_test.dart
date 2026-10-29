@@ -4,7 +4,9 @@ import 'package:smart_attendance_app/domain/models/smart_pass.dart';
 void main() {
   group('SmartPass Model', () {
     test('parses active smart pass and checks expiry', () {
-      final futureDate = DateTime.now().add(const Duration(minutes: 5)).toIso8601String();
+      final futureDate = DateTime.now()
+          .add(const Duration(minutes: 5))
+          .toIso8601String();
       final json = {
         'qr_token': 'jwt.token.here',
         'expires_at': futureDate,
@@ -22,7 +24,9 @@ void main() {
     });
 
     test('detects expired smart pass', () {
-      final pastDate = DateTime.now().subtract(const Duration(minutes: 5)).toIso8601String();
+      final pastDate = DateTime.now()
+          .subtract(const Duration(minutes: 5))
+          .toIso8601String();
       final json = {
         'qr_token': 'expired.token.here',
         'expires_at': pastDate,

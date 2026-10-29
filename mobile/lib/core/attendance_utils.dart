@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:smart_attendance_app/app/theme.dart';
 import 'package:smart_attendance_app/core/attendance_constants.dart';
@@ -36,8 +35,7 @@ Color statusColor(String status) {
 
 int calculateStreak(List<AttendanceHistoryItem> history) {
   if (history.isEmpty) return 0;
-  final sorted = [...history]
-    ..sort((a, b) => b.markedAt.compareTo(a.markedAt));
+  final sorted = [...history]..sort((a, b) => b.markedAt.compareTo(a.markedAt));
   int streak = 0;
   for (final item in sorted) {
     if (isPresentOrApproved(item.status)) {
@@ -51,8 +49,7 @@ int calculateStreak(List<AttendanceHistoryItem> history) {
 
 int calculateHighestStreak(List<AttendanceHistoryItem> history) {
   if (history.isEmpty) return 0;
-  final sorted = [...history]
-    ..sort((a, b) => a.markedAt.compareTo(b.markedAt));
+  final sorted = [...history]..sort((a, b) => a.markedAt.compareTo(b.markedAt));
   int maxStreak = 0;
   int currentStreak = 0;
   for (final item in sorted) {
@@ -89,8 +86,10 @@ int countFlagged(Iterable<AttendanceHistoryItem> items) =>
   } else {
     final ratio = target / 100;
     if (ratio < 1.0) {
-      needToAttend =
-          ((ratio * total - present) / (1 - ratio)).ceil().clamp(0, 999);
+      needToAttend = ((ratio * total - present) / (1 - ratio)).ceil().clamp(
+        0,
+        999,
+      );
     }
   }
   return (canMiss: canMiss, needToAttend: needToAttend);
@@ -102,9 +101,8 @@ double computeSubjectPct(int present, int total) =>
 int computeWeekPresent(Iterable<AttendanceHistoryItem> history) {
   final now = DateTime.now();
   final weekStart = now.subtract(Duration(days: now.weekday - 1));
-  final weekItems =
-      history.where((h) => h.markedAt.isAfter(weekStart.subtract(
-        const Duration(days: 1),
-      )));
+  final weekItems = history.where(
+    (h) => h.markedAt.isAfter(weekStart.subtract(const Duration(days: 1))),
+  );
   return countPresentOrApproved(weekItems);
 }

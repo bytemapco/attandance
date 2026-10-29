@@ -3,10 +3,8 @@ import 'package:smart_attendance_app/app/theme.dart';
 
 /// Animated three-dot pulsing loader for splash screen.
 class SplashDotsLoader extends AnimatedWidget {
-  const SplashDotsLoader({
-    super.key,
-    required AnimationController controller,
-  }) : super(listenable: controller);
+  const SplashDotsLoader({super.key, required AnimationController controller})
+    : super(listenable: controller);
 
   AnimationController get _controller => listenable as AnimationController;
 
@@ -19,11 +17,7 @@ class SplashDotsLoader extends AnimatedWidget {
         final end = (start + 0.4).clamp(0.0, 1.0);
         final anim = CurvedAnimation(
           parent: _controller,
-          curve: Interval(
-            start,
-            end,
-            curve: Curves.easeInOut,
-          ),
+          curve: Interval(start, end, curve: Curves.easeInOut),
         );
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 3),

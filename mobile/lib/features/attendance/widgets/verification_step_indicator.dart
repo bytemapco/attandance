@@ -22,8 +22,12 @@ class VerificationStepIndicator extends StatelessWidget {
       VerificationStep.done => 4,
     };
 
-    final inactiveTrack = isDark ? const Color(0xFF1E293B) : const Color(0xFFE9EEF5);
-    final borderCol = isDark ? const Color(0x2AFFFFFF) : const Color(0xFFE3E9F1);
+    final inactiveTrack = isDark
+        ? const Color(0xFF1E293B)
+        : const Color(0xFFE9EEF5);
+    final borderCol = isDark
+        ? const Color(0x2AFFFFFF)
+        : const Color(0xFFE3E9F1);
     const orangeCol = Color(0xFFF95721);
     const emeraldCol = Color(0xFF08A875);
 
@@ -38,8 +42,8 @@ class VerificationStepIndicator extends StatelessWidget {
         final stepColor = isCompleted
             ? emeraldCol
             : isCurrent
-                ? orangeCol
-                : (isDark ? const Color(0xFF64748B) : const Color(0xFF94A3B8));
+            ? orangeCol
+            : (isDark ? const Color(0xFF64748B) : const Color(0xFF94A3B8));
 
         return Expanded(
           child: Column(
@@ -63,14 +67,16 @@ class VerificationStepIndicator extends StatelessWidget {
                       color: isCompleted
                           ? emeraldCol
                           : isCurrent
-                              ? (isDark ? const Color(0x33F95721) : const Color(0xFFFFEDD5))
-                              : inactiveTrack,
+                          ? (isDark
+                                ? const Color(0x33F95721)
+                                : const Color(0xFFFFEDD5))
+                          : inactiveTrack,
                       border: Border.all(
                         color: isCompleted
                             ? emeraldCol
                             : isCurrent
-                                ? orangeCol
-                                : borderCol,
+                            ? orangeCol
+                            : borderCol,
                         width: isCurrent ? 2.2 : 1.2,
                       ),
                       boxShadow: isCurrent
@@ -85,12 +91,18 @@ class VerificationStepIndicator extends StatelessWidget {
                     ),
                     child: Center(
                       child: isCompleted
-                          ? const Icon(Icons.check_rounded, size: 16, color: Colors.white)
+                          ? const Icon(
+                              Icons.check_rounded,
+                              size: 16,
+                              color: Colors.white,
+                            )
                           : Text(
                               '${i + 1}',
                               style: SasTypography.style(
                                 fontSize: 12,
-                                fontWeight: isCurrent ? FontWeight.w800 : FontWeight.w600,
+                                fontWeight: isCurrent
+                                    ? FontWeight.w800
+                                    : FontWeight.w600,
                                 color: isCurrent ? orangeCol : stepColor,
                               ),
                             ),
@@ -114,7 +126,9 @@ class VerificationStepIndicator extends StatelessWidget {
                   fontSize: 11,
                   fontWeight: isCurrent ? FontWeight.w700 : FontWeight.w500,
                   color: isCurrent
-                      ? (isDark ? SasColors.brilliance : const Color(0xFF0F172A))
+                      ? (isDark
+                            ? SasColors.brilliance
+                            : const Color(0xFF0F172A))
                       : stepColor,
                 ),
               ),

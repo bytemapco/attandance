@@ -18,17 +18,15 @@ class LoginErrorBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDeviceBound = errorMessage == 'Access forbidden' ||
-        errorMessage.contains('bound');
+    final isDeviceBound =
+        errorMessage == 'Access forbidden' || errorMessage.contains('bound');
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
         color: SasColors.danger.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: SasColors.danger.withValues(alpha: 0.25),
-        ),
+        border: Border.all(color: SasColors.danger.withValues(alpha: 0.25)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -36,7 +34,11 @@ class LoginErrorBanner extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const Icon(Icons.error_outline_rounded, color: SasColors.danger, size: 18),
+              const Icon(
+                Icons.error_outline_rounded,
+                color: SasColors.danger,
+                size: 18,
+              ),
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
@@ -77,7 +79,9 @@ class LoginErrorBanner extends StatelessWidget {
               label: const Text('Request Device Change'),
               style: OutlinedButton.styleFrom(
                 foregroundColor: SasColors.osageOrange,
-                side: BorderSide(color: SasColors.osageOrange.withValues(alpha: 0.5)),
+                side: BorderSide(
+                  color: SasColors.osageOrange.withValues(alpha: 0.5),
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),

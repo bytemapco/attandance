@@ -17,15 +17,11 @@ class AuthStudentIdentityCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final cardBg = isDark
-        ? const Color(0xFF1E2838)
-        : const Color(0xFFFFF7ED);
+    final cardBg = isDark ? const Color(0xFF1E2838) : const Color(0xFFFFF7ED);
     final cardBorder = isDark
         ? const Color(0xFF334155)
         : const Color(0xFFFFEDD5);
-    final idTextColor = isDark
-        ? SasColors.brilliance
-        : const Color(0xFF0F172A);
+    final idTextColor = isDark ? SasColors.brilliance : const Color(0xFF0F172A);
     final subtitleColor = isDark
         ? SasColors.maidenMist
         : const Color(0xFF64748B);
@@ -54,14 +50,18 @@ class AuthStudentIdentityCard extends StatelessWidget {
               color: isDark ? const Color(0xFF1E3A5F) : const Color(0xFFE0F2FE),
               shape: BoxShape.circle,
               border: Border.all(
-                color: isDark ? const Color(0xFF38BDF8) : const Color(0xFFBAE6FD),
+                color: isDark
+                    ? const Color(0xFF38BDF8)
+                    : const Color(0xFFBAE6FD),
                 width: 1.0,
               ),
             ),
             child: Center(
               child: Icon(
                 Icons.school_rounded,
-                color: isDark ? const Color(0xFF38BDF8) : const Color(0xFF0284C7),
+                color: isDark
+                    ? const Color(0xFF38BDF8)
+                    : const Color(0xFF0284C7),
                 size: 24,
               ),
             ),

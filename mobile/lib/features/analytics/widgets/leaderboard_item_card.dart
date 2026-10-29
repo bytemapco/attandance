@@ -29,10 +29,7 @@ class LeaderboardItemCard extends StatelessWidget {
       borderColor: itemBorderColor,
       child: Row(
         children: [
-          SizedBox(
-            width: 28,
-            child: _buildRankBadge(rank),
-          ),
+          SizedBox(width: 28, child: _buildRankBadge(rank, context)),
           const SizedBox(width: 10),
           Expanded(
             child: Column(
@@ -44,8 +41,9 @@ class LeaderboardItemCard extends StatelessWidget {
                       child: Text(
                         entry.name,
                         style: TextStyle(
-                          fontWeight:
-                              isCurrentUser ? FontWeight.w700 : FontWeight.w600,
+                          fontWeight: isCurrentUser
+                              ? FontWeight.w700
+                              : FontWeight.w600,
                           fontSize: 13,
                           color: isCurrentUser
                               ? SasColors.success
@@ -89,9 +87,9 @@ class LeaderboardItemCard extends StatelessWidget {
                       const SizedBox(width: 3),
                       Text(
                         '${entry.currentStreak} day streak',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 11,
-                          color: SasColors.textMuted,
+                          color: SasColors.textMutedOf(context),
                         ),
                       ),
                     ],
@@ -106,7 +104,9 @@ class LeaderboardItemCard extends StatelessWidget {
             style: TextStyle(
               fontWeight: FontWeight.w700,
               fontSize: 13,
-              color: rank == 1 ? SasColors.accentAmber : SasColors.textSecondary,
+              color: rank == 1
+                  ? SasColors.accentAmber
+                  : SasColors.textSecondaryOf(context),
             ),
           ),
         ],
@@ -114,7 +114,7 @@ class LeaderboardItemCard extends StatelessWidget {
     );
   }
 
-  Widget _buildRankBadge(int rank) {
+  Widget _buildRankBadge(int rank, BuildContext context) {
     if (rank == 1) {
       return const Icon(
         Icons.emoji_events_rounded,
@@ -137,10 +137,10 @@ class LeaderboardItemCard extends StatelessWidget {
 
     return Text(
       '#$rank',
-      style: const TextStyle(
+      style: TextStyle(
         fontWeight: FontWeight.w700,
         fontSize: 12,
-        color: SasColors.textMuted,
+        color: SasColors.textMutedOf(context),
       ),
     );
   }

@@ -17,10 +17,12 @@ class AnalyticsLeaderboardTile extends ConsumerWidget {
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardBg = isDark ? const Color(0xFF1E2838) : Colors.white;
-    final primaryTextColor =
-        isDark ? SasColors.brilliance : const Color(0xFF0F172A);
-    final subtitleColor =
-        isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B);
+    final primaryTextColor = isDark
+        ? SasColors.brilliance
+        : const Color(0xFF0F172A);
+    final subtitleColor = isDark
+        ? const Color(0xFF94A3B8)
+        : const Color(0xFF64748B);
 
     return InkWell(
       onTap: () => context.push('/leaderboard'),
@@ -90,11 +92,7 @@ class AnalyticsLeaderboardTile extends ConsumerWidget {
             ),
 
             // Chevron
-            Icon(
-              Icons.chevron_right_rounded,
-              color: subtitleColor,
-              size: 20,
-            ),
+            Icon(Icons.chevron_right_rounded, color: subtitleColor, size: 20),
           ],
         ),
       ),

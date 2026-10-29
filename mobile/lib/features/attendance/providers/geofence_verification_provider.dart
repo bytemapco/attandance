@@ -6,12 +6,7 @@ import 'package:smart_attendance_app/features/attendance/providers/location_prov
 import 'package:smart_attendance_app/data/local/hive_service.dart';
 import 'package:smart_attendance_app/data/repositories/config_repository.dart';
 
-enum GeofenceStatus {
-  idle,
-  scanning,
-  success,
-  failed,
-}
+enum GeofenceStatus { idle, scanning, success, failed }
 
 class GeofenceVerificationState {
   final GeofenceStatus status;
@@ -50,7 +45,8 @@ class GeofenceVerificationState {
   }
 }
 
-class GeofenceVerificationNotifier extends AutoDisposeNotifier<GeofenceVerificationState> {
+class GeofenceVerificationNotifier
+    extends AutoDisposeNotifier<GeofenceVerificationState> {
   @override
   GeofenceVerificationState build() {
     return const GeofenceVerificationState();
@@ -62,7 +58,7 @@ class GeofenceVerificationNotifier extends AutoDisposeNotifier<GeofenceVerificat
     required double radius,
   }) async {
     state = state.copyWith(status: GeofenceStatus.scanning, clearError: true);
-    
+
     try {
       try {
         await ref.read(configRepositoryProvider).fetchAndCacheConfig();
@@ -88,7 +84,7 @@ class GeofenceVerificationNotifier extends AutoDisposeNotifier<GeofenceVerificat
 
       final locationService = ref.read(locationServiceProvider);
       final pos = await locationService.getHighlyAccuratePosition();
-      
+
       final distance = Geolocator.distanceBetween(
         pos.latitude,
         pos.longitude,
@@ -134,6 +130,8 @@ class GeofenceVerificationNotifier extends AutoDisposeNotifier<GeofenceVerificat
   }
 }
 
-final geofenceVerificationProvider = NotifierProvider.autoDispose<GeofenceVerificationNotifier, GeofenceVerificationState>(
-  () => GeofenceVerificationNotifier(),
-);
+final geofenceVerificationProvider =
+    NotifierProvider.autoDispose<
+      GeofenceVerificationNotifier,
+      GeofenceVerificationState
+    >(() => GeofenceVerificationNotifier());

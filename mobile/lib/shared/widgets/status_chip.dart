@@ -29,10 +29,14 @@ class StatusChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final isActive = isSelected;
     final bgColor = isActive
-        ? color.withValues(alpha: variant == StatusChipVariant.filled ? 0.1 : 0.15)
+        ? color.withValues(
+            alpha: variant == StatusChipVariant.filled ? 0.1 : 0.15,
+          )
         : SasColors.glassBg;
     final borderColor = isActive
-        ? color.withValues(alpha: variant == StatusChipVariant.filled ? 0.3 : 0.5)
+        ? color.withValues(
+            alpha: variant == StatusChipVariant.filled ? 0.3 : 0.5,
+          )
         : SasColors.glassBorder;
     final textColor = isActive ? color : SasColors.textMuted;
 

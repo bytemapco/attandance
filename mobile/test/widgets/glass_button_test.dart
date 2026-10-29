@@ -28,29 +28,32 @@ void main() {
       expect(wasPressed, isTrue);
     });
 
-    testWidgets('displays loading indicator and blocks tap when isLoading is true', (WidgetTester tester) async {
-      var wasPressed = false;
+    testWidgets(
+      'displays loading indicator and blocks tap when isLoading is true',
+      (WidgetTester tester) async {
+        var wasPressed = false;
 
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: GlassButton(
-              label: 'Submitting',
-              isLoading: true,
-              onPressed: () {
-                wasPressed = true;
-              },
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: GlassButton(
+                label: 'Submitting',
+                isLoading: true,
+                onPressed: () {
+                  wasPressed = true;
+                },
+              ),
             ),
           ),
-        ),
-      );
+        );
 
-      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+        expect(find.byType(CircularProgressIndicator), findsOneWidget);
 
-      await tester.tap(find.byType(GlassButton));
-      await tester.pump();
+        await tester.tap(find.byType(GlassButton));
+        await tester.pump();
 
-      expect(wasPressed, isFalse);
-    });
+        expect(wasPressed, isFalse);
+      },
+    );
   });
 }

@@ -1,4 +1,3 @@
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_attendance_app/data/repositories/attendance_repository.dart';
 import 'package:smart_attendance_app/utils/logger.dart';
@@ -9,9 +8,15 @@ class RegistrationState {
   final RegistrationStatus status;
   final String? errorMessage;
 
-  const RegistrationState({this.status = RegistrationStatus.idle, this.errorMessage});
+  const RegistrationState({
+    this.status = RegistrationStatus.idle,
+    this.errorMessage,
+  });
 
-  RegistrationState copyWith({RegistrationStatus? status, String? errorMessage}) {
+  RegistrationState copyWith({
+    RegistrationStatus? status,
+    String? errorMessage,
+  }) {
     return RegistrationState(
       status: status ?? this.status,
       errorMessage: errorMessage,
@@ -25,7 +30,10 @@ class RegistrationNotifier extends StateNotifier<RegistrationState> {
   RegistrationNotifier(this._repo) : super(const RegistrationState());
 
   Future<bool> uploadFace(String imagePath) async {
-    state = state.copyWith(status: RegistrationStatus.uploading, errorMessage: null);
+    state = state.copyWith(
+      status: RegistrationStatus.uploading,
+      errorMessage: null,
+    );
     try {
       try {
         await _repo.submitBiometricConsent();
@@ -44,10 +52,9 @@ class RegistrationNotifier extends StateNotifier<RegistrationState> {
       return false;
     }
   }
-
 }
 
 final registrationProvider =
     StateNotifierProvider<RegistrationNotifier, RegistrationState>((ref) {
-  return RegistrationNotifier(ref.read(attendanceRepositoryProvider));
-});
+      return RegistrationNotifier(ref.read(attendanceRepositoryProvider));
+    });

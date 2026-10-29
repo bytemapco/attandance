@@ -28,8 +28,12 @@ class VerificationPreviewFrame extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardBg = isDark ? SasColors.darkSurface : Colors.white;
-    final borderCol = isDark ? const Color(0x1FFFFFFF) : const Color(0xFFE3E9F1);
-    final primaryTextColor = isDark ? SasColors.brilliance : const Color(0xFF0F172A);
+    final borderCol = isDark
+        ? const Color(0x1FFFFFFF)
+        : const Color(0xFFE3E9F1);
+    final primaryTextColor = isDark
+        ? SasColors.brilliance
+        : const Color(0xFF0F172A);
 
     return Column(
       children: [
@@ -73,9 +77,14 @@ class VerificationPreviewFrame extends StatelessWidget {
                     right: 0,
                     child: Center(
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
                         decoration: BoxDecoration(
-                          color: (isDark ? const Color(0xFF0F172A) : Colors.white).withValues(alpha: 0.92),
+                          color:
+                              (isDark ? const Color(0xFF0F172A) : Colors.white)
+                                  .withValues(alpha: 0.92),
                           borderRadius: BorderRadius.circular(20),
                           border: Border.all(color: borderCol),
                           boxShadow: [
@@ -136,7 +145,10 @@ class VerificationPreviewFrame extends StatelessWidget {
                     child: SizedBox(
                       width: 22,
                       height: 22,
-                      child: CircularProgressIndicator(strokeWidth: 2.2, color: Color(0xFFF95721)),
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2.2,
+                        color: Color(0xFFF95721),
+                      ),
                     ),
                   ),
                 )
@@ -158,9 +170,14 @@ class VerificationPreviewFrame extends StatelessWidget {
                 if (isPoorQuality) ...[
                   const SizedBox(height: 12),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFF59E0B).withValues(alpha: isDark ? 0.15 : 0.08),
+                      color: const Color(
+                        0xFFF59E0B,
+                      ).withValues(alpha: isDark ? 0.15 : 0.08),
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(
                         color: const Color(0xFFF59E0B).withValues(alpha: 0.25),
@@ -168,13 +185,19 @@ class VerificationPreviewFrame extends StatelessWidget {
                     ),
                     child: Row(
                       children: [
-                        const Icon(Icons.wb_incandescent_outlined, size: 16, color: Color(0xFFF59E0B)),
+                        const Icon(
+                          Icons.wb_incandescent_outlined,
+                          size: 16,
+                          color: Color(0xFFF59E0B),
+                        ),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             'Low lighting detected. Retake in brighter light for faster verification.',
                             style: GoogleFonts.plusJakartaSans(
-                              color: isDark ? const Color(0xFFFBBF24) : const Color(0xFFB45309),
+                              color: isDark
+                                  ? const Color(0xFFFBBF24)
+                                  : const Color(0xFFB45309),
                               fontSize: 12,
                               fontWeight: FontWeight.w500,
                               height: 1.3,

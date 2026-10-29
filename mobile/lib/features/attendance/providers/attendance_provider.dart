@@ -1,11 +1,18 @@
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_attendance_app/core/exceptions.dart';
 import 'package:smart_attendance_app/data/repositories/attendance_repository.dart';
 import 'package:smart_attendance_app/domain/models/attendance.dart';
 import 'package:smart_attendance_app/utils/logger.dart';
 
-enum VerificationStep { gps, camera, preview, submitting, reviewing, confirming, done }
+enum VerificationStep {
+  gps,
+  camera,
+  preview,
+  submitting,
+  reviewing,
+  confirming,
+  done,
+}
 
 class AttendanceVerificationState {
   final VerificationStep step;
@@ -65,10 +72,11 @@ class AttendanceNotifier extends StateNotifier<AttendanceVerificationState> {
 
   void setGpsLocation(double lat, double lng, double accuracy) {
     state = state.copyWith(
-        latitude: lat,
-        longitude: lng,
-        accuracy: accuracy,
-        step: VerificationStep.camera);
+      latitude: lat,
+      longitude: lng,
+      accuracy: accuracy,
+      step: VerificationStep.camera,
+    );
   }
 
   void setImagePath(String path) {
@@ -105,8 +113,9 @@ class AttendanceNotifier extends StateNotifier<AttendanceVerificationState> {
       );
     } catch (e) {
       AppLogger.error('Attendance analyze failed: $e');
-      final displayError =
-          e is AppException ? e.message : 'Something went wrong. Please try again.';
+      final displayError = e is AppException
+          ? e.message
+          : 'Something went wrong. Please try again.';
       state = state.copyWith(
         errorMessage: displayError,
         isError: true,
@@ -142,8 +151,9 @@ class AttendanceNotifier extends StateNotifier<AttendanceVerificationState> {
       state = state.copyWith(result: result, step: VerificationStep.done);
     } catch (e) {
       AppLogger.error('Attendance confirm failed: $e');
-      final displayError =
-          e is AppException ? e.message : 'Something went wrong. Please try again.';
+      final displayError = e is AppException
+          ? e.message
+          : 'Something went wrong. Please try again.';
       state = state.copyWith(
         errorMessage: displayError,
         isError: true,
@@ -158,7 +168,9 @@ class AttendanceNotifier extends StateNotifier<AttendanceVerificationState> {
   }
 }
 
-final attendanceVerificationProvider = StateNotifierProvider<
-    AttendanceNotifier, AttendanceVerificationState>((ref) {
-  return AttendanceNotifier(ref.read(attendanceRepositoryProvider));
-});
+final attendanceVerificationProvider =
+    StateNotifierProvider<AttendanceNotifier, AttendanceVerificationState>((
+      ref,
+    ) {
+      return AttendanceNotifier(ref.read(attendanceRepositoryProvider));
+    });

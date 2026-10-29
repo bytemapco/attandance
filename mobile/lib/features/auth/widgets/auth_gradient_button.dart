@@ -26,11 +26,7 @@ class _AuthGradientButtonState extends State<AuthGradientButton> {
     const gradient = LinearGradient(
       begin: Alignment.centerLeft,
       end: Alignment.centerRight,
-      colors: [
-        Color(0xFFFF7A18),
-        Color(0xFFF95721),
-        Color(0xFFE24408),
-      ],
+      colors: [Color(0xFFFF7A18), Color(0xFFF95721), Color(0xFFE24408)],
     );
 
     return AnimatedScale(
@@ -72,7 +68,9 @@ class _AuthGradientButtonState extends State<AuthGradientButton> {
                         height: 22,
                         child: CircularProgressIndicator(
                           strokeWidth: 2.2,
-                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Colors.white,
+                          ),
                         ),
                       )
                     : Row(

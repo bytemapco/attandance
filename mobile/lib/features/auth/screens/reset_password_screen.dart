@@ -14,7 +14,8 @@ class ResetPasswordScreen extends ConsumerStatefulWidget {
   const ResetPasswordScreen({super.key, required this.token});
 
   @override
-  ConsumerState<ResetPasswordScreen> createState() => _ResetPasswordScreenState();
+  ConsumerState<ResetPasswordScreen> createState() =>
+      _ResetPasswordScreenState();
 }
 
 class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
@@ -41,10 +42,9 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
 
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
-    final success = await ref.read(resetPasswordProvider.notifier).submitReset(
-          token: widget.token,
-          newPassword: _passCtrl.text,
-        );
+    final success = await ref
+        .read(resetPasswordProvider.notifier)
+        .submitReset(token: widget.token, newPassword: _passCtrl.text);
     if (success && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -67,17 +67,21 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
             child: SafeArea(
               child: Center(
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 16,
+                  ),
                   child: state.isVerifying
                       ? _buildLoadingCard()
                       : (!state.isValid && !state.isSuccess)
-                          ? _buildInvalidCard(state.errorMessage)
-                          : _buildResetForm(state),
+                      ? _buildInvalidCard(state.errorMessage)
+                      : _buildResetForm(state),
                 ),
               ),
             ),
           ),
-          if (state.isSubmitting) const LoadingOverlay(message: 'Updating password...'),
+          if (state.isSubmitting)
+            const LoadingOverlay(message: 'Updating password...'),
         ],
       ),
     );
@@ -91,7 +95,10 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
         children: [
           CircularProgressIndicator(strokeWidth: 2.5),
           SizedBox(height: 20),
-          Text('Verifying reset link...', style: TextStyle(fontWeight: FontWeight.w600)),
+          Text(
+            'Verifying reset link...',
+            style: TextStyle(fontWeight: FontWeight.w600),
+          ),
         ],
       ),
     );
@@ -109,17 +116,29 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
               color: SasColors.danger.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.error_outline, color: SasColors.danger, size: 36),
+            child: const Icon(
+              Icons.error_outline,
+              color: SasColors.danger,
+              size: 36,
+            ),
           ),
           const SizedBox(height: 16),
-          const Text('Invalid or Expired Link',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
+          const Text(
+            'Invalid or Expired Link',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+          ),
           const SizedBox(height: 8),
-          Text(error ?? 'This reset link is invalid or has already been used.',
-              textAlign: TextAlign.center,
-              style: const TextStyle(color: SasColors.textMuted, fontSize: 13)),
+          Text(
+            error ?? 'This reset link is invalid or has already been used.',
+            textAlign: TextAlign.center,
+            style: const TextStyle(color: SasColors.textMuted, fontSize: 13),
+          ),
           const SizedBox(height: 24),
-          GlassButton(label: 'Back to Login', isExpanded: true, onPressed: () => context.go('/login')),
+          GlassButton(
+            label: 'Back to Login',
+            isExpanded: true,
+            onPressed: () => context.go('/login'),
+          ),
         ],
       ),
     );
@@ -135,17 +154,30 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
             color: SasColors.osageOrange.withValues(alpha: 0.12),
-            border: Border.all(color: SasColors.osageOrange.withValues(alpha: 0.35), width: 1.2),
+            border: Border.all(
+              color: SasColors.osageOrange.withValues(alpha: 0.35),
+              width: 1.2,
+            ),
           ),
-          child: const Icon(Icons.lock_reset_rounded, color: SasColors.osageOrange, size: 26),
+          child: const Icon(
+            Icons.lock_reset_rounded,
+            color: SasColors.osageOrange,
+            size: 26,
+          ),
         ),
         const SizedBox(height: 16),
-        Text('Reset Password',
-            style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w700)),
+        Text(
+          'Reset Password',
+          style: Theme.of(
+            context,
+          ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w700),
+        ),
         const SizedBox(height: 6),
-        Text('Create a new password for ${state.email ?? "your account"}',
-            textAlign: TextAlign.center,
-            style: const TextStyle(color: SasColors.textMuted, fontSize: 13)),
+        Text(
+          'Create a new password for ${state.email ?? "your account"}',
+          textAlign: TextAlign.center,
+          style: const TextStyle(color: SasColors.textMuted, fontSize: 13),
+        ),
         const SizedBox(height: 24),
         GlassCard(
           padding: const EdgeInsets.all(24),
@@ -161,13 +193,17 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
                   prefixIcon: Icons.lock_outline,
                   obscureText: _obscurePass,
                   suffix: IconButton(
-                    icon: Icon(_obscurePass ? Icons.visibility_off : Icons.visibility),
-                    onPressed: () => setState(() => _obscurePass = !_obscurePass),
+                    icon: Icon(
+                      _obscurePass ? Icons.visibility_off : Icons.visibility,
+                    ),
+                    onPressed: () =>
+                        setState(() => _obscurePass = !_obscurePass),
                   ),
                   validator: (v) {
                     if (v == null || v.isEmpty) return 'Password is required';
                     if (v.length < 8) return 'Must be at least 8 characters';
-                    if (!RegExp(r'[A-Za-z]').hasMatch(v) || !RegExp(r'[0-9]').hasMatch(v)) {
+                    if (!RegExp(r'[A-Za-z]').hasMatch(v) ||
+                        !RegExp(r'[0-9]').hasMatch(v)) {
                       return 'Must contain letters and numbers';
                     }
                     return null;
@@ -181,13 +217,21 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
                   prefixIcon: Icons.lock_clock_outlined,
                   obscureText: _obscureConfirm,
                   suffix: IconButton(
-                    icon: Icon(_obscureConfirm ? Icons.visibility_off : Icons.visibility),
-                    onPressed: () => setState(() => _obscureConfirm = !_obscureConfirm),
+                    icon: Icon(
+                      _obscureConfirm ? Icons.visibility_off : Icons.visibility,
+                    ),
+                    onPressed: () =>
+                        setState(() => _obscureConfirm = !_obscureConfirm),
                   ),
-                  validator: (v) => v != _passCtrl.text ? 'Passwords do not match' : null,
+                  validator: (v) =>
+                      v != _passCtrl.text ? 'Passwords do not match' : null,
                 ),
                 const SizedBox(height: 24),
-                GlassButton(label: 'Update Password', isExpanded: true, onPressed: _submit),
+                GlassButton(
+                  label: 'Update Password',
+                  isExpanded: true,
+                  onPressed: _submit,
+                ),
               ],
             ),
           ),

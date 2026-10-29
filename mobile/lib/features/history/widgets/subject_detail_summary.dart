@@ -39,29 +39,57 @@ class SubjectDetailSummary extends StatelessWidget {
         children: [
           Text(
             subjectName,
-            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16, color: SasColors.textPrimaryOf(context)),
+            style: TextStyle(
+              fontWeight: FontWeight.w700,
+              fontSize: 16,
+              color: SasColors.textPrimaryOf(context),
+            ),
           ),
           if (className.isNotEmpty)
-            Text(className, style: const TextStyle(color: SasColors.textMuted, fontSize: 12)),
+            Text(
+              className,
+              style: const TextStyle(color: SasColors.textMuted, fontSize: 12),
+            ),
           const SizedBox(height: 14),
           Row(
             children: [
-              Expanded(child: _buildMiniStat('Present', '$present', SasColors.accentEmerald)),
+              Expanded(
+                child: _buildMiniStat(
+                  'Present',
+                  '$present',
+                  SasColors.accentEmerald,
+                ),
+              ),
               const SizedBox(width: 8),
-              Expanded(child: _buildMiniStat('Absent', '$absent', SasColors.danger)),
+              Expanded(
+                child: _buildMiniStat('Absent', '$absent', SasColors.danger),
+              ),
               const SizedBox(width: 8),
-              Expanded(child: _buildMiniStat('Flagged', '$flagged', SasColors.warning)),
+              Expanded(
+                child: _buildMiniStat('Flagged', '$flagged', SasColors.warning),
+              ),
               const SizedBox(width: 8),
-              Expanded(child: _buildMiniStat('Total', '$total', SasColors.info)),
+              Expanded(
+                child: _buildMiniStat('Total', '$total', SasColors.info),
+              ),
             ],
           ),
           const SizedBox(height: 14),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('Attendance Rate', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
-              Text('${pct.toStringAsFixed(1)}%',
-                  style: TextStyle(color: color, fontWeight: FontWeight.w800, fontSize: 15)),
+              const Text(
+                'Attendance Rate',
+                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+              ),
+              Text(
+                '${pct.toStringAsFixed(1)}%',
+                style: TextStyle(
+                  color: color,
+                  fontWeight: FontWeight.w800,
+                  fontSize: 15,
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 6),
@@ -78,11 +106,13 @@ class SubjectDetailSummary extends StatelessWidget {
           Text(
             pct >= target
                 ? (needs.canMiss > 0
-                    ? 'You can miss ${needs.canMiss} more sessions and maintain ${target.toStringAsFixed(0)}%'
-                    : 'You are meeting your attendance target.')
+                      ? 'You can miss ${needs.canMiss} more sessions and maintain ${target.toStringAsFixed(0)}%'
+                      : 'You are meeting your attendance target.')
                 : 'Attend ${needs.needToAttend} more sessions to reach ${target.toStringAsFixed(0)}%',
             style: TextStyle(
-              color: pct >= target ? SasColors.accentEmerald : SasColors.warning,
+              color: pct >= target
+                  ? SasColors.accentEmerald
+                  : SasColors.warning,
               fontSize: 12,
               fontWeight: FontWeight.w500,
             ),
@@ -102,8 +132,22 @@ class SubjectDetailSummary extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Text(value, style: TextStyle(color: color, fontWeight: FontWeight.w800, fontSize: 16)),
-          Text(label, style: const TextStyle(color: SasColors.textMuted, fontSize: 10, fontWeight: FontWeight.w600)),
+          Text(
+            value,
+            style: TextStyle(
+              color: color,
+              fontWeight: FontWeight.w800,
+              fontSize: 16,
+            ),
+          ),
+          Text(
+            label,
+            style: const TextStyle(
+              color: SasColors.textMuted,
+              fontSize: 10,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
         ],
       ),
     );

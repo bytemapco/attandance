@@ -71,11 +71,15 @@ class RefreshPillIndicator extends StatelessWidget {
               Text(
                 isRefreshing
                     ? 'Syncing Attendance...'
-                    : (progress >= 1.0 ? 'Release to Refresh' : 'Pull to Refresh'),
+                    : (progress >= 1.0
+                          ? 'Release to Refresh'
+                          : 'Pull to Refresh'),
                 style: SasTypography.style(
                   fontSize: 12.5,
                   fontWeight: FontWeight.w700,
-                  color: isDark ? SasColors.brilliance : const Color(0xFF0F172A),
+                  color: isDark
+                      ? SasColors.brilliance
+                      : const Color(0xFF0F172A),
                 ),
               ),
             ],

@@ -1,4 +1,3 @@
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:smart_attendance_app/core/constants.dart';
@@ -13,6 +12,7 @@ class SecureStorageService {
       encryptedSharedPreferences: true,
       resetOnError: true,
     ),
+    iOptions: IOSOptions(accessibility: KeychainAccessibility.first_unlock),
   );
 
   Future<void> saveToken(String token) async {

@@ -1,4 +1,3 @@
-
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_attendance_app/data/api/dio_client.dart';
@@ -13,7 +12,11 @@ class AuthApi {
 
   const AuthApi(this._dio);
 
-  Future<TokenResponse> login(String email, String password, {String? deviceUuid}) async {
+  Future<TokenResponse> login(
+    String email,
+    String password, {
+    String? deviceUuid,
+  }) async {
     final response = await _dio.post<Map<String, dynamic>>(
       '/auth/login',
       data: {
@@ -51,10 +54,7 @@ class AuthApi {
   Future<Map<String, dynamic>> verifyResetToken(String token) async {
     final response = await _dio.get<Map<String, dynamic>>(
       '/auth/verify-token',
-      queryParameters: {
-        'token': token,
-        'token_type': 'reset',
-      },
+      queryParameters: {'token': token, 'token_type': 'reset'},
     );
     return response.data ?? {};
   }
@@ -65,10 +65,7 @@ class AuthApi {
   }) async {
     await _dio.post<Map<String, dynamic>>(
       '/auth/reset-password',
-      data: {
-        'token': token,
-        'new_password': newPassword,
-      },
+      data: {'token': token, 'new_password': newPassword},
     );
   }
 }

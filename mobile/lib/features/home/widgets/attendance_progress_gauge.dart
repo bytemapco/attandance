@@ -23,8 +23,8 @@ class AttendanceProgressGauge extends StatelessWidget {
     final List<Color> gradientColors = isCompliant
         ? const [Color(0xFF059669), Color(0xFF10B981), Color(0xFF34D399)]
         : overallPct < 50
-            ? const [Color(0xFFE11D48), Color(0xFFF43F5E), Color(0xFFFB7185)]
-            : const [Color(0xFFEA580C), Color(0xFFF6A242), Color(0xFFFBBF24)];
+        ? const [Color(0xFFE11D48), Color(0xFFF43F5E), Color(0xFFFB7185)]
+        : const [Color(0xFFEA580C), Color(0xFFF6A242), Color(0xFFFBBF24)];
 
     return SizedBox(
       width: size,
@@ -32,15 +32,17 @@ class AttendanceProgressGauge extends StatelessWidget {
       child: Stack(
         alignment: Alignment.center,
         children: [
-          CustomPaint(
-            size: Size(size, size),
-            painter: _RingPainter(
-              progress: clampedPct,
-              gradientColors: gradientColors,
-              trackColor: isDark
-                  ? const Color(0x2EBAC0BE)
-                  : const Color(0x1FBAC0BE),
-              strokeWidth: 8.0,
+          RepaintBoundary(
+            child: CustomPaint(
+              size: Size(size, size),
+              painter: _RingPainter(
+                progress: clampedPct,
+                gradientColors: gradientColors,
+                trackColor: isDark
+                    ? const Color(0x2EBAC0BE)
+                    : const Color(0x1FBAC0BE),
+                strokeWidth: 8.0,
+              ),
             ),
           ),
           Column(

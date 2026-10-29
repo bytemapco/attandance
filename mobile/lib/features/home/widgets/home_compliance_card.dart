@@ -45,18 +45,12 @@ class HomeComplianceCard extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Expanded(
-              child: HomeComplianceInfo(percentage: percentage),
-            ),
+            Expanded(child: HomeComplianceInfo(percentage: percentage)),
             const SizedBox(width: 8),
-            HomeComplianceArc(
-              progress: clampedPct,
-              size: 122,
-            ),
+            HomeComplianceArc(progress: clampedPct, size: 122),
           ],
         ),
       ),
     );
   }
 }
-

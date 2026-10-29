@@ -49,9 +49,7 @@ class GlassBottomNav extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: bgColor,
-        border: Border(
-          top: BorderSide(color: borderColor, width: 0.5),
-        ),
+        border: Border(top: BorderSide(color: borderColor, width: 0.5)),
         boxShadow: isDark
             ? null
             : [
@@ -116,8 +114,9 @@ class _NavTabItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final activeColor = SasColors.osageOrange;
-    final inactiveColor =
-        isDark ? const Color(0xFFCBD5E1) : const Color(0xFF475569);
+    final inactiveColor = isDark
+        ? const Color(0xFFCBD5E1)
+        : const Color(0xFF475569);
 
     return Expanded(
       child: GestureDetector(
@@ -136,7 +135,9 @@ class _NavTabItem extends StatelessWidget {
                 height: 32,
                 decoration: BoxDecoration(
                   color: selected
-                      ? SasColors.osageOrange.withValues(alpha: isDark ? 0.18 : 0.12)
+                      ? SasColors.osageOrange.withValues(
+                          alpha: isDark ? 0.18 : 0.12,
+                        )
                       : Colors.transparent,
                   borderRadius: BorderRadius.circular(16),
                 ),

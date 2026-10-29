@@ -32,49 +32,50 @@ class ResultConfig {
   });
 
   factory ResultConfig.error(String? message) => ResultConfig(
-        icon: Icons.error_outline_rounded,
-        color: SasColors.danger,
-        title: 'Submission Failed',
-        subtitle: message ?? 'Could not submit attendance. Please try again.',
-      );
+    icon: Icons.error_outline_rounded,
+    color: SasColors.danger,
+    title: 'Submission Failed',
+    subtitle: message ?? 'Could not submit attendance. Please try again.',
+  );
 
   factory ResultConfig.offline() => const ResultConfig(
-        icon: Icons.cloud_done_rounded,
-        color: SasColors.info,
-        title: 'Saved Offline',
-        subtitle: 'Attendance queued locally. It will automatically sync when online.',
-      );
+    icon: Icons.cloud_done_rounded,
+    color: SasColors.info,
+    title: 'Saved Offline',
+    subtitle:
+        'Attendance queued locally. It will automatically sync when online.',
+  );
 
   factory ResultConfig.present(AttendanceResult att) => ResultConfig(
-        icon: Icons.check_circle_rounded,
-        color: SasColors.accentEmerald,
-        title: 'Verified Present',
-        subtitle: 'Attendance confirmed for this class session.',
-        scores: ScoreData(
-          overall: att.finalAiScore,
-          face: att.faceScore,
-          liveness: att.livenessScore,
-          background: att.backgroundScore,
-        ),
-      );
+    icon: Icons.check_circle_rounded,
+    color: SasColors.accentEmerald,
+    title: 'Verified Present',
+    subtitle: 'Attendance confirmed for this class session.',
+    scores: ScoreData(
+      overall: att.finalAiScore,
+      face: att.faceScore,
+      liveness: att.livenessScore,
+      background: att.backgroundScore,
+    ),
+  );
 
   factory ResultConfig.flagged(AttendanceResult att) => ResultConfig(
-        icon: Icons.schedule_rounded,
-        color: const Color(0xFFF95721),
-        title: 'Sent for Review',
-        subtitle: 'Attendance recorded. Pending instructor review.',
-        scores: ScoreData(
-          overall: att.finalAiScore,
-          face: att.faceScore,
-          liveness: att.livenessScore,
-          background: att.backgroundScore,
-        ),
-      );
+    icon: Icons.schedule_rounded,
+    color: const Color(0xFFF95721),
+    title: 'Sent for Review',
+    subtitle: 'Attendance recorded. Pending instructor review.',
+    scores: ScoreData(
+      overall: att.finalAiScore,
+      face: att.faceScore,
+      liveness: att.livenessScore,
+      background: att.backgroundScore,
+    ),
+  );
 
   factory ResultConfig.processing() => const ResultConfig(
-        icon: Icons.hourglass_top_rounded,
-        color: SasColors.textMuted,
-        title: 'Checking Attendance',
-        subtitle: 'Verifying location and biometric records...',
-      );
+    icon: Icons.hourglass_top_rounded,
+    color: SasColors.textMuted,
+    title: 'Checking Attendance',
+    subtitle: 'Verifying location and biometric records...',
+  );
 }

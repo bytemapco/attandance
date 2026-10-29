@@ -44,7 +44,9 @@ class _FlaggedTroubleshootFaqState extends State<FlaggedTroubleshootFaq> {
             ),
           ),
           trailing: Icon(
-            _expanded ? Icons.keyboard_arrow_up_rounded : Icons.keyboard_arrow_down_rounded,
+            _expanded
+                ? Icons.keyboard_arrow_up_rounded
+                : Icons.keyboard_arrow_down_rounded,
             color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
           ),
           onExpansionChanged: (v) => setState(() => _expanded = v),
@@ -52,7 +54,8 @@ class _FlaggedTroubleshootFaqState extends State<FlaggedTroubleshootFaq> {
             _TipItem(
               icon: Icons.wb_sunny_outlined,
               title: 'Lighting conditions',
-              desc: 'Ensure even front lighting. Avoid strong backlights or dark shadows.',
+              desc:
+                  'Ensure even front lighting. Avoid strong backlights or dark shadows.',
             ),
             SizedBox(height: 10),
             _TipItem(
@@ -112,7 +115,9 @@ class _TipItem extends StatelessWidget {
               Text(
                 desc,
                 style: GoogleFonts.plusJakartaSans(
-                  color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
+                  color: isDark
+                      ? const Color(0xFF94A3B8)
+                      : const Color(0xFF64748B),
                   fontSize: 11,
                   height: 1.35,
                 ),

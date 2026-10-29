@@ -3,7 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:smart_attendance_app/app/theme.dart';
 import 'package:smart_attendance_app/app/typography.dart';
 
-class VerificationAppBar extends StatelessWidget implements PreferredSizeWidget {
+class VerificationAppBar extends StatelessWidget
+    implements PreferredSizeWidget {
   const VerificationAppBar({super.key});
 
   @override
@@ -12,7 +13,9 @@ class VerificationAppBar extends StatelessWidget implements PreferredSizeWidget 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final primaryTextColor = isDark ? SasColors.brilliance : const Color(0xFF0F172A);
+    final primaryTextColor = isDark
+        ? SasColors.brilliance
+        : const Color(0xFF0F172A);
 
     return AppBar(
       backgroundColor: Colors.transparent,

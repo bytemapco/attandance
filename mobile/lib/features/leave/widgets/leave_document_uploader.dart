@@ -17,15 +17,23 @@ class LeaveDocumentUploader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textSecondary = SasColors.textSecondaryOf(context);
+    final textMuted = SasColors.textMutedOf(context);
+    final cardBg = isDark ? SasColors.darkSurface : SasColors.bgSecondary;
+    final cardBorder = isDark
+        ? const Color(0x2AFFFFFF)
+        : const Color(0xFFE2E8F0);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Supporting Documentation (Optional)',
           style: TextStyle(
             fontWeight: FontWeight.w700,
             fontSize: 13,
-            color: SasColors.textSecondary,
+            color: textSecondary,
           ),
         ),
         const SizedBox(height: 8),
@@ -72,22 +80,22 @@ class LeaveDocumentUploader extends StatelessWidget {
                   child: Container(
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     decoration: BoxDecoration(
-                      color: SasColors.bgSecondary,
+                      color: cardBg,
                       borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: SasColors.glassBorder),
+                      border: Border.all(color: cardBorder),
                     ),
-                    child: const Column(
+                    child: Column(
                       children: [
                         Icon(
                           Icons.photo_library_outlined,
-                          color: SasColors.textMuted,
+                          color: textMuted,
                           size: 22,
                         ),
-                        SizedBox(height: 4),
+                        const SizedBox(height: 4),
                         Text(
                           'Upload Image',
                           style: TextStyle(
-                            color: SasColors.textSecondary,
+                            color: textSecondary,
                             fontSize: 11,
                             fontWeight: FontWeight.w600,
                           ),
@@ -105,22 +113,22 @@ class LeaveDocumentUploader extends StatelessWidget {
                   child: Container(
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     decoration: BoxDecoration(
-                      color: SasColors.bgSecondary,
+                      color: cardBg,
                       borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: SasColors.glassBorder),
+                      border: Border.all(color: cardBorder),
                     ),
-                    child: const Column(
+                    child: Column(
                       children: [
                         Icon(
                           Icons.camera_alt_outlined,
-                          color: SasColors.textMuted,
+                          color: textMuted,
                           size: 22,
                         ),
-                        SizedBox(height: 4),
+                        const SizedBox(height: 4),
                         Text(
                           'Take Photo',
                           style: TextStyle(
-                            color: SasColors.textSecondary,
+                            color: textSecondary,
                             fontSize: 11,
                             fontWeight: FontWeight.w600,
                           ),

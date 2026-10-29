@@ -21,7 +21,9 @@ class GeofenceStatusCard extends StatelessWidget {
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardBg = isDark ? SasColors.darkSurface : Colors.white;
-    final borderCol = isDark ? const Color(0x1FFFFFFF) : const Color(0xFFE3E9F1);
+    final borderCol = isDark
+        ? const Color(0x1FFFFFFF)
+        : const Color(0xFFE3E9F1);
 
     Color statusColor;
     String statusTitle;
@@ -103,7 +105,11 @@ class GeofenceStatusCard extends StatelessWidget {
               height: 48,
               child: ElevatedButton.icon(
                 onPressed: onRetry,
-                icon: const Icon(Icons.refresh_rounded, size: 18, color: Colors.white),
+                icon: const Icon(
+                  Icons.refresh_rounded,
+                  size: 18,
+                  color: Colors.white,
+                ),
                 label: Text(
                   'Retry Location',
                   style: GoogleFonts.plusJakartaSans(
@@ -116,7 +122,9 @@ class GeofenceStatusCard extends StatelessWidget {
                   backgroundColor: const Color(0xFFF95721),
                   elevation: 1,
                   shadowColor: const Color(0xFFF95721).withValues(alpha: 0.35),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
                 ),
               ),
             ),

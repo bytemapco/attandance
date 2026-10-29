@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:smart_attendance_app/data/api/dio_client.dart';
 import 'package:smart_attendance_app/data/api/student_api.dart';
 import 'package:smart_attendance_app/data/local/device_service.dart';
 import 'package:smart_attendance_app/data/local/location_service.dart';
@@ -43,16 +44,22 @@ class SmartPassNotifier extends StateNotifier<SmartPassState> {
   final LocationService _locationService;
 
   SmartPassNotifier(this._api, this._deviceService, this._locationService)
-      : super(const SmartPassState());
+    : super(const SmartPassState());
 
   Future<void> scanAndVerifyPass(String qrToken) async {
     final trimmed = qrToken.trim();
     if (trimmed.isEmpty) {
-      state = state.copyWith(errorMessage: 'Please scan or enter a valid QR token.');
+      state = state.copyWith(
+        errorMessage: 'Please scan or enter a valid QR token.',
+      );
       return;
     }
 
-    state = state.copyWith(isLoading: true, clearError: true, clearResult: true);
+    state = state.copyWith(
+      isLoading: true,
+      clearError: true,
+      clearResult: true,
+    );
     try {
       final deviceUuid = await _deviceService.getDeviceUUID();
 
@@ -79,7 +86,8 @@ class SmartPassNotifier extends StateNotifier<SmartPassState> {
       if (lat == null || lng == null) {
         state = state.copyWith(
           isLoading: false,
-          errorMessage: 'Unable to acquire accurate GPS position. Please ensure location services are enabled and permissions are granted.',
+          errorMessage:
+              'Unable to acquire accurate GPS position. Please ensure location services are enabled and permissions are granted.',
         );
         return;
       }
@@ -101,33 +109,34 @@ class SmartPassNotifier extends StateNotifier<SmartPassState> {
       );
     } on DioException catch (dioErr) {
       if (!mounted) return;
-      String msg = 'Verification failed. Please try again.';
-      if (dioErr.response?.data is Map) {
-        final d = dioErr.response!.data as Map;
-        msg = d['detail'] as String? ?? msg;
-      }
-      AppLogger.error('Smart Pass scan error: $msg');
-      state = state.copyWith(isLoading: false, errorMessage: msg);
+      final mapped = mapDioError(dioErr);
+      AppLogger.error('Smart Pass scan error: ${mapped.message}');
+      state = state.copyWith(isLoading: false, errorMessage: mapped.message);
     } catch (e) {
       if (!mounted) return;
       AppLogger.error('Smart Pass failed: $e');
       state = state.copyWith(
         isLoading: false,
-        errorMessage: 'Verification failed: ${e.toString().replaceAll("Exception: ", "")}',
+        errorMessage:
+            'Verification failed: ${e.toString().replaceAll("Exception: ", "")}',
       );
     }
   }
 
   void resetScan() {
-    state = state.copyWith(clearResult: true, clearError: true, isLoading: false);
+    state = state.copyWith(
+      clearResult: true,
+      clearError: true,
+      isLoading: false,
+    );
   }
 }
 
 final smartPassProvider =
     StateNotifierProvider.autoDispose<SmartPassNotifier, SmartPassState>((ref) {
-  return SmartPassNotifier(
-    ref.read(studentApiProvider),
-    ref.read(deviceServiceProvider),
-    LocationService(),
-  );
-});
+      return SmartPassNotifier(
+        ref.read(studentApiProvider),
+        ref.read(deviceServiceProvider),
+        LocationService(),
+      );
+    });

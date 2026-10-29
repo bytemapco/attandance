@@ -25,7 +25,9 @@ class ResultScreen extends ConsumerWidget {
       config = ResultConfig.offline();
     } else if (result is OnlineResult) {
       final att = result.result;
-      config = att.isPresent ? ResultConfig.present(att) : ResultConfig.flagged(att);
+      config = att.isPresent
+          ? ResultConfig.present(att)
+          : ResultConfig.flagged(att);
     } else {
       config = ResultConfig.processing();
     }
@@ -35,7 +37,9 @@ class ResultScreen extends ConsumerWidget {
 
     void goHome() {
       context.go('/home');
-      Future.microtask(() => ref.read(attendanceVerificationProvider.notifier).reset());
+      Future.microtask(
+        () => ref.read(attendanceVerificationProvider.notifier).reset(),
+      );
     }
 
     return PopScope(
@@ -44,14 +48,19 @@ class ResultScreen extends ConsumerWidget {
         if (!didPop) goHome();
       },
       child: Scaffold(
-        backgroundColor: isDark ? SasColors.darkCanvas : const Color(0xFFF4F7FB),
+        backgroundColor: isDark
+            ? SasColors.darkCanvas
+            : const Color(0xFFF4F7FB),
         body: SafeArea(
           child: Center(
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 480),
               child: SingleChildScrollView(
                 physics: const ClampingScrollPhysics(),
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 24,
+                ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -75,7 +84,9 @@ class ResultScreen extends ConsumerWidget {
                         config.subtitle,
                         textAlign: TextAlign.center,
                         style: GoogleFonts.plusJakartaSans(
-                          color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
+                          color: isDark
+                              ? const Color(0xFF94A3B8)
+                              : const Color(0xFF64748B),
                           fontSize: 14,
                           height: 1.4,
                           fontWeight: FontWeight.w500,
@@ -98,9 +109,17 @@ class ResultScreen extends ConsumerWidget {
                             } else {
                               context.push('/history');
                             }
-                            Future.microtask(() => ref.read(attendanceVerificationProvider.notifier).reset());
+                            Future.microtask(
+                              () => ref
+                                  .read(attendanceVerificationProvider.notifier)
+                                  .reset(),
+                            );
                           },
-                          icon: const Icon(Icons.rate_review_outlined, size: 20, color: Colors.white),
+                          icon: const Icon(
+                            Icons.rate_review_outlined,
+                            size: 20,
+                            color: Colors.white,
+                          ),
                           label: Text(
                             'View details & add note',
                             style: GoogleFonts.plusJakartaSans(
@@ -112,8 +131,12 @@ class ResultScreen extends ConsumerWidget {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFFF95721),
                             elevation: 0,
-                            shadowColor: const Color(0xFFF95721).withValues(alpha: 0.35),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                            shadowColor: const Color(
+                              0xFFF95721,
+                            ).withValues(alpha: 0.35),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
                           ),
                         ),
                       ),
@@ -125,7 +148,9 @@ class ResultScreen extends ConsumerWidget {
                           style: GoogleFonts.plusJakartaSans(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
-                            color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
+                            color: isDark
+                                ? const Color(0xFF94A3B8)
+                                : const Color(0xFF64748B),
                           ),
                         ),
                       ),
@@ -135,7 +160,11 @@ class ResultScreen extends ConsumerWidget {
                         height: 52,
                         child: ElevatedButton.icon(
                           onPressed: goHome,
-                          icon: const Icon(Icons.check_rounded, size: 20, color: Colors.white),
+                          icon: const Icon(
+                            Icons.check_rounded,
+                            size: 20,
+                            color: Colors.white,
+                          ),
                           label: Text(
                             'Back to dashboard',
                             style: GoogleFonts.plusJakartaSans(
@@ -147,8 +176,12 @@ class ResultScreen extends ConsumerWidget {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFFF95721),
                             elevation: 0,
-                            shadowColor: const Color(0xFFF95721).withValues(alpha: 0.35),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                            shadowColor: const Color(
+                              0xFFF95721,
+                            ).withValues(alpha: 0.35),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
                           ),
                         ),
                       ),

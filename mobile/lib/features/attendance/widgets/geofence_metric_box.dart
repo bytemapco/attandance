@@ -46,7 +46,9 @@ class GeofenceMetricBox extends StatelessWidget {
                   label,
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 11,
-                    color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
+                    color: isDark
+                        ? const Color(0xFF94A3B8)
+                        : const Color(0xFF64748B),
                     fontWeight: FontWeight.w500,
                   ),
                   overflow: TextOverflow.ellipsis,

@@ -61,7 +61,10 @@ class _GeofenceRadarIndicatorState extends State<GeofenceRadarIndicator>
               animation: _radarController,
               builder: (context, _) => CustomPaint(
                 size: const Size(70, 70),
-                painter: _RadarPainter(progress: _radarController.value, color: widget.color),
+                painter: _RadarPainter(
+                  progress: _radarController.value,
+                  color: widget.color,
+                ),
               ),
             ),
           Container(
@@ -70,9 +73,16 @@ class _GeofenceRadarIndicatorState extends State<GeofenceRadarIndicator>
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: widget.color.withValues(alpha: 0.12),
-              border: Border.all(color: widget.color.withValues(alpha: 0.4), width: 1.5),
+              border: Border.all(
+                color: widget.color.withValues(alpha: 0.4),
+                width: 1.5,
+              ),
             ),
-            child: Icon(_iconForStatus(widget.status), color: widget.color, size: 28),
+            child: Icon(
+              _iconForStatus(widget.status),
+              color: widget.color,
+              size: 28,
+            ),
           ),
         ],
       ),
@@ -110,7 +120,12 @@ class _RadarPainter extends CustomPainter {
 
     final path = Path()
       ..moveTo(center.dx, center.dy)
-      ..arcTo(Rect.fromCircle(center: center, radius: radius), startAngle, sweepAngle, false)
+      ..arcTo(
+        Rect.fromCircle(center: center, radius: radius),
+        startAngle,
+        sweepAngle,
+        false,
+      )
       ..close();
 
     canvas.drawPath(path, sweepPaint);

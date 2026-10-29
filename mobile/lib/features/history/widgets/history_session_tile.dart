@@ -19,9 +19,12 @@ class _HistorySessionTileState extends State<HistorySessionTile> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final item = widget.item;
     final hasAiScores = item.finalAiScore != null;
     final itemStatusColor = statusColor(item.status);
+    final textSecondary = SasColors.textSecondaryOf(context);
+    final textMuted = SasColors.textMutedOf(context);
 
     return GlassCard(
       padding: const EdgeInsets.all(12),
@@ -56,10 +59,7 @@ class _HistorySessionTileState extends State<HistorySessionTile> {
                     ),
                     Text(
                       item.subject,
-                      style: const TextStyle(
-                        color: SasColors.textSecondary,
-                        fontSize: 11,
-                      ),
+                      style: TextStyle(color: textSecondary, fontSize: 11),
                     ),
                   ],
                 ),
@@ -68,8 +68,10 @@ class _HistorySessionTileState extends State<HistorySessionTile> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 3,
+                    ),
                     decoration: BoxDecoration(
                       color: itemStatusColor.withValues(alpha: 0.08),
                       borderRadius: BorderRadius.circular(4),
@@ -89,10 +91,7 @@ class _HistorySessionTileState extends State<HistorySessionTile> {
                   const SizedBox(height: 2),
                   Text(
                     DateFormat.jm().format(item.markedAt),
-                    style: const TextStyle(
-                      color: SasColors.textMuted,
-                      fontSize: 10,
-                    ),
+                    style: TextStyle(color: textMuted, fontSize: 10),
                   ),
                 ],
               ),
@@ -103,30 +102,45 @@ class _HistorySessionTileState extends State<HistorySessionTile> {
                       ? Icons.keyboard_arrow_up_rounded
                       : Icons.keyboard_arrow_down_rounded,
                   size: 16,
-                  color: SasColors.textMuted,
+                  color: textMuted,
                 ),
               ],
               if (item.status == 'Flagged') ...[
                 const SizedBox(width: 6),
-                const Icon(
-                  Icons.chevron_right_rounded,
-                  size: 16,
-                  color: SasColors.textMuted,
-                ),
+                Icon(Icons.chevron_right_rounded, size: 16, color: textMuted),
               ],
             ],
           ),
           if (_expanded && hasAiScores) ...[
             const SizedBox(height: 10),
-            const Divider(color: SasColors.glassBorder, height: 1),
+            Divider(
+              color: isDark ? const Color(0x2AFFFFFF) : const Color(0xFFE2E8F0),
+              height: 1,
+            ),
             const SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _ScoreItem(label: 'Face', score: item.faceScore ?? 0),
-                _ScoreItem(label: 'Liveness', score: item.livenessScore ?? 0),
-                _ScoreItem(label: 'Room', score: item.backgroundScore ?? 0),
-                _ScoreItem(label: 'Score', score: item.finalAiScore ?? 0),
+                _ScoreItem(
+                  label: 'Face',
+                  score: item.faceScore ?? 0,
+                  textMuted: textMuted,
+                ),
+                _ScoreItem(
+                  label: 'Liveness',
+                  score: item.livenessScore ?? 0,
+                  textMuted: textMuted,
+                ),
+                _ScoreItem(
+                  label: 'Room',
+                  score: item.backgroundScore ?? 0,
+                  textMuted: textMuted,
+                ),
+                _ScoreItem(
+                  label: 'Score',
+                  score: item.finalAiScore ?? 0,
+                  textMuted: textMuted,
+                ),
               ],
             ),
           ],
@@ -139,17 +153,19 @@ class _HistorySessionTileState extends State<HistorySessionTile> {
 class _ScoreItem extends StatelessWidget {
   final String label;
   final double score;
-  const _ScoreItem({required this.label, required this.score});
+  final Color textMuted;
+  const _ScoreItem({
+    required this.label,
+    required this.score,
+    required this.textMuted,
+  });
 
   @override
   Widget build(BuildContext context) {
     final color = scoreColor(score);
     return Column(
       children: [
-        Text(
-          label,
-          style: const TextStyle(color: SasColors.textMuted, fontSize: 10),
-        ),
+        Text(label, style: TextStyle(color: textMuted, fontSize: 10)),
         const SizedBox(height: 1),
         Text(
           '${(score * 100).toStringAsFixed(0)}%',

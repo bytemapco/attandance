@@ -22,8 +22,9 @@ class AuthBrandHeader extends StatelessWidget {
         : SasColors.brilliance;
 
     final backBtnBg = isDark ? SasColors.darkSurface : Colors.white;
-    final backBtnBorder =
-        isDark ? const Color(0x1EFFFFFF) : const Color(0x12000000);
+    final backBtnBorder = isDark
+        ? const Color(0x1EFFFFFF)
+        : const Color(0x12000000);
 
     final logoWidget = Row(
       mainAxisSize: MainAxisSize.min,
@@ -35,10 +36,7 @@ class AuthBrandHeader extends StatelessWidget {
             gradient: const LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [
-                Color(0xFFFF7A18),
-                Color(0xFFF95721),
-              ],
+              colors: [Color(0xFFFF7A18), Color(0xFFF95721)],
             ),
             borderRadius: BorderRadius.circular(10),
             boxShadow: [
@@ -50,11 +48,7 @@ class AuthBrandHeader extends StatelessWidget {
             ],
           ),
           child: const Center(
-            child: Icon(
-              Icons.school_rounded,
-              color: Colors.white,
-              size: 20,
-            ),
+            child: Icon(Icons.school_rounded, color: Colors.white, size: 20),
           ),
         ),
         const SizedBox(width: 9),
@@ -89,12 +83,7 @@ class AuthBrandHeader extends StatelessWidget {
 
     if (onBackPressed == null) {
       // Screen 1: Logo on the left
-      return Row(
-        children: [
-          logoWidget,
-          const Spacer(),
-        ],
-      );
+      return Row(children: [logoWidget, const Spacer()]);
     }
 
     // Screen 2: Back button on the left, logo on the right

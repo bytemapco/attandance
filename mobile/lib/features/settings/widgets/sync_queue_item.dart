@@ -24,7 +24,9 @@ class SyncQueueItem extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 8),
       child: GlassCard(
         padding: const EdgeInsets.all(12),
-        borderColor: isExpiringSoon ? SasColors.warning.withValues(alpha: 0.3) : null,
+        borderColor: isExpiringSoon
+            ? SasColors.warning.withValues(alpha: 0.3)
+            : null,
         child: Row(
           children: [
             Container(
@@ -33,7 +35,11 @@ class SyncQueueItem extends StatelessWidget {
                 color: SasColors.info.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: const Icon(Icons.pending_rounded, color: SasColors.info, size: 16),
+              child: const Icon(
+                Icons.pending_rounded,
+                color: SasColors.info,
+                size: 16,
+              ),
             ),
             const SizedBox(width: 10),
             Expanded(
@@ -42,18 +48,29 @@ class SyncQueueItem extends StatelessWidget {
                 children: [
                   Text(
                     payload.className ?? 'Class Session',
-                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: SasColors.textPrimaryOf(context)),
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 13,
+                      color: SasColors.textPrimaryOf(context),
+                    ),
                   ),
                   const SizedBox(height: 2),
                   Text(
                     '${DateFormat.jm().format(payload.capturedAt)} · ${_formatAge(age)}',
-                    style: const TextStyle(color: SasColors.textMuted, fontSize: 11),
+                    style: const TextStyle(
+                      color: SasColors.textMuted,
+                      fontSize: 11,
+                    ),
                   ),
                 ],
               ),
             ),
             if (isExpiringSoon)
-              const Icon(Icons.warning_amber_rounded, color: SasColors.warning, size: 16),
+              const Icon(
+                Icons.warning_amber_rounded,
+                color: SasColors.warning,
+                size: 16,
+              ),
           ],
         ),
       ),

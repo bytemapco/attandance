@@ -13,7 +13,10 @@ class SubjectSessionRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final color = statusColor(item.status);
+    final textMuted = SasColors.textMutedOf(context);
+    final textSecondary = SasColors.textSecondaryOf(context);
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
@@ -36,11 +39,15 @@ class SubjectSessionRow extends StatelessWidget {
                 children: [
                   Text(
                     DateFormat('EEE, MMM d, yyyy').format(item.markedAt),
-                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: SasColors.textPrimaryOf(context)),
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 13,
+                      color: SasColors.textPrimaryOf(context),
+                    ),
                   ),
                   Text(
                     DateFormat.jm().format(item.markedAt),
-                    style: const TextStyle(color: SasColors.textMuted, fontSize: 11),
+                    style: TextStyle(color: textMuted, fontSize: 11),
                   ),
                 ],
               ),
@@ -50,13 +57,21 @@ class SubjectSessionRow extends StatelessWidget {
                 margin: const EdgeInsets.only(right: 8),
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
-                  color: SasColors.bgCanvas,
+                  color: isDark ? SasColors.darkSurface : SasColors.bgCanvas,
                   borderRadius: BorderRadius.circular(6),
-                  border: Border.all(color: SasColors.glassBorder),
+                  border: Border.all(
+                    color: isDark
+                        ? const Color(0x2AFFFFFF)
+                        : const Color(0xFFE2E8F0),
+                  ),
                 ),
                 child: Text(
                   '${(item.finalAiScore! * 100).toStringAsFixed(0)}%',
-                  style: const TextStyle(color: SasColors.textSecondary, fontSize: 11, fontWeight: FontWeight.w600),
+                  style: TextStyle(
+                    color: textSecondary,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             Container(
@@ -68,12 +83,16 @@ class SubjectSessionRow extends StatelessWidget {
               ),
               child: Text(
                 item.status,
-                style: TextStyle(color: color, fontSize: 11, fontWeight: FontWeight.w700),
+                style: TextStyle(
+                  color: color,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
             ),
             if (isFlagged(item.status)) ...[
               const SizedBox(width: 4),
-              const Icon(Icons.chevron_right_rounded, color: SasColors.textMuted, size: 16),
+              Icon(Icons.chevron_right_rounded, color: textMuted, size: 16),
             ],
           ],
         ),

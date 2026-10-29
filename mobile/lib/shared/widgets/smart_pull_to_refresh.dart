@@ -52,8 +52,10 @@ class _SmartPullToRefreshState extends State<SmartPullToRefresh>
           notification.scrollDelta != null &&
           notification.scrollDelta! < 0) {
         setState(() {
-          _pullOffset = (_pullOffset - notification.scrollDelta! * 0.45)
-              .clamp(0.0, _kMaxOverpull);
+          _pullOffset = (_pullOffset - notification.scrollDelta! * 0.45).clamp(
+            0.0,
+            _kMaxOverpull,
+          );
         });
 
         if (_pullOffset >= _kTriggerThreshold && !_hasHapticTriggered) {
@@ -68,8 +70,10 @@ class _SmartPullToRefreshState extends State<SmartPullToRefresh>
 
     if (notification is OverscrollNotification && notification.overscroll < 0) {
       setState(() {
-        _pullOffset = (_pullOffset - notification.overscroll * 0.45)
-            .clamp(0.0, _kMaxOverpull);
+        _pullOffset = (_pullOffset - notification.overscroll * 0.45).clamp(
+          0.0,
+          _kMaxOverpull,
+        );
       });
 
       if (_pullOffset >= _kTriggerThreshold && !_hasHapticTriggered) {
@@ -126,7 +130,9 @@ class _SmartPullToRefreshState extends State<SmartPullToRefresh>
       child: Stack(
         children: [
           AnimatedContainer(
-            duration: _pullOffset == 0 ? const Duration(milliseconds: 250) : Duration.zero,
+            duration: _pullOffset == 0
+                ? const Duration(milliseconds: 250)
+                : Duration.zero,
             curve: Curves.easeOutCubic,
             transform: Matrix4.translationValues(
               0,

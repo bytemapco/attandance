@@ -48,95 +48,108 @@ class FaceCameraPreview extends StatelessWidget {
                 height: double.infinity,
               )
             : cameraError != null
-                ? Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(24),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(14),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: const Color(0xFFF0445E).withValues(alpha: 0.12),
-                            ),
-                            child: const Icon(Icons.videocam_off_rounded, color: Color(0xFFF0445E), size: 36),
+            ? Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(14),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: const Color(
+                            0xFFF0445E,
+                          ).withValues(alpha: 0.12),
+                        ),
+                        child: const Icon(
+                          Icons.videocam_off_rounded,
+                          color: Color(0xFFF0445E),
+                          size: 36,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        cameraError!,
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.plusJakartaSans(
+                          color: const Color(0xFFF0445E),
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      OutlinedButton.icon(
+                        onPressed: onRetry,
+                        icon: const Icon(Icons.refresh_rounded, size: 18),
+                        label: Text(
+                          'Retry Camera',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontWeight: FontWeight.w600,
                           ),
-                          const SizedBox(height: 12),
-                          Text(
-                            cameraError!,
-                            textAlign: TextAlign.center,
-                            style: GoogleFonts.plusJakartaSans(
-                              color: const Color(0xFFF0445E),
-                              fontSize: 13,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          const SizedBox(height: 16),
-                          OutlinedButton.icon(
-                            onPressed: onRetry,
-                            icon: const Icon(Icons.refresh_rounded, size: 18),
-                            label: Text(
-                              'Retry Camera',
-                              style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600),
-                            ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            : isCameraReady && cameraController != null
+            ? Stack(
+                fit: StackFit.expand,
+                children: [
+                  CameraPreview(cameraController!),
+                  Center(
+                    child: Container(
+                      width: 210,
+                      height: 275,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(105),
+                        border: Border.all(
+                          color: const Color(0xFFF95721).withValues(alpha: 0.8),
+                          width: 2.2,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(
+                              0xFFF95721,
+                            ).withValues(alpha: 0.2),
+                            blurRadius: 12,
+                            spreadRadius: 2,
                           ),
                         ],
                       ),
                     ),
-                  )
-                : isCameraReady && cameraController != null
-                    ? Stack(
-                        fit: StackFit.expand,
-                        children: [
-                          CameraPreview(cameraController!),
-                          Center(
-                            child: Container(
-                              width: 210,
-                              height: 275,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(105),
-                                border: Border.all(
-                                  color: const Color(0xFFF95721).withValues(alpha: 0.8),
-                                  width: 2.2,
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: const Color(0xFFF95721).withValues(alpha: 0.2),
-                                    blurRadius: 12,
-                                    spreadRadius: 2,
-                                  ),
-                                ],
-                              ),
-                            ),
+                  ),
+                  Positioned(
+                    bottom: 16,
+                    left: 0,
+                    right: 0,
+                    child: Center(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withValues(alpha: 0.6),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          'Fit face in oval',
+                          style: GoogleFonts.plusJakartaSans(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
                           ),
-                          Positioned(
-                            bottom: 16,
-                            left: 0,
-                            right: 0,
-                            child: Center(
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                                decoration: BoxDecoration(
-                                  color: Colors.black.withValues(alpha: 0.6),
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: Text(
-                                  'Fit face in oval',
-                                  style: GoogleFonts.plusJakartaSans(
-                                    color: Colors.white,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      )
-                    : const Center(
-                        child: CircularProgressIndicator(color: Color(0xFFF95721)),
+                        ),
                       ),
+                    ),
+                  ),
+                ],
+              )
+            : const Center(
+                child: CircularProgressIndicator(color: Color(0xFFF95721)),
+              ),
       ),
     );
   }

@@ -19,7 +19,9 @@ class SmartPassSuccessCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardBg = isDark ? SasColors.darkSurface : Colors.white;
-    final borderColor = isDark ? const Color(0x1EFFFFFF) : const Color(0x140F172A);
+    final borderColor = isDark
+        ? const Color(0x1EFFFFFF)
+        : const Color(0x140F172A);
 
     return Container(
       decoration: BoxDecoration(
@@ -73,7 +75,9 @@ class SmartPassSuccessCard extends StatelessWidget {
               color: isDark ? SasColors.darkElevated : SasColors.polishWhite,
               borderRadius: BorderRadius.circular(14),
               border: Border.all(
-                color: isDark ? const Color(0x1EFFFFFF) : const Color(0x10000000),
+                color: isDark
+                    ? const Color(0x1EFFFFFF)
+                    : const Color(0x10000000),
               ),
             ),
             child: Column(

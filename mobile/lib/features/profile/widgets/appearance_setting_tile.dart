@@ -15,10 +15,12 @@ class AppearanceSettingTile extends ConsumerWidget {
         : (themeMode == ThemeMode.dark ? 'Dark theme' : 'System theme');
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final primaryTextColor =
-        isDark ? SasColors.brilliance : const Color(0xFF0F172A);
-    final subtitleColor =
-        isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B);
+    final primaryTextColor = isDark
+        ? SasColors.brilliance
+        : const Color(0xFF0F172A);
+    final subtitleColor = isDark
+        ? const Color(0xFF94A3B8)
+        : const Color(0xFF64748B);
 
     return InkWell(
       onTap: () => _showThemeModal(context, ref, themeMode),
@@ -30,7 +32,9 @@ class AppearanceSettingTile extends ConsumerWidget {
               width: 36,
               height: 36,
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF332314) : const Color(0xFFFFEDD5),
+                color: isDark
+                    ? const Color(0xFF332314)
+                    : const Color(0xFFFFEDD5),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: const Icon(
@@ -65,11 +69,7 @@ class AppearanceSettingTile extends ConsumerWidget {
               ),
             ),
             const SizedBox(width: 8),
-            Icon(
-              Icons.chevron_right_rounded,
-              color: subtitleColor,
-              size: 18,
-            ),
+            Icon(Icons.chevron_right_rounded, color: subtitleColor, size: 18),
           ],
         ),
       ),
@@ -94,7 +94,9 @@ class AppearanceSettingTile extends ConsumerWidget {
                 subtitle: 'Crisp ivory and warm apricot aesthetic',
                 isSelected: current == ThemeMode.light,
                 onTap: () {
-                  ref.read(themeModeProvider.notifier).setThemeMode(ThemeMode.light);
+                  ref
+                      .read(themeModeProvider.notifier)
+                      .setThemeMode(ThemeMode.light);
                   Navigator.of(ctx).pop();
                 },
               ),
@@ -104,7 +106,9 @@ class AppearanceSettingTile extends ConsumerWidget {
                 subtitle: 'Deep Slate canvas with glowing orange accents',
                 isSelected: current == ThemeMode.dark,
                 onTap: () {
-                  ref.read(themeModeProvider.notifier).setThemeMode(ThemeMode.dark);
+                  ref
+                      .read(themeModeProvider.notifier)
+                      .setThemeMode(ThemeMode.dark);
                   Navigator.of(ctx).pop();
                 },
               ),
@@ -114,7 +118,9 @@ class AppearanceSettingTile extends ConsumerWidget {
                 subtitle: 'Follows your phone system appearance',
                 isSelected: current == ThemeMode.system,
                 onTap: () {
-                  ref.read(themeModeProvider.notifier).setThemeMode(ThemeMode.system);
+                  ref
+                      .read(themeModeProvider.notifier)
+                      .setThemeMode(ThemeMode.system);
                   Navigator.of(ctx).pop();
                 },
               ),
@@ -146,8 +152,16 @@ class AppearanceSettingTile extends ConsumerWidget {
         style: const TextStyle(fontSize: 12, color: SasColors.textMuted),
       ),
       trailing: isSelected
-          ? const Icon(Icons.check_circle_rounded, color: Color(0xFFF95721), size: 20)
-          : const Icon(Icons.circle_outlined, color: SasColors.glassBorder, size: 20),
+          ? const Icon(
+              Icons.check_circle_rounded,
+              color: Color(0xFFF95721),
+              size: 20,
+            )
+          : const Icon(
+              Icons.circle_outlined,
+              color: SasColors.glassBorder,
+              size: 20,
+            ),
       onTap: onTap,
     );
   }

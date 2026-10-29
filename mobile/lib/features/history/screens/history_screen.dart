@@ -40,79 +40,87 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
 
     final historyList = hState.data?.history ?? [];
     final firstItem = historyList.isNotEmpty ? historyList.first : null;
-    final courseTitle = firstItem?.subject ?? 'Distributed Systems';
+    final courseTitle = firstItem?.subject ?? 'All Enrolled Subjects';
     final classCode = firstItem != null && firstItem.className.contains(':')
         ? firstItem.className.split(':').first.trim()
-        : (firstItem?.className ?? 'CS-6A');
-    final courseSubtitle = '$classCode • Robert Hayes';
+        : (firstItem?.className ?? 'Overall');
+    final courseSubtitle = '$classCode • Attendance Log';
 
     return AnimatedBackground(
       child: SafeArea(
-        child: SmartPullToRefresh(
-          onRefresh: () => ref.read(historyProvider.notifier).fetch(),
-          child: ListView(
-            physics: const AlwaysScrollableScrollPhysics(
-              parent: BouncingScrollPhysics(),
-            ),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-            children: [
-              // Screen header with "Attendance Log" & circular overall gauge
-              HistoryHeader(percentage: pctClean),
-              const SizedBox(height: 16),
-
-              // Segmented tab switcher ("Calendar" | "List View")
-              HistorySegmentedTabs(
-                mode: _mode,
-                onChanged: (m) => setState(() => _mode = m),
-                isDark: isDark,
-              ),
-              const SizedBox(height: 14),
-
-              // Course selector dropdown card
-              HistoryCourseCard(
-                courseTitle: courseTitle,
-                courseSubtitle: courseSubtitle,
-              ),
-              const SizedBox(height: 14),
-
-              // Main content body with smooth cross-fade transition
-              if (hState.errorMessage != null && hState.data == null)
-                _buildErrorCard(hState.errorMessage!, isDark)
-              else if (hState.isLoading && hState.data == null)
-                const ShimmerCalendarPlaceholder()
-              else
-                AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 240),
-                  switchInCurve: Curves.easeOutCubic,
-                  switchOutCurve: Curves.easeInCubic,
-                  transitionBuilder: (child, animation) {
-                    return FadeTransition(
-                      opacity: animation,
-                      child: SlideTransition(
-                        position: Tween<Offset>(
-                          begin: const Offset(0.0, 0.02),
-                          end: Offset.zero,
-                        ).animate(animation),
-                        child: child,
-                      ),
-                    );
-                  },
-                  child: _mode == HistoryViewMode.calendar
-                      ? KeyedSubtree(
-                          key: const ValueKey('calendar_mode'),
-                          child: HistoryCalendarCard(
-                            grouped: hState.groupedByDate,
-                            history: historyList,
-                          ),
-                        )
-                      : KeyedSubtree(
-                          key: const ValueKey('list_mode'),
-                          child: HistoryListTab(hState: hState),
-                        ),
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 600),
+            child: SmartPullToRefresh(
+              onRefresh: () => ref.read(historyProvider.notifier).fetch(),
+              child: ListView(
+                physics: const AlwaysScrollableScrollPhysics(
+                  parent: BouncingScrollPhysics(),
                 ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 14,
+                ),
+                children: [
+                  // Screen header with "Attendance Log" & circular overall gauge
+                  HistoryHeader(percentage: pctClean),
+                  const SizedBox(height: 16),
 
-              const SizedBox(height: 24),
-            ],
+                  // Segmented tab switcher ("Calendar" | "List View")
+                  HistorySegmentedTabs(
+                    mode: _mode,
+                    onChanged: (m) => setState(() => _mode = m),
+                    isDark: isDark,
+                  ),
+                  const SizedBox(height: 14),
+
+                  // Course selector dropdown card
+                  HistoryCourseCard(
+                    courseTitle: courseTitle,
+                    courseSubtitle: courseSubtitle,
+                  ),
+                  const SizedBox(height: 14),
+
+                  // Main content body with smooth cross-fade transition
+                  if (hState.errorMessage != null && hState.data == null)
+                    _buildErrorCard(hState.errorMessage!, isDark)
+                  else if (hState.isLoading && hState.data == null)
+                    const ShimmerCalendarPlaceholder()
+                  else
+                    AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 240),
+                      switchInCurve: Curves.easeOutCubic,
+                      switchOutCurve: Curves.easeInCubic,
+                      transitionBuilder: (child, animation) {
+                        return FadeTransition(
+                          opacity: animation,
+                          child: SlideTransition(
+                            position: Tween<Offset>(
+                              begin: const Offset(0.0, 0.02),
+                              end: Offset.zero,
+                            ).animate(animation),
+                            child: child,
+                          ),
+                        );
+                      },
+                      child: _mode == HistoryViewMode.calendar
+                          ? KeyedSubtree(
+                              key: const ValueKey('calendar_mode'),
+                              child: HistoryCalendarCard(
+                                grouped: hState.groupedByDate,
+                                history: historyList,
+                              ),
+                            )
+                          : KeyedSubtree(
+                              key: const ValueKey('list_mode'),
+                              child: HistoryListTab(hState: hState),
+                            ),
+                    ),
+
+                  const SizedBox(height: 24),
+                ],
+              ),
+            ),
           ),
         ),
       ),

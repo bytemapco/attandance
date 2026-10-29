@@ -26,7 +26,9 @@ class SmartPassScannerView extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardBg = isDark ? SasColors.darkSurface : Colors.white;
-    final borderColor = isDark ? const Color(0x1EFFFFFF) : const Color(0x140F172A);
+    final borderColor = isDark
+        ? const Color(0x1EFFFFFF)
+        : const Color(0x140F172A);
 
     return Container(
       decoration: BoxDecoration(

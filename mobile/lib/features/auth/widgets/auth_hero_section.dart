@@ -13,10 +13,12 @@ class AuthHeroSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final primaryTextColor =
-        isDark ? SasColors.brilliance : const Color(0xFF0F172A);
-    final subtitleColor =
-        isDark ? const Color(0xFFE2E8F0) : const Color(0xFF334155);
+    final primaryTextColor = isDark
+        ? SasColors.brilliance
+        : const Color(0xFF0F172A);
+    final subtitleColor = isDark
+        ? const Color(0xFFE2E8F0)
+        : const Color(0xFF334155);
 
     final screenHeight = MediaQuery.of(context).size.height;
     final isCompact = screenHeight < 720;

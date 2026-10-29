@@ -16,10 +16,12 @@ class GoalsSliderCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final primaryTextColor =
-        isDark ? SasColors.brilliance : const Color(0xFF0F172A);
-    final subtitleColor =
-        isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B);
+    final primaryTextColor = isDark
+        ? SasColors.brilliance
+        : const Color(0xFF0F172A);
+    final subtitleColor = isDark
+        ? const Color(0xFF94A3B8)
+        : const Color(0xFF64748B);
 
     return Container(
       padding: const EdgeInsets.all(20),
@@ -48,7 +50,9 @@ class GoalsSliderCard extends StatelessWidget {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF332314) : const Color(0xFFFFEDD5),
+                  color: isDark
+                      ? const Color(0xFF332314)
+                      : const Color(0xFFFFEDD5),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: const Center(
@@ -92,8 +96,9 @@ class GoalsSliderCard extends StatelessWidget {
             data: SliderTheme.of(context).copyWith(
               trackHeight: 7,
               activeTrackColor: const Color(0xFFF95721),
-              inactiveTrackColor:
-                  isDark ? const Color(0xFF334155) : const Color(0xFFF1F5F9),
+              inactiveTrackColor: isDark
+                  ? const Color(0xFF334155)
+                  : const Color(0xFFF1F5F9),
               thumbColor: const Color(0xFFF95721),
               thumbShape: const RoundSliderThumbShape(
                 enabledThumbRadius: 11,

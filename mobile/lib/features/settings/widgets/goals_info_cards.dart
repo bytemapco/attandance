@@ -35,7 +35,9 @@ class GoalsInfoCallout extends StatelessWidget {
               style: SasTypography.style(
                 fontSize: 12.5,
                 fontWeight: FontWeight.w500,
-                color: isDark ? const Color(0xFFBAE6FD) : const Color(0xFF0369A1),
+                color: isDark
+                    ? const Color(0xFFBAE6FD)
+                    : const Color(0xFF0369A1),
                 height: 1.35,
               ),
             ),
@@ -59,8 +61,9 @@ class GoalsRecommendedCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final primaryTextColor =
-        isDark ? SasColors.brilliance : const Color(0xFF0F172A);
+    final primaryTextColor = isDark
+        ? SasColors.brilliance
+        : const Color(0xFF0F172A);
 
     return InkWell(
       onTap: onTap,
@@ -88,7 +91,9 @@ class GoalsRecommendedCard extends StatelessWidget {
               width: 38,
               height: 38,
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF332314) : const Color(0xFFFFEDD5),
+                color: isDark
+                    ? const Color(0xFF332314)
+                    : const Color(0xFFFFEDD5),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: const Center(

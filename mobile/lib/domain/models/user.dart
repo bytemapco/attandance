@@ -1,4 +1,3 @@
-
 class TokenResponse {
   final String accessToken;
   final String tokenType;
@@ -19,14 +18,14 @@ class TokenResponse {
   });
 
   factory TokenResponse.fromJson(Map<String, dynamic> json) => TokenResponse(
-        accessToken: json['access_token'] as String,
-        tokenType: json['token_type'] as String,
-        role: json['role'] as String,
-        mustChangePassword: json['must_change_password'] as bool? ?? false,
-        tenantId: json['tenant_id'] as String?,
-        tenantSlug: json['tenant_slug'] as String?,
-        tenantName: json['tenant_name'] as String?,
-      );
+    accessToken: json['access_token'] as String,
+    tokenType: json['token_type'] as String,
+    role: json['role'] as String,
+    mustChangePassword: json['must_change_password'] as bool? ?? false,
+    tenantId: json['tenant_id'] as String?,
+    tenantSlug: json['tenant_slug'] as String?,
+    tenantName: json['tenant_name'] as String?,
+  );
 }
 
 class StudentProfile {
@@ -59,34 +58,34 @@ class StudentProfile {
   });
 
   factory StudentProfile.fromJson(Map<String, dynamic> json) => StudentProfile(
-        id: json['id'] as String,
-        enrollmentNumber: json['enrollment_number'] as String,
-        firstName: json['first_name'] as String?,
-        lastName: json['last_name'] as String?,
-        phone: json['phone'] as String?,
-        gender: json['gender'] as String?,
-        branch: json['branch'] as String?,
-        semester: json['semester'] as int?,
-        batch: json['batch'] as String?,
-        departmentId: json['department_id'] as String?,
-        departmentName: json['department_name'] as String?,
-        faceRegistered: json['face_registered'] as bool? ?? false,
-      );
+    id: json['id'] as String,
+    enrollmentNumber: json['enrollment_number'] as String,
+    firstName: json['first_name'] as String?,
+    lastName: json['last_name'] as String?,
+    phone: json['phone'] as String?,
+    gender: json['gender'] as String?,
+    branch: json['branch'] as String?,
+    semester: json['semester'] as int?,
+    batch: json['batch'] as String?,
+    departmentId: json['department_id'] as String?,
+    departmentName: json['department_name'] as String?,
+    faceRegistered: json['face_registered'] as bool? ?? false,
+  );
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'enrollment_number': enrollmentNumber,
-        'first_name': firstName,
-        'last_name': lastName,
-        'phone': phone,
-        'gender': gender,
-        'branch': branch,
-        'semester': semester,
-        'batch': batch,
-        'department_id': departmentId,
-        'department_name': departmentName,
-        'face_registered': faceRegistered,
-      };
+    'id': id,
+    'enrollment_number': enrollmentNumber,
+    'first_name': firstName,
+    'last_name': lastName,
+    'phone': phone,
+    'gender': gender,
+    'branch': branch,
+    'semester': semester,
+    'batch': batch,
+    'department_id': departmentId,
+    'department_name': departmentName,
+    'face_registered': faceRegistered,
+  };
 }
 
 class UserProfile {
@@ -125,20 +124,21 @@ class UserProfile {
       tenantId: json['tenant_id'] as String?,
       tenantSlug: json['tenant_slug'] as String?,
       tenantName: json['tenant_name'] as String?,
-      studentProfile:
-          studentJson != null ? StudentProfile.fromJson(studentJson) : null,
+      studentProfile: studentJson != null
+          ? StudentProfile.fromJson(studentJson)
+          : null,
     );
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'email': email,
-        'role': role,
-        'is_active': isActive,
-        'must_change_password': mustChangePassword,
-        'tenant_id': tenantId,
-        'tenant_slug': tenantSlug,
-        'tenant_name': tenantName,
-        'student_profile': studentProfile?.toJson(),
-      };
+    'id': id,
+    'email': email,
+    'role': role,
+    'is_active': isActive,
+    'must_change_password': mustChangePassword,
+    'tenant_id': tenantId,
+    'tenant_slug': tenantSlug,
+    'tenant_name': tenantName,
+    'student_profile': studentProfile?.toJson(),
+  };
 }

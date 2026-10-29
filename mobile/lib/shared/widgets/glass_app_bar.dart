@@ -37,10 +37,8 @@ class GlassAppBar extends StatelessWidget implements PreferredSizeWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: bgColor,   // Fixed: was hardcoded bgSecondary (white) in dark mode
-        border: Border(
-          bottom: BorderSide(color: borderColor, width: 0.5),
-        ),
+        color: bgColor, // Fixed: was hardcoded bgSecondary (white) in dark mode
+        border: Border(bottom: BorderSide(color: borderColor, width: 0.5)),
       ),
       child: SafeArea(
         bottom: false,
@@ -80,8 +78,7 @@ class GlassAppBar extends StatelessWidget implements PreferredSizeWidget {
                       : TextAlign.center,
                 ),
               ),
-              if (actions != null) ...actions!
-              else const SizedBox(width: 48),
+              if (actions != null) ...actions! else const SizedBox(width: 48),
             ],
           ),
         ),

@@ -13,10 +13,12 @@ class FaceRegistrationScreen extends ConsumerStatefulWidget {
   const FaceRegistrationScreen({super.key});
 
   @override
-  ConsumerState<FaceRegistrationScreen> createState() => _FaceRegistrationScreenState();
+  ConsumerState<FaceRegistrationScreen> createState() =>
+      _FaceRegistrationScreenState();
 }
 
-class _FaceRegistrationScreenState extends ConsumerState<FaceRegistrationScreen> {
+class _FaceRegistrationScreenState
+    extends ConsumerState<FaceRegistrationScreen> {
   CameraController? _cameraController;
   bool _isCameraReady = false;
   String? _capturedPath;
@@ -35,18 +37,29 @@ class _FaceRegistrationScreenState extends ConsumerState<FaceRegistrationScreen>
         setState(() => _cameraError = 'No cameras detected on this device');
         return;
       }
-      final front = cameras.firstWhere((c) => c.lensDirection == CameraLensDirection.front, orElse: () => cameras.first);
-      _cameraController = CameraController(front, ResolutionPreset.high, enableAudio: false);
+      final front = cameras.firstWhere(
+        (c) => c.lensDirection == CameraLensDirection.front,
+        orElse: () => cameras.first,
+      );
+      _cameraController = CameraController(
+        front,
+        ResolutionPreset.high,
+        enableAudio: false,
+      );
       await _cameraController!.initialize();
       if (mounted) setState(() => _isCameraReady = true);
     } catch (e) {
       AppLogger.error('Camera initialization failed: $e');
-      if (mounted) setState(() => _cameraError = 'Camera initialization failed: $e');
+      if (mounted) {
+        setState(() => _cameraError = 'Camera initialization failed: $e');
+      }
     }
   }
 
   Future<void> _capturePhoto() async {
-    if (_cameraController == null || !_cameraController!.value.isInitialized) return;
+    if (_cameraController == null || !_cameraController!.value.isInitialized) {
+      return;
+    }
     try {
       final file = await _cameraController!.takePicture();
       setState(() => _capturedPath = file.path);
@@ -57,10 +70,15 @@ class _FaceRegistrationScreenState extends ConsumerState<FaceRegistrationScreen>
 
   Future<void> _uploadPhoto() async {
     if (_capturedPath == null) return;
-    final success = await ref.read(registrationProvider.notifier).uploadFace(_capturedPath!);
+    final success = await ref
+        .read(registrationProvider.notifier)
+        .uploadFace(_capturedPath!);
     if (success && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Biometric profile enrolled successfully!'), backgroundColor: Color(0xFF08A875)),
+        const SnackBar(
+          content: Text('Biometric profile enrolled successfully!'),
+          backgroundColor: Color(0xFF08A875),
+        ),
       );
       await Future.delayed(const Duration(milliseconds: 600));
       if (mounted) ref.read(authProvider.notifier).onFaceRegistered();
@@ -91,9 +109,15 @@ class _FaceRegistrationScreenState extends ConsumerState<FaceRegistrationScreen>
                 height: 52,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: const Color(0xFFF95721).withValues(alpha: isDark ? 0.2 : 0.12),
+                  color: const Color(
+                    0xFFF95721,
+                  ).withValues(alpha: isDark ? 0.2 : 0.12),
                 ),
-                child: const Icon(Icons.face_retouching_natural_rounded, color: Color(0xFFF95721), size: 28),
+                child: const Icon(
+                  Icons.face_retouching_natural_rounded,
+                  color: Color(0xFFF95721),
+                  size: 28,
+                ),
               ),
               const SizedBox(height: 10),
               Text(
@@ -109,7 +133,9 @@ class _FaceRegistrationScreenState extends ConsumerState<FaceRegistrationScreen>
                 'Align your face within the oval guide to create your official verification template.',
                 textAlign: TextAlign.center,
                 style: GoogleFonts.plusJakartaSans(
-                  color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
+                  color: isDark
+                      ? const Color(0xFF94A3B8)
+                      : const Color(0xFF64748B),
                   fontSize: 12.5,
                 ),
               ),
@@ -135,7 +161,10 @@ class _FaceRegistrationScreenState extends ConsumerState<FaceRegistrationScreen>
                   padding: const EdgeInsets.only(bottom: 10),
                   child: Text(
                     regState.errorMessage!,
-                    style: GoogleFonts.plusJakartaSans(color: const Color(0xFFF0445E), fontSize: 12),
+                    style: GoogleFonts.plusJakartaSans(
+                      color: const Color(0xFFF0445E),
+                      fontSize: 12,
+                    ),
                   ),
                 ),
               FaceRegistrationBottomBar(

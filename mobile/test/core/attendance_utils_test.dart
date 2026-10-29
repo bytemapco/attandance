@@ -28,11 +28,19 @@ void main() {
     });
 
     test('computeAttendanceNeeds calculates canMiss and needToAttend', () {
-      final aboveTarget = computeAttendanceNeeds(present: 90, total: 100, target: 75.0);
+      final aboveTarget = computeAttendanceNeeds(
+        present: 90,
+        total: 100,
+        target: 75.0,
+      );
       expect(aboveTarget.canMiss, greaterThan(0));
       expect(aboveTarget.needToAttend, 0);
 
-      final belowTarget = computeAttendanceNeeds(present: 50, total: 100, target: 75.0);
+      final belowTarget = computeAttendanceNeeds(
+        present: 50,
+        total: 100,
+        target: 75.0,
+      );
       expect(belowTarget.canMiss, 0);
       expect(belowTarget.needToAttend, greaterThan(0));
     });

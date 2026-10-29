@@ -17,7 +17,9 @@ class AuthFormHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final primaryTextColor = isDark ? SasColors.brilliance : SasColors.indianInk;
+    final primaryTextColor = isDark
+        ? SasColors.brilliance
+        : SasColors.indianInk;
     final backBtnBg = isDark ? SasColors.darkCanvas : SasColors.polishWhite;
 
     return Column(

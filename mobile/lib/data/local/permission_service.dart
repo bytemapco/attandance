@@ -25,7 +25,8 @@ class PermissionService {
   const PermissionService();
 
   Future<PermissionStatusResult> checkAttendancePermissions() async {
-    final isLocationServiceEnabled = await Geolocator.isLocationServiceEnabled();
+    final isLocationServiceEnabled =
+        await Geolocator.isLocationServiceEnabled();
     if (!isLocationServiceEnabled) {
       return const PermissionStatusResult(
         isLocationServiceEnabled: false,
@@ -37,7 +38,8 @@ class PermissionService {
     }
 
     final permission = await Geolocator.checkPermission();
-    final hasAccess = permission == LocationPermission.always ||
+    final hasAccess =
+        permission == LocationPermission.always ||
         permission == LocationPermission.whileInUse;
     final isPermanent = permission == LocationPermission.deniedForever;
 
@@ -45,7 +47,8 @@ class PermissionService {
     if (permission == LocationPermission.denied) {
       msg = 'Location permission is required to verify classroom geofence.';
     } else if (isPermanent) {
-      msg = 'Location permission is permanently denied. Please enable in App Settings.';
+      msg =
+          'Location permission is permanently denied. Please enable in App Settings.';
     }
 
     return PermissionStatusResult(
@@ -58,7 +61,8 @@ class PermissionService {
   }
 
   Future<PermissionStatusResult> requestLocationPermission() async {
-    final isLocationServiceEnabled = await Geolocator.isLocationServiceEnabled();
+    final isLocationServiceEnabled =
+        await Geolocator.isLocationServiceEnabled();
     if (!isLocationServiceEnabled) {
       await Geolocator.openLocationSettings();
       return checkAttendancePermissions();

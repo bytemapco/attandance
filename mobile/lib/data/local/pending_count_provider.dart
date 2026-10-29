@@ -10,6 +10,8 @@ class PendingCountNotifier extends StateNotifier<int> {
   }
 }
 
-final pendingCountProvider = StateNotifierProvider<PendingCountNotifier, int>((ref) {
+final pendingCountProvider = StateNotifierProvider<PendingCountNotifier, int>((
+  ref,
+) {
   return PendingCountNotifier(ref.read(hiveServiceProvider));
 });

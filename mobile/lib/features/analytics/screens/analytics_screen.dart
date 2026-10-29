@@ -46,68 +46,79 @@ class _AnalyticsScreenState extends ConsumerState<AnalyticsScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final history = hState.data?.history ?? [];
-    final total = history.isEmpty ? 5 : history.length;
-    final present = history.isEmpty ? 1 : countPresentOrApproved(history);
-    final absent = history.isEmpty ? 2 : countAbsent(history);
-    final flagged = history.isEmpty ? 0 : countFlagged(history);
+    final total = history.length;
+    final present = countPresentOrApproved(history);
+    final absent = countAbsent(history);
+    final flagged = countFlagged(history);
 
     final pct = hState.data?.overallAttendancePercentage ?? 0.0;
     final pctClean = (pct.isNaN || pct.isInfinite) ? 0.0 : pct;
 
     return AnimatedBackground(
       child: SafeArea(
-        child: SmartPullToRefresh(
-          onRefresh: () async {
-            await ref.read(historyProvider.notifier).fetch();
-          },
-          child: ListView(
-            physics: const AlwaysScrollableScrollPhysics(
-              parent: BouncingScrollPhysics(),
-            ),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-            children: [
-              // Screen Header ("Performance" & "Last 4 weeks" dropdown pill)
-              const AnalyticsHeader(),
-              const SizedBox(height: 16),
-
-              if (hState.isLoading && hState.data == null)
-                const ShimmerPlaceholder(itemCount: 4, itemHeight: 110)
-              else if (hState.errorMessage != null && hState.data == null)
-                _buildErrorCard(hState.errorMessage!, isDark)
-              else ...[
-                // 1. Overall Attendance Rate Card (Circular gauge + Target alert)
-                AnalyticsRateCard(percentage: pctClean, target: target),
-                const SizedBox(height: 14),
-
-                // 2. Pastel KPI Metrics Row (Total, Present, Absent, Flagged)
-                AnalyticsKpiRow(
-                  total: total,
-                  present: present,
-                  absent: absent,
-                  flagged: flagged,
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 600),
+            child: SmartPullToRefresh(
+              onRefresh: () async {
+                await ref.read(historyProvider.notifier).fetch();
+              },
+              child: ListView(
+                physics: const AlwaysScrollableScrollPhysics(
+                  parent: BouncingScrollPhysics(),
                 ),
-                const SizedBox(height: 14),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 14,
+                ),
+                children: [
+                  // Screen Header ("Performance" & "Last 4 weeks" dropdown pill)
+                  const AnalyticsHeader(),
+                  const SizedBox(height: 16),
 
-                // 3. Weekly Attendance Bar Chart
-                if (hState.data != null)
-                  AnalyticsWeeklyChart(data: hState.data!),
-                const SizedBox(height: 14),
+                  if (hState.isLoading && hState.data == null)
+                    const ShimmerPlaceholder(itemCount: 4, itemHeight: 110)
+                  else if (hState.errorMessage != null && hState.data == null)
+                    _buildErrorCard(hState.errorMessage!, isDark)
+                  else ...[
+                    // 1. Overall Attendance Rate Card (Circular gauge + Target alert)
+                    AnalyticsRateCard(percentage: pctClean, target: target),
+                    const SizedBox(height: 14),
 
-                // 4. Course Progress Card
-                if (hState.data != null)
-                  AnalyticsCourseProgressCard(data: hState.data!, target: target),
-                const SizedBox(height: 14),
+                    // 2. Pastel KPI Metrics Row (Total, Present, Absent, Flagged)
+                    AnalyticsKpiRow(
+                      total: total,
+                      present: present,
+                      absent: absent,
+                      flagged: flagged,
+                    ),
+                    const SizedBox(height: 14),
 
-                // 5. Department Leaderboard Tile
-                const AnalyticsLeaderboardTile(),
-                const SizedBox(height: 14),
+                    // 3. Weekly Attendance Bar Chart
+                    if (hState.data != null)
+                      AnalyticsWeeklyChart(data: hState.data!),
+                    const SizedBox(height: 14),
 
-                // 6. Course Activity Heatmap
-                if (hState.data != null)
-                  AnalyticsHeatmapCard(data: hState.data!),
-                const SizedBox(height: 24),
-              ],
-            ],
+                    // 4. Course Progress Card
+                    if (hState.data != null)
+                      AnalyticsCourseProgressCard(
+                        data: hState.data!,
+                        target: target,
+                      ),
+                    const SizedBox(height: 14),
+
+                    // 5. Department Leaderboard Tile
+                    const AnalyticsLeaderboardTile(),
+                    const SizedBox(height: 14),
+
+                    // 6. Course Activity Heatmap
+                    if (hState.data != null)
+                      AnalyticsHeatmapCard(data: hState.data!),
+                    const SizedBox(height: 24),
+                  ],
+                ],
+              ),
+            ),
           ),
         ),
       ),
@@ -121,7 +132,11 @@ class _AnalyticsScreenState extends ConsumerState<AnalyticsScreen> {
         padding: const EdgeInsets.symmetric(vertical: 12),
         child: Column(
           children: [
-            const Icon(Icons.cloud_off_rounded, size: 36, color: SasColors.danger),
+            const Icon(
+              Icons.cloud_off_rounded,
+              size: 36,
+              color: SasColors.danger,
+            ),
             const SizedBox(height: 10),
             Text(
               error,

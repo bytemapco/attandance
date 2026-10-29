@@ -20,7 +20,11 @@ class CalendarMonthGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final firstDay = DateTime(focusedMonth.year, focusedMonth.month, 1);
-    final daysInMonth = DateTime(focusedMonth.year, focusedMonth.month + 1, 0).day;
+    final daysInMonth = DateTime(
+      focusedMonth.year,
+      focusedMonth.month + 1,
+      0,
+    ).day;
     final startWeekday = firstDay.weekday;
     final cells = <Widget>[];
 
@@ -56,13 +60,15 @@ class CalendarMonthGrid extends StatelessWidget {
               color: isSelected
                   ? SasColors.accentEmerald.withValues(alpha: 0.12)
                   : isToday
-                      ? SasColors.bgCanvas
-                      : null,
+                  ? SasColors.bgCanvas
+                  : null,
               border: isSelected
-                  ? Border.all(color: SasColors.accentEmerald.withValues(alpha: 0.5))
+                  ? Border.all(
+                      color: SasColors.accentEmerald.withValues(alpha: 0.5),
+                    )
                   : isToday
-                      ? Border.all(color: SasColors.glassBorder)
-                      : null,
+                  ? Border.all(color: SasColors.glassBorder)
+                  : null,
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -72,7 +78,9 @@ class CalendarMonthGrid extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: isToday ? FontWeight.w700 : FontWeight.w500,
-                    color: isSelected ? SasColors.accentEmerald : SasColors.textPrimaryOf(context),
+                    color: isSelected
+                        ? SasColors.accentEmerald
+                        : SasColors.textPrimaryOf(context),
                   ),
                 ),
                 if (dotColor != null)
