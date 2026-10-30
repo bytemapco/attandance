@@ -50,10 +50,9 @@ jobs:
         run: |
           npm ci
           npm run build
-          mkdir -p .next/standalone/frontend/.next
-          cp -r public .next/standalone/frontend/public
-          cp -r .next/static .next/standalone/frontend/.next/static
-          tar -czf ../frontend-bundle.tar.gz -C .next/standalone/frontend .
+          cp -r public .next/standalone/public
+          cp -r .next/static .next/standalone/.next/static
+          tar -czf ../frontend-bundle.tar.gz -C .next/standalone .
 
       - name: Package Backend Bundle
         run: |
