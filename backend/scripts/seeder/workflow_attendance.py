@@ -64,8 +64,10 @@ async def seed_leave_request_workflow(
     teacher_pass: str,
 ) -> None:
     """Student submits an academic leave request, and teacher reviews & approves it."""
-    # 1. Student submits leave
-    student_token = await login_user(client, student_email, student_pass)
+    # 1. Student submits leave (using bound hardware device UUID)
+    student_token = await login_user(
+        client, student_email, student_pass, device_uuid="dev-hw-uuid-oneplus12r-in-99"
+    )
     client.set_token(student_token)
 
     today = date.today()

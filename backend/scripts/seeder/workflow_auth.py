@@ -1,5 +1,4 @@
-"""Authentication and Super Admin Bootstrapping Workflows."""
-
+from typing import Optional
 from app.core.logging_config import get_logger
 from .client import APIClient
 from .config import SeederConfig
@@ -41,9 +40,16 @@ async def ensure_local_superadmin_if_needed(config: SeederConfig) -> None:
         await disconnect_db()
 
 
-async def login_user(client: APIClient, email: str, password: str) -> str:
+async def login_user(
+    client: APIClient,
+    email: str,
+    password: str,
+    device_uuid: Optional[str] = None,
+) -> str:
     """Authenticate any user via actual API and return JWT access token."""
     payload = {"email": email, "password": password}
+    if device_uuid:
+        payload["device_uuid"] = device_uuid
     result = await client.post("/auth/login", json_data=payload)
     token = result.get("access_token")
     if not token:
