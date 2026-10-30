@@ -67,8 +67,18 @@ export function proxy(request: NextRequest): NextResponse {
     "/api",
     "/_next",
     "/favicon.ico",
+    "/sahaj-app-icon.png",
+    "/sahaj-logo-transparent.png",
+    "/sahaj-logo-light.png",
+    "/logo.png",
+    "/icon-192.png",
+    "/icon-512.png",
+    "/sw.js",
   ];
-  if (publicPaths.some((p) => pathname.startsWith(p))) {
+  if (
+    publicPaths.some((p) => pathname.startsWith(p)) ||
+    /\.(png|jpe?g|svg|ico|webp|webmanifest|json)$/i.test(pathname)
+  ) {
     return NextResponse.next();
   }
 
