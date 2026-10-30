@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:smart_attendance_app/app/theme.dart';
 import 'package:smart_attendance_app/app/typography.dart';
 import 'package:smart_attendance_app/domain/models/user.dart';
+import 'package:smart_attendance_app/features/profile/widgets/profile_avatar.dart';
+import 'package:smart_attendance_app/features/profile/widgets/profile_badges_row.dart';
 
 /// User identity card with peach avatar, student metadata, and verification badges.
 class ProfileHeaderCard extends StatelessWidget {
@@ -79,30 +81,9 @@ class ProfileHeaderCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Peach Squircle Avatar
-          Container(
-            width: 66,
-            height: 66,
-            decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF332314) : const Color(0xFFFFE4D6),
-              borderRadius: BorderRadius.circular(18),
-              border: Border.all(
-                color: isDark
-                    ? const Color(0xFF7C2D12)
-                    : const Color(0xFFFFD1BD),
-                width: 1.0,
-              ),
-            ),
-            child: Center(
-              child: Text(
-                _getInitials(),
-                style: SasTypography.style(
-                  color: const Color(0xFFEA580C),
-                  fontSize: 22,
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: 0.5,
-                ),
-              ),
-            ),
+          ProfileAvatar(
+            initials: _getInitials(),
+            isDark: isDark,
           ),
           const SizedBox(width: 14),
 
@@ -172,73 +153,9 @@ class ProfileHeaderCard extends StatelessWidget {
                 const SizedBox(height: 10),
 
                 // Badges Row
-                Row(
-                  children: [
-                    // Student Role Badge
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 3.5,
-                      ),
-                      decoration: BoxDecoration(
-                        color: isDark
-                            ? const Color(0xFF332314)
-                            : const Color(0xFFFFEDD5),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Text(
-                        'STUDENT',
-                        style: SasTypography.style(
-                          color: const Color(0xFFEA580C),
-                          fontSize: 10,
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: 0.3,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-
-                    // Face ID Verified Badge
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 3.5,
-                      ),
-                      decoration: BoxDecoration(
-                        color: isDark
-                            ? const Color(0xFF143828)
-                            : const Color(0xFFECFDF5),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            isFaceVerified
-                                ? Icons.check_circle_rounded
-                                : Icons.error_outline_rounded,
-                            size: 12,
-                            color: isFaceVerified
-                                ? const Color(0xFF10B981)
-                                : const Color(0xFFF59E0B),
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            isFaceVerified
-                                ? 'Face ID Verified'
-                                : 'Face ID Pending',
-                            style: SasTypography.style(
-                              color: isFaceVerified
-                                  ? const Color(0xFF059669)
-                                  : const Color(0xFFD97706),
-                              fontSize: 10,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+                ProfileBadgesRow(
+                  isDark: isDark,
+                  isFaceVerified: isFaceVerified,
                 ),
               ],
             ),

@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
-import 'package:smart_attendance_app/app/theme.dart';
 import 'package:smart_attendance_app/data/local/permission_service.dart';
 import 'package:smart_attendance_app/features/smart_pass/providers/smart_pass_provider.dart';
+import 'package:smart_attendance_app/features/smart_pass/widgets/smart_pass_error_banner.dart';
 import 'package:smart_attendance_app/features/smart_pass/widgets/smart_pass_guidelines_card.dart';
 import 'package:smart_attendance_app/features/smart_pass/widgets/smart_pass_permission_card.dart';
 import 'package:smart_attendance_app/features/smart_pass/widgets/smart_pass_scanner_view.dart';
@@ -83,13 +82,19 @@ class _SmartPassScreenState extends ConsumerState<SmartPassScreen>
     for (final barcode in capture.barcodes) {
       final code = barcode.rawValue?.trim();
       if (code != null && code.isNotEmpty) {
+        _scannerController.stop();
         setState(() => _isProcessing = true);
         HapticFeedback.mediumImpact();
         ref
             .read(smartPassProvider.notifier)
             .scanAndVerifyPass(code)
             .whenComplete(() {
-              if (mounted) setState(() => _isProcessing = false);
+              if (mounted) {
+                setState(() => _isProcessing = false);
+                if (ref.read(smartPassProvider).scanResult == null) {
+                  _scannerController.start();
+                }
+              }
             });
         break;
       }
@@ -107,9 +112,12 @@ class _SmartPassScreenState extends ConsumerState<SmartPassScreen>
   @override
   Widget build(BuildContext context) {
     final passState = ref.watch(smartPassProvider);
-    final hasPermission = _permissionStatus?.hasLocationAccess ?? true;
-    final isLocationServiceOn =
-        _permissionStatus?.isLocationServiceEnabled ?? true;
+    final hasPermission = _checkingPermission
+        ? false
+        : (_permissionStatus?.hasLocationAccess ?? false);
+    final isLocationServiceOn = _checkingPermission
+        ? false
+        : (_permissionStatus?.isLocationServiceEnabled ?? false);
 
     return PopScope(
       canPop: false,
@@ -158,7 +166,7 @@ class _SmartPassScreenState extends ConsumerState<SmartPassScreen>
                     ),
                     const SizedBox(height: 14),
                     if (passState.errorMessage != null)
-                      _buildErrorBanner(passState.errorMessage!),
+                      SmartPassErrorBanner(error: passState.errorMessage!),
                   ],
                   const SizedBox(height: 14),
                   const SmartPassGuidelinesCard(),
@@ -167,37 +175,6 @@ class _SmartPassScreenState extends ConsumerState<SmartPassScreen>
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildErrorBanner(String error) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: SasColors.danger.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: SasColors.danger.withValues(alpha: 0.3)),
-      ),
-      child: Row(
-        children: [
-          const Icon(
-            Icons.error_outline_rounded,
-            size: 18,
-            color: SasColors.danger,
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              error,
-              style: GoogleFonts.plusJakartaSans(
-                fontSize: 12,
-                color: SasColors.danger,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }

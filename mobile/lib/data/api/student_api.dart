@@ -1,9 +1,8 @@
-import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http_parser/http_parser.dart';
-import 'package:path/path.dart' as p;
 import 'package:smart_attendance_app/data/api/dio_client.dart';
+import 'package:smart_attendance_app/data/api/multipart_utils.dart';
 import 'package:smart_attendance_app/domain/models/attendance.dart';
 import 'package:smart_attendance_app/domain/models/leaderboard.dart';
 
@@ -47,21 +46,13 @@ class StudentApi {
     required double accuracy,
     required String imagePath,
   }) async {
-    final Map<String, dynamic> formDataMap = {
-      'session_id': sessionId,
-      'latitude': latitude.toString(),
-      'longitude': longitude.toString(),
-      'accuracy': accuracy.toString(),
-    };
-
-    if (File(imagePath).existsSync()) {
-      formDataMap['image'] = await MultipartFile.fromFile(
-        imagePath,
-        contentType: MediaType('image', 'jpeg'),
-      );
-    }
-
-    final formData = FormData.fromMap(formDataMap);
+    final formData = await buildAttendanceFormData(
+      sessionId: sessionId,
+      latitude: latitude,
+      longitude: longitude,
+      accuracy: accuracy,
+      imagePath: imagePath,
+    );
     final response = await _dio.post<Map<String, dynamic>>(
       '/student/attendance/mark',
       data: formData,
@@ -76,21 +67,13 @@ class StudentApi {
     required double accuracy,
     required String imagePath,
   }) async {
-    final Map<String, dynamic> formDataMap = {
-      'session_id': sessionId,
-      'latitude': latitude.toString(),
-      'longitude': longitude.toString(),
-      'accuracy': accuracy.toString(),
-    };
-
-    if (File(imagePath).existsSync()) {
-      formDataMap['image'] = await MultipartFile.fromFile(
-        imagePath,
-        contentType: MediaType('image', 'jpeg'),
-      );
-    }
-
-    final formData = FormData.fromMap(formDataMap);
+    final formData = await buildAttendanceFormData(
+      sessionId: sessionId,
+      latitude: latitude,
+      longitude: longitude,
+      accuracy: accuracy,
+      imagePath: imagePath,
+    );
     final response = await _dio.post<Map<String, dynamic>>(
       '/student/attendance/analyze',
       data: formData,
@@ -145,27 +128,7 @@ class StudentApi {
     required String reason,
     String? documentPath,
   }) async {
-    MultipartFile? file;
-    if (documentPath != null && documentPath.isNotEmpty) {
-      final ext = p.extension(documentPath).toLowerCase();
-      final filename = p.basename(documentPath);
-      MediaType mediaType;
-      if (ext == '.png') {
-        mediaType = MediaType('image', 'png');
-      } else if (ext == '.pdf') {
-        mediaType = MediaType('application', 'pdf');
-      } else if (ext == '.webp') {
-        mediaType = MediaType('image', 'webp');
-      } else {
-        mediaType = MediaType('image', 'jpeg');
-      }
-      file = await MultipartFile.fromFile(
-        documentPath,
-        filename: filename,
-        contentType: mediaType,
-      );
-    }
-
+    final file = await buildDocumentMultipartFile(documentPath);
     final formData = FormData.fromMap({
       'start_date': startDate.toIso8601String().split('T')[0],
       'end_date': endDate.toIso8601String().split('T')[0],

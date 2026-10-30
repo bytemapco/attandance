@@ -3,6 +3,7 @@ import 'package:smart_attendance_app/app/theme.dart';
 import 'package:smart_attendance_app/app/typography.dart';
 import 'package:smart_attendance_app/features/auth/widgets/auth_brand_header.dart';
 import 'package:smart_attendance_app/features/auth/widgets/auth_gradient_button.dart';
+import 'package:smart_attendance_app/features/auth/widgets/auth_password_heading.dart';
 import 'package:smart_attendance_app/features/auth/widgets/auth_password_input_field.dart';
 import 'package:smart_attendance_app/features/auth/widgets/auth_security_badge.dart';
 import 'package:smart_attendance_app/features/auth/widgets/auth_student_identity_card.dart';
@@ -102,32 +103,9 @@ class AuthPasswordStep extends StatelessWidget {
                                       ),
                                     ),
                                     const SizedBox(height: 36),
-                                    FadeSlideTransition(
-                                      delay: const Duration(milliseconds: 60),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            'Welcome Back!',
-                                            style: SasTypography.style(
-                                              fontSize: 28,
-                                              fontWeight: FontWeight.w600,
-                                              letterSpacing: -0.6,
-                                              color: primaryTextColor,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 6),
-                                          Text(
-                                            'Enter your password to access your account',
-                                            style: SasTypography.style(
-                                              fontSize: 13.5,
-                                              fontWeight: FontWeight.w400,
-                                              color: subtitleColor,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
+                                    AuthPasswordHeading(
+                                      primaryTextColor: primaryTextColor,
+                                      subtitleColor: subtitleColor,
                                     ),
                                     const SizedBox(height: 28),
                                     FadeSlideTransition(

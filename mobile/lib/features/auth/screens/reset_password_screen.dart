@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:smart_attendance_app/app/theme.dart';
 import 'package:smart_attendance_app/features/auth/providers/reset_password_provider.dart';
+import 'package:smart_attendance_app/features/auth/widgets/reset_password_status_cards.dart';
 import 'package:smart_attendance_app/shared/widgets/animated_background.dart';
 import 'package:smart_attendance_app/shared/widgets/glass_button.dart';
 import 'package:smart_attendance_app/shared/widgets/glass_card.dart';
@@ -72,9 +73,9 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
                     vertical: 16,
                   ),
                   child: state.isVerifying
-                      ? _buildLoadingCard()
+                      ? const ResetPasswordLoadingCard()
                       : (!state.isValid && !state.isSuccess)
-                      ? _buildInvalidCard(state.errorMessage)
+                      ? ResetPasswordInvalidCard(errorMessage: state.errorMessage)
                       : _buildResetForm(state),
                 ),
               ),
@@ -87,62 +88,6 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
     );
   }
 
-  Widget _buildLoadingCard() {
-    return const GlassCard(
-      padding: EdgeInsets.all(32),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          CircularProgressIndicator(strokeWidth: 2.5),
-          SizedBox(height: 20),
-          Text(
-            'Verifying reset link...',
-            style: TextStyle(fontWeight: FontWeight.w600),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildInvalidCard(String? error) {
-    return GlassCard(
-      padding: const EdgeInsets.all(28),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: SasColors.danger.withValues(alpha: 0.1),
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(
-              Icons.error_outline,
-              color: SasColors.danger,
-              size: 36,
-            ),
-          ),
-          const SizedBox(height: 16),
-          const Text(
-            'Invalid or Expired Link',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            error ?? 'This reset link is invalid or has already been used.',
-            textAlign: TextAlign.center,
-            style: const TextStyle(color: SasColors.textMuted, fontSize: 13),
-          ),
-          const SizedBox(height: 24),
-          GlassButton(
-            label: 'Back to Login',
-            isExpanded: true,
-            onPressed: () => context.go('/login'),
-          ),
-        ],
-      ),
-    );
-  }
 
   Widget _buildResetForm(ResetPasswordState state) {
     return Column(

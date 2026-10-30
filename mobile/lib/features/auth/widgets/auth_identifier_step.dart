@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:smart_attendance_app/app/theme.dart';
 import 'package:smart_attendance_app/app/typography.dart';
 import 'package:smart_attendance_app/features/auth/widgets/auth_gradient_button.dart';
+import 'package:smart_attendance_app/features/auth/widgets/auth_identifier_input_field.dart';
 import 'package:smart_attendance_app/features/auth/widgets/auth_wave_painter.dart';
 
 /// Step 1: Bottom sheet for entering Student ID or Email.
@@ -137,60 +138,14 @@ class AuthIdentifierStep extends StatelessWidget {
                           const SizedBox(height: 6),
 
                           // Text Field
-                          TextFormField(
+                          AuthIdentifierInputField(
                             controller: controller,
                             focusNode: focusNode,
-                            textInputAction: TextInputAction.done,
-                            keyboardType: TextInputType.emailAddress,
-                            onFieldSubmitted: (_) => onContinue(),
-                            style: SasTypography.style(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: primaryTextColor,
-                            ),
-                            decoration: InputDecoration(
-                              hintText: 'STU-2026-001 or email',
-                              hintStyle: SasTypography.style(
-                                fontSize: 13.5,
-                                fontWeight: FontWeight.w400,
-                                color: subtitleColor,
-                              ),
-                              prefixIcon: Icon(
-                                Icons.person_outline_rounded,
-                                size: 19,
-                                color: subtitleColor,
-                              ),
-                              filled: true,
-                              fillColor: inputBg,
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 14,
-                                vertical: 10,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(16),
-                                borderSide: BorderSide(color: inputBorder),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(16),
-                                borderSide: BorderSide(color: inputBorder),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(16),
-                                borderSide: const BorderSide(
-                                  color: Color(0xFFF95721),
-                                  width: 1.5,
-                                ),
-                              ),
-                            ),
-                            validator: (value) {
-                              if (value == null || value.trim().isEmpty) {
-                                return 'Please enter your student ID or email';
-                              }
-                              if (value.trim().length < 3) {
-                                return 'Identifier must be at least 3 characters';
-                              }
-                              return null;
-                            },
+                            onSubmitted: onContinue,
+                            primaryTextColor: primaryTextColor,
+                            subtitleColor: subtitleColor,
+                            inputBg: inputBg,
+                            inputBorder: inputBorder,
                           ),
                           const SizedBox(height: 12),
 

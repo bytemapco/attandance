@@ -13,6 +13,10 @@ import 'package:smart_attendance_app/data/local/pending_count_provider.dart';
 import 'package:smart_attendance_app/domain/models/attendance.dart';
 import 'package:smart_attendance_app/domain/models/offline_payload.dart';
 
+import 'package:smart_attendance_app/domain/models/attendance_submit_result.dart';
+
+export 'package:smart_attendance_app/domain/models/attendance_submit_result.dart';
+
 final attendanceRepositoryProvider = Provider<AttendanceRepository>((ref) {
   return AttendanceRepository(
     ref: ref,
@@ -20,18 +24,6 @@ final attendanceRepositoryProvider = Provider<AttendanceRepository>((ref) {
     hive: ref.read(hiveServiceProvider),
   );
 });
-
-sealed class AttendanceSubmitResult {}
-
-class OnlineResult extends AttendanceSubmitResult {
-  final AttendanceResult result;
-  OnlineResult(this.result);
-}
-
-class OfflineQueued extends AttendanceSubmitResult {
-  final int queuePosition;
-  OfflineQueued(this.queuePosition);
-}
 
 class AttendanceRepository {
   final Ref _ref;

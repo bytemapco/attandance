@@ -158,7 +158,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     );
   }
 
-  Widget _buildPasswordScreen(dynamic authState, bool isLoading) {
+  Widget _buildPasswordScreen(AuthStateData authState, bool isLoading) {
     return KeyedSubtree(
       key: const ValueKey('step_password'),
       child: AuthPasswordStep(

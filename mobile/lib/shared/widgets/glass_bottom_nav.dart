@@ -119,14 +119,19 @@ class _NavTabItem extends StatelessWidget {
         : const Color(0xFF475569);
 
     return Expanded(
-      child: GestureDetector(
-        onTap: onTap,
-        behavior: HitTestBehavior.opaque,
-        child: SizedBox(
-          height: 52,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
+      child: Semantics(
+        button: true,
+        selected: selected,
+        label: '${item.label} tab',
+        hint: 'Navigates to ${item.label}',
+        child: GestureDetector(
+          onTap: onTap,
+          behavior: HitTestBehavior.opaque,
+          child: SizedBox(
+            height: 52,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
               // Animated pill behind icon
               AnimatedContainer(
                 duration: SasDurations.spring,
@@ -174,6 +179,7 @@ class _NavTabItem extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }

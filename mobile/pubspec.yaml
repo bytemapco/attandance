@@ -21,7 +21,7 @@ dependencies:
 
 
   # Camera & QR Scanner
-  camera: ^0.11.0+2
+  camera: ^0.12.2
   mobile_scanner: ^7.4.2
 
   # Location
@@ -33,7 +33,12 @@ dependencies:
   flutter_secure_storage: ^9.2.4
 
   # Device Info (hardware UUID for device binding)
-  device_info_plus: ^11.2.0
+  device_info_plus: ^11.5.0
+
+
+
+
+
 
   # Connectivity
   connectivity_plus: ^6.1.1
@@ -73,5 +78,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/
+    - .env
+
 
 

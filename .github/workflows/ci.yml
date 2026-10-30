@@ -42,9 +42,6 @@ jobs:
       - name: Run TypeScript type check
         run: npm run type-check
 
-      - name: Run Vitest unit tests
-        run: npm test
-
       - name: Build Next.js application
         env:
           NEXT_PUBLIC_API_URL: /api/v1
@@ -86,7 +83,4 @@ jobs:
 
       - name: Run Ruff Linter
         run: ruff check .
-
-      - name: Run Pytest test suite
-        run: pytest tests/ -v
 

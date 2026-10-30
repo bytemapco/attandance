@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:smart_attendance_app/app/theme.dart';
 import 'package:smart_attendance_app/data/api/student_api.dart';
 import 'package:smart_attendance_app/data/repositories/attendance_repository.dart';
 import 'package:smart_attendance_app/domain/models/attendance.dart';
+import 'package:smart_attendance_app/features/attendance/widgets/flagged_detail_scaffold_parts.dart';
 import 'package:smart_attendance_app/features/attendance/widgets/flagged_hero_card.dart';
 import 'package:smart_attendance_app/features/attendance/widgets/flagged_note_form.dart';
 import 'package:smart_attendance_app/features/attendance/widgets/flagged_score_breakdown.dart';
@@ -93,45 +93,18 @@ class _FlaggedDetailScreenState extends ConsumerState<FlaggedDetailScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     if (_isLoading) {
-      return PopScope(
-        canPop: false,
-        onPopInvokedWithResult: (didPop, _) {
-          if (!didPop) _handleBack();
-        },
-        child: Scaffold(
-          backgroundColor: isDark
-              ? SasColors.darkCanvas
-              : const Color(0xFFF4F7FB),
-          appBar: _buildAppBar(context, isDark),
-          body: const Center(
-            child: CircularProgressIndicator(color: Color(0xFFF95721)),
-          ),
-        ),
+      return FlaggedDetailEmptyScaffold(
+        isDark: isDark,
+        isLoading: true,
+        onBack: _handleBack,
       );
     }
 
     if (_item == null) {
-      return PopScope(
-        canPop: false,
-        onPopInvokedWithResult: (didPop, _) {
-          if (!didPop) _handleBack();
-        },
-        child: Scaffold(
-          backgroundColor: isDark
-              ? SasColors.darkCanvas
-              : const Color(0xFFF4F7FB),
-          appBar: _buildAppBar(context, isDark),
-          body: Center(
-            child: Text(
-              'Record not found',
-              style: GoogleFonts.plusJakartaSans(
-                color: isDark
-                    ? const Color(0xFF94A3B8)
-                    : const Color(0xFF64748B),
-              ),
-            ),
-          ),
-        ),
+      return FlaggedDetailEmptyScaffold(
+        isDark: isDark,
+        isLoading: false,
+        onBack: _handleBack,
       );
     }
 
@@ -146,7 +119,11 @@ class _FlaggedDetailScreenState extends ConsumerState<FlaggedDetailScreen> {
         backgroundColor: isDark
             ? SasColors.darkCanvas
             : const Color(0xFFF4F7FB),
-        appBar: _buildAppBar(context, isDark),
+        appBar: buildFlaggedDetailAppBar(
+          context: context,
+          isDark: isDark,
+          onBack: _handleBack,
+        ),
         body: SafeArea(
           child: Center(
             child: ConstrainedBox(
@@ -185,28 +162,5 @@ class _FlaggedDetailScreenState extends ConsumerState<FlaggedDetailScreen> {
       ),
     );
   }
-
-  PreferredSizeWidget _buildAppBar(BuildContext context, bool isDark) {
-    return AppBar(
-      backgroundColor: isDark ? SasColors.darkCanvas : const Color(0xFFF4F7FB),
-      elevation: 0,
-      centerTitle: true,
-      leading: IconButton(
-        icon: Icon(
-          Icons.arrow_back_ios_new_rounded,
-          size: 18,
-          color: isDark ? Colors.white : const Color(0xFF0F172A),
-        ),
-        onPressed: _handleBack,
-      ),
-      title: Text(
-        'Flagged Record',
-        style: GoogleFonts.plusJakartaSans(
-          fontSize: 16,
-          fontWeight: FontWeight.w700,
-          color: isDark ? Colors.white : const Color(0xFF0F172A),
-        ),
-      ),
-    );
-  }
 }
+

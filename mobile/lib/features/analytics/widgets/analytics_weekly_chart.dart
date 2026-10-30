@@ -1,10 +1,10 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:smart_attendance_app/app/theme.dart';
 import 'package:smart_attendance_app/app/typography.dart';
-import 'package:smart_attendance_app/core/attendance_utils.dart';
 import 'package:smart_attendance_app/domain/models/attendance.dart';
+import 'package:smart_attendance_app/features/analytics/widgets/analytics_legend_dot.dart';
+import 'package:smart_attendance_app/features/analytics/widgets/weekly_chart_data.dart';
 
 /// Weekly attendance bar chart matching the reference design.
 class AnalyticsWeeklyChart extends StatelessWidget {
@@ -23,35 +23,10 @@ class AnalyticsWeeklyChart extends StatelessWidget {
         ? const Color(0xFF94A3B8)
         : const Color(0xFF64748B);
 
-    final weeks = ['Oct 5', 'Oct 12', 'Oct 19', 'Oct 26'];
-    final presentCounts = [0.0, 0.0, 0.0, 1.0];
-    final scheduledCounts = [2.0, 2.0, 2.0, 5.0];
-
-    // Compute dynamic values if actual history exists
-    if (data.history.isNotEmpty) {
-      final now = DateTime.now();
-      for (int i = 0; i < 4; i++) {
-        final w = 3 - i;
-        final weekStart = now.subtract(Duration(days: now.weekday - 1 + w * 7));
-        final weekEnd = weekStart.add(const Duration(days: 6));
-        final label = DateFormat('MMM d').format(weekStart);
-        weeks[i] = label;
-
-        final weekItems = data.history.where((h) {
-          return h.markedAt.isAfter(
-                weekStart.subtract(const Duration(days: 1)),
-              ) &&
-              h.markedAt.isBefore(weekEnd.add(const Duration(days: 1)));
-        }).toList();
-
-        final p = countPresentOrApproved(weekItems).toDouble();
-        final s = weekItems.length.toDouble();
-        if (s > 0) {
-          presentCounts[i] = p;
-          scheduledCounts[i] = s;
-        }
-      }
-    }
+    final chartData = WeeklyChartData.fromHistory(data);
+    final weeks = chartData.weeks;
+    final presentCounts = chartData.presentCounts;
+    final scheduledCounts = chartData.scheduledCounts;
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -92,9 +67,12 @@ class AnalyticsWeeklyChart extends StatelessWidget {
                   ),
                 ),
               ),
-              _LegendDot(color: const Color(0xFF10B981), label: 'Present'),
+              AnalyticsLegendDot(
+                color: const Color(0xFF10B981),
+                label: 'Present',
+              ),
               const SizedBox(width: 12),
-              _LegendDot(
+              AnalyticsLegendDot(
                 color: isDark
                     ? const Color(0xFF64748B)
                     : const Color(0xFFCBD5E1),
@@ -199,41 +177,6 @@ class AnalyticsWeeklyChart extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-}
-
-class _LegendDot extends StatelessWidget {
-  final Color color;
-  final String label;
-
-  const _LegendDot({required this.color, required this.label});
-
-  @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textColor = isDark
-        ? const Color(0xFF94A3B8)
-        : const Color(0xFF64748B);
-
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          width: 7,
-          height: 7,
-          decoration: BoxDecoration(shape: BoxShape.circle, color: color),
-        ),
-        const SizedBox(width: 5),
-        Text(
-          label,
-          style: SasTypography.style(
-            fontSize: 11,
-            fontWeight: FontWeight.w500,
-            color: textColor,
-          ),
-        ),
-      ],
     );
   }
 }

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:smart_attendance_app/app/theme.dart';
 import 'package:smart_attendance_app/app/typography.dart';
-import 'package:smart_attendance_app/core/attendance_constants.dart';
 import 'package:smart_attendance_app/core/attendance_utils.dart';
 import 'package:smart_attendance_app/domain/models/attendance.dart';
 import 'package:smart_attendance_app/features/attendance/widgets/review_score_row.dart';
+import 'package:smart_attendance_app/features/attendance/widgets/verification_ai_helpers.dart';
 
 class VerificationAiReviewCard extends StatefulWidget {
   final AttendanceAnalysisResult analysis;
@@ -154,7 +154,7 @@ class _VerificationAiReviewCardState extends State<VerificationAiReviewCard>
             icon: Icons.face_rounded,
             score: a.faceScore,
             animation: _progressAnim,
-            hint: _faceHint(a.faceScore),
+            hint: getFaceHint(a.faceScore),
           ),
           const SizedBox(height: 10),
           ReviewScoreRow(
@@ -162,7 +162,7 @@ class _VerificationAiReviewCardState extends State<VerificationAiReviewCard>
             icon: Icons.visibility_rounded,
             score: a.livenessScore,
             animation: _progressAnim,
-            hint: _livenessHint(a.livenessScore),
+            hint: getLivenessHint(a.livenessScore),
           ),
           const SizedBox(height: 10),
           ReviewScoreRow(
@@ -170,56 +170,15 @@ class _VerificationAiReviewCardState extends State<VerificationAiReviewCard>
             icon: Icons.location_city_rounded,
             score: a.backgroundScore,
             animation: _progressAnim,
-            hint: _backgroundHint(a.backgroundScore),
+            hint: getBackgroundHint(a.backgroundScore),
           ),
           if (!isPresent) ...[
             const SizedBox(height: 14),
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: const Color(0xFFFFFBEB),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: const Color(0xFFFDE68A)),
-              ),
-              child: Row(
-                children: [
-                  const Icon(
-                    Icons.info_outline_rounded,
-                    color: Color(0xFFD97706),
-                    size: 16,
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      'Submitting will mark this session as Flagged for teacher review.',
-                      style: SasTypography.style(
-                        color: const Color(0xFF92400E),
-                        fontSize: 11.5,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            const VerificationFlaggedNotice(),
           ],
         ],
       ),
     );
   }
-
-  String _faceHint(double s) => s >= 0.85
-      ? 'Strong match'
-      : s >= kGoodScoreThreshold
-      ? 'Good match'
-      : s >= 0.5
-      ? 'Weak match'
-      : 'Poor lighting';
-  String _livenessHint(double s) => s >= 0.8
-      ? 'Confirmed live'
-      : s >= 0.6
-      ? 'Likely live'
-      : 'Check lighting';
-  String _backgroundHint(double s) =>
-      s >= kGoodScoreThreshold ? 'Classroom verified' : 'Unfamiliar background';
 }
+

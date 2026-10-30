@@ -1,7 +1,8 @@
-import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:smart_attendance_app/app/theme.dart';
 import 'package:smart_attendance_app/app/typography.dart';
+import 'package:smart_attendance_app/features/analytics/widgets/analytics_target_deficit_pill.dart';
+import 'package:smart_attendance_app/features/analytics/widgets/attendance_rate_gauge_painter.dart';
 
 /// Card showing overall attendance rate gauge, target percentage, and deficit alert.
 class AnalyticsRateCard extends StatelessWidget {
@@ -85,7 +86,7 @@ class AnalyticsRateCard extends StatelessWidget {
                     RepaintBoundary(
                       child: CustomPaint(
                         size: const Size(104, 104),
-                        painter: _AttendanceRateGaugePainter(
+                        painter: AttendanceRateGaugePainter(
                           progress: cleanPct / 100.0,
                           isDark: isDark,
                         ),
@@ -148,60 +149,10 @@ class AnalyticsRateCard extends StatelessWidget {
                     const SizedBox(height: 10),
 
                     // Alert Pill
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 8,
-                      ),
-                      decoration: BoxDecoration(
-                        color: isBelow
-                            ? (isDark
-                                  ? const Color(0xFF3F1D24)
-                                  : const Color(0xFFFFF1F2))
-                            : (isDark
-                                  ? const Color(0xFF143828)
-                                  : const Color(0xFFF0FDF4)),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: isBelow
-                              ? (isDark
-                                    ? const Color(0xFF7F1D1D)
-                                    : const Color(0xFFFECDD3))
-                              : (isDark
-                                    ? const Color(0xFF15803D)
-                                    : const Color(0xFFBBF7D0)),
-                          width: 1.0,
-                        ),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(
-                            isBelow
-                                ? Icons.warning_amber_rounded
-                                : Icons.check_circle_outline_rounded,
-                            size: 18,
-                            color: isBelow
-                                ? const Color(0xFFEF4444)
-                                : const Color(0xFF16A34A),
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              isBelow
-                                  ? '${diff.toStringAsFixed(0)} percentage points\nbelow target'
-                                  : 'Target met\nsuccessfully',
-                              style: SasTypography.style(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w600,
-                                color: isBelow
-                                    ? const Color(0xFFE11D48)
-                                    : const Color(0xFF16A34A),
-                                height: 1.2,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                    AnalyticsTargetDeficitPill(
+                      isBelow: isBelow,
+                      isDark: isDark,
+                      diff: diff,
                     ),
                   ],
                 ),
@@ -212,51 +163,4 @@ class AnalyticsRateCard extends StatelessWidget {
       ),
     );
   }
-}
-
-class _AttendanceRateGaugePainter extends CustomPainter {
-  final double progress;
-  final bool isDark;
-
-  const _AttendanceRateGaugePainter({
-    required this.progress,
-    required this.isDark,
-  });
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final center = Offset(size.width / 2, size.height / 2);
-    final radius = (size.width - 8.0) / 2;
-
-    // Outer track
-    final trackPaint = Paint()
-      ..color = isDark ? const Color(0xFF334155) : const Color(0xFFF1F5F9)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 7.0
-      ..strokeCap = StrokeCap.round;
-    canvas.drawCircle(center, radius, trackPaint);
-
-    // Active arc
-    final arcPaint = Paint()
-      ..color = const Color(0xFFF95721)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 7.0
-      ..strokeCap = StrokeCap.round;
-
-    if (progress <= 0.005) {
-      // Prominent top pip when zero
-      final pipPaint = Paint()
-        ..color = const Color(0xFFF95721)
-        ..style = PaintingStyle.fill;
-      canvas.drawCircle(Offset(center.dx, center.dy - radius), 4.0, pipPaint);
-    } else {
-      final sweep = progress.clamp(0.02, 1.0) * 2 * math.pi;
-      final rect = Rect.fromCircle(center: center, radius: radius);
-      canvas.drawArc(rect, -math.pi / 2, sweep, false, arcPaint);
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant _AttendanceRateGaugePainter oldDelegate) =>
-      oldDelegate.progress != progress || oldDelegate.isDark != isDark;
 }

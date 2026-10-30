@@ -1,39 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:smart_attendance_app/app/typography.dart';
 
+export 'package:smart_attendance_app/app/dimensions.dart';
+
 class SasColors {
   SasColors._();
 
-  // Core Brand Palette — "Academy Premium"
-  static const Color brilliance = Color(0xFFFDFDFD);
+  // Core Brand Palette — "Smart Attendance Brand Kit"
+  static const Color brandOrange = Color(0xFFF95721); // Primary warm orange
+  static const Color brandOrangeAlt = Color(0xFFFF8A00); // Brand kit secondary orange
+  static const Color brilliance = Color(0xFFF8FAFC); // Clean white/slate-50
   static const Color polishWhite = Color(0xFFEFF3F7);
-  static const Color sunsetInItaly = Color(0xFFEAC96A); // champagne
-  static const Color maidenMist = Color(
-    0xFF94A3B8,
-  ); // slate-400 (navy-compatible)
-  static const Color osageOrange = Color(0xFFF59E0B); // amber
-  static const Color indianInk = Color(
-    0xFF1E293B,
-  ); // slate-800 (light-mode text)
+  static const Color sunsetInItaly = Color(0xFFEAC96A); // Champagne
+  static const Color maidenMist = Color(0xFF94A3B8); // Slate-400
+  static const Color osageOrange = Color(0xFFF95721); // Primary warm orange
+  static const Color indianInk = Color(0xFF0F172A); // Slate-900 brand navy
 
   // Surface Hierarchy — Dark (deep navy)
-  static const Color darkCanvas = Color(0xFF0D1B2A);
-  static const Color darkSurface = Color(0xFF162033);
-  static const Color darkElevated = Color(0xFF1E3048);
+  static const Color darkCanvas = Color(0xFF0F172A);
+  static const Color darkSurface = Color(0xFF1E293B);
+  static const Color darkElevated = Color(0xFF334155);
 
   // Surface Hierarchy — Light (cool-tinted)
-  static const Color lightCanvas = Color(0xFFF8FAFC);
+  static const Color lightCanvas = Color(0xFFF4F7FB);
   static const Color lightSurface = Color(0xFFFFFFFF);
   static const Color lightElevated = Color(0xFFEFF3F7);
 
   // Semantic
-  static const Color success = Color(0xFF10B981); // emerald
-  static const Color warning = Color(0xFFF59E0B); // amber
-  static const Color danger = Color(0xFFF43F5E); // rose
-  static const Color info = Color(0xFF38BDF8); // sky blue
+  static const Color success = Color(0xFF10B981); // Emerald
+  static const Color warning = Color(0xFFF59E0B); // Amber
+  static const Color danger = Color(0xFFF43F5E); // Rose
+  static const Color info = Color(0xFF38BDF8); // Sky blue
 
   // Glow & Overlays
-  static const Color accentGlow = Color(0x33F59E0B);
+  static const Color accentGlow = Color(0x33F95721);
   static const Color glassBg = Color(0xFFFFFFFF);
   static const Color glassBgHover = Color(0xFFF8FAFC);
   static const Color glassBorder = Color(0x1EFFFFFF);
@@ -46,70 +46,28 @@ class SasColors {
   static const Color bgSurface = lightElevated;
 
   static const Color textPrimary = brilliance;
-  static const Color textSecondary = Color(
-    0xFF334155,
-  ); // slate-700 (deep, sharp contrast)
-  static const Color textMuted = Color(
-    0xFF475569,
-  ); // slate-600 (clear legible contrast)
+  static const Color textSecondary = Color(0xFF334155); // Slate-700
+  static const Color textMuted = Color(0xFF475569); // Slate-600
 
   static Color textPrimaryOf(BuildContext context) =>
       Theme.of(context).brightness == Brightness.dark
-      ? brilliance
-      : const Color(0xFF0F172A);
+          ? brilliance
+          : const Color(0xFF0F172A);
 
   static Color textSecondaryOf(BuildContext context) =>
       Theme.of(context).brightness == Brightness.dark
-      ? const Color(0xFFCBD5E1) // slate-300: bright, crisp against navy
-      : const Color(0xFF334155); // slate-700: deep, high-contrast charcoal
+          ? const Color(0xFFCBD5E1) // Slate-300
+          : const Color(0xFF334155); // Slate-700
 
   static Color textMutedOf(BuildContext context) =>
       Theme.of(context).brightness == Brightness.dark
-      ? const Color(0xFF94A3B8) // slate-400
-      : const Color(0xFF475569); // slate-600: 6:1 contrast ratio against white
+          ? const Color(0xFF94A3B8) // Slate-400
+          : const Color(0xFF475569); // Slate-600
 
   static const Color accentEmerald = success;
   static const Color accentTeal = sunsetInItaly;
   static const Color accentPink = danger;
   static const Color accentAmber = osageOrange;
-}
-
-class SasSpacing {
-  SasSpacing._();
-
-  static const double xs = 4;
-  static const double sm = 8;
-  static const double md = 12;
-  static const double lg = 16;
-  static const double xl = 20;
-  static const double xxl = 24;
-  static const double xxxl = 32;
-
-  static const EdgeInsets screenPadding = EdgeInsets.all(xl);
-}
-
-class SasRadius {
-  SasRadius._();
-
-  static const double sm = 8;
-  static const double md = 12;
-  static const double lg = 16;
-  static const double xl = 20;
-  static const double xxl = 28;
-
-  static BorderRadius get smAll => BorderRadius.circular(sm);
-  static BorderRadius get mdAll => BorderRadius.circular(md);
-  static BorderRadius get lgAll => BorderRadius.circular(lg);
-  static BorderRadius get xlAll => BorderRadius.circular(xl);
-}
-
-class SasDurations {
-  SasDurations._();
-
-  static const Duration fast = Duration(milliseconds: 150);
-  static const Duration normal = Duration(milliseconds: 200);
-  static const Duration slow = Duration(milliseconds: 300);
-  static const Duration spring = Duration(milliseconds: 400);
 }
 
 ThemeData buildSasTheme({Brightness brightness = Brightness.light}) {

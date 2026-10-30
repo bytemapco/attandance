@@ -8,10 +8,17 @@ class ShellScaffold extends StatelessWidget {
 
   static const _tabPaths = ['/home', '/history', '/analytics', '/more'];
 
+  int _calculateIndex(String location) {
+    if (location.startsWith('/history')) return 1;
+    if (location.startsWith('/analytics')) return 2;
+    if (location.startsWith('/more')) return 3;
+    return 0;
+  }
+
   @override
   Widget build(BuildContext context) {
     final location = GoRouterState.of(context).uri.path;
-    final currentIndex = _tabPaths.indexOf(location).clamp(0, 3);
+    final currentIndex = _calculateIndex(location);
 
     return Scaffold(
       body: child,

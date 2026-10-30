@@ -40,7 +40,9 @@ class _SmartAttendanceAppState extends ConsumerState<SmartAttendanceApp> {
     Future.microtask(
       () => ref.read(configRepositoryProvider).fetchAndCacheConfig(),
     );
-    _initializeFcm();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _initializeFcm();
+    });
   }
 
   Future<void> _handleNotificationClick(RemoteMessage message) async {
@@ -77,11 +79,12 @@ class _SmartAttendanceAppState extends ConsumerState<SmartAttendanceApp> {
 
   Future<void> _initializeFcm() async {
     if (Firebase.apps.isEmpty) {
-      AppLogger.warn(
-        'Firebase not initialized; push notification listeners skipped',
+      AppLogger.info(
+        'Push notifications (FCM) inactive: Firebase is not initialized.',
       );
       return;
     }
+
     try {
       final authStatus = ref.read(authProvider).status;
       if (authStatus == AuthStatus.authenticated) {

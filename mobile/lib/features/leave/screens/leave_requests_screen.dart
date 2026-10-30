@@ -7,11 +7,11 @@ import 'package:smart_attendance_app/app/theme.dart';
 import 'package:smart_attendance_app/data/api/student_api.dart';
 import 'package:smart_attendance_app/features/leave/widgets/leave_category_selector.dart';
 import 'package:smart_attendance_app/features/leave/widgets/leave_document_uploader.dart';
+import 'package:smart_attendance_app/features/leave/widgets/leave_notes_input.dart';
 import 'package:smart_attendance_app/features/leave/widgets/leave_period_picker.dart';
 import 'package:smart_attendance_app/shared/widgets/animated_background.dart';
 import 'package:smart_attendance_app/shared/widgets/glass_app_bar.dart';
 import 'package:smart_attendance_app/shared/widgets/glass_button.dart';
-import 'package:smart_attendance_app/shared/widgets/glass_card.dart';
 import 'package:smart_attendance_app/utils/logger.dart';
 
 class LeaveRequestsScreen extends ConsumerStatefulWidget {
@@ -154,38 +154,7 @@ class _LeaveRequestsScreenState extends ConsumerState<LeaveRequestsScreen> {
                     onClear: () => setState(() => _selectedDocument = null),
                   ),
                   const SizedBox(height: 16),
-                  Text(
-                    'Reason Details & Notes',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 13,
-                      color: SasColors.textSecondaryOf(context),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  GlassCard(
-                    padding: const EdgeInsets.all(12),
-                    child: TextField(
-                      controller: _notesController,
-                      maxLines: 3,
-                      maxLength: 300,
-                      style: TextStyle(
-                        color: SasColors.textPrimaryOf(context),
-                        fontSize: 13,
-                      ),
-                      decoration: const InputDecoration(
-                        hintText:
-                            'Provide additional context for your instructor...',
-                        hintStyle: TextStyle(
-                          color: SasColors.textMuted,
-                          fontSize: 12,
-                        ),
-                        border: InputBorder.none,
-                        isDense: true,
-                        contentPadding: EdgeInsets.zero,
-                      ),
-                    ),
-                  ),
+                  LeaveNotesInput(controller: _notesController),
                   const SizedBox(height: 20),
                   GlassButton(
                     label: 'Submit Leave Request',

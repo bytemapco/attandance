@@ -25,11 +25,12 @@ class AuthStateData {
     AuthStatus? status,
     UserProfile? user,
     String? errorMessage,
+    bool clearError = false,
   }) {
     return AuthStateData(
       status: status ?? this.status,
       user: user ?? this.user,
-      errorMessage: errorMessage ?? this.errorMessage,
+      errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
     );
   }
 }
@@ -66,8 +67,14 @@ class AuthNotifier extends StateNotifier<AuthStateData> {
     }
   }
 
+  void clearErrorMessage() {
+    if (state.errorMessage != null) {
+      state = state.copyWith(clearError: true);
+    }
+  }
+
   Future<void> login(String email, String password) async {
-    state = state.copyWith(status: AuthStatus.loading, errorMessage: null);
+    state = state.copyWith(status: AuthStatus.loading, clearError: true);
     try {
       final deviceUuid = await _deviceService.getDeviceUUID();
       final result = await _repo.login(email, password, deviceUuid);
@@ -95,14 +102,14 @@ class AuthNotifier extends StateNotifier<AuthStateData> {
   }
 
   void onFaceRegistered() {
-    state = state.copyWith(status: AuthStatus.authenticated);
+    state = state.copyWith(status: AuthStatus.authenticated, clearError: true);
   }
 
   Future<bool> changePassword(
     String newPassword, {
     String? currentPassword,
   }) async {
-    state = state.copyWith(status: AuthStatus.loading, errorMessage: null);
+    state = state.copyWith(status: AuthStatus.loading, clearError: true);
     try {
       await _repo.changePassword(
         newPassword: newPassword,

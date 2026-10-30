@@ -13,7 +13,9 @@
         android:label="smart_attendance_app"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
-        android:usesCleartextTraffic="true">
+        android:usesCleartextTraffic="true"
+        android:enableOnBackInvokedCallback="true">
+
         
         <!-- FCM Default Notification Channel -->
         <meta-data
