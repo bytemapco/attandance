@@ -6,14 +6,20 @@ describe('useAuthStore', () => {
   const mockUser: UserProfile = {
     id: 'usr-123',
     email: 'test.teacher@yopmail.com',
-    first_name: 'Test',
-    last_name: 'Teacher',
     role: 'TEACHER',
+    is_active: true,
     tenant_id: 'ten-456',
     tenant_slug: 'vjti-mumbai',
     tenant_name: 'VJTI Mumbai',
-    status: 'ACTIVE',
-    created_at: new Date().toISOString(),
+    student_profile: null,
+    teacher_profile: {
+      id: 'prof-1',
+      employee_id: 'EMP001',
+      first_name: 'Test',
+      last_name: 'Teacher',
+      department: 'Computer Engineering',
+      designation: 'Professor',
+    },
   };
 
   beforeEach(() => {
