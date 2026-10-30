@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http_parser/http_parser.dart';
+import 'package:smart_attendance_app/core/constants.dart';
 import 'package:smart_attendance_app/data/api/dio_client.dart';
 import 'package:smart_attendance_app/data/api/multipart_utils.dart';
 import 'package:smart_attendance_app/domain/models/attendance.dart';
@@ -12,6 +13,11 @@ final studentApiProvider = Provider<StudentApi>((ref) {
 
 class StudentApi {
   final Dio _dio;
+
+  static final _aiOptions = Options(
+    sendTimeout: const Duration(seconds: 45),
+    receiveTimeout: const Duration(milliseconds: kAiAnalysisTimeout),
+  );
 
   const StudentApi(this._dio);
 
@@ -36,7 +42,11 @@ class StudentApi {
         contentType: MediaType('image', 'jpeg'),
       ),
     });
-    await _dio.post<void>('/student/register-face', data: formData);
+    await _dio.post<void>(
+      '/student/register-face',
+      data: formData,
+      options: _aiOptions,
+    );
   }
 
   Future<AttendanceResult> markAttendance({
@@ -56,6 +66,7 @@ class StudentApi {
     final response = await _dio.post<Map<String, dynamic>>(
       '/student/attendance/mark',
       data: formData,
+      options: _aiOptions,
     );
     return AttendanceResult.fromJson(response.data!);
   }
@@ -77,6 +88,7 @@ class StudentApi {
     final response = await _dio.post<Map<String, dynamic>>(
       '/student/attendance/analyze',
       data: formData,
+      options: _aiOptions,
     );
     return AttendanceAnalysisResult.fromJson(response.data!);
   }

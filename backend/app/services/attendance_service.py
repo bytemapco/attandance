@@ -160,9 +160,10 @@ class AttendanceService:
             raise ValueError("Attendance already submitted for this session.")
 
         if config.isFaceRecognitionEnabled or config.isAiBackgroundValidationEnabled:
-            if not submission.image_path:
+            img_input = submission.image_bytes if submission.image_bytes is not None else submission.image_path
+            if not img_input:
                 raise ValueError("Image is required when verification is enabled.")
-            ai_results = await self.ai_orchestrator.analyze_attendance(submission.image_path, face_embedding)
+            ai_results = await self.ai_orchestrator.analyze_attendance(img_input, face_embedding)
         else:
             ai_results = {"face_score": 1.0, "liveness_score": 1.0, "background_score": 1.0}
 

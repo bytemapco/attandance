@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:go_router/go_router.dart';
@@ -23,7 +24,9 @@ mixin VerificationFlowMixin on ConsumerState<VerificationScreen>, VerificationCa
 
   void clearTimers() {
     aiStepTimer?.cancel();
+    aiStepTimer = null;
     transitionTimer?.cancel();
+    transitionTimer = null;
   }
 
   Future<void> analyzePhoto() async {
@@ -36,9 +39,13 @@ mixin VerificationFlowMixin on ConsumerState<VerificationScreen>, VerificationCa
         t.cancel();
       }
     });
-    await ref
-        .read(attendanceVerificationProvider.notifier)
-        .analyze(widget.sessionId);
+    try {
+      await ref
+          .read(attendanceVerificationProvider.notifier)
+          .analyze(widget.sessionId);
+    } finally {
+      aiStepTimer?.cancel();
+    }
   }
 
   void retakePhoto() {
@@ -103,6 +110,9 @@ mixin VerificationFlowMixin on ConsumerState<VerificationScreen>, VerificationCa
         .read(attendanceVerificationProvider.notifier)
         .lastSubmittedSessionId;
     if (id != null) ref.read(sessionProvider.notifier).markSessionSubmitted(id);
-    if (mounted) context.pushReplacement('/result');
+    if (!mounted) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) context.pushReplacement('/result');
+    });
   }
 }

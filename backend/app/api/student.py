@@ -198,9 +198,10 @@ async def analyze_attendance(
     """
     await _rate_limit_student(student.id, max_requests=10, window_seconds=60)
     image_url = None
+    image_bytes = None
     if image:
         _validate_image(image)
-        image_url, _ = await _save_uploaded_image(image, "attendance")
+        image_url, image_bytes = await _save_uploaded_image(image, "attendance")
     submission = AttendanceSubmission(
         student_id=student.id,
         session_id=session_id,
@@ -208,6 +209,7 @@ async def analyze_attendance(
         longitude=longitude,
         accuracy=accuracy,
         image_path=image_url,
+        image_bytes=image_bytes,
     )
     try:
         result = await attendance_service.analyze_attendance(submission)

@@ -57,9 +57,12 @@ mixin VerificationCameraMixin<T extends ConsumerStatefulWidget>
   }
 
   Future<void> capturePhoto() async {
-    if (camera == null || !camera!.value.isInitialized) return;
+    final ctrl = camera;
+    if (ctrl == null || !ctrl.value.isInitialized || ctrl.value.isTakingPicture) {
+      return;
+    }
     try {
-      final file = await camera!.takePicture();
+      final file = await ctrl.takePicture();
       HapticFeedback.mediumImpact();
       if (!mounted) return;
       ref.read(attendanceVerificationProvider.notifier).setImagePath(file.path);
@@ -68,7 +71,8 @@ mixin VerificationCameraMixin<T extends ConsumerStatefulWidget>
         brightnessScore = null;
         blurScore = null;
       });
-      disposeCamera();
+      await disposeCamera();
+      if (!mounted) return;
       compute(computeImageQuality, file.path).then((q) {
         if (mounted) {
           setState(() {
@@ -83,10 +87,18 @@ mixin VerificationCameraMixin<T extends ConsumerStatefulWidget>
     }
   }
 
-  void disposeCamera() {
+  Future<void> disposeCamera() async {
     final ctrl = camera;
     camera = null;
-    isCameraReady = false;
-    ctrl?.dispose().catchError((_) {});
+    if (mounted) {
+      setState(() => isCameraReady = false);
+    } else {
+      isCameraReady = false;
+    }
+    if (ctrl != null) {
+      try {
+        await ctrl.dispose();
+      } catch (_) {}
+    }
   }
 }

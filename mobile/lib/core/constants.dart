@@ -44,7 +44,8 @@ const String kSecureKeyTenantSlug = 'sas_tenant_slug';
 const String kSecureKeyTenantName = 'sas_tenant_name';
 
 const int kConnectTimeout = 15000;
-const int kReceiveTimeout = 15000;
+const int kReceiveTimeout = 45000;
+const int kAiAnalysisTimeout = 60000;
 
 const Duration kSessionPollMinInterval = Duration(seconds: 15);
 const Duration kSessionPollMaxInterval = Duration(seconds: 60);

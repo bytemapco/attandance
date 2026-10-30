@@ -99,9 +99,14 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen>
     return PopScope(
       canPop: true,
       onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) return;
         clearTimers();
         disposeCamera();
-        ref.read(attendanceVerificationProvider.notifier).reset();
+        if (vState.step != VerificationStep.done) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            ref.read(attendanceVerificationProvider.notifier).reset();
+          });
+        }
       },
       child: Scaffold(
         backgroundColor: isDark

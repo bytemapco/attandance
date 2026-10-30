@@ -42,6 +42,60 @@
       "sourceType": "github",
       "skillPath": "skills/flutter-visual-qa/SKILL.md",
       "computedHash": "66d9efd5578eb2bd73386133ee6909e66441bc3f6899526a503a3f60a4bdae8b"
+    },
+    "senior-security": {
+      "source": "alirezarezvani/claude-skills",
+      "sourceType": "github",
+      "skillPath": "engineering-team/skills/senior-security/SKILL.md",
+      "computedHash": "454188e4f0188d3e0219f58c70dc666e0a9e98383d53a7437a027b13db68643a"
+    },
+    "senior-computer-vision": {
+      "source": "alirezarezvani/claude-skills",
+      "sourceType": "github",
+      "skillPath": "engineering-team/skills/senior-computer-vision/SKILL.md",
+      "computedHash": "af273171f5e786e0d80a306fdb039e60d264f47633fb61a6cce2ca14ac5bf531"
+    },
+    "api-design-reviewer": {
+      "source": "alirezarezvani/claude-skills",
+      "sourceType": "github",
+      "skillPath": "engineering/skills/api-design-reviewer/SKILL.md",
+      "computedHash": "a4e61a67981d7cab02f479f959b9e83d032e705c17b72e763d07ef9a3247bf54"
+    },
+    "api-test-suite-builder": {
+      "source": "alirezarezvani/claude-skills",
+      "sourceType": "github",
+      "skillPath": "engineering/skills/api-test-suite-builder/SKILL.md",
+      "computedHash": "a0db3fd9004317097c1c9c7ef7da6276a98d205a1c2af79fbbddd72fab976d42"
+    },
+    "database-schema-designer": {
+      "source": "alirezarezvani/claude-skills",
+      "sourceType": "github",
+      "skillPath": "engineering/skills/database-schema-designer/SKILL.md",
+      "computedHash": "0a964937e39dc65462ad5b3e36e30ebd08f17eea6503e0f7d0b2dbe86fbe35fc"
+    },
+    "env-secrets-manager": {
+      "source": "alirezarezvani/claude-skills",
+      "sourceType": "github",
+      "skillPath": "engineering/skills/env-secrets-manager/SKILL.md",
+      "computedHash": "6724d5bd32506212977fe6e78be754d97458e16ae164fbc6adb69e30d31caaee"
+    },
+    "performance-profiler": {
+      "source": "alirezarezvani/claude-skills",
+      "sourceType": "github",
+      "skillPath": "engineering/skills/performance-profiler/SKILL.md",
+      "computedHash": "953948b591db0afc4dac8ff4e84d65a2c34fa62b7b579e3ba6cf3398e79ec18b"
+    },
+    "dependency-auditor": {
+      "source": "alirezarezvani/claude-skills",
+      "sourceType": "github",
+      "skillPath": "engineering/skills/dependency-auditor/SKILL.md",
+      "computedHash": "4bde5bd43d14b39a9c282f1ab74b202d102b070b99a5083724e84526bc5e2f0a"
+    },
+    "observability-designer": {
+      "source": "alirezarezvani/claude-skills",
+      "sourceType": "github",
+      "skillPath": "engineering/skills/observability-designer/SKILL.md",
+      "computedHash": "70ab54164e3cb58f30f4f4e1500bd54361c67f6ecbde954b13596dc2902fe2ac"
     }
   }
 }

@@ -18,3 +18,5 @@ class AttendanceSubmission:
     longitude: float
     accuracy: float
     image_path: str | None = None
+    image_bytes: bytes | None = None
+
