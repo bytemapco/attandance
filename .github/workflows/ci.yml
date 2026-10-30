@@ -42,6 +42,9 @@ jobs:
       - name: Run TypeScript type check
         run: npm run type-check
 
+      - name: Run Unit & Component Tests
+        run: npm run test:ci
+
       - name: Build Next.js application
         env:
           NEXT_PUBLIC_API_URL: /api/v1
@@ -83,4 +86,33 @@ jobs:
 
       - name: Run Ruff Linter
         run: ruff check .
+
+      - name: Run Pytest Test Suite
+        run: pytest tests -v
+
+  mobile-ci:
+    name: Mobile Quality & Unit Tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mobile
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Install Flutter dependencies
+        run: flutter pub get
+
+      - name: Run Flutter Static Analysis
+        run: flutter analyze --no-fatal-infos
+
+      - name: Run Flutter Unit Tests
+        run: flutter test
 
