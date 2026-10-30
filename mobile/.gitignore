@@ -1,4 +1,63 @@
-# Flutter/Dart related
+# ==============================================================================
+# Smart Attendance Mobile - .gitignore
+# Covers: Flutter, Dart, Android, iOS, and Environment/IDE Artifacts
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# 1. Operating System & Filesystem Artifacts
+# ------------------------------------------------------------------------------
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# ------------------------------------------------------------------------------
+# 2. Editors, IDEs & Developer Tooling
+# ------------------------------------------------------------------------------
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+*.swp
+*.swo
+*~
+*.bak
+*.orig
+*.iml
+*.ipr
+*.iws
+
+# ------------------------------------------------------------------------------
+# 3. Environment Variables & Secret Credentials (CRITICAL)
+# ------------------------------------------------------------------------------
+.env
+.env.*
+.env*.local
+!.env.example
+!.env.*.example
+
+credentials.txt
+*-credentials.json
+firebase-credentials*.json
+google-services*.json
+google_services.json
+key.properties
+*.keystore
+*.jks
+*.pem
+*.key
+*.crt
+*.cert
+*.pfx
+*.p12
+
+# ------------------------------------------------------------------------------
+# 4. Flutter & Dart Builds and Caches
+# ------------------------------------------------------------------------------
 .dart_tool/
 .flutter-plugins
 .flutter-plugins-dependencies
@@ -6,41 +65,46 @@
 .pub-cache/
 .pub/
 build/
-
-# Android related
-android/**/generated/
-android/app/local.properties
-android/app/key.properties
-android/app/src/main/res/raw/google_services.json
-android/app/google-services.json
-*.iml
-*.ipr
-*.iws
-.idea/
-.gradle/
 local.properties
 
-# iOS related
+# ------------------------------------------------------------------------------
+# 5. Android
+# ------------------------------------------------------------------------------
+.gradle/
+captures/
+.cxx/
+gradle-wrapper.jar
+gradlew
+gradlew.bat
+**/android/**/generated/
+**/android/app/src/main/res/raw/google_services.json
+**/android/app/google-services.json
+GeneratedPluginRegistrant.java
+
+# ------------------------------------------------------------------------------
+# 6. iOS
+# ------------------------------------------------------------------------------
 ios/Flutter/Generated.xcconfig
 ios/Flutter/flutter_export_environment.sh
 ios/Flutter/ephemeral/
+ios/Flutter/App.framework
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/Flutter/app.flx
+ios/Flutter/app.zip
+ios/Flutter/flutter_assets/
 ios/Pods/
 ios/.symlinks/
 ios/Podfile.lock
-Podfile.lock
-
-# Symbols and Maps
+ios/DerivedData/
+ios/**/GeneratedPluginRegistrant.*
+*.xcworkspace/
+*.xcuserdatad/
+xcuserdata/
 app.*.symbols
 app.*.map.json
 
-# Logs
-*.log
-
-# OS files
-.DS_Store
-
-# Environment files
-.env
-.env*
-!.env.example
-!.env.*.example
+# Build distribution archives
+*.ipa
+*.apk
+*.aab

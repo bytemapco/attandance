@@ -1,6 +1,6 @@
 # ==============================================================================
 # Smart Attendance System - Master Monorepo .gitignore
-# Covers: Workspace Root, Backend (FastAPI/Python/Prisma), Frontend (Next.js/TS),
+# Covers: Root, Backend (FastAPI/Python/Prisma), Frontend (Next.js/TS),
 # and Mobile (Flutter/Dart/Android/iOS)
 # ==============================================================================
 
@@ -36,6 +36,9 @@ desktop.ini
 .classpath
 .cproject
 .settings/
+*.iml
+*.ipr
+*.iws
 
 # ------------------------------------------------------------------------------
 # 3. Environment Variables & Secret Credentials (CRITICAL)
@@ -47,12 +50,15 @@ desktop.ini
 !.env.example
 !.env.*.example
 
-# Credentials & Certificates
+# Credentials, Keys & Certificates
 credentials.txt
 *-credentials.json
 firebase-credentials*.json
 google-services*.json
 google_services.json
+key.properties
+*.keystore
+*.jks
 *.pem
 *.key
 *.crt
@@ -79,7 +85,7 @@ __pycache__/
 *.so
 .Python
 
-# Virtual Environments
+# Virtual Environments & Build Artifacts
 .venv/
 venv/
 ENV/
@@ -92,8 +98,11 @@ eggs/
 *.egg-info/
 .installed.cfg
 *.egg
+sdist/
+var/
+wheels/
 
-# Testing & Coverage Artifacts
+# Testing, Linting & Coverage Artifacts
 .pytest_cache/
 .ruff_cache/
 .mypy_cache/
@@ -110,7 +119,13 @@ cov_html/
 prisma/client/
 backend/prisma/client/
 
-# Dynamic AI/ML Model Weights (Keep base models explicitly whitelisted)
+# Storage & Uploads
+uploads/
+!uploads/.gitkeep
+static/
+!static/.gitkeep
+
+# Dynamic AI/ML Model Weights (Allow base models in models directory)
 *.pb
 *.pt
 *.pth
@@ -123,23 +138,19 @@ backend/prisma/client/
 # 6. Frontend & Node.js (Next.js, React, Tailwind, Vitest, Playwright)
 # ------------------------------------------------------------------------------
 node_modules/
-*/node_modules/
 .pnp
 .pnp.*
 
 # Next.js Build Outputs & Local Deployment
 .next/
-*/.next/
 out/
 build/
 .vercel/
-*/.vercel/
 
 # TypeScript & Test Caches
 *.tsbuildinfo
 next-env.d.ts
 coverage/
-*/coverage/
 playwright-report/
 blob-report/
 test-results/
@@ -150,33 +161,53 @@ e2e-screenshots/
 # 7. Mobile (Flutter, Dart, Android, iOS)
 # ------------------------------------------------------------------------------
 .dart_tool/
-*/.dart_tool/
 .flutter-plugins
 .flutter-plugins-dependencies
 .packages
 .pub-cache/
 .pub/
-mobile/build/
-mobile/.gradle/
 local.properties
-*/local.properties
-key.properties
-*/key.properties
-mobile/android/**/generated/
 
-# iOS Ephemeral & CocoaPods
-mobile/ios/Flutter/Generated.xcconfig
-mobile/ios/Flutter/flutter_export_environment.sh
-mobile/ios/Flutter/ephemeral/
-mobile/ios/Pods/
-mobile/ios/.symlinks/
-mobile/ios/Podfile.lock
-mobile/*.xcworkspace/
+# Flutter / Android Builds & Caches
+.gradle/
+captures/
+.cxx/
+gradle-wrapper.jar
+gradlew
+gradlew.bat
+**/android/**/generated/
+**/android/app/src/main/res/raw/google_services.json
+**/android/app/google-services.json
+GeneratedPluginRegistrant.java
+
+# iOS Ephemeral, CocoaPods & Derived Data
+**/ios/Flutter/Generated.xcconfig
+**/ios/Flutter/flutter_export_environment.sh
+**/ios/Flutter/ephemeral/
+**/ios/Flutter/App.framework
+**/ios/Flutter/Flutter.framework
+**/ios/Flutter/Flutter.podspec
+**/ios/Flutter/app.flx
+**/ios/Flutter/app.zip
+**/ios/Flutter/flutter_assets/
+**/ios/Pods/
+**/ios/.symlinks/
+**/ios/Podfile.lock
+**/ios/DerivedData/
+**/ios/**/GeneratedPluginRegistrant.*
+*.xcworkspace/
+*.xcuserdatad/
+xcuserdata/
 app.*.symbols
 app.*.map.json
 
+# Mobile Distribution Archives (Avoid untracked build dumps)
+*.ipa
+*.apk
+*.aab
+
 # ------------------------------------------------------------------------------
-# 8. Temporary & Agent Knowledge Caches
+# 8. Temporary & Knowledge Graph Caches
 # ------------------------------------------------------------------------------
 temp/
 tmp/
