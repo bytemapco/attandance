@@ -123,10 +123,10 @@ class TeacherAdminService:
             department=teacher.department.name if teacher.department else "",
             designation=teacher.designation.name if teacher.designation else "",
             phone=teacher.phone,
-            qualification=teacher.qualification,
-            specialization=teacher.specialization,
-            experience_years=teacher.experienceYears,
-            joining_date=teacher.joiningDate,
+            qualification=getattr(teacher, "qualification", None),
+            specialization=getattr(teacher, "specialization", None),
+            experience_years=getattr(teacher, "experienceYears", None),
+            joining_date=getattr(teacher, "joiningDate", None),
         )
 
     @staticmethod
