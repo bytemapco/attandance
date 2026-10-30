@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import React from "react";
 
 export const metadata: Metadata = {
-  title: "Account Sign In | Smart Attendance System",
-  description: "Secure multi-layered authentication portal for administrators and faculty.",
+  title: "Account Sign In | SAHAJ",
+  description: "Secure authentication portal for administrators and faculty.",
 };
 
 export default function AuthLayout({ children }: { children: React.ReactNode }): React.ReactElement {

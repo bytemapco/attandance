@@ -161,7 +161,7 @@ class _SmartAttendanceAppState extends ConsumerState<SmartAttendanceApp> {
     final themeMode = ref.watch(themeModeProvider);
 
     return MaterialApp.router(
-      title: 'Smart Attendance',
+      title: 'SAHAJ',
       theme: buildSasTheme(brightness: Brightness.light),
       darkTheme: buildSasTheme(brightness: Brightness.dark),
       themeMode: themeMode,

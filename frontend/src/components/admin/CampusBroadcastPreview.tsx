@@ -101,12 +101,14 @@ export default function CampusBroadcastPreview({ formData }: CampusBroadcastPrev
         </div>
 
         <div className="p-3 rounded-lg border border-border bg-background shadow-xs flex items-start gap-2.5">
-          <div className="w-7 h-7 rounded-md bg-primary text-primary-foreground flex items-center justify-center shrink-0 shadow-2xs mt-0.5">
-            <Shield size={13} className="text-white" />
-          </div>
+          <img
+            src="/sahaj-app-icon.png"
+            alt="SAHAJ"
+            className="w-7 h-7 rounded-md object-contain shrink-0 shadow-2xs mt-0.5"
+          />
           <div className="flex-1 min-w-0">
             <div className="flex items-center justify-between text-[11px] text-muted-foreground">
-              <span className="font-semibold text-foreground">Smart Attendance</span>
+              <span className="font-semibold text-foreground tracking-wide">SAHAJ</span>
               <span>now</span>
             </div>
             <p className="text-xs font-semibold text-foreground truncate mt-0.5">

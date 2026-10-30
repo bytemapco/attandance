@@ -187,13 +187,17 @@ export default function OnboardingPage(): React.ReactElement {
     <div className="min-h-screen flex items-center justify-center p-4 bg-background">
       <div className="w-full max-w-md">
         <div className="text-center mb-6">
-          <div className="inline-flex p-3 rounded-xl bg-primary text-primary-foreground shadow-sm mb-3">
-            <ShieldCheck size={26} />
+          <div className="inline-flex items-center justify-center mb-3">
+            <img
+              src="/sahaj-app-icon.png"
+              alt="SAHAJ Logo"
+              className="w-14 h-14 rounded-2xl shadow-sm object-contain"
+            />
           </div>
           <h1 className="text-2xl font-bold tracking-tight text-foreground">
-            Smart Attendance
+            SAHAJ
           </h1>
-          <p className="text-xs text-muted-foreground mt-1">Set up your account</p>
+          <p className="text-xs text-muted-foreground mt-1 font-medium">Campus, made effortless.</p>
         </div>
 
         <Suspense

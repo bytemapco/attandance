@@ -74,10 +74,12 @@ export default function Header({ onMenuToggle }: HeaderProps): React.JSX.Element
           </button>
 
           <Link href={homeHref} className="md:hidden flex items-center gap-2 font-bold text-xs text-foreground shrink-0 hover:opacity-80 transition-opacity">
-            <div className="h-7 w-7 rounded-md bg-primary text-primary-foreground flex items-center justify-center shadow-2xs">
-              <Shield size={14} className="text-white" />
-            </div>
-            <span className="hidden sm:inline">Smart Attendance</span>
+            <img
+              src="/sahaj-app-icon.png"
+              alt="SAHAJ Logo"
+              className="h-7 w-7 rounded-md shadow-2xs object-contain"
+            />
+            <span className="hidden sm:inline tracking-wider">SAHAJ</span>
           </Link>
 
           <div

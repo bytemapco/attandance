@@ -25,14 +25,14 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: "Smart Attendance System | AI Multi-Layer Verification",
-    template: "%s | Smart Attendance System",
+    default: "SAHAJ | Campus, made effortless",
+    template: "%s | SAHAJ",
   },
-  description: "AI-powered multi-layered smart attendance verification & management dashboard",
-  keywords: ["Smart Attendance", "AI Verification", "Geofence Attendance", "Liveness Detection", "Attendance Management"],
+  description: "Connected campus technology platform — attendance, operations & academic management",
+  keywords: ["SAHAJ", "Campus Platform", "Smart Attendance", "AI Verification", "Geofence Attendance"],
   icons: {
     icon: "/favicon.ico",
-    apple: "/favicon.ico",
+    apple: "/sahaj-app-icon.png",
   },
 };
 

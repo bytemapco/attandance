@@ -37,12 +37,14 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps): React.JSX.El
       <aside className={cn("fixed top-0 bottom-0 left-0 z-40 flex flex-col w-[260px] bg-card border-r border-border transition-transform duration-200", isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0")}>
         <div className="h-16 px-5 border-b border-border flex items-center justify-between">
           <Link href={homeHref} onClick={onClose} className="flex items-center gap-2.5 group hover:opacity-90 transition-opacity cursor-pointer">
-            <div className="h-9 w-9 rounded-lg bg-primary text-primary-foreground flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform">
-              <Shield size={18} className="text-white" />
-            </div>
+            <img
+              src="/sahaj-app-icon.png"
+              alt="SAHAJ Logo"
+              className="h-9 w-9 rounded-lg shadow-xs group-hover:scale-105 transition-transform object-contain"
+            />
             <div>
-              <h2 className="text-sm font-bold text-foreground tracking-tight">Smart Attendance</h2>
-              <p className="text-[11px] text-muted-foreground font-medium">Enterprise System</p>
+              <h2 className="text-sm font-bold text-foreground tracking-wider">SAHAJ</h2>
+              <p className="text-[11px] text-muted-foreground font-medium">Campus Platform</p>
             </div>
           </Link>
         </div>

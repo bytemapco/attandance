@@ -73,12 +73,17 @@ export default function ForgotPasswordPage(): React.ReactElement {
       <div className="w-full">
         <div className="text-center mb-6">
           <Link href="/login" className="inline-block group cursor-pointer hover:opacity-90 transition-opacity">
-            <div className="inline-flex p-3 rounded-xl bg-primary text-primary-foreground shadow-sm mb-3 group-hover:scale-105 transition-transform">
-              <KeyRound size={26} />
+            <div className="inline-flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
+              <img
+                src="/sahaj-app-icon.png"
+                alt="SAHAJ Logo"
+                className="w-14 h-14 rounded-2xl shadow-sm object-contain"
+              />
             </div>
             <h1 className="text-2xl font-bold tracking-tight text-foreground">
-              Smart Attendance
+              SAHAJ
             </h1>
+            <p className="text-xs text-muted-foreground mt-0.5 font-medium">Campus, made effortless.</p>
           </Link>
         </div>
 

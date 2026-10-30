@@ -29,51 +29,45 @@ class AuthBrandHeader extends StatelessWidget {
     final logoWidget = Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Container(
+        SizedBox(
           width: 36,
           height: 36,
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Color(0xFFFF7A18), Color(0xFFF95721)],
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(9),
+            child: Image.asset(
+              'assets/images/sahaj_app_icon.png',
+              width: 36,
+              height: 36,
+              cacheWidth: 72,
+              cacheHeight: 72,
+              fit: BoxFit.cover,
             ),
-            borderRadius: BorderRadius.circular(10),
-            boxShadow: [
-              BoxShadow(
-                color: const Color(0xFFF95721).withValues(alpha: 0.35),
-                blurRadius: 10,
-                offset: const Offset(0, 3),
-              ),
-            ],
-          ),
-          child: const Center(
-            child: Icon(Icons.school_rounded, color: Colors.white, size: 20),
           ),
         ),
-        const SizedBox(width: 9),
+        const SizedBox(width: 10),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'SMART',
+              'SAHAJ',
               style: SasTypography.style(
-                fontSize: 13,
+                fontSize: 16,
                 fontWeight: FontWeight.w700,
-                letterSpacing: 1.2,
+                letterSpacing: 1.5,
                 color: smartTextColor,
                 height: 1.0,
               ),
             ),
+            const SizedBox(height: 2),
             Text(
-              'ATTENDANCE',
+              'Campus, made effortless',
               style: SasTypography.style(
-                fontSize: 11,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 1.2,
-                color: const Color(0xFFF95721),
-                height: 1.05,
+                fontSize: 10,
+                fontWeight: FontWeight.w500,
+                letterSpacing: 0.3,
+                color: isDark ? SasColors.maidenMist : const Color(0xFF526F78),
+                height: 1.0,
               ),
             ),
           ],

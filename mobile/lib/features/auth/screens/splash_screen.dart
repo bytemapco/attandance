@@ -110,35 +110,26 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                 child: FadeTransition(
                   opacity: _logoFade,
                   child: Container(
-                    width: 88,
-                    height: 88,
+                    width: 96,
+                    height: 96,
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(26),
-                      gradient: const LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                          SasColors.osageOrange,
-                          SasColors.sunsetInItaly,
-                        ],
-                      ),
+                      borderRadius: BorderRadius.circular(24),
                       boxShadow: [
                         BoxShadow(
-                          color: SasColors.osageOrange.withValues(alpha: 0.45),
-                          blurRadius: 32,
-                          offset: const Offset(0, 8),
-                        ),
-                        BoxShadow(
-                          color: SasColors.osageOrange.withValues(alpha: 0.15),
-                          blurRadius: 64,
-                          spreadRadius: 8,
+                          color: const Color(0xFFC98260).withValues(alpha: 0.35),
+                          blurRadius: 36,
+                          offset: const Offset(0, 10),
                         ),
                       ],
                     ),
-                    child: const Icon(
-                      Icons.school_rounded,
-                      color: Colors.white,
-                      size: 42,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(24),
+                      child: Image.asset(
+                        'assets/images/sahaj_app_icon.png',
+                        width: 96,
+                        height: 96,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
                 ),
@@ -154,23 +145,23 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                   child: Column(
                     children: [
                       Text(
-                        'Smart Attendance',
+                        'SAHAJ',
                         style: SasTypography.style(
                           color: SasColors.brilliance,
-                          fontSize: 28,
+                          fontSize: 32,
                           fontWeight: FontWeight.w800,
-                          letterSpacing: -0.8,
+                          letterSpacing: 2.0,
                           height: 1.1,
                         ),
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'AI-Powered Verification',
+                        'Campus, made effortless.',
                         style: SasTypography.style(
                           color: SasColors.maidenMist,
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
-                          letterSpacing: 0.2,
+                          letterSpacing: 0.3,
                         ),
                       ),
                     ],
