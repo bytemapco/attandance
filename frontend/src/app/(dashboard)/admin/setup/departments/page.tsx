@@ -91,18 +91,21 @@ export default function DepartmentsPage(): React.ReactElement {
       header: "Actions",
       render: (row) => (
         <div className="flex items-center gap-2">
-          <button
+          <GlassButton
+            variant="ghost"
+            size="sm"
             onClick={() => router.push(`/admin/setup/departments/${row.id}/edit`)}
-            className="glass-btn glass-btn-ghost glass-btn-sm"
+            icon={<Pencil size={13} />}
           >
-            <Pencil size={14} /> Edit
-          </button>
-          <button
+            Edit
+          </GlassButton>
+          <GlassButton
+            variant="ghost"
+            size="sm"
             onClick={() => setDeleteTarget(String(row.id))}
-            className="glass-btn glass-btn-ghost glass-btn-sm text-muted-foreground hover:text-destructive hover:bg-destructive/10"
-          >
-            <Trash2 size={14} />
-          </button>
+            className="text-muted-foreground hover:text-[#b54242] hover:bg-[#f9eaea]"
+            icon={<Trash2 size={13} />}
+          />
         </div>
       ),
     },

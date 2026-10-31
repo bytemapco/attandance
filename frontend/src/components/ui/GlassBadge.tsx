@@ -9,29 +9,32 @@ export interface GlassBadgeProps {
   variant: BadgeVariant;
   children: React.ReactNode;
   className?: string;
+  icon?: React.ReactNode;
 }
 
 const badgeVariantClasses: Record<BadgeVariant, string> = {
-  success: "bg-emerald-50 text-emerald-800 border-emerald-200",
-  warning: "bg-amber-50 text-amber-800 border-amber-200",
-  danger: "bg-red-50 text-red-800 border-red-200",
-  info: "bg-sky-50 text-sky-800 border-sky-200",
-  neutral: "bg-slate-100 text-slate-700 border-slate-200",
+  success: "bg-[#e8f3ed] text-[#247653] border-[#c6e2d3]",
+  warning: "bg-[#fbf1df] text-[#8a5b12] border-[#f2deba]",
+  danger: "bg-[#f9eaea] text-[#b54242] border-[#f0c9c9]",
+  info: "bg-[#eaf2f6] text-[#306b8a] border-[#c5dce8]",
+  neutral: "bg-[#eeece7] text-[#526f78] border-[#e3e1dc]",
 };
 
 export default function GlassBadge({
   variant,
   children,
   className = "",
+  icon,
 }: GlassBadgeProps): React.ReactElement {
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-semibold tracking-wide transition-colors",
+        "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-semibold tracking-wide transition-colors select-none",
         badgeVariantClasses[variant] || badgeVariantClasses.neutral,
         className
       )}
     >
+      {icon}
       {children}
     </span>
   );
@@ -40,11 +43,15 @@ export default function GlassBadge({
 const STATUS_VARIANT_MAP: Record<string, BadgeVariant> = {
   Present: "success",
   Approved: "success",
+  ACTIVE: "success",
   Flagged: "warning",
   Pending: "warning",
+  TRIAL: "warning",
   Absent: "danger",
   Rejected: "danger",
+  SUSPENDED: "danger",
   Active: "info",
+  PROVISIONING: "info",
   Inactive: "neutral",
   Normal: "neutral",
 };

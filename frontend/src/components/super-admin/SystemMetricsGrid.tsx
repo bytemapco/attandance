@@ -30,7 +30,7 @@ export default function SystemMetricsGrid({ health }: SystemMetricsGridProps): R
     <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
       {/* Uptime */}
       <GlassCard className="p-4 flex items-center gap-3.5">
-        <div className="p-2.5 rounded-xl bg-blue-500/10 text-blue-500 shrink-0">
+        <div className="p-2.5 rounded-xl bg-[#eeece7] text-[#526f78] border border-[#e3e1dc] shrink-0">
           <Server size={18} />
         </div>
         <div className="min-w-0">
@@ -43,7 +43,7 @@ export default function SystemMetricsGrid({ health }: SystemMetricsGridProps): R
 
       {/* DB Connections */}
       <GlassCard className="p-4 flex items-center gap-3.5">
-        <div className="p-2.5 rounded-xl bg-indigo-500/10 text-indigo-500 shrink-0">
+        <div className="p-2.5 rounded-xl bg-[#eeece7] text-[#28363b] border border-[#e3e1dc] shrink-0">
           <Database size={18} />
         </div>
         <div className="min-w-0">
@@ -56,7 +56,7 @@ export default function SystemMetricsGrid({ health }: SystemMetricsGridProps): R
 
       {/* Cache Ping */}
       <GlassCard className="p-4 flex items-center gap-3.5">
-        <div className="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-500 shrink-0">
+        <div className="p-2.5 rounded-xl bg-[#e8f3ed] text-[#247653] border border-[#c6e2d3] shrink-0">
           <Zap size={18} />
         </div>
         <div className="min-w-0">
@@ -69,13 +69,13 @@ export default function SystemMetricsGrid({ health }: SystemMetricsGridProps): R
 
       {/* Biometric Compute */}
       <GlassCard className="p-4 flex items-center gap-3.5">
-        <div className="p-2.5 rounded-xl bg-amber-500/10 text-amber-500 shrink-0">
+        <div className="p-2.5 rounded-xl bg-[#f7efea] text-[#c98260] border border-[#f0ded4] shrink-0">
           <Cpu size={18} />
         </div>
         <div className="min-w-0">
-          <p className="text-xs text-muted-foreground font-medium">Biometric Device</p>
-          <p className="text-lg font-bold text-foreground truncate">
-            {activeDevice}
+          <p className="text-xs text-muted-foreground font-medium">AI Compute Hardware</p>
+          <p className="text-lg font-bold text-foreground truncate" title={activeDevice}>
+            {activeDevice.replace(/^\/device:/, "")}
           </p>
         </div>
       </GlassCard>

@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Mail, Lock, Shield, AlertTriangle } from "lucide-react";
+import { Mail, Lock, AlertTriangle } from "lucide-react";
 import toast from "react-hot-toast";
 
 import api, { getApiErrorMessage, applyValidationErrorsToForm } from "@/lib/api";
@@ -52,7 +52,7 @@ export default function LoginPage(): React.ReactElement {
       });
 
       if (profile.role === "STUDENT") {
-        setError("email", { message: "Student accounts must access via the Smart Attendance Mobile App." });
+        setError("email", { message: "Student accounts must access via the SAHAJ Mobile App." });
         toast.error("Access Restricted: Student accounts must use the Mobile App.");
         return;
       }
@@ -80,47 +80,38 @@ export default function LoginPage(): React.ReactElement {
   }
 
   return (
-    <div className="w-full max-w-md mx-auto my-auto py-8">
-      <div className="w-full">
-        <div className="text-center mb-6">
-          <Link href="/login" className="inline-block group cursor-pointer hover:opacity-90 transition-opacity">
-            <div className="inline-flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
-              <img
-                src="/sahaj-app-icon.png"
-                alt="SAHAJ Logo"
-                className="w-14 h-14 rounded-2xl shadow-sm object-contain"
-              />
-            </div>
-            <h1 className="text-2xl font-bold tracking-tight text-foreground">
-              SAHAJ
-            </h1>
-            <p className="text-xs text-muted-foreground mt-0.5 font-medium">Campus, made effortless.</p>
+    <div className="w-full max-w-[420px] mx-auto my-auto py-8 px-4">
+      <div className="rounded-2xl border border-[#e3e1dc]/90 bg-white/95 backdrop-blur-md p-7 sm:p-8 shadow-[0_10px_30px_rgba(40,54,59,0.08),0_1px_3px_rgba(40,54,59,0.04)]">
+        {/* Brand Header */}
+        <div className="flex flex-col items-center text-center mb-6">
+          <Link
+            href="/login"
+            className="group inline-flex items-center justify-center cursor-pointer transition-transform duration-200 hover:scale-[1.02]"
+          >
+            <img
+              src="/sahaj-logo-transparent.png"
+              alt="SAHAJ Logo"
+              className="h-10 sm:h-11 w-auto object-contain"
+            />
           </Link>
         </div>
 
         <form
           noValidate
           onSubmit={handleSubmit(onSubmit)}
-          className="rounded-2xl border border-border bg-card p-7 shadow-sm space-y-5"
+          className="space-y-5"
         >
-          <div className="space-y-1">
-            <h2 className="text-base font-semibold text-foreground">Sign In</h2>
-            <p className="text-xs text-muted-foreground">
-              Sign in with your email and password
-            </p>
-          </div>
-
           {suspensionError && (
-            <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 text-left flex gap-3 items-start animate-in fade-in duration-200">
-              <AlertTriangle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
+            <div className="rounded-xl border border-[#f2deba] bg-[#fbf1df] p-4 text-left flex gap-3 items-start animate-in fade-in duration-200">
+              <AlertTriangle className="w-5 h-5 text-[#8a5b12] shrink-0 mt-0.5" />
               <div className="space-y-1">
-                <p className="text-sm font-semibold text-amber-500">Institution Suspended</p>
-                <p className="text-xs text-muted-foreground leading-relaxed">{suspensionError}</p>
+                <p className="text-xs font-bold text-[#8a5b12]">Institution Suspended</p>
+                <p className="text-xs text-[#526f78] leading-relaxed">{suspensionError}</p>
               </div>
             </div>
           )}
 
-          <div className="space-y-3.5">
+          <div className="space-y-4">
             <GlassInput
               label="Email Address"
               type="email"
@@ -144,7 +135,7 @@ export default function LoginPage(): React.ReactElement {
               <div className="flex justify-end pt-1.5">
                 <Link
                   href="/forgot-password"
-                  className="text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
+                  className="text-xs font-medium text-[#526f78] hover:text-[#202b30] transition-colors focus:outline-none focus:underline"
                 >
                   Forgot password?
                 </Link>
@@ -152,22 +143,18 @@ export default function LoginPage(): React.ReactElement {
             </div>
           </div>
 
-          <div className="pt-1">
+          <div className="pt-2">
             <GlassButton
               type="submit"
               variant="primary"
               size="lg"
               loading={isSubmitting}
-              className="w-full font-medium"
+              className="w-full font-semibold shadow-sm hover:shadow transition-shadow"
             >
               Sign In to Dashboard
             </GlassButton>
           </div>
         </form>
-
-        <p className="text-center text-xs text-muted-foreground mt-6">
-          Protected by Smart Attendance Zero-Trust Verification
-        </p>
       </div>
 
       <ForceChangePasswordModal

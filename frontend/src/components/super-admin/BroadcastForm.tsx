@@ -45,25 +45,25 @@ const SEVERITY_TYPES: Array<{
     value: "info",
     label: "Info",
     icon: <Info size={13} />,
-    activeClass: "bg-blue-500/15 border-blue-500/30 text-blue-600 dark:text-blue-400",
+    activeClass: "bg-[#eaf2f6] border-[#306b8a] text-[#306b8a]",
   },
   {
     value: "warning",
     label: "Warning",
     icon: <AlertTriangle size={13} />,
-    activeClass: "bg-amber-500/15 border-amber-500/30 text-amber-600 dark:text-amber-400",
+    activeClass: "bg-[#fbf1df] border-[#8a5b12] text-[#8a5b12]",
   },
   {
     value: "critical",
     label: "Critical",
     icon: <AlertCircle size={13} />,
-    activeClass: "bg-destructive/15 border-destructive/30 text-destructive",
+    activeClass: "bg-[#f9eaea] border-[#b54242] text-[#b54242]",
   },
   {
     value: "success",
     label: "Success",
     icon: <CheckCircle2 size={13} />,
-    activeClass: "bg-emerald-500/15 border-emerald-500/30 text-emerald-600 dark:text-emerald-400",
+    activeClass: "bg-[#e8f3ed] border-[#247653] text-[#247653]",
   },
 ];
 
@@ -75,39 +75,36 @@ export default function BroadcastForm({
 }: BroadcastFormProps): React.ReactElement {
   return (
     <GlassCard className="p-6">
-      <div className="flex items-center gap-3 pb-4 mb-4 border-b border-border">
-        <div className="p-2.5 rounded-xl bg-blue-500/10 text-blue-500 shrink-0">
-          <Radio size={20} />
+      <div className="flex items-center gap-3 pb-4 mb-4 border-b border-[#e3e1dc]">
+        <div className="p-2 rounded-lg bg-[#eeece7] text-[#28363b] border border-[#e3e1dc] shrink-0">
+          <Radio size={18} />
         </div>
-        <div>
-          <h3 className="text-base font-bold text-foreground">Composer</h3>
-          <p className="text-xs text-muted-foreground">Draft platform announcement</p>
-        </div>
+        <h3 className="text-base font-semibold text-[#28363b]">New Announcement</h3>
       </div>
 
       <form onSubmit={onSubmit} className="space-y-4">
         {/* Title */}
         <div className="space-y-1.5">
-          <label className="text-xs font-medium text-muted-foreground">Title</label>
+          <label className="text-xs font-semibold text-[#526f78]">Title</label>
           <input
             type="text"
-            placeholder="Maintenance on Sunday"
+            placeholder="e.g. Scheduled platform maintenance"
             value={form.title}
             onChange={(e) => onChange({ title: e.target.value })}
             required
-            className="w-full px-3.5 py-2 bg-muted/20 border border-border/60 rounded-xl text-xs text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors"
+            className="w-full px-3.5 py-2 bg-card border border-[#e3e1dc] rounded-lg text-xs text-[#202b30] placeholder:text-[#718087] focus:outline-none focus:ring-1 focus:ring-[#28363b] focus:border-[#28363b] transition-colors"
           />
         </div>
 
         {/* Audience & Category Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div className="space-y-1.5">
-            <label className="text-xs font-medium text-muted-foreground">Audience</label>
+            <label className="text-xs font-semibold text-[#526f78]">Audience</label>
             <Select
               value={form.target_role || "ALL"}
               onValueChange={(val) => onChange({ target_role: val === "ALL" ? undefined : val })}
             >
-              <SelectTrigger className="w-full h-9 bg-muted/20 border-border/60 text-xs rounded-xl">
+              <SelectTrigger className="w-full h-9 bg-card border-[#e3e1dc] text-xs rounded-lg text-[#202b30]">
                 <SelectValue placeholder="Audience" />
               </SelectTrigger>
               <SelectContent>
@@ -121,12 +118,12 @@ export default function BroadcastForm({
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-xs font-medium text-muted-foreground">Category</label>
+            <label className="text-xs font-semibold text-[#526f78]">Category</label>
             <Select
               value={form.category}
               onValueChange={(val) => onChange({ category: val as GlobalBroadcastRequest["category"] })}
             >
-              <SelectTrigger className="w-full h-9 bg-muted/20 border-border/60 text-xs rounded-xl">
+              <SelectTrigger className="w-full h-9 bg-card border-[#e3e1dc] text-xs rounded-lg text-[#202b30]">
                 <SelectValue placeholder="Category" />
               </SelectTrigger>
               <SelectContent>
@@ -142,7 +139,7 @@ export default function BroadcastForm({
 
         {/* Severity */}
         <div className="space-y-1.5">
-          <label className="text-xs font-medium text-muted-foreground">Severity</label>
+          <label className="text-xs font-semibold text-[#526f78]">Severity</label>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
             {SEVERITY_TYPES.map((sev) => {
               const isActive = form.type === sev.value;
@@ -151,10 +148,10 @@ export default function BroadcastForm({
                   key={sev.value}
                   type="button"
                   onClick={() => onChange({ type: sev.value })}
-                  className={`flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-medium transition-all cursor-pointer ${
+                  className={`flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-semibold transition-all cursor-pointer ${
                     isActive
                       ? sev.activeClass
-                      : "bg-muted/10 border-border/60 text-muted-foreground hover:bg-muted/20 hover:text-foreground"
+                      : "bg-[#eeece7]/60 border-[#e3e1dc] text-[#526f78] hover:bg-[#eeece7] hover:text-[#202b30]"
                   }`}
                 >
                   {sev.icon}
@@ -167,19 +164,19 @@ export default function BroadcastForm({
 
         {/* Message */}
         <div className="space-y-1.5">
-          <label className="text-xs font-medium text-muted-foreground">Message</label>
+          <label className="text-xs font-semibold text-[#526f78]">Message</label>
           <textarea
             rows={4}
-            placeholder="Announcement message..."
+            placeholder="Type your announcement details here..."
             value={form.message}
             onChange={(e) => onChange({ message: e.target.value })}
             required
-            className="w-full px-3.5 py-2.5 bg-muted/20 border border-border/60 rounded-xl text-xs text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary resize-y transition-colors leading-relaxed"
+            className="w-full px-3.5 py-2.5 bg-card border border-[#e3e1dc] rounded-lg text-xs text-[#202b30] placeholder:text-[#718087] focus:outline-none focus:ring-1 focus:ring-[#28363b] focus:border-[#28363b] resize-y transition-colors leading-relaxed"
           />
         </div>
 
         {/* Submit */}
-        <div className="pt-1 flex justify-end">
+        <div className="pt-2 flex justify-end">
           <GlassButton
             type="submit"
             variant="primary"
@@ -188,7 +185,7 @@ export default function BroadcastForm({
             className="gap-2 text-xs font-semibold px-4"
           >
             <Send size={13} />
-            <span>Send</span>
+            <span>Send Announcement</span>
           </GlassButton>
         </div>
       </form>

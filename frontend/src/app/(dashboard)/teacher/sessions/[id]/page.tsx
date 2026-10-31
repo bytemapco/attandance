@@ -9,8 +9,9 @@ export default function SessionRedirectPage(): null {
   const router = useRouter();
 
   useEffect(() => {
-    router.replace(`/teacher/sessions/${id}/roster`);
+    router.replace(`/teacher/sessions/${id}/attendance-roll`);
   }, [id, router]);
+
 
   return null;
 }

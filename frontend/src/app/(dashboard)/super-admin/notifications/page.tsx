@@ -76,7 +76,6 @@ export default function SuperAdminNotificationsPage(): React.JSX.Element {
     <div className="space-y-6 max-w-5xl mx-auto pb-16">
       <NotificationHeader
         title="Notifications"
-        description="Tenant provisioning, platform infrastructure health, and global broadcast logs."
         unreadCount={unreadCount}
         loading={loading}
         onRefresh={() => void refetch()}

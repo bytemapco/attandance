@@ -4,6 +4,7 @@ import React from "react";
 import { useRouter } from "next/navigation";
 import { Building2, AlertTriangle, Mail, ArrowRight } from "lucide-react";
 import { useAuthStore } from "@/store/authStore";
+import GlassButton from "@/components/ui/GlassButton";
 
 export default function SuspendedPage(): React.ReactElement {
   const router = useRouter();
@@ -20,74 +21,74 @@ export default function SuspendedPage(): React.ReactElement {
   const handleContactSupport = (): void => {
     const subject = encodeURIComponent(`Account Suspension Inquiry - ${tenantName}`);
     const body = encodeURIComponent(`Hello,\n\nI am ${email} and my institution account "${tenantName}" appears to be suspended. Please assist.\n\nThank you.`);
-    window.open(`mailto:support@smartattendance.io?subject=${subject}&body=${body}`, "_blank");
+    window.open(`mailto:support@sahajcampus.com?subject=${subject}&body=${body}`, "_blank");
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background px-4">
-      <div className="max-w-md w-full text-center space-y-8">
-        {/* Icon */}
+    <div className="min-h-screen flex items-center justify-center bg-background px-4 py-8">
+      <div className="max-w-md w-full text-center space-y-7">
         <div className="relative inline-flex">
-          <div className="w-24 h-24 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center">
-            <Building2 className="w-12 h-12 text-amber-400" />
+          <div className="w-20 h-20 rounded-2xl bg-[#fbf1df] border border-[#f2deba] flex items-center justify-center">
+            <Building2 className="w-10 h-10 text-[#8a5b12]" />
           </div>
-          <div className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-destructive/10 border border-destructive/20 flex items-center justify-center">
-            <AlertTriangle className="w-4 h-4 text-destructive" />
+          <div className="absolute -top-1.5 -right-1.5 w-7 h-7 rounded-full bg-[#f9eaea] border border-[#f0c9c9] flex items-center justify-center">
+            <AlertTriangle className="w-3.5 h-3.5 text-[#b54242]" />
           </div>
         </div>
 
-        {/* Text */}
-        <div className="space-y-3">
-          <h1 className="text-2xl font-bold text-foreground">Account Suspended</h1>
-          <p className="text-muted-foreground leading-relaxed">
+        <div className="space-y-2">
+          <h1 className="text-2xl font-bold tracking-tight text-[#28363b]">Account Suspended</h1>
+          <p className="text-xs sm:text-sm text-[#526f78] leading-relaxed">
             {suspensionReason ? (
               <span>{suspensionReason}</span>
             ) : (
               <>
-                <span className="font-semibold text-foreground">{tenantName}</span> has been temporarily
-                suspended. Access is paused until your institution is reactivated.
+                <span className="font-semibold text-[#202b30]">{tenantName}</span> has been temporarily
+                suspended. Access is paused until your institutional license is reactivated.
               </>
             )}
           </p>
         </div>
 
-        {/* Info box */}
-        <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-4 text-left space-y-2">
-          <p className="text-xs font-semibold uppercase tracking-wider text-amber-400">
+        <div className="rounded-xl border border-[#f2deba] bg-[#fbf1df]/60 p-4 text-left space-y-2">
+          <p className="text-xs font-bold uppercase tracking-wider text-[#8a5b12]">
             Status Details
           </p>
-          <ul className="text-sm text-muted-foreground space-y-1.5">
+          <ul className="text-xs text-[#526f78] space-y-1.5">
             <li className="flex gap-2 items-start">
-              <span className="text-amber-400 mt-0.5">•</span>
-              Access is temporarily paused
+              <span className="text-[#8a5b12] font-bold mt-0.5">•</span>
+              Administrative and faculty access is temporarily paused
             </li>
             <li className="flex gap-2 items-start">
-              <span className="text-amber-400 mt-0.5">•</span>
-              Your attendance and class records are preserved
+              <span className="text-[#8a5b12] font-bold mt-0.5">•</span>
+              All attendance records, biometrics, and class history remain securely preserved
             </li>
             <li className="flex gap-2 items-start">
-              <span className="text-amber-400 mt-0.5">•</span>
-              Full access will resume upon reactivation
+              <span className="text-[#8a5b12] font-bold mt-0.5">•</span>
+              Full platform services will resume immediately upon institutional reactivation
             </li>
           </ul>
         </div>
 
-        {/* Actions */}
-        <div className="flex flex-col gap-3">
-          <button
+        <div className="flex flex-col gap-2.5">
+          <GlassButton
+            variant="primary"
+            size="lg"
             onClick={handleContactSupport}
-            className="flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors"
+            icon={<Mail className="w-4 h-4" />}
+            className="w-full"
           >
-            <Mail className="w-4 h-4" />
-            Contact Support
-          </button>
-          <button
+            Contact SAHAJ Support
+          </GlassButton>
+          <GlassButton
+            variant="secondary"
+            size="md"
             onClick={handleLogout}
-            className="flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl border border-border text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-colors"
+            className="w-full"
           >
-            Sign Out
-            <ArrowRight className="w-4 h-4" />
-          </button>
+            <span>Sign Out</span>
+            <ArrowRight className="w-4 h-4 ml-1" />
+          </GlassButton>
         </div>
       </div>
     </div>

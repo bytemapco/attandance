@@ -34,20 +34,20 @@ export function NotificationFilterBar({
       <div className="relative w-full">
         <Search
           size={14}
-          className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
+          className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#718087] pointer-events-none"
         />
         <input
           type="text"
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
-          placeholder="Filter notifications by keyword, title, or details..."
-          className="w-full pl-9 pr-9 py-2 text-xs sm:text-sm bg-card/70 backdrop-blur-md border border-border/80 rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all shadow-2xs"
+          placeholder="Search notifications..."
+          className="w-full pl-9 pr-9 py-2 text-xs sm:text-sm bg-card border border-[#e3e1dc] rounded-lg text-[#202b30] placeholder:text-[#718087] focus:outline-none focus:ring-1 focus:ring-[#28363b] focus:border-[#28363b] transition-all"
         />
         {searchQuery && (
           <button
             type="button"
             onClick={() => onSearchChange("")}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-0.5 rounded cursor-pointer"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-[#718087] hover:text-[#202b30] p-0.5 rounded cursor-pointer"
             title="Clear search"
             aria-label="Clear search"
           >
@@ -67,16 +67,16 @@ export function NotificationFilterBar({
               onClick={() => onFilterChange(item.id)}
               className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-lg transition-all shrink-0 cursor-pointer select-none active:scale-95 ${
                 isActive
-                  ? "bg-foreground text-background shadow-2xs font-semibold"
-                  : "bg-card/70 text-muted-foreground hover:text-foreground hover:bg-card border border-border/60 font-medium"
+                  ? "bg-[#28363b] text-white font-semibold shadow-xs"
+                  : "bg-card text-[#526f78] hover:text-[#202b30] hover:bg-[#eeece7] border border-[#e3e1dc] font-medium"
               }`}
             >
-              <Icon size={13} className={isActive ? "text-background" : "text-muted-foreground"} />
+              <Icon size={13} className={isActive ? "text-white" : "text-[#718087]"} />
               <span>{item.label}</span>
               {item.id === "unread" && unreadCount > 0 && (
                 <span
                   className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold tabular-nums ${
-                    isActive ? "bg-background text-foreground" : "bg-primary text-primary-foreground"
+                    isActive ? "bg-white text-[#28363b]" : "bg-[#c98260] text-white"
                   }`}
                 >
                   {unreadCount}

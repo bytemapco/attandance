@@ -86,9 +86,11 @@ export default function BulkImportModal({
               <h3 className="text-base font-bold text-foreground">
                 Import {getEntityTitle()}
               </h3>
-              <p className="text-xs text-muted-foreground">
-                {fileName ? `File: ${fileName}` : `Upload a CSV file to add multiple ${getEntityTitle().toLowerCase()} at once`}
-              </p>
+              {fileName && (
+                <p className="text-xs text-muted-foreground">
+                  File: {fileName}
+                </p>
+              )}
             </div>
           </div>
           {stage !== "importing" && (

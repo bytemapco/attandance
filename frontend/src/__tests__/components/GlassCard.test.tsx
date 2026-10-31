@@ -32,7 +32,7 @@ describe("GlassCard component", () => {
 
     const card = container.firstChild as HTMLElement;
     expect(card.className).toContain("p-4");
-    expect(card.className).toContain("hover:border-slate-300");
+    expect(card.className).toContain("hover:border-[#c98260]/60");
     expect(card.className).toContain("custom-class");
   });
 });

@@ -1,19 +1,29 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { Search, X, Loader2, CornerDownLeft, Sparkles } from "lucide-react";
+import { Search, X, Loader2 } from "lucide-react";
 
 import { useAuthStore } from "@/store/authStore";
 import api from "@/lib/api";
 import { useDebounce } from "@/hooks/useDebounce";
-import { getCommandIcon } from "./commandIcons";
+import CommandPaletteItem from "./CommandPaletteItem";
 import type { SearchResultItem, GlobalSearchResponse } from "@/types";
 
 interface CommandPaletteModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
+
+const CATEGORY_ORDER: { [key: string]: { label: string; order: number } } = {
+  action: { label: "Quick Actions", order: 1 },
+  class: { label: "Classes", order: 2 },
+  student: { label: "Students", order: 3 },
+  faculty: { label: "Faculty", order: 4 },
+  session: { label: "Sessions", order: 5 },
+  tenant: { label: "Institutions", order: 6 },
+  navigation: { label: "Navigation", order: 7 },
+};
 
 export default function CommandPaletteModal({ isOpen, onClose }: CommandPaletteModalProps): React.ReactElement | null {
   const router = useRouter();
@@ -24,9 +34,8 @@ export default function CommandPaletteModal({ isOpen, onClose }: CommandPaletteM
   const [selectedIndex, setSelectedIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const debouncedQuery = useDebounce(query, 180);
+  const debouncedQuery = useDebounce(query, 160);
 
-  // Fetch search results from backend whenever query or modal open state changes
   useEffect(() => {
     if (!isOpen) {
       setQuery("");
@@ -78,110 +87,98 @@ export default function CommandPaletteModal({ isOpen, onClose }: CommandPaletteM
     }
   };
 
+  const searchPlaceholder = useMemo(() => {
+    if (user?.role === "SUPER_ADMIN") return "Search institutions, licenses, or system actions...";
+    if (user?.role === "ADMIN" || user?.role === "TENANT_ADMIN") return "Search students, faculty, classes, or actions...";
+    return "Search students, classes, or quick actions...";
+  }, [user?.role]);
+
+  // Group results by category preserving global flat indexing
+  const groupedSections = useMemo(() => {
+    const groups: { [key: string]: { label: string; items: { item: SearchResultItem; globalIndex: number }[] } } = {};
+    results.forEach((item, globalIndex) => {
+      const cat = item.category || "action";
+      const config = CATEGORY_ORDER[cat] || { label: cat.toUpperCase(), order: 99 };
+      if (!groups[cat]) {
+        groups[cat] = { label: config.label, items: [] };
+      }
+      groups[cat].items.push({ item, globalIndex });
+    });
+
+    return Object.entries(groups)
+      .sort(([a], [b]) => (CATEGORY_ORDER[a]?.order ?? 99) - (CATEGORY_ORDER[b]?.order ?? 99))
+      .map(([, group]) => group);
+  }, [results]);
+
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center pt-16 px-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-150">
+    <div className="fixed inset-0 z-50 flex items-start justify-center pt-16 px-4 bg-[#28363b]/50 backdrop-blur-xs animate-in fade-in duration-150">
       <div className="fixed inset-0" onClick={onClose} />
       
-      <div className="relative w-full max-w-2xl rounded-2xl border border-border bg-card shadow-2xl overflow-hidden z-10 flex flex-col max-h-[80vh] animate-in zoom-in-95 duration-150">
-        {/* Search Input Bar */}
-        <div className="flex items-center px-4 py-3.5 border-b border-border gap-3 bg-card/90">
-          <Search size={18} className="text-muted-foreground shrink-0" />
+      <div className="relative w-full max-w-2xl rounded-2xl border border-[#e3e1dc] bg-[#f5f2ed] shadow-[0_8px_24px_rgba(40,54,59,0.14)] overflow-hidden z-10 flex flex-col max-h-[80vh] animate-in zoom-in-95 duration-150">
+        <div className="flex items-center px-4 py-3.5 border-b border-[#e3e1dc] gap-3 bg-[#f5f2ed]">
+          <Search size={18} className="text-[#526f78] shrink-0" />
           <input
             ref={inputRef}
             type="text"
-            placeholder={
-              user?.role === "ADMIN"
-                ? "Search students, faculty, classes, or quick actions..."
-                : "Search enrolled students, classes, sessions, or commands..."
-            }
+            placeholder={searchPlaceholder}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={handleKeyDown}
-            className="flex-1 text-sm bg-transparent text-foreground placeholder:text-muted-foreground outline-none font-medium"
+            className="flex-1 text-sm bg-transparent text-[#202b30] placeholder:text-[#718087] outline-none font-medium"
           />
-          {loading && <Loader2 size={16} className="animate-spin text-emerald-500 shrink-0" />}
+          {loading && <Loader2 size={16} className="animate-spin text-[#c98260] shrink-0" />}
           <button
             onClick={onClose}
             aria-label="Close search"
-            className="p-1 rounded-lg hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors"
+            className="p-1 rounded-lg hover:bg-[#eeece7] text-[#526f78] hover:text-[#202b30] transition-colors cursor-pointer"
           >
             <X size={16} />
           </button>
         </div>
 
-        {/* Results Stream */}
-        <div className="overflow-y-auto p-2.5 space-y-1">
+        <div className="overflow-y-auto p-2.5 space-y-3">
           {results.length === 0 && !loading ? (
-            <div className="py-12 text-center text-xs text-muted-foreground">
+            <div className="py-12 text-center text-xs text-[#526f78]">
               {query ? (
-                <>No matching results found for &ldquo;<strong className="text-foreground">{query}</strong>&rdquo;</>
+                <>No matching results found for &ldquo;<strong className="text-[#202b30]">{query}</strong>&rdquo;</>
               ) : (
-                "Type a query to search across the institution..."
+                "Type a query to search across your workspace..."
               )}
             </div>
           ) : (
-            results.map((item, idx) => {
-              const isSelected = selectedIndex === idx;
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => handleSelect(item)}
-                  onMouseEnter={() => setSelectedIndex(idx)}
-                  className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-left text-xs transition-all ${
-                    isSelected
-                      ? "bg-secondary text-foreground shadow-xs border border-border/70"
-                      : "text-muted-foreground hover:bg-secondary/50 border border-transparent"
-                  }`}
-                >
-                  <div className="flex items-center gap-3 min-w-0">
-                    <div className="p-2 rounded-lg bg-card border border-border shrink-0">
-                      {getCommandIcon(item.icon_type, item.category)}
-                    </div>
-                    <div className="min-w-0">
-                      <div className="font-semibold text-foreground truncate flex items-center gap-2">
-                        <span>{item.title}</span>
-                        {item.badge && (
-                          <span className={`px-1.5 py-0.2 rounded text-[10px] font-bold border ${
-                            item.badge === "LIVE"
-                              ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/30 animate-pulse"
-                              : "bg-secondary text-muted-foreground border-border/50"
-                          }`}>
-                            {item.badge}
-                          </span>
-                        )}
-                      </div>
-                      {item.subtitle && (
-                        <p className="text-[11px] text-muted-foreground truncate mt-0.5">{item.subtitle}</p>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2 shrink-0 ml-3 text-[10px] text-muted-foreground">
-                    <span className="capitalize font-mono px-2 py-0.5 rounded-md bg-card border border-border/70">
-                      {item.category}
-                    </span>
-                    <CornerDownLeft size={12} className={isSelected ? "text-emerald-500 opacity-100" : "opacity-0"} />
-                  </div>
-                </button>
-              );
-            })
+            groupedSections.map((section) => (
+              <div key={section.label} className="space-y-1">
+                <p className="px-3 pt-1 text-[10px] font-bold text-[#718087] uppercase tracking-wider">
+                  {section.label}
+                </p>
+                {section.items.map(({ item, globalIndex }) => (
+                  <CommandPaletteItem
+                    key={item.id}
+                    item={item}
+                    isSelected={selectedIndex === globalIndex}
+                    onSelect={handleSelect}
+                    onMouseEnter={() => setSelectedIndex(globalIndex)}
+                  />
+                ))}
+              </div>
+            ))
           )}
         </div>
 
-        {/* Footer Shortcut Hints */}
-        <div className="px-4 py-2.5 border-t border-border bg-secondary/30 flex items-center justify-between text-[11px] text-muted-foreground">
+        <div className="px-4 py-2.5 border-t border-[#e3e1dc] bg-[#eeece7]/60 flex items-center justify-between text-[11px] text-[#526f78]">
           <div className="flex items-center gap-3">
-            <span><kbd className="font-mono px-1.5 py-0.5 rounded border border-border bg-card text-[10px]">↑↓</kbd> Navigate</span>
-            <span><kbd className="font-mono px-1.5 py-0.5 rounded border border-border bg-card text-[10px]">↵</kbd> Select</span>
-            <span><kbd className="font-mono px-1.5 py-0.5 rounded border border-border bg-card text-[10px]">esc</kbd> Dismiss</span>
+            <span><kbd className="font-mono px-1.5 py-0.5 rounded border border-[#e3e1dc] bg-[#f5f2ed] text-[10px]">↑↓</kbd> Navigate</span>
+            <span><kbd className="font-mono px-1.5 py-0.5 rounded border border-[#e3e1dc] bg-[#f5f2ed] text-[10px]">↵</kbd> Select</span>
+            <span><kbd className="font-mono px-1.5 py-0.5 rounded border border-[#e3e1dc] bg-[#f5f2ed] text-[10px]">esc</kbd> Dismiss</span>
           </div>
-          <span className="font-semibold text-[11px] text-emerald-500 flex items-center gap-1">
-            <Sparkles size={12} /> Enterprise Global Search
+          <span className="font-semibold text-[11px] text-[#526f78]">
+            Sahaj Search
           </span>
         </div>
       </div>
     </div>
   );
 }
+

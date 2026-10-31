@@ -6,15 +6,13 @@ import { useRouter } from "next/navigation";
 import { Plus, ArrowRight } from "lucide-react";
 import GlassPageHeader from "@/components/ui/GlassPageHeader";
 import GlassButton from "@/components/ui/GlassButton";
-import SuperAdminKpiStrip from "@/components/super-admin/SuperAdminKpiStrip";
 import TenantTable from "@/components/super-admin/TenantTable";
 import { superAdminService } from "@/services/superAdminService";
-import type { SuperAdminStats, Tenant } from "@/types";
+import type { Tenant } from "@/types";
 import toast from "react-hot-toast";
 
 export default function SuperAdminDashboardPage(): React.ReactElement {
   const router = useRouter();
-  const [stats, setStats] = useState<SuperAdminStats | null>(null);
   const [recentTenants, setRecentTenants] = useState<Tenant[]>([]);
   const [loading, setLoading] = useState(true);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
@@ -22,11 +20,7 @@ export default function SuperAdminDashboardPage(): React.ReactElement {
   const loadData = useCallback(async (): Promise<void> => {
     try {
       setLoading(true);
-      const [statsData, tenantsData] = await Promise.all([
-        superAdminService.getStats(),
-        superAdminService.getTenants({ page: 1, page_size: 5 }),
-      ]);
-      setStats(statsData);
+      const tenantsData = await superAdminService.getTenants({ page: 1, page_size: 5 });
       setRecentTenants(tenantsData.items);
     } catch {
       toast.error("Failed to load platform dashboard data.");
@@ -45,9 +39,9 @@ export default function SuperAdminDashboardPage(): React.ReactElement {
       setUpdatingId(tenant.id);
       const updated = await superAdminService.updateTenant(tenant.id, { status: nextStatus });
       setRecentTenants((prev) => prev.map((t) => (t.id === updated.id ? updated : t)));
-      toast.success(`Tenant ${updated.name} is now ${nextStatus.toLowerCase()}.`);
+      toast.success(`Updated status: "${updated.name}" is now ${nextStatus.toLowerCase()}.`);
     } catch {
-      toast.error("Failed to update tenant status.");
+      toast.error("Failed to update status.");
     } finally {
       setUpdatingId(null);
     }
@@ -64,8 +58,6 @@ export default function SuperAdminDashboardPage(): React.ReactElement {
           </GlassButton>
         }
       />
-
-      <SuperAdminKpiStrip stats={stats} loading={loading} />
 
       <div className="mt-8">
         <div className="flex items-center justify-between mb-4">

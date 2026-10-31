@@ -112,6 +112,20 @@ export const superAdminService = {
     return data;
   },
 
+  async updateTenantAdminEmail(tenantId: string, adminId: string, payload: { email: string }): Promise<{ id: string; email: string; role: string }> {
+    const { data } = await api.put<{ id: string; email: string; role: string }>(`/super-admin/tenants/${tenantId}/admins/${adminId}`, payload);
+    return data;
+  },
+
+  async deleteTenantAdmin(tenantId: string, adminId: string): Promise<void> {
+    await api.delete(`/super-admin/tenants/${tenantId}/admins/${adminId}`);
+  },
+
+  async setTenantAdminStatus(adminId: string, isActive: boolean): Promise<{ id: string; email: string; is_active: boolean }> {
+    const { data } = await api.patch<{ id: string; email: string; is_active: boolean }>(`/super-admin/users/${adminId}/status`, { is_active: isActive });
+    return data;
+  },
+
   async triggerPasswordReset(userId: string): Promise<{ id: string; email: string; status: string }> {
     const { data } = await api.post<{ id: string; email: string; status: string }>(`/super-admin/users/${userId}/reset-password`);
     return data;

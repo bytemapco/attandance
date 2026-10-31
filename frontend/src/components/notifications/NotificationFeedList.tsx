@@ -45,11 +45,11 @@ export function NotificationFeedList({
     return (
       <div className="space-y-3">
         {[1, 2, 3, 4].map((i) => (
-          <div key={i} className="p-4 rounded-xl bg-card border border-border animate-pulse flex items-start gap-3.5">
-            <div className="h-9 w-9 rounded-xl bg-muted shrink-0" />
+          <div key={i} className="p-4 rounded-xl bg-card border border-[#e3e1dc] animate-pulse flex items-start gap-3.5">
+            <div className="h-9 w-9 rounded-lg bg-[#eeece7] shrink-0" />
             <div className="flex-1 space-y-2">
-              <div className="w-32 h-3.5 bg-muted rounded" />
-              <div className="w-3/4 h-3 bg-muted rounded" />
+              <div className="w-32 h-3.5 bg-[#eeece7] rounded" />
+              <div className="w-3/4 h-3 bg-[#eeece7] rounded" />
             </div>
           </div>
         ))}
@@ -59,12 +59,17 @@ export function NotificationFeedList({
 
   if (error && notifications.length === 0) {
     return (
-      <div className="p-8 rounded-2xl bg-destructive/5 border border-destructive/20 text-center space-y-3">
-        <div className="inline-flex p-3 rounded-xl bg-destructive/10 text-destructive"><AlertCircle size={24} /></div>
-        <h3 className="text-base font-semibold text-foreground">Unable to load notifications</h3>
-        <p className="text-xs sm:text-sm text-muted-foreground max-w-sm mx-auto">{error}</p>
-        <button type="button" onClick={onRetry} className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-white bg-destructive hover:bg-destructive/90 rounded-lg transition-all active:scale-95 cursor-pointer shadow-2xs">
-          <RotateCw size={13} /><span>Retry</span>
+      <div className="p-8 rounded-xl bg-[#f9eaea] border border-[#b54242]/20 text-center space-y-3">
+        <div className="inline-flex p-3 rounded-lg bg-[#b54242]/10 text-[#b54242]"><AlertCircle size={22} /></div>
+        <h3 className="text-base font-semibold text-[#202b30]">Unable to load notifications</h3>
+        <p className="text-xs sm:text-sm text-[#526f78] max-w-sm mx-auto">{error}</p>
+        <button
+          type="button"
+          onClick={onRetry}
+          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-white bg-[#b54242] hover:bg-[#a03838] rounded-lg transition-all active:scale-95 cursor-pointer shadow-xs"
+        >
+          <RotateCw size={13} />
+          <span>Retry</span>
         </button>
       </div>
     );
@@ -72,11 +77,11 @@ export function NotificationFeedList({
 
   if (notifications.length === 0) {
     return (
-      <div className="p-12 rounded-2xl bg-card/60 backdrop-blur-md border border-border/80 text-center space-y-3 shadow-2xs">
-        <div className="inline-flex p-3.5 rounded-2xl bg-secondary/80 text-muted-foreground border border-border/40"><Inbox size={26} /></div>
-        <h3 className="text-base font-semibold text-foreground">{searchQuery ? "No matching notifications" : "Inbox zero"}</h3>
-        <p className="text-xs sm:text-sm text-muted-foreground max-w-md mx-auto leading-relaxed">
-          {searchQuery ? `No alerts match "${searchQuery}". Check spelling or switch filter tabs.` : "You have reviewed all platform alerts. New campus activities and triggers will appear here in real time."}
+      <div className="p-12 rounded-xl bg-card border border-[#e3e1dc] text-center space-y-3">
+        <div className="inline-flex p-3.5 rounded-xl bg-[#eeece7] text-[#526f78] border border-[#e3e1dc]"><Inbox size={24} /></div>
+        <h3 className="text-base font-semibold text-[#202b30]">{searchQuery ? "No matching notifications" : "Inbox zero"}</h3>
+        <p className="text-xs sm:text-sm text-[#526f78] max-w-md mx-auto leading-relaxed">
+          {searchQuery ? `No alerts match "${searchQuery}". Check spelling or switch filter tabs.` : "You have reviewed all platform alerts. New campus activities will appear here in real time."}
         </p>
       </div>
     );
@@ -99,7 +104,7 @@ export function NotificationFeedList({
 
   return (
     <div className="space-y-3">
-      <div className="flex items-center justify-between gap-3 px-3.5 py-2 bg-card/70 backdrop-blur-md border border-border/80 rounded-xl text-xs shadow-2xs">
+      <div className="flex items-center justify-between gap-3 px-3.5 py-2.5 bg-card border border-[#e3e1dc] rounded-lg text-xs">
         <div className="flex items-center gap-3">
           {onSelectAll && (
             <label className="inline-flex items-center gap-2 cursor-pointer select-none">
@@ -107,9 +112,9 @@ export function NotificationFeedList({
                 type="checkbox"
                 checked={allSelected}
                 onChange={onSelectAll}
-                className="h-4 w-4 rounded border-border text-primary focus:ring-primary cursor-pointer accent-primary"
+                className="h-4 w-4 rounded border-[#e3e1dc] text-[#28363b] focus:ring-[#28363b] cursor-pointer accent-[#28363b]"
               />
-              <span className="text-muted-foreground font-medium">
+              <span className="text-[#526f78] font-semibold">
                 {selectedCount > 0 ? `${selectedCount} selected` : "Select all"}
               </span>
             </label>
@@ -119,7 +124,7 @@ export function NotificationFeedList({
             <button
               type="button"
               onClick={onClearSelection}
-              className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1 text-[#718087] hover:text-[#202b30] transition-colors cursor-pointer"
             >
               <X size={12} />
               <span>Clear</span>
@@ -132,7 +137,7 @@ export function NotificationFeedList({
             <button
               type="button"
               onClick={() => setConfirmDeleteSelectedOpen(true)}
-              className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold text-destructive bg-destructive/10 hover:bg-destructive/15 rounded-lg transition-all active:scale-95 cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold text-[#b54242] bg-[#f9eaea] hover:bg-[#f9eaea]/80 rounded-md transition-all active:scale-95 cursor-pointer"
             >
               <Trash2 size={13} />
               <span>Delete ({selectedCount})</span>
@@ -143,7 +148,7 @@ export function NotificationFeedList({
             <button
               type="button"
               onClick={() => setConfirmDeleteAllOpen(true)}
-              className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg transition-all cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium text-[#718087] hover:text-[#b54242] hover:bg-[#f9eaea] rounded-md transition-all cursor-pointer"
             >
               <Trash2 size={13} />
               <span>Delete all</span>

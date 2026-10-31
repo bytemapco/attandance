@@ -105,17 +105,13 @@ export default function EditTenantPage(): React.ReactElement {
 
       <GlassPageHeader
         title="Edit Institution"
-        description="Update institution profile, license quota, domain routing, and platform status."
       />
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <GlassCard className="p-6 space-y-6">
-          <div className="flex items-center gap-2 border-b border-border pb-4">
+          <div className="flex items-center gap-2 border-b border-border pb-3">
             <Building2 size={18} className="text-primary" />
-            <div>
-              <h3 className="text-sm font-bold text-foreground">Institution Profile</h3>
-              <p className="text-xs text-muted-foreground">General identity and categorization.</p>
-            </div>
+            <h3 className="text-sm font-bold text-foreground">Institution Profile</h3>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -127,7 +123,7 @@ export default function EditTenantPage(): React.ReactElement {
               required
             />
             <GlassInput
-              label="Tenant Slug"
+              label="URL Slug"
               value={slug}
               onChange={(e) => setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]+/g, ""))}
               placeholder="e.g. stanford-academy"
@@ -149,9 +145,8 @@ export default function EditTenantPage(): React.ReactElement {
         </GlassCard>
 
         <GlassCard className="p-6 space-y-6">
-          <div className="border-b border-border pb-4">
+          <div className="border-b border-border pb-3">
             <h3 className="text-sm font-bold text-foreground">Licensing & Domain</h3>
-            <p className="text-xs text-muted-foreground">Capacity quota and custom web address.</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">

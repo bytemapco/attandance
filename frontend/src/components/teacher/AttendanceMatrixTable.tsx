@@ -2,14 +2,12 @@
 
 import React, { useEffect, useState, useMemo } from "react";
 import { Download, Search } from "lucide-react";
-
-
-
 import api, { getApiErrorMessage } from "@/lib/api";
 import GlassLoader from "@/components/ui/GlassLoader";
 import GlassEmptyState from "@/components/ui/GlassEmptyState";
 import GlassButton from "@/components/ui/GlassButton";
 import toast from "react-hot-toast";
+import { exportAttendanceMatrixCsv } from "@/components/teacher/exportMatrixCsv";
 import type { AttendanceMatrixResponse } from "@/types";
 
 interface AttendanceMatrixTableProps {
@@ -54,124 +52,98 @@ export default function AttendanceMatrixTable({
     );
   }, [matrixData, searchTerm]);
 
-  const handleExportCSV = (): void => {
-    if (!matrixData || matrixData.students.length === 0) {
-      toast.error("No matrix data available to export.");
-      return;
-    }
-
-    const sessionHeaders = matrixData.sessions.map((s) => `${s.session_name} (${s.session_date})`);
-    const headers = ["Enrollment Number", "Student Name", "Overall Attendance %", ...sessionHeaders];
-
-    const rows = matrixData.students.map((student) => {
-      const sessionValues = matrixData.sessions.map((s) => student.statuses[s.session_id] || "Absent");
-      return [
-        student.enrollment_number,
-        student.full_name,
-        `${student.attendance_percentage.toFixed(1)}%`,
-        ...sessionValues,
-      ];
-    });
-
-    const csvContent = [
-      headers.join(","),
-      ...rows.map((row) => row.map((val) => `"${String(val).replace(/"/g, '""')}"`).join(",")),
-    ].join("\n");
-
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    const sanitizedName = matrixData.class_name.replace(/[^a-z0-9]/gi, "_").toLowerCase();
-    link.setAttribute("href", url);
-    link.setAttribute("download", `attendance_matrix_${sanitizedName}.csv`);
-    link.style.visibility = "hidden";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    toast.success("Attendance matrix exported successfully!");
-  };
-
-  if (loading) return <div className="py-12"><GlassLoader text="Generating full attendance matrix grid..." /></div>;
+  if (loading) return <div className="py-12"><GlassLoader text="Loading attendance sheet..." /></div>;
   if (!matrixData || matrixData.sessions.length === 0) {
     return (
-      <div className="p-8 rounded-2xl bg-card border border-border">
+      <div className="p-8 rounded-2xl bg-card border border-[#e3e1dc]">
         <GlassEmptyState
-          title="No Sessions Conducted"
-          message="There are no session records to build an attendance matrix for this class."
+          title="No Sessions Yet"
+          message="No attendance sessions have been conducted for this class yet."
         />
       </div>
     );
   }
 
   return (
-    <div className="space-y-4">
-      {/* Controls Bar */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-card/60 p-3.5 rounded-xl border border-border">
+    <div className="space-y-4 animate-fade-in">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-card p-3.5 rounded-xl border border-[#e3e1dc]">
         <div className="relative w-full sm:w-72">
-          <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#718087]" />
           <input
             type="text"
-            placeholder="Search student or roll no..."
+            placeholder="Search student or ID..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-9 pr-3 py-1.5 text-xs rounded-lg bg-secondary/50 border border-border focus:outline-none focus:ring-1 focus:ring-emerald-500 text-foreground"
+            className="w-full pl-9 pr-3 py-1.5 text-xs rounded-lg bg-[#eeece7]/40 border border-[#e3e1dc] focus:outline-none focus:ring-1 focus:ring-[#c98260] text-[#202b30] placeholder-[#718087]"
           />
         </div>
 
-        <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end">
-          <span className="text-xs text-muted-foreground">
-            Showing <strong className="text-foreground">{filteredStudents.length}</strong> students across{" "}
-            <strong className="text-foreground">{matrixData.sessions.length}</strong> sessions
-          </span>
-          <GlassButton
-            variant="secondary"
-            className="text-xs py-1.5 px-3"
-            icon={<Download size={13} />}
-            onClick={handleExportCSV}
-          >
-            Export Matrix CSV
-          </GlassButton>
-        </div>
+        <GlassButton
+          variant="secondary"
+          className="text-xs py-1.5 px-3 self-end sm:self-auto"
+          icon={<Download size={13} />}
+          onClick={() => exportAttendanceMatrixCsv(matrixData)}
+        >
+          Export CSV
+        </GlassButton>
       </div>
 
-      {/* Grid Container */}
-      <div className="overflow-x-auto rounded-xl border border-border bg-card shadow-sm max-h-[600px] overflow-y-auto">
+      <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-xl bg-card border border-[#e3e1dc] text-xs text-[#526f78]">
+        <div className="flex items-center gap-3">
+          <span className="flex items-center gap-1.5 font-medium text-[#202b30]">
+            <span className="w-5 h-5 rounded text-[11px] font-bold bg-[#e8f3ed] text-[#247653] border border-[#247653]/30 flex items-center justify-center">P</span> Present
+          </span>
+          <span className="flex items-center gap-1.5 font-medium text-[#202b30]">
+            <span className="w-5 h-5 rounded text-[11px] font-bold bg-[#fbf1df] text-[#8a5b12] border border-[#8a5b12]/30 flex items-center justify-center">F</span> Review
+          </span>
+          <span className="flex items-center gap-1.5 font-medium text-[#202b30]">
+            <span className="w-5 h-5 rounded text-[11px] font-bold bg-[#f9eaea] text-[#b54242] border border-[#b54242]/30 flex items-center justify-center">A</span> Absent
+          </span>
+        </div>
+        <span>
+          Showing <strong className="text-[#202b30] font-mono">{filteredStudents.length}</strong> students across{" "}
+          <strong className="text-[#202b30] font-mono">{matrixData.sessions.length}</strong> sessions
+        </span>
+      </div>
+
+      <div className="overflow-x-auto rounded-xl border border-[#e3e1dc] bg-card max-h-[600px] overflow-y-auto">
         <table className="w-full border-collapse text-left text-xs">
-          <thead className="sticky top-0 z-20 bg-secondary/90 backdrop-blur-md border-b border-border text-muted-foreground font-semibold">
+          <thead className="sticky top-0 z-20 bg-[#f5f2ed] border-b border-[#e3e1dc] text-[#526f78] font-semibold">
             <tr>
-              <th className="sticky left-0 z-30 bg-secondary/95 backdrop-blur-md p-3 min-w-[180px] border-r border-border">
+              <th className="sticky left-0 z-30 bg-[#f5f2ed] p-3 min-w-[180px] border-r border-[#e3e1dc]">
                 Student
               </th>
-              <th className="p-3 text-center min-w-[70px] border-r border-border">
-                Rate
+              <th className="p-3 text-center min-w-[80px] border-r border-[#e3e1dc]">
+                Attendance
               </th>
               {matrixData.sessions.map((session) => (
-                <th key={session.session_id} className="p-2.5 text-center min-w-[58px] border-r border-border/50">
-                  <span className="block font-bold text-foreground">{session.session_name}</span>
-                  <span className="text-[10px] text-muted-foreground block font-normal">{session.session_date}</span>
+                <th key={session.session_id} className="p-2.5 text-center min-w-[58px] border-r border-[#e3e1dc]/80">
+                  <span className="block font-semibold text-[#202b30]">{session.session_name}</span>
+                  <span className="text-[10px] text-[#718087] block font-normal">{session.session_date}</span>
                 </th>
               ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-border/50">
+          <tbody className="divide-y divide-[#e3e1dc]">
             {filteredStudents.map((student) => {
-              const isDefaulter = student.attendance_percentage < 75.0;
+              const pct = student.attendance_percentage;
+              const pctColor = pct >= 75.0 ? "text-[#247653]" : pct >= 65.0 ? "text-[#8a5b12]" : "text-[#b54242]";
               return (
-                <tr key={student.student_id} className="hover:bg-secondary/40 transition-colors">
-                  <td className="sticky left-0 z-10 bg-card/95 backdrop-blur-md p-3 border-r border-border">
+                <tr key={student.student_id} className="hover:bg-[#eeece7]/40 transition-colors">
+                  <td className="sticky left-0 z-10 bg-card p-3 border-r border-[#e3e1dc]">
                     <button
                       onClick={() => onSelectStudent && onSelectStudent(student.student_id, student.full_name, student.enrollment_number)}
                       className="text-left group flex flex-col hover:opacity-80 transition-opacity"
                     >
-                      <span className="font-semibold text-foreground group-hover:text-emerald-500 transition-colors">
+                      <span className="font-semibold text-[#202b30] group-hover:text-[#c98260] transition-colors">
                         {student.full_name}
                       </span>
-                      <span className="text-[11px] text-muted-foreground">{student.enrollment_number}</span>
+                      <span className="text-[11px] text-[#718087] font-mono">{student.enrollment_number}</span>
                     </button>
                   </td>
-                  <td className="p-3 text-center border-r border-border font-bold">
-                    <span className={isDefaulter ? "text-rose-400" : "text-emerald-500"}>
-                      {student.attendance_percentage.toFixed(0)}%
+                  <td className="p-3 text-center border-r border-[#e3e1dc] font-bold">
+                    <span className={pctColor}>
+                      {pct.toFixed(0)}%
                     </span>
                   </td>
                   {matrixData.sessions.map((session) => {
@@ -179,15 +151,15 @@ export default function AttendanceMatrixTable({
                     const isPresent = status === "Present" || status === "Approved";
                     const isFlagged = status === "Flagged";
                     return (
-                      <td key={session.session_id} className="p-2 text-center border-r border-border/50">
+                      <td key={session.session_id} className="p-2 text-center border-r border-[#e3e1dc]/80">
                         <span
                           title={`${session.session_name}: ${status}`}
-                          className={`inline-flex items-center justify-center w-6 h-6 rounded-md text-[11px] font-bold border ${
+                          className={`inline-flex items-center justify-center w-6 h-6 rounded text-[11px] font-bold border ${
                             isPresent
-                              ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/30"
+                              ? "bg-[#e8f3ed] text-[#247653] border-[#247653]/30"
                               : isFlagged
-                              ? "bg-amber-500/15 text-amber-400 border-amber-500/30"
-                              : "bg-rose-500/15 text-rose-400 border-rose-500/30"
+                              ? "bg-[#fbf1df] text-[#8a5b12] border-[#8a5b12]/30"
+                              : "bg-[#f9eaea] text-[#b54242] border-[#b54242]/30"
                           }`}
                         >
                           {isPresent ? "P" : isFlagged ? "F" : "A"}

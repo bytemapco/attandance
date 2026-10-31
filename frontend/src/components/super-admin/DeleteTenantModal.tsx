@@ -38,7 +38,7 @@ export default function DeleteTenantModal({
       if (err instanceof Error) {
         setError(err.message);
       } else {
-        setError("Failed to delete tenant institution.");
+        setError("Failed to delete institution.");
       }
     } finally {
       setLoading(false);
@@ -69,7 +69,7 @@ export default function DeleteTenantModal({
 
         <div className="p-6 space-y-4">
           <p className="text-xs text-muted-foreground leading-relaxed">
-            This action <strong className="text-destructive font-semibold">CANNOT be undone</strong>. This will permanently delete the tenant institution <strong className="text-foreground">{tenant.name}</strong>, clear database records, purge active user sessions, and remove domain routing.
+            This action cannot be undone. All classes, user accounts, attendance records, and custom domain routing for <strong className="text-foreground">{tenant.name}</strong> will be permanently removed.
           </p>
 
           {error && (
@@ -104,7 +104,7 @@ export default function DeleteTenantModal({
               className="gap-2"
             >
               {loading ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
-              <span>Permanently Delete</span>
+              <span>Delete Institution</span>
             </GlassButton>
           </div>
         </div>

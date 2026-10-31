@@ -54,9 +54,9 @@ export default function TenantTable({
 }: TenantTableProps): React.ReactElement {
   if (loading) {
     return (
-      <div className="bg-card border border-border rounded-xl p-4 space-y-3">
+      <div className="bg-card border border-[#e3e1dc] rounded-xl p-4 space-y-3">
         {Array.from({ length: 5 }).map((_, i) => (
-          <div key={i} className="h-12 rounded-lg bg-muted/40 animate-pulse" />
+          <div key={i} className="h-12 rounded-lg bg-secondary animate-pulse" />
         ))}
       </div>
     );
@@ -66,16 +66,16 @@ export default function TenantTable({
     return (
       <GlassEmptyState
         title="No institutions found"
-        message="No institutional tenants match your search and filter criteria."
+        message="No institutions match your search or filter criteria."
       />
     );
   }
 
   return (
-    <div className="bg-card border border-border rounded-xl overflow-hidden shadow-2xs">
+    <div className="bg-card border border-[#e3e1dc] rounded-xl overflow-hidden shadow-[0_2px_8px_rgba(40,54,59,0.04)]">
       <div className="overflow-x-auto">
         <table className="w-full text-left text-xs">
-          <thead className="bg-muted/50 border-b border-border text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
+          <thead className="bg-[#eeece7]/80 border-b border-[#e3e1dc] text-[11px] font-bold text-[#526f78] uppercase tracking-wider">
             <tr>
               <th className="px-4 py-3">Institution</th>
               <th className="px-4 py-3">Type</th>
@@ -85,7 +85,7 @@ export default function TenantTable({
               <th className="px-4 py-3 text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-border">
+          <tbody className="divide-y divide-[#e3e1dc]">
             {tenants.map((tenant) => {
               const isUpdating = statusUpdatingId === tenant.id;
               const isActive = tenant.status === "ACTIVE";
@@ -99,24 +99,23 @@ export default function TenantTable({
               const licenseCount = tenant.license_count ?? (tenant as unknown as { licenseCount?: number }).licenseCount;
 
               return (
-                <tr key={tenant.id} className="hover:bg-muted/30 transition-colors">
+                <tr key={tenant.id} className="hover:bg-secondary/40 transition-colors">
                   <td className="px-4 py-3.5">
                     <Link href={`/super-admin/tenants/${tenant.id}`} className="flex items-center gap-2.5 group">
-                      <div className="h-8 w-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">
+                      <div className="h-8 w-8 rounded-lg bg-secondary text-[#28363b] border border-[#e3e1dc] flex items-center justify-center shrink-0 group-hover:bg-[#f7efea] group-hover:text-[#c98260] transition-colors">
                         <Building2 size={16} />
                       </div>
                       <div>
-                        <p className="font-semibold text-foreground text-sm group-hover:text-primary transition-colors flex items-center gap-1">
+                        <p className="font-bold text-[#202b30] text-sm group-hover:text-[#28363b] transition-colors flex items-center gap-1">
                           <span>{tenant.name}</span>
                           <ExternalLink size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" />
                         </p>
-                        <p className="text-[11px] text-muted-foreground font-mono">{tenant.slug}</p>
                       </div>
                     </Link>
                   </td>
 
                   <td className="px-4 py-3.5">
-                    <span className="text-xs text-foreground font-medium">{typeLabel(tenant.type)}</span>
+                    <span className="text-xs text-[#202b30] font-medium">{typeLabel(tenant.type)}</span>
                   </td>
 
                   <td className="px-4 py-3.5">
@@ -125,11 +124,11 @@ export default function TenantTable({
                     </GlassBadge>
                   </td>
 
-                  <td className="px-4 py-3.5 text-foreground font-medium">
+                  <td className="px-4 py-3.5 text-[#202b30] font-mono font-medium">
                     {licenseCount ? `${licenseCount.toLocaleString()} licenses` : "Unlimited"}
                   </td>
 
-                  <td className="px-4 py-3.5 text-muted-foreground text-[11px]">
+                  <td className="px-4 py-3.5 text-[#526f78] text-[11px] font-mono">
                     {formattedDate}
                   </td>
 
@@ -137,7 +136,7 @@ export default function TenantTable({
                     <div className="inline-flex items-center gap-1.5">
                       <Link
                         href={`/super-admin/tenants/${tenant.id}`}
-                        className="px-2.5 py-1 rounded-md text-xs font-semibold bg-secondary hover:bg-secondary/80 text-foreground transition-colors"
+                        className="px-2.5 py-1 rounded-md text-xs font-semibold bg-secondary hover:bg-secondary/70 text-[#202b30] border border-[#e3e1dc] transition-colors"
                       >
                         Manage
                       </Link>
@@ -145,8 +144,8 @@ export default function TenantTable({
                         <button
                           type="button"
                           onClick={() => onEditTenant(tenant)}
-                          title="Edit institution details"
-                          className="p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer"
+                          title="Edit institution"
+                          className="p-1 rounded-md text-[#526f78] hover:text-[#202b30] hover:bg-secondary transition-colors cursor-pointer"
                         >
                           <Edit3 size={14} />
                         </button>
@@ -155,11 +154,11 @@ export default function TenantTable({
                         type="button"
                         disabled={isUpdating}
                         onClick={() => onToggleStatus(tenant)}
-                        title={isActive ? "Suspend tenant" : "Activate tenant"}
-                        className={`inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-semibold transition-colors disabled:opacity-50 ${
+                        title={isActive ? "Suspend institution" : "Activate institution"}
+                        className={`inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-semibold border transition-colors disabled:opacity-50 cursor-pointer ${
                           isActive
-                            ? "bg-amber-500/10 text-amber-700 dark:text-amber-400 hover:bg-amber-500/20"
-                            : "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-500/20"
+                            ? "bg-[#fbf1df] text-[#8a5b12] border-[#f2deba] hover:bg-[#fbf1df]/80"
+                            : "bg-[#e8f3ed] text-[#247653] border-[#c6e2d3] hover:bg-[#e8f3ed]/80"
                         }`}
                       >
                         {isActive ? <PowerOff size={12} /> : <Power size={12} />}
@@ -169,8 +168,8 @@ export default function TenantTable({
                         <button
                           type="button"
                           onClick={() => onDeleteTenant(tenant)}
-                          title="Delete institution permanently"
-                          className="p-1 rounded-md text-destructive/80 hover:text-destructive hover:bg-destructive/10 transition-colors cursor-pointer"
+                          title="Delete institution"
+                          className="p-1 rounded-md text-[#b54242] hover:bg-[#f9eaea] transition-colors cursor-pointer"
                         >
                           <Trash2 size={14} />
                         </button>

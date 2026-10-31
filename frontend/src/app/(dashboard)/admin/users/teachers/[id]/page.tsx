@@ -17,15 +17,15 @@ import GlassResetPasswordDialog from "@/components/ui/GlassResetPasswordDialog";
 import type { TeacherResponse } from "@/types";
 
 const colorVariants: Record<string, string> = {
-  blue: "bg-blue-50 text-blue-700 border border-blue-200/60",
-  purple: "bg-purple-50 text-purple-700 border border-purple-200/60",
-  amber: "bg-amber-50 text-amber-700 border border-amber-200/60",
-  emerald: "bg-emerald-50 text-emerald-700 border border-emerald-200/60",
-  rose: "bg-rose-50 text-rose-700 border border-rose-200/60",
-  orange: "bg-orange-50 text-orange-700 border border-orange-200/60",
-  cyan: "bg-cyan-50 text-cyan-700 border border-cyan-200/60",
-  indigo: "bg-indigo-50 text-indigo-700 border border-indigo-200/60",
-  slate: "bg-slate-100 text-slate-700 border border-slate-200/60",
+  blue: "bg-[#eaf2f6] text-[#306b8a] border border-[#c5dce8]",
+  purple: "bg-[#eeece7] text-[#526f78] border border-[#e3e1dc]",
+  amber: "bg-[#fbf1df] text-[#8a5b12] border border-[#f2deba]",
+  emerald: "bg-[#e8f3ed] text-[#247653] border border-[#c6e2d3]",
+  rose: "bg-[#f9eaea] text-[#b54242] border border-[#f0c9c9]",
+  orange: "bg-[#f7efea] text-[#c98260] border border-[#f0ded4]",
+  cyan: "bg-[#eaf2f6] text-[#306b8a] border border-[#c5dce8]",
+  indigo: "bg-[#eeece7] text-[#28363b] border border-[#e3e1dc]",
+  slate: "bg-[#eeece7] text-[#526f78] border border-[#e3e1dc]",
 };
 
 const InfoItem = ({ icon: Icon, label, value, color }: { icon: React.ElementType, label: string, value: string, color: string }) => (
@@ -77,7 +77,7 @@ export default function TeacherDetailPage(): React.ReactElement {
   };
 
   if (loading) return <GlassLoader text="Loading teacher details..." />;
-  if (!teacher) return <div className="text-center py-20 text-slate-500">Teacher not found</div>;
+  if (!teacher) return <div className="text-center py-20 text-muted-foreground">Teacher not found</div>;
 
   const fullName = `${teacher.first_name} ${teacher.last_name}`;
   const initials = (teacher.first_name?.[0] || "") + (teacher.last_name?.[0] || "");

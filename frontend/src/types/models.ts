@@ -77,6 +77,8 @@ export interface ClassResponse {
   classroom_name?: string | null;
   semester?: number | null;
   batch?: string | null;
+  academic_term_id?: string | null;
+  term_name?: string | null;
   enrolled_count: number;
   enrolled_student_ids?: string[];
 }

@@ -36,7 +36,7 @@ export default function TenantFilterBar({
     <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-3 bg-card rounded-xl border border-border mb-4">
       <div className="flex-1 max-w-md">
         <GlassSearch
-          placeholder="Search by institution name or slug..."
+          placeholder="Search by name, slug, or domain..."
           value={searchQuery}
           onSearch={onSearchChange}
         />
@@ -50,10 +50,10 @@ export default function TenantFilterBar({
 
         <Select value={typeFilter || "ALL_TYPES"} onValueChange={(val) => onTypeChange(val === "ALL_TYPES" ? "" : val)}>
           <SelectTrigger aria-label="Filter by institution type" className="h-9 min-w-[120px] text-xs">
-            <SelectValue placeholder="All Types" />
+            <SelectValue placeholder="All types" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="ALL_TYPES">All Types</SelectItem>
+            <SelectItem value="ALL_TYPES">All types</SelectItem>
             <SelectItem value="SCHOOL">School</SelectItem>
             <SelectItem value="COLLEGE">College</SelectItem>
             <SelectItem value="COACHING_CENTER">Coaching Center</SelectItem>
@@ -62,10 +62,10 @@ export default function TenantFilterBar({
 
         <Select value={statusFilter || "ALL_STATUSES"} onValueChange={(val) => onStatusChange(val === "ALL_STATUSES" ? "" : val)}>
           <SelectTrigger aria-label="Filter by institution status" className="h-9 min-w-[125px] text-xs">
-            <SelectValue placeholder="All Statuses" />
+            <SelectValue placeholder="All statuses" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="ALL_STATUSES">All Statuses</SelectItem>
+            <SelectItem value="ALL_STATUSES">All statuses</SelectItem>
             <SelectItem value="ACTIVE">Active</SelectItem>
             <SelectItem value="SUSPENDED">Suspended</SelectItem>
           </SelectContent>
@@ -77,7 +77,7 @@ export default function TenantFilterBar({
             onClick={onReset}
             className="text-xs text-muted-foreground hover:text-foreground underline px-2 py-1 transition-colors"
           >
-            Clear
+            Reset
           </button>
         )}
       </div>

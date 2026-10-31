@@ -2,7 +2,6 @@
 
 import React from "react";
 import Link from "next/link";
-import { Shield } from "lucide-react";
 import { useAuthStore } from "@/store/authStore";
 import { useNotifications } from "@/hooks/useNotifications";
 import { cn } from "@/lib/utils";
@@ -28,23 +27,38 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps): React.JSX.El
       ? "/teacher/dashboard"
       : "/admin/dashboard";
 
+  const instituteName =
+    user?.tenant_name ||
+    (role === "SUPER_ADMIN" ? "Platform Administration" : "Institute");
+
   return (
     <>
       {isOpen && (
-        <div className="fixed inset-0 bg-slate-950/30 backdrop-blur-xs z-30 md:hidden" onClick={onClose} />
+        <div className="fixed inset-0 bg-[#28363b]/40 backdrop-blur-xs z-30 md:hidden" onClick={onClose} />
       )}
 
-      <aside className={cn("fixed top-0 bottom-0 left-0 z-40 flex flex-col w-[260px] bg-card border-r border-border transition-transform duration-200", isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0")}>
-        <div className="h-16 px-5 border-b border-border flex items-center justify-between">
-          <Link href={homeHref} onClick={onClose} className="flex items-center gap-2.5 group hover:opacity-90 transition-opacity cursor-pointer">
+      <aside
+        className={cn(
+          "fixed top-0 bottom-0 left-0 z-40 flex flex-col w-[260px] bg-card border-r border-[#e3e1dc] shadow-[0_2px_8px_rgba(40,54,59,0.04)] transition-transform duration-200",
+          isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+        )}
+      >
+        <div className="min-h-16 py-3 px-4 sm:px-5 border-b border-[#e3e1dc] flex items-center justify-between bg-card shrink-0">
+          <Link
+            href={homeHref}
+            onClick={onClose}
+            className="flex items-center gap-3 group hover:opacity-95 transition-opacity cursor-pointer min-w-0 w-full"
+          >
             <img
               src="/sahaj-app-icon.png"
               alt="SAHAJ Logo"
-              className="h-9 w-9 rounded-lg shadow-xs group-hover:scale-105 transition-transform object-contain"
+              className="h-9 w-9 rounded-xl shadow-xs group-hover:scale-105 transition-transform object-contain shrink-0 self-center"
             />
-            <div>
-              <h2 className="text-sm font-bold text-foreground tracking-wider">SAHAJ</h2>
-              <p className="text-[11px] text-muted-foreground font-medium">Campus Platform</p>
+            <div className="min-w-0 flex-1">
+              <h2 className="text-sm font-bold text-[#28363b] tracking-wider leading-tight">SAHAJ</h2>
+              <p className="text-[11px] text-[#526f78] font-medium leading-snug break-words">
+                {instituteName}
+              </p>
             </div>
           </Link>
         </div>

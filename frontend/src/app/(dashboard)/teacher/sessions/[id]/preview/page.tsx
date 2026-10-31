@@ -72,7 +72,7 @@ export default function SessionPreviewPage(): React.ReactElement {
   }, [roster, searchTerm]);
 
   if (loading) return <GlassLoader text="Loading attendance sheet..." />;
-  if (!roster) return <div className="text-center py-20 text-slate-500">Session not found</div>;
+  if (!roster) return <div className="text-center py-20 text-muted-foreground">Session not found</div>;
 
   const columns: TableColumn<StudentRosterItem & Record<string, unknown>>[] = [
     { key: "enrollment_number", header: "Enrollment #", sortable: true },
@@ -94,9 +94,9 @@ export default function SessionPreviewPage(): React.ReactElement {
       sortable: true,
       render: (r) => {
         const score = Number(r.final_score);
-        if (score === 0 && r.status === "Absent") return <span className="text-slate-500">—</span>;
+        if (score === 0 && r.status === "Absent") return <span className="text-muted-foreground">—</span>;
         return (
-          <span className={`font-mono text-sm font-semibold ${score >= 0.7 ? "text-emerald-400" : score >= 0.4 ? "text-amber-400" : "text-rose-400"}`}>
+          <span className={`font-mono text-sm font-semibold ${score >= 0.7 ? "text-[#247653]" : score >= 0.4 ? "text-[#8A5B12]" : "text-[#B54242]"}`}>
             {(score * 100).toFixed(1)}%
           </span>
         );
@@ -107,7 +107,7 @@ export default function SessionPreviewPage(): React.ReactElement {
       header: "Marked Timestamp",
       sortable: true,
       render: (r) => (
-        <span className="text-xs text-slate-400">
+        <span className="text-xs text-muted-foreground">
           {r.marked_at ? new Date(String(r.marked_at)).toLocaleString() : "—"}
         </span>
       ),
@@ -150,10 +150,10 @@ export default function SessionPreviewPage(): React.ReactElement {
       />
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6 print:grid-cols-4 print:gap-2">
-        <GlassStatCard icon={<span className="text-lg">👥</span>} label="Total Students" value={counts.total} accentColor="neutral" />
+        <GlassStatCard icon={<span className="text-lg">👥</span>} label="Total Students" value={counts.total} accentColor="carbon" />
         <GlassStatCard icon={<span className="text-lg">✅</span>} label="Present" value={counts.present} accentColor="emerald" />
         <GlassStatCard icon={<span className="text-lg">❌</span>} label="Absent" value={counts.absent} accentColor="rose" />
-        <GlassStatCard icon={<span className="text-lg">📈</span>} label="Attendance Rate" value={`${counts.rate}%`} accentColor="emerald" />
+        <GlassStatCard icon={<span className="text-lg">📈</span>} label="Attendance Rate" value={`${counts.rate}%`} accentColor="copper" />
       </div>
 
       <div className="mb-6 flex items-center justify-between gap-4 print:hidden">
@@ -164,7 +164,7 @@ export default function SessionPreviewPage(): React.ReactElement {
             placeholder="Search students by name, enrollment or email..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="glass-input pl-9 pr-4 py-2 w-full text-sm text-foreground outline-none rounded-xl border border-input bg-background placeholder:text-muted-foreground focus:ring-1 focus:ring-ring"
+            className="pl-9 pr-4 py-2 w-full text-sm text-foreground outline-none rounded-xl border border-border bg-card placeholder:text-muted-foreground focus:ring-1 focus:ring-ring"
           />
         </div>
       </div>

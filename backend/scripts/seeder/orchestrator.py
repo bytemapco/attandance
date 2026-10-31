@@ -37,6 +37,13 @@ from .workflow_users import (
     seed_students,
     seed_teachers,
 )
+from .workflow_institutional import (
+    seed_academic_year,
+    seed_time_slots,
+    seed_course_sections,
+    enroll_students_in_sections,
+    seed_timetable_and_occurrences,
+)
 
 logger = get_logger("app.seeder.orchestrator")
 
@@ -96,7 +103,14 @@ class SeederOrchestrator:
             student_map = await seed_students(client, STUDENTS, dept_map)
             class_map = await seed_classes(client, teacher_map, subject_map, room_map)
             await enroll_students_in_classes(client, class_map, student_map)
-            print(f"      ✓ {len(teacher_map)} Teachers | {len(student_map)} Students | {len(class_map)} Classes")
+
+            # Institutional NEP Structure: Semester, UGC Slots, Sections, Weekly Rules & Occurrences
+            acad_year = await seed_academic_year(client)
+            time_slots = await seed_time_slots(client)
+            section_map = await seed_course_sections(client, acad_year["id"], subject_map, teacher_map)
+            await enroll_students_in_sections(client, section_map, student_map)
+            await seed_timetable_and_occurrences(client, acad_year, section_map, time_slots, room_map, teacher_map)
+            print(f"      ✓ {len(teacher_map)} Teachers | {len(student_map)} Students | {len(section_map)} Sections & Timetable")
 
             # Step 7: Live Workflows (Geofences, Attendance Session, Leaves, Device Changes)
             print("[7/7] Simulating Live Academic Workflows...")

@@ -18,7 +18,7 @@ export const studentColumns: TableColumn<StudentResponse & Record<string, unknow
       const initial = name.charAt(0).toUpperCase();
       return (
         <div className="flex items-center gap-2.5">
-          <div className="h-8 w-8 rounded-full bg-slate-900 text-white font-bold text-xs flex items-center justify-center shrink-0 shadow-2xs">
+          <div className="h-8 w-8 rounded-full bg-[#28363b] text-white font-bold text-xs flex items-center justify-center shrink-0 shadow-2xs">
             {initial}
           </div>
           <div className="min-w-0">
@@ -36,15 +36,6 @@ export const studentColumns: TableColumn<StudentResponse & Record<string, unknow
     render: (r) => (
       <span className="font-mono text-xs text-foreground bg-secondary/80 px-2 py-0.5 rounded border border-border">
         {String(r.enrollment_number || (r as { enrollmentNumber?: string }).enrollmentNumber || "stu-000")}
-      </span>
-    ),
-  },
-  {
-    key: "role",
-    header: "System Role",
-    render: () => (
-      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md border border-border bg-card text-[11px] font-medium text-muted-foreground shadow-2xs">
-        Enrolled Student
       </span>
     ),
   },
@@ -85,11 +76,11 @@ export const studentColumns: TableColumn<StudentResponse & Record<string, unknow
     render: (r) => {
       const isActive = r.is_active !== false;
       return isActive ? (
-        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-[#e8f3ed] text-[#247653] border border-[#c6e2d3]">
           Active
         </span>
       ) : (
-        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-zinc-500/10 text-zinc-500 dark:text-zinc-400 border border-zinc-500/20">
+        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-[#eeece7] text-[#526f78] border border-[#e3e1dc]">
           Inactive
         </span>
       );

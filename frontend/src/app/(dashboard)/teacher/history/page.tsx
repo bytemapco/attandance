@@ -4,7 +4,9 @@ import React, { useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import api, { getApiErrorMessage } from "@/lib/api";
 import GlassPageHeader from "@/components/ui/GlassPageHeader";
+import GlassBreadcrumb from "@/components/ui/GlassBreadcrumb";
 import GlassTable from "@/components/ui/GlassTable";
+import GlassButton from "@/components/ui/GlassButton";
 import GlassLoader from "@/components/ui/GlassLoader";
 import GlassEmptyState from "@/components/ui/GlassEmptyState";
 import toast from "react-hot-toast";
@@ -131,18 +133,20 @@ export default function HistoryPage(): React.ReactElement {
 
   const columns = useMemo(() => getSessionLogColumns({
     onPreview: (id) => router.push(`/teacher/sessions/${id}/preview`),
-    onRoster: (id) => router.push(`/teacher/sessions/${id}/roster`),
+    onRoster: (id) => router.push(`/teacher/sessions/${id}/attendance-roll`),
     onManual: (id) => router.push(`/teacher/sessions/${id}/manual`),
     onExport: (id, className, subject, startTime) => void handleExportCSV(id, className, subject, startTime),
     exportingId,
   }), [router, exportingId]);
 
-  if (loading) return <GlassLoader />;
+  if (loading) return <GlassLoader text="Loading history..." />;
 
   return (
-    <div className="animate-fade-in-up">
+    <div className="animate-fade-in space-y-6">
+      <GlassBreadcrumb items={[{ label: "Teacher", href: "/teacher/classes" }, { label: "History" }]} />
       <GlassPageHeader
         title="Attendance History"
+        description="Review past class sessions, inspect attendance sheets, and export records."
       />
 
       <HistoryFilters
@@ -164,18 +168,21 @@ export default function HistoryPage(): React.ReactElement {
           pageSize={10}
         />
       ) : (
-        <div className="p-8 text-center rounded-2xl bg-card border border-border">
+        <div className="p-8 text-center rounded-2xl bg-card border border-[#e3e1dc]">
           <GlassEmptyState
             title="No Sessions Match Filters"
-            message="Try loosening your search terms or selecting a different class dropdown option."
+            message="Try adjusting your search terms or selecting a different class."
           />
           {(selectedClass !== "all" || searchTerm || dateFilter) && (
-            <button
-              onClick={handleResetFilters}
-              className="glass-btn glass-btn-primary mt-4 text-xs px-4 py-2"
-            >
-              Reset Filters
-            </button>
+            <div className="mt-4">
+              <GlassButton
+                variant="secondary"
+                size="sm"
+                onClick={handleResetFilters}
+              >
+                Reset Filters
+              </GlassButton>
+            </div>
           )}
         </div>
       )}

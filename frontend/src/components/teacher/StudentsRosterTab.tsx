@@ -12,7 +12,7 @@ interface StudentsRosterTabProps {
   onSelectStudent: (studentId: string, name: string, enrollment: string) => void;
 }
 
-type FilterTier = "all" | "at_risk" | "critical" | "regular";
+type FilterTier = "all" | "regular" | "condonable" | "critical";
 
 export default function StudentsRosterTab({
   students,
@@ -23,16 +23,16 @@ export default function StudentsRosterTab({
   const [activeTier, setActiveTier] = useState<FilterTier>("all");
   const [sortAsc, setSortAsc] = useState<boolean>(false);
 
-  const atRiskCount = useMemo(() => students.filter((s) => s.attendance_percentage < 75.0).length, [students]);
-  const criticalCount = useMemo(() => students.filter((s) => s.attendance_percentage < 50.0).length, [students]);
   const regularCount = useMemo(() => students.filter((s) => s.attendance_percentage >= 75.0).length, [students]);
+  const condonableCount = useMemo(() => students.filter((s) => s.attendance_percentage >= 65.0 && s.attendance_percentage < 75.0).length, [students]);
+  const criticalCount = useMemo(() => students.filter((s) => s.attendance_percentage < 65.0).length, [students]);
 
   const filteredStudents = useMemo(() => {
     return students
       .filter((s) => {
-        if (activeTier === "at_risk" && s.attendance_percentage >= 75.0) return false;
-        if (activeTier === "critical" && s.attendance_percentage >= 50.0) return false;
         if (activeTier === "regular" && s.attendance_percentage < 75.0) return false;
+        if (activeTier === "condonable" && (s.attendance_percentage < 65.0 || s.attendance_percentage >= 75.0)) return false;
+        if (activeTier === "critical" && s.attendance_percentage >= 65.0) return false;
 
         if (searchTerm.trim()) {
           const term = searchTerm.toLowerCase();
@@ -44,141 +44,138 @@ export default function StudentsRosterTab({
 
         return true;
       })
-      .sort((a, b) => {
-        return sortAsc
-          ? a.attendance_percentage - b.attendance_percentage
-          : b.attendance_percentage - a.attendance_percentage;
-      });
+      .sort((a, b) => (sortAsc ? a.attendance_percentage - b.attendance_percentage : b.attendance_percentage - a.attendance_percentage));
   }, [students, activeTier, searchTerm, sortAsc]);
 
   return (
     <div className="space-y-4">
-      {/* Search & Filter Controls */}
-      <div className="flex flex-col md:flex-row items-center justify-between gap-3 bg-card/60 p-3.5 rounded-xl border border-border">
-        {/* Search Input */}
-        <div className="relative w-full md:w-72">
-          <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+      <div className="flex flex-col md:flex-row items-center justify-between gap-3 bg-card p-3.5 rounded-xl border border-[#e3e1dc]">
+        <div className="relative w-full md:w-64">
+          <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#718087]" />
           <input
             type="text"
-            placeholder="Search by name, roll no, email..."
+            placeholder="Search student or roll #..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-9 pr-3 py-1.5 text-xs rounded-lg bg-secondary/50 border border-border focus:outline-none focus:ring-1 focus:ring-emerald-500 text-foreground"
+            className="w-full pl-9 pr-3 py-1.5 text-xs rounded-lg bg-[#eeece7]/40 border border-[#e3e1dc] focus:outline-none focus:ring-1 focus:ring-[#c98260] text-[#202b30] placeholder-[#718087]"
           />
         </div>
 
-        {/* Tier Tabs */}
-        <div className="flex items-center gap-1.5 overflow-x-auto w-full md:w-auto">
+        <div className="inline-flex items-center gap-1 overflow-x-auto w-full md:w-auto p-1 rounded-lg bg-[#eeece7]/60 border border-[#e3e1dc]">
           <button
             onClick={() => setActiveTier("all")}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1.5 ${
-              activeTier === "all" ? "bg-emerald-500 text-white" : "bg-secondary text-muted-foreground hover:text-foreground"
+            className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-all flex items-center gap-1 ${
+              activeTier === "all" ? "bg-card text-[#202b30] shadow-xs border border-[#e3e1dc]" : "text-[#526f78] hover:text-[#202b30]"
             }`}
           >
-            All <span className="opacity-70 text-[11px]">({students.length})</span>
-          </button>
-          <button
-            onClick={() => setActiveTier("at_risk")}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1.5 ${
-              activeTier === "at_risk" ? "bg-rose-500 text-white" : "bg-secondary text-rose-400 hover:text-rose-300"
-            }`}
-          >
-            <AlertOctagon size={12} /> Defaulters &lt;75% <span className="opacity-80 text-[11px]">({atRiskCount})</span>
-          </button>
-          <button
-            onClick={() => setActiveTier("critical")}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1.5 ${
-              activeTier === "critical" ? "bg-rose-700 text-white" : "bg-secondary text-rose-500 hover:text-rose-400"
-            }`}
-          >
-            Critical &lt;50% <span className="opacity-80 text-[11px]">({criticalCount})</span>
+            All <span className="text-[10px] font-mono opacity-80">({students.length})</span>
           </button>
           <button
             onClick={() => setActiveTier("regular")}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1.5 ${
-              activeTier === "regular" ? "bg-emerald-600 text-white" : "bg-secondary text-emerald-400 hover:text-emerald-300"
+            className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-all flex items-center gap-1 ${
+              activeTier === "regular" ? "bg-[#e8f3ed] text-[#247653] shadow-xs border border-[#247653]/30" : "text-[#247653] hover:bg-[#e8f3ed]/50"
             }`}
           >
-            <CheckCircle2 size={12} /> Good Standing <span className="opacity-80 text-[11px]">({regularCount})</span>
+            <CheckCircle2 size={12} /> Regular (&ge;75%) <span className="text-[10px] font-mono opacity-80">({regularCount})</span>
+          </button>
+          <button
+            onClick={() => setActiveTier("condonable")}
+            className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-all flex items-center gap-1 ${
+              activeTier === "condonable" ? "bg-[#fef7ea] text-[#8a5b12] shadow-xs border border-[#8a5b12]/30" : "text-[#8a5b12] hover:bg-[#fef7ea]/50"
+            }`}
+          >
+            <AlertOctagon size={12} /> Shortage (65-75%) <span className="text-[10px] font-mono opacity-80">({condonableCount})</span>
+          </button>
+          <button
+            onClick={() => setActiveTier("critical")}
+            className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-all flex items-center gap-1 ${
+              activeTier === "critical" ? "bg-[#f9eaea] text-[#b54242] shadow-xs border border-[#b54242]/30" : "text-[#b54242] hover:bg-[#f9eaea]/50"
+            }`}
+          >
+            <AlertOctagon size={12} /> Critical (&lt;65%) <span className="text-[10px] font-mono opacity-80">({criticalCount})</span>
           </button>
         </div>
       </div>
 
-      {/* Roster Table */}
       {filteredStudents.length > 0 ? (
-        <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
+        <div className="overflow-hidden rounded-xl border border-[#e3e1dc] bg-card">
           <table className="w-full text-left text-xs">
-            <thead className="bg-secondary/70 border-b border-border text-muted-foreground font-semibold">
+            <thead className="bg-[#f5f2ed] border-b border-[#e3e1dc] text-[#526f78] font-semibold">
               <tr>
-                <th className="p-3.5">Student Details</th>
-                <th className="p-3.5">Classes Attended</th>
+                <th className="p-3.5">#</th>
+                <th className="p-3.5">Enrollment #</th>
+                <th className="p-3.5">Student</th>
+                <th className="p-3.5">Attended / Total</th>
                 <th className="p-3.5 cursor-pointer select-none" onClick={() => setSortAsc((prev) => !prev)}>
-                  <div className="flex items-center gap-1 hover:text-foreground transition-colors">
-                    Attendance Rate <ArrowUpDown size={12} />
+                  <div className="flex items-center gap-1 hover:text-[#202b30] transition-colors">
+                    Percentage <ArrowUpDown size={12} />
                   </div>
                 </th>
-                <th className="p-3.5">Academic Status</th>
-                <th className="p-3.5 text-right">Actions</th>
+                <th className="p-3.5">Status</th>
+                <th className="p-3.5 text-right">Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-border/50">
-              {filteredStudents.map((std) => {
-                const isDefaulter = std.attendance_percentage < 75.0;
-                const isCritical = std.attendance_percentage < 50.0;
+            <tbody className="divide-y divide-[#e3e1dc]">
+              {filteredStudents.map((std, idx) => {
+                const pct = std.attendance_percentage;
+                const isRegular = pct >= 75.0;
+                const isCondonable = pct >= 65.0 && pct < 75.0;
+                const barColor = isRegular ? "bg-[#247653]" : isCondonable ? "bg-[#8a5b12]" : "bg-[#b54242]";
+                const textColor = isRegular ? "text-[#247653]" : isCondonable ? "text-[#8a5b12]" : "text-[#b54242]";
                 return (
-                  <tr key={std.student_id} className="hover:bg-secondary/30 transition-colors">
+                  <tr key={std.student_id} className="hover:bg-[#eeece7]/40 transition-colors">
+                    <td className="p-3.5 font-mono text-[#718087]">{idx + 1}</td>
                     <td className="p-3.5">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-secondary text-foreground font-bold text-xs flex items-center justify-center border border-border">
-                          {std.full_name.slice(0, 2).toUpperCase()}
-                        </div>
-                        <div>
-                          <div className="font-semibold text-foreground">{std.full_name}</div>
-                          <div className="text-[11px] text-muted-foreground">{std.enrollment_number} • {std.email}</div>
-                        </div>
-                      </div>
+                      <span className="font-mono text-xs font-semibold text-[#202b30] bg-[#eeece7] px-2 py-0.5 rounded border border-[#e3e1dc]">
+                        {std.enrollment_number}
+                      </span>
                     </td>
-                    <td className="p-3.5 text-foreground font-medium">
-                      {std.attended_sessions} / {totalSessions} <span className="text-[11px] text-muted-foreground font-normal">sessions</span>
+                    <td className="p-3.5">
+                      <div className="font-semibold text-[#202b30]">{std.full_name}</div>
+                      <div className="text-[11px] text-[#526f78] font-mono">{std.email}</div>
+                    </td>
+                    <td className="p-3.5 text-[#202b30] font-medium font-mono">
+                      {std.attended_sessions} / {totalSessions}
                     </td>
                     <td className="p-3.5">
                       <div className="flex items-center gap-2">
-                        <div className="w-20 bg-secondary rounded-full h-2 overflow-hidden border border-border/50">
+                        <div className="w-16 bg-[#eeece7] rounded-full h-1.5 overflow-hidden">
                           <div
-                            className={`h-full rounded-full ${
-                              isCritical ? "bg-rose-600" : isDefaulter ? "bg-amber-500" : "bg-emerald-500"
-                            }`}
-                            style={{ width: `${Math.min(100, std.attendance_percentage)}%` }}
+                            className={`h-full rounded-full ${barColor}`}
+                            style={{ width: `${Math.min(100, pct)}%` }}
                           />
                         </div>
-                        <span className={`font-bold ${isDefaulter ? "text-rose-400" : "text-emerald-500"}`}>
-                          {std.attendance_percentage.toFixed(1)}%
+                        <span className={`font-mono font-bold ${textColor}`}>
+                          {pct.toFixed(1)}%
                         </span>
                       </div>
                     </td>
                     <td className="p-3.5">
-                      {isCritical ? (
-                        <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-600/15 text-rose-400 border border-rose-600/30">
-                          Critical Defaulter
+                      {isRegular && (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#e8f3ed] text-[#247653] border border-[#247653]/30">
+                          Regular
                         </span>
-                      ) : isDefaulter ? (
-                        <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30">
-                          At Risk (&lt;75%)
+                      )}
+                      {isCondonable && (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#fef7ea] text-[#8a5b12] border border-[#8a5b12]/30">
+                          Condonable
                         </span>
-                      ) : (
-                        <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
-                          Good Standing
+                      )}
+                      {!isRegular && !isCondonable && (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#f9eaea] text-[#b54242] border border-[#b54242]/30">
+                          Critical
                         </span>
                       )}
                     </td>
                     <td className="p-3.5 text-right">
                       <GlassButton
-                        variant="secondary"
-                        className="text-xs py-1 px-2.5 h-auto"
+                        variant="ghost"
+                        size="sm"
+                        className="text-xs py-1 px-2.5 h-auto text-[#526f78] hover:text-[#202b30]"
                         icon={<History size={13} />}
                         onClick={() => onSelectStudent(std.student_id, std.full_name, std.enrollment_number)}
                       >
-                        View History
+                        History
                       </GlassButton>
                     </td>
                   </tr>
@@ -188,7 +185,7 @@ export default function StudentsRosterTab({
           </table>
         </div>
       ) : (
-        <div className="p-8 rounded-2xl bg-card border border-border">
+        <div className="p-8 rounded-xl bg-card border border-[#e3e1dc]">
           <GlassEmptyState
             title="No Matching Students"
             message="No enrolled students match the search criteria or selected filter tier."

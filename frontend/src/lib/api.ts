@@ -2,10 +2,19 @@ import axios from "axios";
 import { UseFormSetError, FieldValues, Path } from "react-hook-form";
 import { useAuthStore } from "@/store/authStore";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
+function getBaseUrl(): string {
+  if (typeof window !== "undefined") {
+    const configured = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
+    if (configured.includes("localhost") && window.location.hostname !== "localhost") {
+      return configured.replace("localhost", window.location.hostname);
+    }
+    return configured;
+  }
+  return process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
+}
 
 const api = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: getBaseUrl(),
   headers: { "Content-Type": "application/json" },
   timeout: 60000,
 });

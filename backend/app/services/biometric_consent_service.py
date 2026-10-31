@@ -5,7 +5,7 @@ from typing import Optional, Dict, Any, List
 
 
 from app.core.logging_config import get_logger
-from app.db.redis import get_redis
+from app.db.redis import get_redis, safe_redis
 from app.db.client import db
 from app.services.s3_service import S3Service
 
@@ -36,15 +36,16 @@ class BiometricConsentService:
             "retention_schedule_days": 365,
         }
 
-        r = await get_redis()
-        try:
-            await r.setex(
-                f"{self.CONSENT_PREFIX}{student_id}",
-                self.CONSENT_TTL_SECONDS,
-                json.dumps(consent_record),
-            )
-        except Exception as redis_err:
-            logger.warning("Redis consent cache write error: %s", redis_err)
+        r = safe_redis()
+        if r:
+            try:
+                await r.setex(
+                    f"{self.CONSENT_PREFIX}{student_id}",
+                    self.CONSENT_TTL_SECONDS,
+                    json.dumps(consent_record),
+                )
+            except Exception as redis_err:
+                logger.warning("Redis consent cache write error: %s", redis_err)
 
         try:
             await db.studentbiometric.update_many(
@@ -57,15 +58,34 @@ class BiometricConsentService:
         logger.info("Biometric consent recorded for student %s under policy %s", student_id, policy_version)
         return consent_record
 
-    async def has_consent(self, student_id: str) -> bool:
+    async def revoke_consent(self, student_id: str) -> bool:
+        r = safe_redis()
+        if r:
+            try:
+                await r.delete(f"{self.CONSENT_PREFIX}{student_id}")
+            except Exception as redis_err:
+                logger.warning("Redis consent cache delete error: %s", redis_err)
+
         try:
-            r = await get_redis()
-            raw = await r.get(f"{self.CONSENT_PREFIX}{student_id}")
-            if raw:
-                data = json.loads(raw)
-                return bool(data.get("consented", False))
-        except Exception as redis_err:
-            logger.warning("Redis consent read error: %s", redis_err)
+            await db.studentbiometric.update_many(
+                where={"studentId": student_id},
+                data={"consentGiven": False},
+            )
+            return True
+        except Exception as db_err:
+            logger.warning("DB consent revocation error for student %s: %s", student_id, db_err)
+            return False
+
+    async def has_consent(self, student_id: str) -> bool:
+        r = safe_redis()
+        if r:
+            try:
+                raw = await r.get(f"{self.CONSENT_PREFIX}{student_id}")
+                if raw:
+                    data = json.loads(raw)
+                    return bool(data.get("consented", False))
+            except Exception as redis_err:
+                logger.warning("Redis consent read error: %s", redis_err)
 
         try:
             biometric = await db.studentbiometric.find_first(

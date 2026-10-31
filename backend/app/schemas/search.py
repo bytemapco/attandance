@@ -2,7 +2,7 @@ from typing import Optional, Literal
 from pydantic import BaseModel, ConfigDict, Field
 
 
-SearchCategory = Literal["student", "faculty", "class", "session", "action", "navigation"]
+SearchCategory = Literal["student", "faculty", "class", "session", "action", "navigation", "tenant"]
 
 
 class SearchResultItem(BaseModel):

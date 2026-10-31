@@ -30,10 +30,10 @@ export default function ProvisionAdminAccountsCard({
           </div>
           <div>
             <h2 className="text-sm font-semibold text-foreground">
-              Main Administrator Accounts
+              Administrator Accounts
             </h2>
             <p className="text-xs text-muted-foreground">
-              Administrators with complete access to manage students, teachers, classes, and institution settings
+              Initial accounts to manage academic years, classes, and staff.
             </p>
           </div>
         </div>
@@ -45,7 +45,7 @@ export default function ProvisionAdminAccountsCard({
           icon={<Plus size={14} />}
           onClick={() => append({ name: "", email: "", role: "TENANT_ADMIN" })}
         >
-          Add Another Administrator
+          Add Administrator
         </GlassButton>
       </div>
 

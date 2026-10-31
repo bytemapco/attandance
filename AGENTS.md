@@ -25,3 +25,17 @@
 - Zero analyzer warnings (`flutter analyze --no-fatal-infos`).
 - Keep code test-backed (`flutter test` 100% passing).
 - Run `graphify update .` after touching code files.
+- **File Modifications**: Must always use dedicated file editing tools (`replace_file_content`, `write_to_file`) to add or edit code. Never use terminal/bash commands (`cat << EOF`, `sed`, `echo >`, python scripts, etc.) to modify code files.
+
+## ENVIRONMENT & CONFIGURATION SYNC
+- **Root `.env.prod` is the Source of Truth**: Whenever configuration keys or environment variables are added or modified, update the root `.env.prod` immediately along with the respective sub-service `.env` files.
+- **Never Hardcode Secrets**: API keys, database URLs, and JWT secrets must always be loaded via environment variables / configuration classes.
+
+## VERSION CONTROL & DUAL-REPOSITORY ARCHITECTURE
+- **Dual Repositories**: Main repository (`bytemapco/attandance`) and dedicated mobile repository (`bytemapco/attandance_mobile` inside `./mobile`).
+- **Two-Way Sync**: Any modifications made to `./mobile` must be committed and pushed to both the root repo and the mobile standalone repo.
+
+## DATABASE & PRISMA STANDARDS
+- **Never Add `output` in `schema.prisma`**: The `generator client` block in `backend/prisma/schema.prisma` must never contain hardcoded `output` directory paths.
+
+

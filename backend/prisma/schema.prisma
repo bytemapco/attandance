@@ -44,12 +44,37 @@ enum AttendanceStatus {
   FLAGGED
   APPROVED
   EXCUSED
+  LATE
 }
 
 enum AttendanceMethod {
   AI_BIOMETRIC
   SMART_PASS_OFFLINE
   MANUAL_OVERRIDE
+  MANUAL_REGISTER
+  SYSTEM_EXCUSED
+}
+
+enum AcademicPeriodStatus {
+  PLANNING
+  ACTIVE
+  LOCKED
+  ARCHIVED
+}
+
+
+enum OccurrenceStatus {
+  SCHEDULED
+  CONDUCTED
+  CANCELLED
+  RESCHEDULED
+}
+
+enum CalendarEventType {
+  HOLIDAY
+  EXAM_DAY
+  NON_INSTRUCTIONAL
+  TIMETABLE_OVERRIDE
 }
 
 enum LeaveStatus {
@@ -116,6 +141,12 @@ model Tenant {
   notifications   Notification[]
   systemConfig    SystemConfiguration?
 
+  academicYears     AcademicYear[]
+  calendarEvents    AcademicCalendarEvent[]
+  courseSections    CourseSection[]
+  classOccurrences  ClassOccurrence[]
+  attendanceRecords AttendanceRecord[]
+
   @@index([status])
   @@map("tenants")
 }
@@ -138,6 +169,7 @@ model User {
   notifications              Notification[]
   licenseRequestsAsRequester LicenseRequest[] @relation("LicenseRequester")
   licenseRequestsAsProcessor LicenseRequest[] @relation("LicenseProcessor")
+  attendanceAudits           AttendanceAuditLog[]
 
   @@index([tenantId, role])
   @@index([tenantId, isActive])
@@ -176,6 +208,8 @@ model Student {
   leaveRequests        LeaveRequest[]
   deviceChangeRequests DeviceChangeRequest[]
   cohortMemberships    CohortStudent[]
+  courseEnrollments    CourseEnrollment[]
+  newAttendanceRecords AttendanceRecord[]
 
   @@unique([enrollmentNumber])
   @@index([tenantId, departmentId])
@@ -243,6 +277,10 @@ model Teacher {
   primaryCourses        CourseOffering[]
   originalSubstitutions TeacherSubstitution[] @relation("OriginalTeacher")
   assignedSubstitutions TeacherSubstitution[] @relation("SubstituteTeacher")
+  facultyOccurrences    ClassOccurrence[]     @relation("FacultyOccurrences")
+  substituteOccurrences ClassOccurrence[]     @relation("SubstituteOccurrences")
+  courseFaculties       CourseFaculty[]
+  timetableRules        TimetableRule[]
 
   @@index([tenantId, departmentId])
   @@map("teachers")
@@ -267,6 +305,7 @@ model Department {
   students Student[]
   subjects Subject[]
   cohorts  AcademicCohort[]
+  courseSections CourseSection[]
 
   @@index([tenantId])
   @@map("departments")
@@ -302,6 +341,7 @@ model Subject {
   department      Department?      @relation(fields: [departmentId], references: [id], onDelete: SetNull)
   classes         AcademicClass[]
   courseOfferings CourseOffering[]
+  courseSections  CourseSection[]
 
   @@index([tenantId])
   @@index([departmentId])
@@ -320,6 +360,9 @@ model Classroom {
   tenant           Tenant?          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   classes          AcademicClass[]
   timetableEntries TimetableEntry[]
+  courseSections   CourseSection[]
+  occurrences      ClassOccurrence[]
+  timetableRules   TimetableRule[]
 
   @@index([tenantId])
   @@map("classrooms")
@@ -403,9 +446,12 @@ model TimeSlot {
   startTime  String   @map("start_time")
   endTime    String   @map("end_time")
   isBreak    Boolean  @default(false) @map("is_break")
+  isLabBlock Boolean  @default(false) @map("is_lab_block")
 
-  tenant           Tenant?          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenant           Tenant?           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   timetableEntries TimetableEntry[]
+  timetableRules   TimetableRule[]
+  classOccurrences ClassOccurrence[]
 
   @@unique([tenantId, slotNumber])
   @@map("time_slots")
@@ -457,23 +503,26 @@ model AcademicClass {
   name        String
   subjectId   String   @map("subject_id")
   teacherId   String   @map("teacher_id")
-  classroomId String?  @map("classroom_id")
-  semester    Int?
-  batch       String?
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
+  classroomId    String?  @map("classroom_id")
+  academicYearId String?  @map("academic_year_id")
+  semester       Int?
+  batch          String?
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
 
-  tenant      Tenant?      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  teacher     Teacher      @relation(fields: [teacherId], references: [id], onDelete: Restrict)
-  subject     Subject      @relation(fields: [subjectId], references: [id], onDelete: Restrict)
-  classroom   Classroom?   @relation(fields: [classroomId], references: [id], onDelete: SetNull)
-  geofence    Geofence?
-  enrollments Enrollment[]
-  sessions    Session[]
+  tenant       Tenant?       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  teacher      Teacher       @relation(fields: [teacherId], references: [id], onDelete: Restrict)
+  subject      Subject       @relation(fields: [subjectId], references: [id], onDelete: Restrict)
+  classroom    Classroom?    @relation(fields: [classroomId], references: [id], onDelete: SetNull)
+  academicYear AcademicYear? @relation(fields: [academicYearId], references: [id], onDelete: SetNull)
+  geofence     Geofence?
+  enrollments  Enrollment[]
+  sessions     Session[]
 
   @@index([tenantId, teacherId, semester])
   @@index([subjectId])
   @@index([classroomId])
+  @@index([academicYearId])
   @@map("classes")
 }
 
@@ -517,14 +566,16 @@ model Session {
 
 model Geofence {
   id              String   @id @default(uuid())
-  academicClassId String   @unique @map("class_id")
+  academicClassId String?  @unique @map("class_id")
+  courseSectionId String?  @unique @map("course_section_id")
   latitude        Float
   longitude       Float
   radiusMeters    Float    @map("radius_meters")
   createdAt       DateTime @default(now()) @map("created_at")
   updatedAt       DateTime @updatedAt @map("updated_at")
 
-  academicClass AcademicClass @relation(fields: [academicClassId], references: [id], onDelete: Cascade)
+  academicClass AcademicClass? @relation(fields: [academicClassId], references: [id], onDelete: Cascade)
+  courseSection CourseSection? @relation(fields: [courseSectionId], references: [id], onDelete: Cascade)
 
   @@map("geofences")
 }
@@ -676,3 +727,214 @@ model Notification {
   @@index([userId, isRead])
   @@map("notifications")
 }
+
+// ==============================================================================
+// ACADEMIC CALENDAR & INSTITUTIONAL TIMETABLE MODELS
+// ==============================================================================
+
+model AcademicYear {
+  id                    String               @id @default(uuid())
+  tenantId              String               @map("tenant_id")
+  name                  String
+  startDate             DateTime             @map("start_date") @db.Date
+  endDate               DateTime             @map("end_date") @db.Date
+  attendanceStartDate   DateTime?            @map("attendance_start_date") @db.Date
+  attendanceEndDate     DateTime?            @map("attendance_end_date") @db.Date
+  minAttendancePct      Float                @default(75.0) @map("min_attendance_pct")
+  saturdayEnabled       Boolean              @default(false) @map("saturday_enabled")
+  verificationWindowMin Int                  @default(60) @map("verification_window_min")
+  status                AcademicPeriodStatus @default(PLANNING)
+  createdAt             DateTime             @default(now()) @map("created_at")
+  updatedAt             DateTime             @updatedAt @map("updated_at")
+
+  tenant         Tenant                  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  calendarEvents AcademicCalendarEvent[]
+  courseSections CourseSection[]
+  classes        AcademicClass[]
+
+  @@unique([tenantId, name])
+  @@index([tenantId, status])
+  @@map("academic_years")
+}
+
+model AcademicCalendarEvent {
+  id                  String            @id @default(uuid())
+  tenantId            String            @map("tenant_id")
+  academicYearId      String            @map("academic_year_id")
+  title               String
+  date                DateTime          @db.Date
+  eventType           CalendarEventType @map("event_type")
+  affectsAllCourses   Boolean           @default(true) @map("affects_all_courses")
+  substituteDayOfWeek Int?              @map("substitute_day_of_week")
+  description         String?
+  createdAt           DateTime          @default(now()) @map("created_at")
+
+  tenant       Tenant       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  academicYear AcademicYear @relation(fields: [academicYearId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, academicYearId, date, eventType])
+  @@index([tenantId, date])
+  @@map("academic_calendar_events")
+}
+
+model CourseSection {
+  id             String   @id @default(uuid())
+  tenantId       String   @map("tenant_id")
+  academicYearId String   @map("academic_year_id")
+  subjectId      String   @map("subject_id")
+  departmentId   String?  @map("department_id")
+  name           String
+  batch          String?
+  defaultRoomId  String?  @map("default_room_id")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  tenant         Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  academicYear   AcademicYear       @relation(fields: [academicYearId], references: [id], onDelete: Cascade)
+  subject        Subject            @relation(fields: [subjectId], references: [id], onDelete: Restrict)
+  department     Department?        @relation(fields: [departmentId], references: [id], onDelete: SetNull)
+  defaultRoom    Classroom?         @relation(fields: [defaultRoomId], references: [id], onDelete: SetNull)
+  faculties      CourseFaculty[]
+  enrollments    CourseEnrollment[]
+  timetableRules TimetableRule[]
+  occurrences    ClassOccurrence[]
+  geofence       Geofence?
+
+  @@unique([academicYearId, subjectId, name, batch])
+  @@index([tenantId, academicYearId])
+  @@map("course_sections")
+}
+
+model CourseFaculty {
+  id              String   @id @default(uuid())
+  courseSectionId String   @map("course_section_id")
+  teacherId       String   @map("teacher_id")
+  isPrimary       Boolean  @default(false) @map("is_primary")
+  roleDescription String?  @map("role_description")
+  assignedAt      DateTime @default(now()) @map("assigned_at")
+
+  courseSection CourseSection @relation(fields: [courseSectionId], references: [id], onDelete: Cascade)
+  teacher       Teacher       @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+
+  @@unique([courseSectionId, teacherId])
+  @@map("course_faculties")
+}
+
+model CourseEnrollment {
+  id              String   @id @default(uuid())
+  courseSectionId String   @map("course_section_id")
+  studentId       String   @map("student_id")
+  status          String   @default("ACTIVE")
+  enrolledAt      DateTime @default(now()) @map("enrolled_at")
+
+  courseSection CourseSection @relation(fields: [courseSectionId], references: [id], onDelete: Cascade)
+  student       Student       @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([courseSectionId, studentId])
+  @@index([studentId])
+  @@map("course_enrollments")
+}
+
+model TimetableRule {
+  id              String   @id @default(uuid())
+  tenantId        String   @map("tenant_id")
+  courseSectionId String   @map("course_section_id")
+  timeSlotId      String   @map("time_slot_id")
+  classroomId     String?  @map("classroom_id")
+  teacherId       String?  @map("teacher_id")
+  dayOfWeek       Int      @map("day_of_week")
+  effectiveFrom   DateTime @map("effective_from") @db.Date
+  effectiveUntil  DateTime @map("effective_until") @db.Date
+  isActive        Boolean  @default(true) @map("is_active")
+
+  courseSection CourseSection     @relation(fields: [courseSectionId], references: [id], onDelete: Cascade)
+  timeSlot      TimeSlot          @relation(fields: [timeSlotId], references: [id], onDelete: Restrict)
+  classroom     Classroom?        @relation(fields: [classroomId], references: [id], onDelete: SetNull)
+  teacher       Teacher?          @relation(fields: [teacherId], references: [id], onDelete: SetNull)
+  occurrences   ClassOccurrence[]
+
+  @@unique([courseSectionId, timeSlotId, dayOfWeek])
+  @@index([tenantId, dayOfWeek, timeSlotId])
+  @@map("timetable_rules")
+}
+
+model ClassOccurrence {
+  id                  String           @id @default(uuid())
+  tenantId            String           @map("tenant_id")
+  courseSectionId     String           @map("course_section_id")
+  timetableRuleId     String?          @map("timetable_rule_id")
+  date                DateTime         @db.Date
+  timeSlotId          String           @map("time_slot_id")
+  classroomId         String?          @map("classroom_id")
+  facultyId           String           @map("faculty_id")
+  substituteFacultyId String?          @map("substitute_faculty_id")
+  status              OccurrenceStatus @default(SCHEDULED)
+  cancellationReason  String?          @map("cancellation_reason")
+  topicCovered        String?          @map("topic_covered")
+  isAttendanceLocked  Boolean          @default(false) @map("is_attendance_locked")
+  verificationActive  Boolean          @default(false) @map("verification_active")
+  verificationExpires DateTime?        @map("verification_expires")
+  conductedAt         DateTime?        @map("conducted_at")
+  createdAt           DateTime         @default(now()) @map("created_at")
+  updatedAt           DateTime         @updatedAt @map("updated_at")
+
+  tenant            Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  courseSection     CourseSection      @relation(fields: [courseSectionId], references: [id], onDelete: Cascade)
+  timetableRule     TimetableRule?     @relation(fields: [timetableRuleId], references: [id], onDelete: SetNull)
+  timeSlot          TimeSlot           @relation(fields: [timeSlotId], references: [id], onDelete: Restrict)
+  classroom         Classroom?         @relation(fields: [classroomId], references: [id], onDelete: SetNull)
+  faculty           Teacher            @relation("FacultyOccurrences", fields: [facultyId], references: [id], onDelete: Restrict)
+  substituteFaculty Teacher?           @relation("SubstituteOccurrences", fields: [substituteFacultyId], references: [id], onDelete: SetNull)
+  attendanceRecords AttendanceRecord[]
+
+  @@unique([courseSectionId, date, timeSlotId])
+  @@index([tenantId, date])
+  @@index([facultyId, date])
+  @@index([tenantId, facultyId, date])
+  @@map("class_occurrences")
+}
+
+model AttendanceRecord {
+  id               String           @id @default(uuid())
+  tenantId         String           @map("tenant_id")
+  occurrenceId     String           @map("occurrence_id")
+  studentId        String           @map("student_id")
+  status           AttendanceStatus @default(ABSENT)
+  method           AttendanceMethod @default(MANUAL_REGISTER)
+  faceScore        Float?           @map("face_score")
+  livenessScore    Float?           @map("liveness_score")
+  gpsLatitude      Float?           @map("gps_latitude")
+  gpsLongitude     Float?           @map("gps_longitude")
+  evidencePhotoUrl String?          @map("evidence_photo_url")
+  remarks          String?
+  verifiedAt       DateTime         @default(now()) @map("verified_at")
+  updatedAt        DateTime         @updatedAt @map("updated_at")
+
+  tenant     Tenant               @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  occurrence ClassOccurrence      @relation(fields: [occurrenceId], references: [id], onDelete: Cascade)
+  student    Student              @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  auditLogs  AttendanceAuditLog[]
+
+  @@unique([occurrenceId, studentId])
+  @@index([tenantId, verifiedAt])
+  @@index([studentId, status])
+  @@map("attendance_records")
+}
+
+model AttendanceAuditLog {
+  id                 String           @id @default(uuid())
+  attendanceRecordId String           @map("attendance_record_id")
+  previousStatus     AttendanceStatus @map("previous_status")
+  newStatus          AttendanceStatus @map("new_status")
+  changedById        String           @map("changed_by_id")
+  reason             String
+  ipAddress          String?          @map("ip_address")
+  timestamp          DateTime         @default(now())
+
+  attendanceRecord AttendanceRecord @relation(fields: [attendanceRecordId], references: [id], onDelete: Cascade)
+  changedBy        User             @relation(fields: [changedById], references: [id], onDelete: Restrict)
+
+  @@index([attendanceRecordId])
+  @@map("attendance_audit_logs")
+}
+

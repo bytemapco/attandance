@@ -4,6 +4,7 @@ from prisma.models import User
 from app.api.dependencies import RoleChecker, get_current_user
 from app.schemas.super_admin import (
     TenantAdminInput,
+    TenantAdminEmailUpdateRequest,
     TenantProvisionRequest,
     TenantUpdateRequest,
     TenantDetailResponse,
@@ -105,6 +106,40 @@ async def add_tenant_admin(
 ):
     try:
         return await SuperAdminService.add_tenant_admin(tenant_id, data.model_dump(), actor=current_user.email)
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
+
+@router.put("/tenants/{tenant_id}/admins/{admin_id}")
+async def update_tenant_admin_email(
+    tenant_id: str,
+    admin_id: str,
+    data: TenantAdminEmailUpdateRequest,
+    current_user: User = Depends(get_current_user),
+):
+    try:
+        return await SuperAdminService.update_tenant_admin_email(
+            tenant_id=tenant_id,
+            admin_id=admin_id,
+            new_email=data.email,
+            actor=current_user.email,
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
+
+@router.delete("/tenants/{tenant_id}/admins/{admin_id}")
+async def delete_tenant_admin(
+    tenant_id: str,
+    admin_id: str,
+    current_user: User = Depends(get_current_user),
+):
+    try:
+        return await SuperAdminService.delete_tenant_admin(
+            tenant_id=tenant_id,
+            admin_id=admin_id,
+            actor=current_user.email,
+        )
     except ValueError as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 

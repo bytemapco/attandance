@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
-import { RefreshCw, Copy, Check } from "lucide-react";
+import { RefreshCw } from "lucide-react";
 import toast from "react-hot-toast";
 
 import { superAdminService } from "@/services/superAdminService";
@@ -18,7 +18,6 @@ export default function PlatformHealthPage(): React.ReactElement {
   const [health, setHealth] = useState<PlatformHealth | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [copied, setCopied] = useState(false);
 
   const fetchHealth = useCallback(async (showToast = false): Promise<void> => {
     try {
@@ -40,18 +39,6 @@ export default function PlatformHealthPage(): React.ReactElement {
     void fetchHealth();
   }, [fetchHealth]);
 
-  const handleCopyDiagnostics = async (): Promise<void> => {
-    if (!health) return;
-    try {
-      await navigator.clipboard.writeText(JSON.stringify(health, null, 2));
-      setCopied(true);
-      toast.success("Diagnostics copied");
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      toast.error("Failed to copy");
-    }
-  };
-
   const isHealthy = health?.status === "healthy";
 
   return (
@@ -67,28 +54,15 @@ export default function PlatformHealthPage(): React.ReactElement {
         title="System Status"
         description="Service health and diagnostics."
         actions={
-          <div className="flex items-center gap-2">
-            <GlassButton
-              variant="ghost"
-              onClick={() => void handleCopyDiagnostics()}
-              disabled={!health}
-              className="gap-1.5 text-xs h-9 px-3"
-              title="Copy details"
-            >
-              {copied ? <Check size={13} className="text-emerald-500" /> : <Copy size={13} />}
-              <span>{copied ? "Copied" : "Copy JSON"}</span>
-            </GlassButton>
-
-            <GlassButton
-              variant="secondary"
-              onClick={() => void fetchHealth(true)}
-              disabled={refreshing}
-              className="gap-1.5 text-xs h-9 px-3"
-            >
-              <RefreshCw size={13} className={refreshing ? "animate-spin" : ""} />
-              <span>Refresh</span>
-            </GlassButton>
-          </div>
+          <GlassButton
+            variant="secondary"
+            onClick={() => void fetchHealth(true)}
+            disabled={refreshing}
+            className="gap-1.5 text-xs h-9 px-3"
+          >
+            <RefreshCw size={13} className={refreshing ? "animate-spin" : ""} />
+            <span>Refresh</span>
+          </GlassButton>
         }
       />
 
@@ -105,7 +79,7 @@ export default function PlatformHealthPage(): React.ReactElement {
       ) : (
         <div className="space-y-5">
           {/* Status Header Strip */}
-          <GlassCard className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <GlassCard className="p-4 flex items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               <span
                 className={`h-2.5 w-2.5 rounded-full shrink-0 ${
@@ -116,7 +90,7 @@ export default function PlatformHealthPage(): React.ReactElement {
               />
               <div>
                 <h2 className="text-sm font-semibold text-foreground">
-                  {isHealthy ? "All systems operating normally" : "Service advisory in effect"}
+                  {isHealthy ? "All services operational" : "Service degradation detected"}
                 </h2>
                 <p className="text-xs text-muted-foreground">
                   Updated at{" "}
@@ -128,10 +102,6 @@ export default function PlatformHealthPage(): React.ReactElement {
                 </p>
               </div>
             </div>
-
-            <span className="text-xs font-mono text-muted-foreground pl-5.5 sm:pl-0">
-              {isHealthy ? "4 of 4 services operational" : "Review degraded services below"}
-            </span>
           </GlassCard>
 
           {/* Vitals KPI Strip */}

@@ -9,35 +9,43 @@ import type { ClassResponse } from "@/types";
 export const classColumns: TableColumn<ClassResponse & Record<string, unknown>>[] = [
   {
     key: "name",
-    header: "Course / Class",
+    header: "Class / Batch",
     sortable: true,
     render: (r) => (
       <div>
-        <p className="font-bold text-foreground text-xs leading-tight">{r.name}</p>
+        <div className="flex items-center gap-1.5">
+          <p className="font-bold text-foreground text-xs leading-tight">{r.name}</p>
+          {r.batch && (
+            <span className="font-mono text-[10px] bg-primary/10 text-primary border border-primary/20 px-1.5 py-0.5 rounded font-semibold">
+              {r.batch}
+            </span>
+          )}
+        </div>
         <p className="text-[11px] text-muted-foreground mt-0.5">
-          {String((r as { schedule?: string }).schedule || "Schedule: Mon-Fri")}
+          {r.semester ? `Semester ${r.semester}` : "Regular Session"}
         </p>
       </div>
     ),
   },
   {
-    key: "subject_name",
-    header: "Subject & Code",
+    key: "semester",
+    header: "Semester",
     sortable: true,
-    render: (r) => {
-      const sub = r.subject_name || (r as { subjectName?: string }).subjectName || "—";
-      const code = r.subject_code || (r as { subjectCode?: string }).subjectCode || (r as { code?: string }).code;
-      return (
-        <div className="flex items-center gap-1.5">
-          <span className="font-medium text-foreground text-xs">{sub}</span>
-          {code && (
-            <span className="font-mono text-[11px] bg-secondary/80 text-foreground px-1.5 py-0.5 rounded border border-border">
-              {code}
-            </span>
-          )}
-        </div>
-      );
-    },
+    render: (r) => (
+      <span className="font-medium text-foreground text-xs">
+        {r.semester ? `Semester ${r.semester}` : "—"}
+      </span>
+    ),
+  },
+  {
+    key: "batch",
+    header: "Batch Code",
+    sortable: true,
+    render: (r) => (
+      <span className="font-mono text-xs font-semibold px-2 py-0.5 rounded bg-secondary border border-border text-foreground">
+        {r.batch || "—"}
+      </span>
+    ),
   },
   {
     key: "enrolled_count",

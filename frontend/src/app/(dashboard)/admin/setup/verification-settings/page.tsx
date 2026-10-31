@@ -74,14 +74,14 @@ export default function VerificationSettingsPage() {
       />
 
       {error && (
-        <div className="p-3.5 bg-red-50 border border-red-200 rounded-lg text-red-800 text-xs flex items-start gap-2.5">
+        <div className="p-3.5 bg-[#f9eaea] border border-[#f0c9c9] rounded-lg text-[#b54242] text-xs flex items-start gap-2.5">
           <AlertTriangleIcon className="w-4 h-4 shrink-0 mt-0.5" />
           <p>{error}</p>
         </div>
       )}
 
-      <div className="p-3.5 bg-amber-50 border border-amber-200 rounded-lg text-amber-900 flex items-start gap-2.5 text-xs">
-        <AlertTriangleIcon className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+      <div className="p-3.5 bg-[#fbf1df] border border-[#f2deba] rounded-lg text-[#8a5b12] flex items-start gap-2.5 text-xs">
+        <AlertTriangleIcon className="w-4 h-4 text-[#8a5b12] shrink-0 mt-0.5" />
         <div>
           <h4 className="font-semibold text-foreground">Notice</h4>
           <p className="text-muted-foreground mt-0.5 leading-relaxed">
@@ -160,7 +160,7 @@ function ToggleOption({
           type="button"
           onClick={onToggle}
           className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ${
-            enabled ? 'bg-primary' : 'bg-slate-300'
+            enabled ? 'bg-[#28363b]' : 'bg-[#eeece7] border-[#e3e1dc]'
           }`}
           role="switch"
           aria-checked={enabled}

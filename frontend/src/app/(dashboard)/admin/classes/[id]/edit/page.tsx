@@ -2,9 +2,9 @@
 
 import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { BookOpen, Save, X, Settings2 } from "lucide-react";
+import { BookOpen, Save, X } from "lucide-react";
 import toast from "react-hot-toast";
 
 import api, { getApiErrorMessage, applyValidationErrorsToForm } from "@/lib/api";
@@ -13,10 +13,18 @@ import GlassBreadcrumb from "@/components/ui/GlassBreadcrumb";
 import GlassPageHeader from "@/components/ui/GlassPageHeader";
 import GlassCard from "@/components/ui/GlassCard";
 import GlassInput from "@/components/ui/GlassInput";
-import GlassSelect from "@/components/ui/GlassSelect";
 import GlassButton from "@/components/ui/GlassButton";
 import GlassLoader from "@/components/ui/GlassLoader";
+import ClassDetailsFormCard from "@/components/admin/ClassDetailsFormCard";
 import type { ClassResponse, SubjectResponse, ClassroomResponse } from "@/types";
+
+const SEMESTER_OPTIONS = [
+  { value: "", label: "— Select Semester —" },
+  ...Array.from({ length: 8 }, (_, i) => ({
+    value: String(i + 1),
+    label: `Semester ${i + 1}`,
+  })),
+];
 
 export default function EditClassPage(): React.ReactElement {
   const { id } = useParams<{ id: string }>();
@@ -92,15 +100,11 @@ export default function EditClassPage(): React.ReactElement {
   }
 
   if (loading) return <GlassLoader />;
-  if (!cls) return <div className="text-center py-20 text-muted-foreground text-xs">Class not found</div>;
+  if (!cls) return <div className="text-center py-20 text-[#526f78] text-xs">Class not found</div>;
 
   const subjectOptions = [
     { value: "", label: "— Select Subject —" },
     ...subjects.map((s) => ({ value: s.id, label: `${s.name} (${s.code})` })),
-  ];
-  const SEMESTER_OPTIONS = [
-    { value: "", label: "— Select Semester —" },
-    ...Array.from({ length: 8 }, (_, i) => ({ value: String(i + 1), label: `Semester ${i + 1}` })),
   ];
   const classroomOptions = [
     { value: "", label: "None — no classroom" },
@@ -108,7 +112,7 @@ export default function EditClassPage(): React.ReactElement {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fade-in">
       <GlassBreadcrumb
         items={[
           { label: "Admin", href: "/admin/dashboard" },
@@ -118,14 +122,14 @@ export default function EditClassPage(): React.ReactElement {
         ]}
       />
       <GlassPageHeader title="Edit Class" description={`Configure parameters for ${cls.name}`} />
-      
+
       <form noValidate onSubmit={handleSubmit(onSubmit)} className="max-w-4xl space-y-6">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-1 space-y-5">
             <GlassCard padding="md" className="bg-card">
               <div className="flex items-center gap-2 mb-3">
-                <BookOpen size={16} className="text-primary" />
-                <h3 className="text-sm font-semibold text-foreground">Core Info</h3>
+                <BookOpen size={16} className="text-[#28363b]" />
+                <h3 className="text-sm font-semibold text-[#28363b]">Core Info</h3>
               </div>
               <GlassInput
                 label="Class Name"
@@ -136,59 +140,15 @@ export default function EditClassPage(): React.ReactElement {
           </div>
 
           <div className="lg:col-span-2">
-            <GlassCard padding="md" className="bg-card h-full">
-              <div className="flex items-center gap-2 mb-4">
-                <Settings2 size={16} className="text-primary" />
-                <h3 className="text-sm font-semibold text-foreground">Class Configuration</h3>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <Controller
-                  control={control}
-                  name="subject_id"
-                  render={({ field }) => (
-                    <GlassSelect
-                      label="Subject"
-                      options={subjectOptions}
-                      value={field.value}
-                      onChange={field.onChange}
-                      error={errors.subject_id?.message}
-                    />
-                  )}
-                />
-                <Controller
-                  control={control}
-                  name="classroom_id"
-                  render={({ field }) => (
-                    <GlassSelect
-                      label="Classroom"
-                      options={classroomOptions}
-                      value={field.value ?? ""}
-                      onChange={(v) => field.onChange(v || undefined)}
-                      error={errors.classroom_id?.message}
-                    />
-                  )}
-                />
-                <Controller
-                  control={control}
-                  name="semester"
-                  render={({ field }) => (
-                    <GlassSelect
-                      label="Semester"
-                      options={SEMESTER_OPTIONS}
-                      value={field.value ? String(field.value) : ""}
-                      onChange={(v) => field.onChange(v ? Number(v) : undefined)}
-                      error={errors.semester?.message}
-                    />
-                  )}
-                />
-                <GlassInput
-                  label="Batch"
-                  placeholder="e.g. 2022-2026"
-                  {...register("batch")}
-                  error={errors.batch?.message}
-                />
-              </div>
-            </GlassCard>
+            <ClassDetailsFormCard
+              control={control}
+              register={register}
+              errors={errors}
+              subjectOptions={subjectOptions}
+              classroomOptions={classroomOptions}
+              semesterOptions={SEMESTER_OPTIONS}
+              title="Class Configuration"
+            />
           </div>
         </div>
 

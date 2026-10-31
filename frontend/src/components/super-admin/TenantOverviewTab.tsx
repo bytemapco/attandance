@@ -41,16 +41,16 @@ export default function TenantOverviewTab({ tenant }: TenantOverviewTabProps): R
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
               <Globe size={16} className="text-primary" />
-              <span>Access & Web Routing</span>
+              <span>Portal Access</span>
             </h3>
             <GlassBadge variant={tenant.domain ? "success" : "neutral"}>
-              {tenant.domain ? "Custom Domain" : "Standard Slug"}
+              {tenant.domain ? "Custom Domain" : "Standard URL"}
             </GlassBadge>
           </div>
 
           <div className="p-3.5 bg-muted/40 rounded-xl border border-border space-y-2.5">
             <div className="flex items-center justify-between text-xs">
-              <span className="text-muted-foreground font-medium">Default Portal URL:</span>
+              <span className="text-muted-foreground font-medium">Login URL:</span>
               <span className="font-mono text-foreground font-semibold">
                 /login?tenant={tenant.slug}
               </span>
@@ -62,7 +62,7 @@ export default function TenantOverviewTab({ tenant }: TenantOverviewTabProps): R
               </span>
             </div>
             <div className="flex items-center justify-between text-xs">
-              <span className="text-muted-foreground font-medium">Institution Identifier:</span>
+              <span className="text-muted-foreground font-medium">URL Slug:</span>
               <span className="font-mono text-muted-foreground">{tenant.slug}</span>
             </div>
           </div>

@@ -37,8 +37,8 @@ class LeaderboardNotifier extends StateNotifier<LeaderboardState> {
   Future<void> fetch() async {
     state = state.copyWith(isLoading: true, errorMessage: null);
     try {
-      final res = await _api.getLeaderboard();
-      state = LeaderboardState(data: res);
+      final leaderboardData = await _api.getLeaderboard();
+      state = LeaderboardState(data: leaderboardData);
     } catch (e) {
       AppLogger.error('Fetch leaderboard failed: $e');
       state = state.copyWith(

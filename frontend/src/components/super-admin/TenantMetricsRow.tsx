@@ -29,7 +29,7 @@ export default function TenantMetricsRow({
       {/* Students Card */}
       <GlassCard className="p-4 flex flex-col justify-center">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-blue-500/10 text-blue-500">
+          <div className="p-2.5 rounded-xl bg-[#eeece7] text-[#526f78] border border-[#e3e1dc]">
             <GraduationCap size={20} />
           </div>
           <div>
@@ -44,11 +44,11 @@ export default function TenantMetricsRow({
       {/* Faculty Card */}
       <GlassCard className="p-4 flex flex-col justify-center">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-500">
+          <div className="p-2.5 rounded-xl bg-[#f7efea] text-[#c98260] border border-[#f0ded4]">
             <Users size={20} />
           </div>
           <div>
-            <p className="text-xs text-muted-foreground font-medium">Faculty Members</p>
+            <p className="text-xs text-muted-foreground font-medium">Faculty</p>
             <p className="text-2xl font-bold text-foreground">
               {teacherCount.toLocaleString()}
             </p>
@@ -59,7 +59,7 @@ export default function TenantMetricsRow({
       {/* License Usage Card */}
       <GlassCard className="p-4 flex flex-col justify-between">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-indigo-500/10 text-indigo-500">
+          <div className="p-2.5 rounded-xl bg-[#eeece7] text-[#28363b] border border-[#e3e1dc]">
             <ShieldCheck size={20} />
           </div>
           <div>
@@ -70,10 +70,10 @@ export default function TenantMetricsRow({
           </div>
         </div>
         <div className="mt-2.5">
-          <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
+          <div className="w-full h-1.5 bg-[#eeece7] rounded-full overflow-hidden">
             <div
               className={`h-full rounded-full transition-all ${
-                capacityPct > 90 ? "bg-red-500" : capacityPct > 70 ? "bg-amber-500" : "bg-primary"
+                capacityPct > 90 ? "bg-[#b54242]" : capacityPct > 70 ? "bg-[#8a5b12]" : "bg-[#28363b]"
               }`}
               style={{ width: `${capacityPct}%` }}
             />
@@ -88,7 +88,7 @@ export default function TenantMetricsRow({
       {/* Academic Structure Card */}
       <GlassCard className="p-4 flex flex-col justify-center">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-purple-500/10 text-purple-500">
+          <div className="p-2.5 rounded-xl bg-[#eeece7] text-[#526f78] border border-[#e3e1dc]">
             <Building2 size={20} />
           </div>
           <div>
@@ -103,7 +103,7 @@ export default function TenantMetricsRow({
       {/* Attendance Activity Card */}
       <GlassCard className="p-4 flex flex-col justify-center">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-rose-500/10 text-rose-500">
+          <div className="p-2.5 rounded-xl bg-[#e8f3ed] text-[#247653] border border-[#c6e2d3]">
             <Radio size={20} />
           </div>
           <div>

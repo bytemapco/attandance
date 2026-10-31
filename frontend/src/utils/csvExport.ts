@@ -1,4 +1,4 @@
-import type { StudentRosterItem } from "@/types";
+import type { SessionStudentAttendanceItem } from "@/types";
 
 export function exportToCSV(filename: string, rows: Record<string, unknown>[]): void {
   if (!rows || rows.length === 0) return;
@@ -29,8 +29,8 @@ export function exportToCSV(filename: string, rows: Record<string, unknown>[]): 
   URL.revokeObjectURL(url);
 }
 
-export function exportRosterToCSV(className: string, roster: StudentRosterItem[]): void {
-  const formattedRows = roster.map((item) => ({
+export function exportAttendanceRollToCSV(className: string, roll: SessionStudentAttendanceItem[]): void {
+  const formattedRows = roll.map((item) => ({
     "Enrollment Number": item.enrollment_number,
     "Full Name": item.full_name,
     "Email": item.email,
@@ -43,3 +43,6 @@ export function exportRosterToCSV(className: string, roster: StudentRosterItem[]
   const dateStr = new Date().toISOString().split("T")[0];
   exportToCSV(`Attendance_${cleanClassName}_${dateStr}`, formattedRows);
 }
+
+export const exportRosterToCSV = exportAttendanceRollToCSV;
+

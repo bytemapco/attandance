@@ -34,26 +34,29 @@ async def setup_geofence_and_session(
         "academic_class_id": class_id,
         "duration_minutes": 60,
     }
-    sess_res = await client.post("/teacher/sessions/start", json_data=session_data)
-    session_id = sess_res["id"]
-    logger.info("Opened attendance session %s for class %s", session_id, class_id)
+    try:
+        sess_res = await client.post("/teacher/sessions/start", json_data=session_data)
+        session_id = sess_res["id"]
+        logger.info("Opened attendance session %s for class %s", session_id, class_id)
 
-    # 3. Mark Realistic Attendance (80% Present, 20% Absent)
-    records = []
-    for idx, sid in enumerate(student_ids):
-        status = "Absent" if idx == 0 else "Present"
-        records.append({"student_id": sid, "status": status})
+        # 3. Mark Realistic Attendance (80% Present, 20% Absent)
+        records = []
+        for idx, sid in enumerate(student_ids):
+            status = "Absent" if idx == 0 else "Present"
+            records.append({"student_id": sid, "status": status})
 
-    if records:
-        bulk_data = {"records": records}
-        await client.post(f"/teacher/sessions/{session_id}/mark-bulk", json_data=bulk_data)
-        logger.info("Bulk-marked %d attendance records in session %s", len(records), session_id)
+        if records:
+            bulk_data = {"records": records}
+            await client.post(f"/teacher/sessions/{session_id}/mark-bulk", json_data=bulk_data)
+            logger.info("Bulk-marked %d attendance records in session %s", len(records), session_id)
 
-    # 4. Close Session
-    await client.post(f"/teacher/sessions/{session_id}/stop")
-    logger.info("Closed attendance session %s", session_id)
-
-    return session_id
+        # 4. Close Session
+        await client.post(f"/teacher/sessions/{session_id}/stop")
+        logger.info("Closed attendance session %s", session_id)
+        return session_id
+    except Exception as ex:
+        logger.warning("Session workflow skipped or already active: %s", ex)
+        return ""
 
 
 async def seed_leave_request_workflow(

@@ -129,7 +129,7 @@ export default function TeachersPage(): React.ReactElement {
           </button>
           <button
             onClick={() => router.push("/admin/users/teachers/add")}
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-primary text-primary-foreground text-xs font-medium hover:bg-slate-800 transition-colors shadow-2xs"
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-primary text-primary-foreground text-xs font-medium hover:bg-[#1e292d] transition-colors shadow-2xs"
           >
             <Plus size={14} /> Add Teacher
           </button>

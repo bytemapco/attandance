@@ -20,8 +20,21 @@ class StudentService:
 
     async def get_student_classes(self, user_id: str) -> list[StudentClassResponse]:
         student = await self.get_student_by_user_id(user_id)
+        from datetime import datetime, timezone
+        now = datetime.now(timezone.utc)
+
         enrollments = await db.enrollment.find_many(
-            where={"studentId": student.id},
+            where={
+                "studentId": student.id,
+                "academicClass": {
+                    "is": {
+                        "OR": [
+                            {"academicYearId": None},
+                            {"academicYear": {"is": {"endDate": {"gte": now}}}},
+                        ]
+                    }
+                },
+            },
             include={
                 "academicClass": {
                     "include": {
@@ -33,10 +46,6 @@ class StudentService:
                 }
             },
         )
-
-        from datetime import datetime, timezone
-
-        now = datetime.now(timezone.utc)
 
         # Proactively deactivate expired sessions to sync database state
         expired_session_ids = []
@@ -271,12 +280,12 @@ class StudentService:
                 "enrollment_number": student.enrollmentNumber,
             }
             await manager.send_personal_message(msg, student_id=student.id)
-            tid = (
+            tenant_id = (
                 session.academicClass.tenantId
                 if (session.academicClass and hasattr(session.academicClass, "tenantId"))
                 else None
             )
-            await manager.broadcast_to_teachers(msg, tenant_id=tid)
+            await manager.broadcast_to_teachers(msg, tenant_id=tenant_id)
         except Exception as ws_err:
             logger.warning("Failed broadcasting attendance update for %s: %s", student.id, ws_err)
 

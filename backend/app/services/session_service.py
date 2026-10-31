@@ -2,7 +2,7 @@ from datetime import datetime, timedelta, timezone
 from typing import Optional
 
 from app.core.logging_config import get_logger
-from app.db.redis import get_redis
+from app.db.redis import safe_redis
 from app.repositories.session_repository import SessionRepository
 from app.repositories.class_repository import ClassRepository
 from app.schemas.teacher import SessionResponse, SessionStart
@@ -52,10 +52,12 @@ class SessionService:
         await self.session_repo.deactivate(session_id)
 
         # 2. Delete from Redis
-        try:
-            await get_redis().delete(f"session:{session_id}")
-        except Exception as e:
-            logger.warning("Failed to delete session from Redis: %s", e)
+        r = safe_redis()
+        if r:
+            try:
+                await r.delete(f"session:{session_id}")
+            except Exception as e:
+                logger.warning("Failed to delete session from Redis: %s", e)
 
         # 3. Get enrollments and existing attendance
         from app.db.client import db

@@ -8,6 +8,7 @@ import { useDebounce } from "@/hooks/useDebounce";
 import api, { getApiErrorMessage } from "@/lib/api";
 import { toast } from "react-hot-toast";
 import type { DeviceChangeRequest } from "@/types/models";
+import { formatDateIndianMedium } from "@/utils/dateFormatter";
 
 interface DeviceChangeTableProps {
   requests: DeviceChangeRequest[];
@@ -26,14 +27,7 @@ export default function DeviceChangeTable({ requests, onActionComplete }: Device
     setLocalRequests(requests);
   }, [requests]);
 
-  const formatDate = (dateStr: string): string => {
-    try {
-      const date = new Date(dateStr);
-      return date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
-    } catch {
-      return dateStr;
-    }
-  };
+  const formatDate = (dateStr: string): string => formatDateIndianMedium(dateStr);
 
   const handleAction = async (id: string, status: "APPROVED" | "REJECTED"): Promise<void> => {
     try {

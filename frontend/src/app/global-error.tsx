@@ -11,11 +11,11 @@ export default function GlobalError({
 }): React.ReactElement {
   return (
     <html lang="en">
-      <body className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center p-4 font-sans antialiased">
-        <div className="w-full max-w-md text-center rounded-2xl border border-slate-800 bg-slate-900/90 p-8 shadow-2xl backdrop-blur-md">
-          <div className="inline-flex p-3 rounded-2xl bg-red-500/10 text-red-400 mb-5">
+      <body className="min-h-screen bg-[#f5f2ed] text-[#202b30] flex items-center justify-center p-4 font-sans antialiased">
+        <div className="w-full max-w-md text-center rounded-2xl border border-[#e3e1dc] bg-white p-8 shadow-[0_8px_24px_rgba(40,54,59,0.1)]">
+          <div className="inline-flex p-3 rounded-2xl bg-[#f9eaea] text-[#b54242] border border-[#f0c9c9] mb-5">
             <svg
-              className="h-9 w-9"
+              className="h-8 w-8"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -30,18 +30,18 @@ export default function GlobalError({
             </svg>
           </div>
 
-          <h1 className="text-xl font-bold tracking-tight text-white mb-2">
+          <h1 className="text-xl font-bold tracking-tight text-[#28363b] mb-2">
             Something went critically wrong
           </h1>
 
-          <p className="text-xs text-slate-400 mb-6 max-w-sm mx-auto leading-relaxed">
-            {error.message || "A critical application error occurred. Reloading the application usually resolves this."}
+          <p className="text-xs sm:text-sm text-[#526f78] mb-6 max-w-sm mx-auto leading-relaxed">
+            {error.message || "A critical system error occurred. Restarting the session usually resolves this."}
           </p>
 
           <button
             type="button"
             onClick={() => reset()}
-            className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-white text-slate-950 text-xs font-semibold hover:bg-slate-200 transition-all cursor-pointer shadow-md"
+            className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-[#28363b] text-white text-xs font-semibold hover:bg-[#1f2b2f] transition-all cursor-pointer shadow-xs"
           >
             Restart Application
           </button>

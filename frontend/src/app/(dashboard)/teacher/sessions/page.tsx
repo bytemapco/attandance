@@ -2,16 +2,12 @@
 
 import React, { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { Radio, Play } from "lucide-react";
 import toast from "react-hot-toast";
 import api, { getApiErrorMessage } from "@/lib/api";
 import GlassPageHeader from "@/components/ui/GlassPageHeader";
 import GlassBreadcrumb from "@/components/ui/GlassBreadcrumb";
-import GlassCard from "@/components/ui/GlassCard";
-import GlassSelect from "@/components/ui/GlassSelect";
-import GlassInput from "@/components/ui/GlassInput";
-import GlassButton from "@/components/ui/GlassButton";
 import GlassLoader from "@/components/ui/GlassLoader";
+import StartSessionCard from "./StartSessionCard";
 import ActiveSessionsCard from "./ActiveSessionsCard";
 import PastSessionsTable from "./PastSessionsTable";
 import SmartPassGeneratorModal from "@/components/scanner/SmartPassGeneratorModal";
@@ -24,7 +20,7 @@ export default function SessionsPage(): React.ReactElement {
   const [duration, setDuration] = useState("10");
   const [loading, setLoading] = useState(true);
   const [starting, setStarting] = useState(false);
-  const [activeSessions, setActiveSessions] = useState<SessionResponse[]>([]);
+  const [activeSessions, setActiveSessions] = useState<SessionWithClassResponse[]>([]);
   const [pastSessions, setPastSessions] = useState<SessionWithClassResponse[]>([]);
   const [classFilter, setClassFilter] = useState("");
   const [selectedQrSession, setSelectedQrSession] = useState<{ id: string; className: string } | null>(null);
@@ -36,14 +32,10 @@ export default function SessionsPage(): React.ReactElement {
         api.get<SessionWithClassResponse[]>("/teacher/sessions/all"),
       ]);
       setClasses(classesRes.data);
-      
+
       const now = new Date();
       setActiveSessions(
-        allSessionsRes.data
-          .filter((s) => s.isActive && new Date(s.endTime) > now)
-          .map(({ id, academicClassId, startTime, endTime, isActive }) => ({
-            id, academicClassId, startTime, endTime, isActive,
-          }))
+        allSessionsRes.data.filter((s) => s.isActive && new Date(s.endTime) > now)
       );
       setPastSessions(
         allSessionsRes.data.filter((s) => !s.isActive || new Date(s.endTime) <= now)
@@ -95,7 +87,13 @@ export default function SessionsPage(): React.ReactElement {
         academic_class_id: selectedClass,
         duration_minutes: mins,
       });
-      setActiveSessions((prev) => [...prev, data]);
+      const cls = classes.find((c) => c.id === selectedClass);
+      const newSession: SessionWithClassResponse = {
+        ...data,
+        class_name: cls?.name ?? "Class Session",
+        subject: cls?.subject ?? "",
+      };
+      setActiveSessions((prev) => [...prev, newSession]);
       toast.success("Session started!");
     } catch (err: unknown) {
       toast.error(getApiErrorMessage(err, "Failed to start session"));
@@ -129,18 +127,18 @@ export default function SessionsPage(): React.ReactElement {
   const filterLabel = filteredClass ? `${filteredClass.name} — ${filteredClass.subject}` : "Selected Class";
 
   return (
-    <div className="animate-fade-in-up space-y-6">
+    <div className="animate-fade-in space-y-6">
       <GlassBreadcrumb items={[{ label: "Teacher", href: "/teacher/classes" }, { label: "Sessions" }]} />
       <GlassPageHeader title="Class Sessions" />
 
       {classFilter && (
-        <div className="p-4 flex items-center justify-between animate-fade-in text-sm border border-border bg-card rounded-xl">
-          <div className="flex items-center gap-2 text-foreground">
+        <div className="p-4 flex items-center justify-between animate-fade-in text-sm border border-[#e3e1dc] bg-card rounded-2xl">
+          <div className="flex items-center gap-2 text-[#28363b]">
             Showing class: <span className="font-semibold">{filterLabel}</span>
           </div>
           <button 
             onClick={handleClearFilter}
-            className="text-xs text-muted-foreground hover:text-foreground hover:underline transition-colors font-medium"
+            className="text-xs text-[#526f78] hover:text-[#28363b] hover:underline transition-colors font-medium"
           >
             Clear Filter
           </button>
@@ -148,48 +146,30 @@ export default function SessionsPage(): React.ReactElement {
       )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <GlassCard>
-          <div className="flex items-center gap-3 mb-6">
-            <div className="p-2.5 rounded-xl bg-primary/10 text-primary">
-              <Radio size={20} />
-            </div>
-            <h3 className="text-base font-semibold text-foreground">Start New Session</h3>
-          </div>
-          <div className="space-y-4">
-            <GlassSelect
-              label="Class"
-              options={classes.map((c) => ({ value: c.id, label: `${c.name} — ${c.subject}` }))}
-              value={selectedClass}
-              onChange={setSelectedClass}
-              placeholder="Select class..."
-            />
-            <GlassInput
-              label="Duration (minutes)"
-              type="number"
-              value={duration}
-              onChange={(e) => setDuration(e.target.value)}
-            />
-            <GlassButton
-              variant="primary"
-              size="lg"
-              className="w-full"
-              onClick={() => void handleStart()}
-              loading={starting}
-              icon={<Play size={18} />}
-            >
-              Start Session
-            </GlassButton>
-          </div>
-        </GlassCard>
+        <StartSessionCard
+          classes={classes}
+          selectedClass={selectedClass}
+          duration={duration}
+          starting={starting}
+          onClassChange={setSelectedClass}
+          onDurationChange={setDuration}
+          onStart={() => void handleStart()}
+        />
 
         <ActiveSessionsCard
           sessions={filteredActiveSessions}
           onStop={(id) => void handleStop(id)}
           onOpenQr={(session) => {
-            const cls = classes.find((c) => c.id === session.academicClassId);
+            const hasSubjectInName = session.subject &&
+              session.class_name.toLowerCase().includes(session.subject.toLowerCase().slice(0, 8));
+            const displayName = session.class_name
+              ? (session.subject && !hasSubjectInName
+                  ? `${session.class_name} • ${session.subject}`
+                  : session.class_name)
+              : "Class Session";
             setSelectedQrSession({
               id: session.id,
-              className: cls ? `${cls.name} — ${cls.subject}` : "Class Session",
+              className: displayName,
             });
           }}
         />

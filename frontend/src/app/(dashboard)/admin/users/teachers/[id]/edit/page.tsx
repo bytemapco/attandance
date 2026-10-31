@@ -103,7 +103,7 @@ export default function EditTeacherPage(): React.ReactElement {
   const desigOptions = designations.map((d) => ({ value: d.id, label: `${d.name} (${d.code})` }));
 
   if (loading) return <GlassLoader text="Loading teacher..." />;
-  if (!teacher) return <div className="text-center py-20 text-slate-500">Teacher not found</div>;
+  if (!teacher) return <div className="text-center py-20 text-muted-foreground">Teacher not found</div>;
 
   return (
     <div className="animate-fade-in-up">

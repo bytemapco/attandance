@@ -20,7 +20,7 @@ function ScoreGauge({ label, score, color }: { label: string; score: number; col
   return (
     <div className="flex flex-col items-center gap-2">
       <svg width="100" height="100" viewBox="0 0 100 100">
-        <circle cx="50" cy="50" r={r} fill="none" className="stroke-slate-200 dark:stroke-slate-800" strokeWidth="8" />
+        <circle cx="50" cy="50" r={r} fill="none" stroke="#EEECE7" strokeWidth="8" />
         <circle cx="50" cy="50" r={r} fill="none" stroke={color} strokeWidth="8" strokeLinecap="round"
           strokeDasharray={c} strokeDashoffset={offset} className="score-ring" transform="rotate(-90 50 50)" />
         <text x="50" y="50" textAnchor="middle" dominantBaseline="central" fill="currentColor" className="fill-foreground font-bold font-mono" fontSize="16">{pct.toFixed(0)}%</text>
@@ -55,7 +55,7 @@ export default function ReviewDetailPage(): React.ReactElement {
   }
 
   if (loading) return <GlassLoader />;
-  if (!record) return <div className="text-center py-20 text-slate-500">Not found</div>;
+  if (!record) return <div className="text-center py-20 text-muted-foreground">Not found</div>;
 
   return (
     <div className="animate-fade-in-up">
@@ -66,10 +66,10 @@ export default function ReviewDetailPage(): React.ReactElement {
           <GlassCard>
             <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-6">AI Evidence</h3>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
-              <ScoreGauge label="Face" score={record.face_score ?? 0} color="#2563eb" />
-              <ScoreGauge label="Liveness" score={record.liveness_score ?? 0} color="#16a34a" />
-              <ScoreGauge label="Background" score={record.background_score ?? 0} color="#7c3aed" />
-              <ScoreGauge label="Final" score={record.final_ai_score ?? 0} color={(record.final_ai_score ?? 0) >= 0.75 ? "#16a34a" : "#e11d48"} />
+              <ScoreGauge label="Face" score={record.face_score ?? 0} color="#306B8A" />
+              <ScoreGauge label="Liveness" score={record.liveness_score ?? 0} color="#247653" />
+              <ScoreGauge label="Background" score={record.background_score ?? 0} color="#526F78" />
+              <ScoreGauge label="Final" score={record.final_ai_score ?? 0} color={(record.final_ai_score ?? 0) >= 0.75 ? "#247653" : "#B54242"} />
             </div>
           </GlassCard>
           <GlassCard>

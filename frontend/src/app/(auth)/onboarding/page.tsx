@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Lock, ShieldCheck, AlertCircle, CheckCircle2 } from "lucide-react";
+import { Lock } from "lucide-react";
 import toast from "react-hot-toast";
 
 import api, { getApiErrorMessage, applyValidationErrorsToForm } from "@/lib/api";
@@ -13,6 +13,7 @@ import { onboardingSchema, type OnboardingFormData } from "@/lib/validations/aut
 import GlassInput from "@/components/ui/GlassInput";
 import GlassButton from "@/components/ui/GlassButton";
 import GlassLoader from "@/components/ui/GlassLoader";
+import { OnboardingInvalidCard, OnboardingCompletedCard } from "@/components/auth/OnboardingStatusCards";
 
 interface VerifyData {
   valid: boolean;
@@ -38,10 +39,7 @@ function OnboardingContent(): React.ReactElement {
     formState: { errors, isSubmitting },
   } = useForm<OnboardingFormData>({
     resolver: zodResolver(onboardingSchema),
-    defaultValues: {
-      password: "",
-      confirmPassword: "",
-    },
+    defaultValues: { password: "", confirmPassword: "" },
   });
 
   useEffect(() => {
@@ -95,53 +93,23 @@ function OnboardingContent(): React.ReactElement {
   }
 
   if (!userData?.valid) {
-    return (
-      <div className="rounded-2xl border border-border bg-card p-7 text-center space-y-5 shadow-sm">
-        <div className="inline-flex p-3 rounded-full bg-red-50 border border-red-200 text-red-600">
-          <AlertCircle size={32} />
-        </div>
-        <div>
-          <h2 className="text-lg font-semibold text-foreground">Invalid Link</h2>
-          <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">
-            {userData?.message || "This link is invalid or has expired."}
-          </p>
-        </div>
-        <Link href="/login" className="inline-block">
-          <GlassButton variant="secondary" size="sm">Back to Sign In</GlassButton>
-        </Link>
-      </div>
-    );
+    return <OnboardingInvalidCard message={userData?.message} />;
   }
 
   if (completed) {
-    return (
-      <div className="rounded-2xl border border-border bg-card p-7 text-center space-y-5 shadow-sm">
-        <div className="inline-flex p-3 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-600">
-          <CheckCircle2 size={32} />
-        </div>
-        <div>
-          <h2 className="text-lg font-semibold text-foreground">Account Activated</h2>
-          <p className="text-xs text-muted-foreground mt-1.5">
-            Password saved. Redirecting to sign in...
-          </p>
-        </div>
-        <Link href="/login" className="inline-block">
-          <GlassButton variant="primary" size="sm">Sign In</GlassButton>
-        </Link>
-      </div>
-    );
+    return <OnboardingCompletedCard />;
   }
 
   return (
     <form
       noValidate
       onSubmit={handleSubmit(onSubmit)}
-      className="rounded-2xl border border-border bg-card p-7 space-y-5 shadow-sm"
+      className="rounded-2xl border border-[#e3e1dc] bg-card p-6 sm:p-7 space-y-5 shadow-[0_4px_16px_rgba(40,54,59,0.06)]"
     >
       <div className="space-y-1">
-        <h2 className="text-base font-semibold text-foreground">Activate Your Account</h2>
-        <p className="text-xs text-muted-foreground">
-          Welcome <strong className="text-foreground">{userData.name || userData.email}</strong> ({userData.role || "User"}). Please set your password.
+        <h2 className="text-base font-bold text-[#202b30]">Activate Your Account</h2>
+        <p className="text-xs text-[#526f78]">
+          Welcome <strong className="text-[#202b30]">{userData.name || userData.email}</strong> ({userData.role || "User"}). Set a secure password to get started.
         </p>
       </div>
 
@@ -173,7 +141,7 @@ function OnboardingContent(): React.ReactElement {
           variant="primary"
           size="lg"
           loading={isSubmitting}
-          className="w-full font-medium"
+          className="w-full font-semibold"
         >
           Activate & Save Password
         </GlassButton>
@@ -184,25 +152,27 @@ function OnboardingContent(): React.ReactElement {
 
 export default function OnboardingPage(): React.ReactElement {
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-background">
-      <div className="w-full max-w-md">
+    <div className="w-full max-w-md mx-auto my-auto py-8">
+      <div className="w-full">
         <div className="text-center mb-6">
-          <div className="inline-flex items-center justify-center mb-3">
-            <img
-              src="/sahaj-app-icon.png"
-              alt="SAHAJ Logo"
-              className="w-14 h-14 rounded-2xl shadow-sm object-contain"
-            />
-          </div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">
-            SAHAJ
-          </h1>
-          <p className="text-xs text-muted-foreground mt-1 font-medium">Campus, made effortless.</p>
+          <Link href="/login" className="inline-block group cursor-pointer hover:opacity-95 transition-opacity">
+            <div className="inline-flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
+              <img
+                src="/sahaj-app-icon.png"
+                alt="SAHAJ Logo"
+                className="w-14 h-14 rounded-2xl shadow-sm object-contain"
+              />
+            </div>
+            <h1 className="text-2xl font-bold tracking-tight text-[#28363b]">
+              SAHAJ
+            </h1>
+            <p className="text-xs text-[#526f78] mt-0.5 font-medium">Campus, made effortless.</p>
+          </Link>
         </div>
 
         <Suspense
           fallback={
-            <div className="rounded-2xl border border-border bg-card p-8 text-center">
+            <div className="rounded-2xl border border-[#e3e1dc] bg-card p-8 text-center">
               <GlassLoader />
             </div>
           }

@@ -42,7 +42,7 @@ export default function SuperAdminTenantsPage(): React.JSX.Element {
       setTenants(data.items);
       setTotal(data.total_items ?? (data as unknown as { total?: number }).total ?? 0);
     } catch {
-      toast.error("Failed to load institutions list.");
+      toast.error("Failed to load institutions.");
     } finally {
       setLoading(false);
     }
@@ -58,9 +58,9 @@ export default function SuperAdminTenantsPage(): React.JSX.Element {
       setUpdatingId(tenant.id);
       const updated = await superAdminService.updateTenant(tenant.id, { status: nextStatus });
       setTenants((prev) => prev.map((t) => (t.id === updated.id ? updated : t)));
-      toast.success(`Tenant '${updated.name}' is now ${nextStatus.toLowerCase()}.`);
+      toast.success(`Updated status: "${updated.name}" is now ${nextStatus.toLowerCase()}.`);
     } catch {
-      toast.error("Failed to update tenant status.");
+      toast.error("Failed to update status.");
     } finally {
       setUpdatingId(null);
     }
@@ -68,7 +68,7 @@ export default function SuperAdminTenantsPage(): React.JSX.Element {
 
   async function handleDeleteTenant(id: string): Promise<void> {
     await superAdminService.deleteTenant(id);
-    toast.success("Institution deleted successfully.");
+    toast.success("Institution deleted.");
     void fetchTenants();
   }
 

@@ -66,6 +66,7 @@ class TeacherAdminService:
         teacher_data = {
             k: v
             for k, v in {
+                "tenantId": tenant_id,
                 "userId": user.id,
                 "employeeId": data.employee_id,
                 "firstName": data.first_name,

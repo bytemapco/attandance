@@ -10,6 +10,13 @@ def resolve_frontend_url(request: Optional[Request] = None, fallback_url: Option
     Checks incoming Request headers (Origin, Referer) first to match the user's active client
     environment in both local development and production. Falls back to configured settings.
     """
+    if request is None:
+        try:
+            from app.middleware.request_logging import get_current_request
+            request = get_current_request()
+        except Exception:
+            request = None
+
     if request is not None:
         origin = request.headers.get("origin")
         if origin and origin.strip().startswith(("http://", "https://")):

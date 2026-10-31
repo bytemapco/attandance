@@ -1,16 +1,12 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { ChevronLeft, ChevronRight, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import GlassErrorState from "./GlassErrorState";
+import GlassTableHeader, { type TableColumnHeader } from "./GlassTableHeader";
+import GlassTablePagination from "./GlassTablePagination";
 
-export interface TableColumn<T> {
-  key: string;
-  header: string;
-  render?: (row: T) => React.ReactNode;
-  sortable?: boolean;
-}
+export type TableColumn<T> = TableColumnHeader<T>;
 
 export interface GlassTableProps<T> {
   columns: TableColumn<T>[];
@@ -61,7 +57,7 @@ export default function GlassTable<T extends Record<string, unknown>>({
   const isAsc = sortBy !== undefined ? sortOrder === "asc" : internalSortAsc;
 
   const sorted = useMemo(() => {
-    if (sortBy !== undefined) return data; // Server-sorted
+    if (sortBy !== undefined) return data;
     if (!activeSortKey) return data;
     return [...data].sort((a, b) => sortByColumn(a, b, activeSortKey, isAsc));
   }, [data, activeSortKey, isAsc, sortBy]);
@@ -85,10 +81,10 @@ export default function GlassTable<T extends Record<string, unknown>>({
 
   if (loading) {
     return (
-      <div className={cn("rounded-xl border border-border bg-card shadow-sm overflow-hidden", className)}>
+      <div className={cn("rounded-xl border border-border bg-card shadow-xs overflow-hidden", className)}>
         <div className="p-4 space-y-3">
           {Array.from({ length: 5 }).map((_, i) => (
-            <div key={i} className="h-10 w-full rounded-lg bg-secondary/60 animate-pulse" />
+            <div key={i} className="h-10 w-full rounded-lg bg-secondary/70 animate-pulse" />
           ))}
         </div>
       </div>
@@ -97,7 +93,7 @@ export default function GlassTable<T extends Record<string, unknown>>({
 
   if (error) {
     return (
-      <div className={cn("rounded-xl border border-border bg-card shadow-sm overflow-hidden", className)}>
+      <div className={cn("rounded-xl border border-border bg-card shadow-xs overflow-hidden", className)}>
         <GlassErrorState message={error} onRetry={onRetry} />
       </div>
     );
@@ -106,38 +102,15 @@ export default function GlassTable<T extends Record<string, unknown>>({
   const isEmpty = data.length === 0;
 
   return (
-    <div className={cn("rounded-xl border border-border bg-card shadow-sm overflow-hidden", className)}>
+    <div className={cn("rounded-xl border border-border bg-card shadow-xs overflow-hidden", className)}>
       <div className="overflow-x-auto">
         <table className="w-full text-left text-sm border-collapse">
-          <thead>
-            <tr className="border-b border-border bg-secondary/50">
-              {columns.map((col) => {
-                const isActive = activeSortKey === col.key;
-                return (
-                  <th
-                    key={col.key}
-                    onClick={col.sortable ? () => handleSort(col.key) : undefined}
-                    className={cn(
-                      "h-10 px-4 text-xs font-semibold tracking-wide select-none whitespace-nowrap",
-                      isActive ? "text-foreground font-bold" : "text-muted-foreground",
-                      col.sortable && "cursor-pointer hover:text-foreground"
-                    )}
-                  >
-                    <span className="inline-flex items-center gap-1.5">
-                      {col.header}
-                      {col.sortable && (
-                        isActive ? (
-                          isAsc ? <ArrowUp size={12} className="text-primary" /> : <ArrowDown size={12} className="text-primary" />
-                        ) : (
-                          <ArrowUpDown size={12} className="opacity-40" />
-                        )
-                      )}
-                    </span>
-                  </th>
-                );
-              })}
-            </tr>
-          </thead>
+          <GlassTableHeader
+            columns={columns}
+            activeSortKey={activeSortKey}
+            isAsc={isAsc}
+            onSort={handleSort}
+          />
           <tbody className="divide-y divide-border">
             {isEmpty ? (
               <tr>
@@ -153,12 +126,12 @@ export default function GlassTable<T extends Record<string, unknown>>({
                     key={rowId}
                     onClick={onRowClick ? () => onRowClick(row) : undefined}
                     className={cn(
-                      "transition-colors hover:bg-muted/50",
+                      "transition-colors hover:bg-secondary/40",
                       onRowClick && "cursor-pointer"
                     )}
                   >
                     {columns.map((col) => (
-                      <td key={col.key} className="p-4 text-sm text-foreground align-middle">
+                      <td key={col.key} className="p-3.5 sm:p-4 text-xs sm:text-sm text-foreground align-middle">
                         {col.render ? col.render(row) : (row[col.key] as React.ReactNode) ?? "—"}
                       </td>
                     ))}
@@ -170,38 +143,14 @@ export default function GlassTable<T extends Record<string, unknown>>({
         </table>
       </div>
 
-
       {sortBy === undefined && totalPages > 1 && (
-        <div className="flex items-center justify-between border-t border-border px-4 py-3 bg-card text-xs text-muted-foreground">
-          <span>
-            Showing <strong className="font-semibold text-foreground">{page * pageSize + 1}</strong> to{" "}
-            <strong className="font-semibold text-foreground">
-              {Math.min((page + 1) * pageSize, sorted.length)}
-            </strong>{" "}
-            of <strong className="font-semibold text-foreground">{sorted.length}</strong> results
-          </span>
-          <div className="flex items-center gap-1">
-            <button
-              onClick={() => setPage(Math.max(0, page - 1))}
-              disabled={page === 0}
-              className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-input bg-card text-foreground hover:bg-secondary disabled:pointer-events-none disabled:opacity-40 transition-colors"
-              aria-label="Previous page"
-            >
-              <ChevronLeft size={14} />
-            </button>
-            <span className="px-2 font-medium text-foreground">
-              {page + 1} / {totalPages}
-            </span>
-            <button
-              onClick={() => setPage(Math.min(totalPages - 1, page + 1))}
-              disabled={page >= totalPages - 1}
-              className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-input bg-card text-foreground hover:bg-secondary disabled:pointer-events-none disabled:opacity-40 transition-colors"
-              aria-label="Next page"
-            >
-              <ChevronRight size={14} />
-            </button>
-          </div>
-        </div>
+        <GlassTablePagination
+          page={page}
+          pageSize={pageSize}
+          totalItems={sorted.length}
+          totalPages={totalPages}
+          onPageChange={setPage}
+        />
       )}
     </div>
   );

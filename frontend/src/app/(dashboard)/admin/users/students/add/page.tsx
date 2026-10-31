@@ -116,7 +116,7 @@ export default function AddStudentPage(): React.ReactElement {
                   {...register("enrollment_number")}
                   error={errors.enrollment_number?.message}
                 />
-                <div className="p-3.5 rounded-xl bg-blue-50 border border-blue-200/60 text-xs text-blue-800 leading-relaxed">
+                <div className="p-3.5 rounded-xl bg-[#eaf2f6] border border-[#c5dce8] text-xs text-[#306b8a] leading-relaxed">
                   🔒 A secure temporary password will be automatically generated and emailed to this student. They will be prompted to choose a new password upon first login.
                 </div>
               </div>

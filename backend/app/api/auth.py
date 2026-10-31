@@ -7,9 +7,10 @@ from prisma.models import User
 from app.api.dependencies import get_current_user, reusable_oauth2, auth_rate_limit
 from app.core.logging_config import get_logger
 from app.core.security import decode_access_token, create_access_token, create_refresh_token
+from app.core.config import settings
 from app.core.url_resolver import resolve_frontend_url
 from app.db.client import db
-from app.db.redis import get_redis
+from app.db.redis import safe_redis
 from app.repositories.student_repository import StudentRepository
 from app.repositories.user_repository import UserRepository
 from app.schemas.auth import (
@@ -57,11 +58,29 @@ async def refresh_token_endpoint(payload: RefreshTokenRequest) -> Token:
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-    r = await get_redis()
-    if await r.get(f"denylist:{payload.refresh_token}"):
+    r = safe_redis()
+    if r:
+        try:
+            if await r.get(f"denylist:{payload.refresh_token}"):
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="Refresh token has been revoked",
+                    headers={"WWW-Authenticate": "Bearer"},
+                )
+        except HTTPException:
+            raise
+        except Exception as cache_err:
+            logger.warning("Could not check refresh token revocation in Redis: %s", cache_err)
+            if getattr(settings, "TOKEN_REVOCATION_FAIL_CLOSED", False):
+                raise HTTPException(
+                    status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                    detail="Authentication service temporarily unavailable.",
+                    headers={"WWW-Authenticate": "Bearer"},
+                )
+    elif getattr(settings, "TOKEN_REVOCATION_FAIL_CLOSED", False):
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Refresh token has been revoked",
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Authentication service temporarily unavailable.",
             headers={"WWW-Authenticate": "Bearer"},
         )
 
@@ -196,11 +215,13 @@ async def logout(token: str = Depends(reusable_oauth2)) -> MessageResponse:
         if exp:
             ttl = exp - int(datetime.now(timezone.utc).timestamp())
             if ttl > 0:
-                try:
-                    await get_redis().setex(f"denylist:{token}", ttl, "revoked")
-                    logger.info("Token revoked: user=%s", payload.get("sub"))
-                except Exception as cache_err:
-                    logger.warning("Failed to add token to Redis denylist: %s", cache_err)
+                r = safe_redis()
+                if r:
+                    try:
+                        await r.setex(f"denylist:{token}", ttl, "revoked")
+                        logger.info("Token revoked: user=%s", payload.get("sub"))
+                    except Exception as cache_err:
+                        logger.warning("Failed to add token to Redis denylist: %s", cache_err)
     return MessageResponse(status="success", message="Successfully logged out.")
 
 

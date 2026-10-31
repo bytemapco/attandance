@@ -1,6 +1,6 @@
 import React from "react";
 import { useRouter } from "next/navigation";
-import { Radio, ClipboardList, BookOpen } from "lucide-react";
+import { ClipboardList, BookOpen } from "lucide-react";
 import GlassCard from "@/components/ui/GlassCard";
 import GlassButton from "@/components/ui/GlassButton";
 import type { SessionWithClassResponse } from "@/types";
@@ -58,18 +58,10 @@ export default function PastSessionsTable({ sessions }: PastSessionsTableProps):
                       <GlassButton
                         variant="ghost"
                         size="sm"
-                        icon={<Radio size={13} className="text-emerald-600 animate-pulse" />}
-                        onClick={() => router.push(`/teacher/sessions/${s.id}/roster`)}
-                      >
-                        Live View
-                      </GlassButton>
-                      <GlassButton
-                        variant="ghost"
-                        size="sm"
                         icon={<ClipboardList size={13} />}
-                        onClick={() => router.push(`/teacher/sessions/${s.id}/roster`)}
+                        onClick={() => router.push(`/teacher/sessions/${s.id}/attendance-roll`)}
                       >
-                        Roster
+                        View Attendance
                       </GlassButton>
                       <GlassButton
                         variant="ghost"
@@ -77,7 +69,7 @@ export default function PastSessionsTable({ sessions }: PastSessionsTableProps):
                         icon={<BookOpen size={13} />}
                         onClick={() => router.push(`/teacher/sessions/${s.id}/manual`)}
                       >
-                        Manual
+                        Manual Entry
                       </GlassButton>
                     </div>
                   </td>

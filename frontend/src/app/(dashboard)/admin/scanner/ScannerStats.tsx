@@ -28,40 +28,40 @@ export default function ScannerStats({
       {/* 3 Metric Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         {/* Flagged Count */}
-        <GlassCard className="p-4 bg-card/80 border-border/80 shadow-xs flex items-center justify-between">
+        <GlassCard className="p-4 bg-card border-border shadow-xs flex items-center justify-between">
           <div>
             <span className="text-xs font-medium text-muted-foreground">Flagged Students</span>
-            <p className="text-2xl font-semibold tracking-tight text-foreground mt-0.5 font-mono">
+            <p className="text-2xl font-bold tracking-tight text-foreground mt-0.5 font-mono">
               {totalFlagged}
             </p>
           </div>
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-red-500/10 text-red-600 border border-red-500/20">
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#f9eaea] text-[#b54242] border border-[#f0c9c9]">
             <Users size={18} />
           </span>
         </GlassCard>
 
         {/* Avg Score */}
-        <GlassCard className="p-4 bg-card/80 border-border/80 shadow-xs flex items-center justify-between">
+        <GlassCard className="p-4 bg-card border-border shadow-xs flex items-center justify-between">
           <div>
             <span className="text-xs font-medium text-muted-foreground">Average Score</span>
-            <p className="text-2xl font-semibold tracking-tight text-foreground mt-0.5 font-mono">
+            <p className="text-2xl font-bold tracking-tight text-foreground mt-0.5 font-mono">
               {avgScore.toFixed(3)}
             </p>
           </div>
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500/10 text-amber-600 border border-amber-500/20">
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#fbf1df] text-[#8a5b12] border border-[#f2deba]">
             <Activity size={18} />
           </span>
         </GlassCard>
 
         {/* Max Score */}
-        <GlassCard className="p-4 bg-card/80 border-border/80 shadow-xs flex items-center justify-between">
+        <GlassCard className="p-4 bg-card border-border shadow-xs flex items-center justify-between">
           <div>
             <span className="text-xs font-medium text-muted-foreground">Highest Score</span>
-            <p className="text-2xl font-semibold tracking-tight text-foreground mt-0.5 font-mono">
+            <p className="text-2xl font-bold tracking-tight text-foreground mt-0.5 font-mono">
               {maxScore.toFixed(3)}
             </p>
           </div>
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-purple-500/10 text-purple-600 border border-purple-500/20">
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#f7efea] text-[#c98260] border border-[#f0ded4]">
             <AlertTriangle size={18} />
           </span>
         </GlassCard>

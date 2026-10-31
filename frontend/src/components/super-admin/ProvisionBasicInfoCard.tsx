@@ -34,9 +34,9 @@ export default function ProvisionBasicInfoCard({
           <Building size={18} />
         </div>
         <div>
-          <h2 className="text-sm font-semibold text-foreground">Institution Details</h2>
+          <h2 className="text-sm font-semibold text-foreground">Institution Information</h2>
           <p className="text-xs text-muted-foreground">
-            Basic information and web address for this institution
+            Name, URL identifier, and license allocation
           </p>
         </div>
       </div>
@@ -53,13 +53,13 @@ export default function ProvisionBasicInfoCard({
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <GlassInput
-              label="Short Web Name (Code)"
+              label="URL Slug"
               placeholder="e.g. oxford or city-college"
               {...register("slug")}
               error={errors.slug?.message}
             />
             <span className="text-[11px] text-muted-foreground mt-1 block">
-              Used in login links and institution web address
+              Used in the login URL (e.g. /login?tenant=oxford)
             </span>
           </div>
 
@@ -80,7 +80,7 @@ export default function ProvisionBasicInfoCard({
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <GlassInput
-            label="License Count"
+            label="License Quota"
             type="number"
             placeholder="0"
             {...register("license_count")}
@@ -89,14 +89,11 @@ export default function ProvisionBasicInfoCard({
 
           <div>
             <GlassInput
-              label="Custom Website Domain (Optional)"
-              placeholder="e.g. attendance.school.edu"
+              label="Custom Domain (Optional)"
+              placeholder="e.g. attendance.oxford.edu"
               {...register("domain")}
               error={errors.domain?.message}
             />
-            <span className="text-[11px] text-muted-foreground mt-1 block">
-              Leave empty if you do not have a custom domain
-            </span>
           </div>
         </div>
       </div>

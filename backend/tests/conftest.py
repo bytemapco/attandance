@@ -36,8 +36,35 @@ def mock_external_services(monkeypatch: pytest.MonkeyPatch) -> None:
     mock_redis.set.return_value = True
     mock_redis.delete.return_value = 1
     mock_redis.exists.return_value = 0
+    mock_redis.incr.return_value = 1
+    mock_redis.expire.return_value = True
+
+    async def fake_eval(script, numkeys, *args):
+        if "DEL" in script and "RELEASE_LOCK" in script:
+            return 1
+        if "ZREMRANGEBYSCORE" in script:
+            return [1, 1]
+        return 1
+
+    mock_redis.eval = fake_eval
     monkeypatch.setattr("app.db.redis.redis_client", mock_redis)
-    monkeypatch.setattr("app.db.redis.get_redis", lambda: mock_redis)
+
+    class AwaitableMockRedis:
+        def __init__(self, target):
+            self._target = target
+
+        def __getattr__(self, name):
+            return getattr(self._target, name)
+
+        def __await__(self):
+            async def _coro():
+                return self._target
+            return _coro().__await__()
+
+    wrapped_redis = AwaitableMockRedis(mock_redis)
+    monkeypatch.setattr("app.db.redis.get_redis", lambda: wrapped_redis)
+    monkeypatch.setattr("app.db.redis.safe_redis", lambda: wrapped_redis)
+
 
 
 @pytest.fixture

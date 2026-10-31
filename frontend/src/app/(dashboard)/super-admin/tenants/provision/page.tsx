@@ -76,7 +76,7 @@ export default function ProvisionTenantPage(): React.ReactElement {
       });
 
       toast.success(
-        `"${newTenant.name}" registered successfully with ${formData.admins.length} administrator(s)`
+        `Registered "${newTenant.name}" with ${formData.admins.length} administrator(s).`
       );
       router.push("/super-admin/tenants");
     } catch (err: unknown) {
@@ -93,13 +93,13 @@ export default function ProvisionTenantPage(): React.ReactElement {
         items={[
           { label: "Super Admin", href: "/super-admin/dashboard" },
           { label: "Institutions", href: "/super-admin/tenants" },
-          { label: "Add New Institution" },
+          { label: "Add Institution" },
         ]}
       />
 
       <GlassPageHeader
-        title="Add New Institution"
-        description="Set up a school or college with student limits and administrator accounts."
+        title="Add Institution"
+        description="Register a school or college and configure initial administrator accounts."
       />
 
       <form noValidate onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -126,7 +126,7 @@ export default function ProvisionTenantPage(): React.ReactElement {
             Cancel
           </GlassButton>
           <GlassButton type="submit" variant="primary" loading={isSubmitting}>
-            Save & Create Institution
+            Create Institution
           </GlassButton>
         </div>
       </form>

@@ -55,7 +55,7 @@ export default function AnomalyCard({ result }: AnomalyCardProps): React.ReactEl
 
         {/* Pattern Notice */}
         {result.primary_pattern && (
-          <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-500/20 text-xs font-medium">
+          <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[#fbf1df] text-[#8a5b12] border border-[#f2deba] text-xs font-medium">
             <AlertCircle size={13} className="shrink-0" />
             <span className="truncate">{result.primary_pattern}</span>
           </div>
@@ -99,7 +99,7 @@ export default function AnomalyCard({ result }: AnomalyCardProps): React.ReactEl
                     key={day}
                     className={`flex flex-col items-center justify-between py-1.5 px-0.5 rounded-lg border text-center transition-colors ${
                       isPeak
-                        ? "bg-amber-500/10 border-amber-500/30 text-amber-900 dark:text-amber-200"
+                        ? "bg-[#fbf1df] border-[#f2deba] text-[#8a5b12]"
                         : "bg-secondary/40 border-border/30 text-muted-foreground"
                     }`}
                   >
@@ -107,7 +107,7 @@ export default function AnomalyCard({ result }: AnomalyCardProps): React.ReactEl
                     <span className="text-[10px] font-mono font-bold my-0.5">{count}</span>
                     <div className="w-full h-1 bg-secondary rounded-full overflow-hidden px-0.5">
                       <div
-                        className={`h-full rounded-full ${isPeak ? "bg-amber-500" : "bg-muted-foreground/40"}`}
+                        className={`h-full rounded-full ${isPeak ? "bg-[#8a5b12]" : "bg-muted-foreground/40"}`}
                         style={{ width: `${ratio}%` }}
                       />
                     </div>

@@ -94,7 +94,7 @@ export default function ManualAttendancePage(): React.ReactElement {
       const records = Array.from(statusMap.entries()).map(([student_id, status]) => ({ student_id, status }));
       await api.post(`/teacher/sessions/${id}/mark-bulk`, { records } as BulkMarkRequest);
       toast.success("Attendance override applied successfully");
-      router.push(`/teacher/sessions/${id}/roster`);
+      router.push(`/teacher/sessions/${id}/attendance-roll`);
     } catch (err: unknown) {
       toast.error(getApiErrorMessage(err, "Failed to submit attendance"));
     } finally {
@@ -123,7 +123,7 @@ export default function ManualAttendancePage(): React.ReactElement {
 
   return (
     <div className="space-y-4">
-      <GlassBreadcrumb items={[{ label: "Sessions", href: "/teacher/sessions" }, { label: roster.class_name, href: `/teacher/sessions/${id}/roster` }, { label: "Manual Entry" }]} />
+      <GlassBreadcrumb items={[{ label: "Sessions", href: "/teacher/sessions" }, { label: roster.class_name, href: `/teacher/sessions/${id}/attendance-roll` }, { label: "Manual Entry" }]} />
       <GlassPageHeader
         title={`Manual Override — ${roster.class_name}`}
         description="Fast, keyboard-driven attendance roster management."
@@ -139,9 +139,10 @@ export default function ManualAttendancePage(): React.ReactElement {
           onMarkAll={handleMarkAll}
           onReset={handleReset}
           onSubmit={() => void handleSubmit()}
-          onCancel={() => router.push(`/teacher/sessions/${id}/roster`)}
+          onCancel={() => router.push(`/teacher/sessions/${id}/attendance-roll`)}
           submitting={submitting}
         />
+
 
         <div className="lg:col-span-2">
           <GlassCard padding="none" className="overflow-hidden bg-card">

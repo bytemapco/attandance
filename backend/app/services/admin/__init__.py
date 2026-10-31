@@ -7,6 +7,7 @@ from app.services.admin.teacher_admin_service import TeacherAdminService
 from app.services.admin.class_admin_service import ClassAdminService
 from app.services.admin.bulk_import_service import BulkImportService
 from app.services.admin.audit_export_service import AuditExportService
+from app.services.admin.admin_enrollment_service import AdminEnrollmentService
 
 __all__ = [
     "DepartmentService",
@@ -18,4 +19,6 @@ __all__ = [
     "ClassAdminService",
     "BulkImportService",
     "AuditExportService",
+    "AdminEnrollmentService",
 ]
+

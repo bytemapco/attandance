@@ -74,7 +74,7 @@ export default function ClassesPage(): React.ReactElement {
           </button>
           <button
             onClick={() => router.push("/admin/classes/create")}
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-primary text-primary-foreground text-xs font-medium hover:bg-slate-800 transition-colors shadow-2xs"
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-primary text-primary-foreground text-xs font-medium hover:bg-[#1e292d] transition-colors shadow-2xs"
           >
             <Plus size={14} /> Create Class
           </button>
@@ -82,7 +82,7 @@ export default function ClassesPage(): React.ReactElement {
       </div>
 
       <EnterpriseTableToolbar
-        searchPlaceholder="Search by class name or subject..."
+        searchPlaceholder="Search by class name, batch (e.g. CE-A-1)..."
         searchValue={searchQuery}
         onSearch={setSearchQuery}
         filterLabel="Subject"

@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Bell, ExternalLink, Smartphone, Shield, Eye } from "lucide-react";
+import { Bell, ExternalLink, Smartphone, Eye } from "lucide-react";
 import GlassCard from "@/components/ui/GlassCard";
 import type { NotificationBroadcastCreate, NotificationType, NotificationCategory } from "@/types/notification";
 

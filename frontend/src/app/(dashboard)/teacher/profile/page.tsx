@@ -3,15 +3,14 @@
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { User, Building, Briefcase, Award, Shield, Lock } from "lucide-react";
+import { Building, Briefcase, Award, Shield, Lock } from "lucide-react";
 import toast from "react-hot-toast";
 import api, { getApiErrorMessage, applyValidationErrorsToForm } from "@/lib/api";
 import GlassPageHeader from "@/components/ui/GlassPageHeader";
-import GlassCard from "@/components/ui/GlassCard";
+import GlassBreadcrumb from "@/components/ui/GlassBreadcrumb";
 import GlassButton from "@/components/ui/GlassButton";
 import GlassInput from "@/components/ui/GlassInput";
 import GlassLoader from "@/components/ui/GlassLoader";
-import GlassBadge from "@/components/ui/GlassBadge";
 import { changePasswordSchema, ChangePasswordFormData } from "@/lib/validations/auth";
 import type { UserProfile } from "@/types";
 
@@ -62,68 +61,79 @@ export default function TeacherProfilePage(): React.ReactElement {
     }
   };
 
-  if (loading) return <GlassLoader text="Loading faculty profile..." />;
-  if (!profile) return <div className="text-center py-20 text-muted-foreground text-xs">Profile unavailable</div>;
+  if (loading) return <GlassLoader text="Loading profile..." />;
+  if (!profile) return <div className="text-center py-20 text-[#526f78] text-xs">Profile unavailable</div>;
 
   const t = profile.teacher_profile;
+  const initial = t?.first_name ? t.first_name[0].toUpperCase() : (profile.email ? profile.email[0].toUpperCase() : "U");
 
   return (
-    <div className="space-y-6">
-      <GlassPageHeader
-        title="Faculty Profile & Security"
-        description="Manage institutional credentials, personal identifiers, and security controls"
+    <div className="space-y-6 animate-fade-in">
+      <GlassBreadcrumb
+        items={[
+          { label: "Teacher", href: "/teacher/classes" },
+          { label: "Profile" },
+        ]}
       />
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <GlassPageHeader
+        title="Profile & Security"
+        description="View your faculty details and update your account password."
+      />
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
         {/* Profile Card */}
-        <GlassCard className="lg:col-span-1 space-y-5 bg-card">
-          <div className="flex flex-col items-center text-center p-3 border-b border-border">
-            <div className="w-16 h-16 rounded-full bg-secondary text-primary flex items-center justify-center mb-2.5 font-bold text-lg border border-border">
-              {t?.first_name ? t.first_name[0] : (profile.email ? profile.email[0].toUpperCase() : <User size={24} />)}
+        <div className="lg:col-span-1 rounded-2xl border border-[#e3e1dc] bg-white p-6 shadow-2xs space-y-6">
+          <div className="flex flex-col items-center text-center">
+            <div className="w-18 h-18 rounded-full bg-[#f0ede6] text-[#28363b] font-bold text-2xl flex items-center justify-center border-2 border-[#e3e1dc] mb-3 shadow-2xs">
+              {initial}
             </div>
-            <h3 className="text-base font-bold text-foreground">
+            <h2 className="text-base font-bold text-[#202b30]">
               {t ? `${t.first_name} ${t.last_name}` : profile.email}
-            </h3>
-            <p className="text-xs text-muted-foreground mt-0.5">{profile.email}</p>
+            </h2>
+            <p className="text-xs text-[#526f78] mt-0.5">{profile.email}</p>
             <div className="mt-2.5">
-              <GlassBadge variant="success">Faculty Member</GlassBadge>
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#e8f3ed] text-[#247653] border border-[#c6e2d3]">
+                Faculty Member
+              </span>
             </div>
           </div>
 
-          <div className="space-y-2 text-xs">
-            <div className="flex items-center justify-between p-2.5 rounded-lg bg-secondary/40 border border-border">
-              <span className="flex items-center gap-1.5 text-muted-foreground font-medium">
-                <Briefcase size={14} /> Employee ID
+          <div className="pt-4 border-t border-[#e3e1dc] space-y-2.5 text-xs">
+            <div className="flex items-center justify-between py-1">
+              <span className="flex items-center gap-2 text-[#526f78] font-medium">
+                <Briefcase size={14} className="text-[#718087]" /> Employee ID
               </span>
-              <span className="font-mono text-foreground font-semibold">{t?.employee_id || "N/A"}</span>
+              <span className="font-mono text-[#202b30] font-semibold">{t?.employee_id || "—"}</span>
             </div>
-            <div className="flex items-center justify-between p-2.5 rounded-lg bg-secondary/40 border border-border">
-              <span className="flex items-center gap-1.5 text-muted-foreground font-medium">
-                <Building size={14} /> Department
+            <div className="flex items-center justify-between py-1">
+              <span className="flex items-center gap-2 text-[#526f78] font-medium">
+                <Building size={14} className="text-[#718087]" /> Department
               </span>
-              <span className="text-foreground font-semibold">{t?.department || "N/A"}</span>
+              <span className="text-[#202b30] font-semibold">{t?.department || "—"}</span>
             </div>
-            <div className="flex items-center justify-between p-2.5 rounded-lg bg-secondary/40 border border-border">
-              <span className="flex items-center gap-1.5 text-muted-foreground font-medium">
-                <Award size={14} /> Designation
+            <div className="flex items-center justify-between py-1">
+              <span className="flex items-center gap-2 text-[#526f78] font-medium">
+                <Award size={14} className="text-[#718087]" /> Designation
               </span>
-              <span className="text-foreground font-semibold">{t?.designation || "N/A"}</span>
+              <span className="text-[#202b30] font-semibold">{t?.designation || "—"}</span>
             </div>
           </div>
-        </GlassCard>
+        </div>
 
-        {/* Password & Security Card */}
-        <GlassCard className="lg:col-span-2 space-y-5 bg-card">
-          <div>
-            <h3 className="text-base font-bold text-foreground flex items-center gap-2">
-              <Shield size={16} className="text-primary" /> Account Security & Password
-            </h3>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              Ensure your account utilizes a robust password with at least 8 characters.
-            </p>
+        {/* Security / Password Card */}
+        <div className="lg:col-span-2 rounded-2xl border border-[#e3e1dc] bg-white p-6 shadow-2xs space-y-5">
+          <div className="flex items-center gap-2.5 pb-4 border-b border-[#e3e1dc]">
+            <div className="w-8 h-8 rounded-lg bg-[#eeece7] text-[#28363b] flex items-center justify-center border border-[#e3e1dc]">
+              <Shield size={16} className="text-[#c98260]" />
+            </div>
+            <div>
+              <h3 className="text-base font-bold text-[#202b30]">Change Password</h3>
+              <p className="text-xs text-[#526f78]">Choose a strong password with at least 8 characters.</p>
+            </div>
           </div>
 
-          <form onSubmit={handleSubmit(handleChangePassword)} className="space-y-3.5 max-w-md">
+          <form onSubmit={handleSubmit(handleChangePassword)} className="space-y-4 max-w-md">
             <GlassInput
               type="password"
               label="Current Password"
@@ -146,13 +156,13 @@ export default function TeacherProfilePage(): React.ReactElement {
               error={errors.confirm_password?.message}
             />
 
-            <div className="pt-2 flex justify-start">
+            <div className="pt-2">
               <GlassButton type="submit" variant="primary" loading={isSubmitting} icon={<Lock size={14} />}>
                 Update Password
               </GlassButton>
             </div>
           </form>
-        </GlassCard>
+        </div>
       </div>
     </div>
   );

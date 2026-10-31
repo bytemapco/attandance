@@ -11,7 +11,7 @@ class Settings(BaseSettings):
         extra="ignore",
     )
 
-    PROJECT_NAME: str = "Smart Attendance System API"
+    PROJECT_NAME: str = Field(default="SAHAJ", description="Platform brand name")
     API_V1_STR: str = "/api/v1"
     DATABASE_URL: str = Field(
         default="", description="PostgreSQL Connection URL (must be set via environment variable)"

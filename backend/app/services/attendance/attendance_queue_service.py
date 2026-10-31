@@ -7,7 +7,7 @@ from typing import Any, Dict, Optional
 from fastapi import Depends
 
 from app.core.logging_config import get_logger
-from app.db.redis import get_redis
+from app.db.redis import safe_redis
 from app.services.attendance.models import AttendanceSubmission
 from app.services.attendance_service import AttendanceService
 
@@ -17,6 +17,7 @@ logger = get_logger("app.attendance.queue")
 class AttendanceQueueService:
     JOB_PREFIX = "attendance:job:"
     JOB_TTL_SECONDS = 3600
+    _running_tasks: set[asyncio.Task] = set()
 
     def __init__(self, attendance_service: AttendanceService = Depends()) -> None:
         self.attendance_service = attendance_service
@@ -37,19 +38,25 @@ class AttendanceQueueService:
             "error": None,
         }
 
-        r = await get_redis()
+        r = safe_redis()
+        if not r:
+            raise RuntimeError("Attendance job queue cache is currently unavailable. Please retry.")
         await r.setex(
             f"{self.JOB_PREFIX}{job_id}",
             self.JOB_TTL_SECONDS,
             json.dumps(job_data),
         )
 
-        # Dispatch background task to process verification
-        asyncio.create_task(self._process_job(job_id, submission))
+        # Dispatch background task and retain strong reference to prevent GC eviction
+        task = asyncio.create_task(self._process_job(job_id, submission))
+        self._running_tasks.add(task)
+        task.add_done_callback(self._running_tasks.discard)
         return job_id
 
     async def _process_job(self, job_id: str, submission: AttendanceSubmission) -> None:
-        r = await get_redis()
+        r = safe_redis()
+        if not r:
+            return
         try:
             # Update status to PROCESSING
             raw = await r.get(f"{self.JOB_PREFIX}{job_id}")
@@ -105,7 +112,9 @@ class AttendanceQueueService:
             await r.setex(f"{self.JOB_PREFIX}{job_id}", self.JOB_TTL_SECONDS, json.dumps(job_data))
 
     async def get_job_status(self, job_id: str) -> Optional[Dict[str, Any]]:
-        r = await get_redis()
+        r = safe_redis()
+        if not r:
+            return None
         raw = await r.get(f"{self.JOB_PREFIX}{job_id}")
         if not raw:
             return None

@@ -112,7 +112,7 @@ export default function EditStudentPage(): React.ReactElement {
   ];
 
   if (loading) return <GlassLoader text="Loading student..." />;
-  if (!student) return <div className="text-center py-20 text-slate-500">Student not found</div>;
+  if (!student) return <div className="text-center py-20 text-muted-foreground">Student not found</div>;
 
   return (
     <div className="animate-fade-in-up">

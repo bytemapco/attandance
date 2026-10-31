@@ -2,14 +2,12 @@
 
 import React from "react";
 import Link from "next/link";
-import { ShieldCheck, Activity, BookOpen, Cpu, ArrowUpRight } from "lucide-react";
+import { ShieldCheck, KeyRound, BookOpen, QrCode, ArrowUpRight } from "lucide-react";
 
 interface QuickActionItem {
   label: string;
   href: string;
-  detail: string;
   icon: React.ReactNode;
-  accent: string;
 }
 
 export default function AdminQuickActions(): React.ReactElement {
@@ -17,30 +15,22 @@ export default function AdminQuickActions(): React.ReactElement {
     {
       label: "Verification Settings",
       href: "/admin/setup/verification-settings",
-      detail: "Camera and location rules",
-      icon: <ShieldCheck size={18} className="text-emerald-600 dark:text-emerald-400" />,
-      accent: "hover:border-emerald-500/40 hover:bg-emerald-500/5",
+      icon: <ShieldCheck size={18} className="text-[#247653]" />,
     },
     {
-      label: "Activity Log",
-      href: "/admin/audit",
-      detail: "System logs and events",
-      icon: <Activity size={18} className="text-sky-600 dark:text-sky-400" />,
-      accent: "hover:border-sky-500/40 hover:bg-sky-500/5",
+      label: "Manage Licenses",
+      href: "/admin/licenses",
+      icon: <KeyRound size={18} className="text-[#306b8a]" />,
     },
     {
-      label: "Classes",
+      label: "Class Schedules",
       href: "/admin/classes",
-      detail: "Schedules and student rosters",
-      icon: <BookOpen size={18} className="text-indigo-600 dark:text-indigo-400" />,
-      accent: "hover:border-indigo-500/40 hover:bg-indigo-500/5",
+      icon: <BookOpen size={18} className="text-[#526f78]" />,
     },
     {
       label: "Attendance Scanner",
       href: "/admin/scanner",
-      detail: "Flag irregular attendance",
-      icon: <Cpu size={18} className="text-purple-600 dark:text-purple-400" />,
-      accent: "hover:border-purple-500/40 hover:bg-purple-500/5",
+      icon: <QrCode size={18} className="text-[#c98260]" />,
     },
   ];
 
@@ -50,25 +40,22 @@ export default function AdminQuickActions(): React.ReactElement {
         <Link
           key={action.href}
           href={action.href}
-          className={`relative overflow-hidden flex flex-col justify-between p-4.5 rounded-xl border border-border bg-card shadow-xs hover:shadow-md transition-all duration-200 group ${action.accent}`}
+          className="relative overflow-hidden flex flex-col justify-between p-4.5 rounded-xl border border-[#e3e1dc] bg-card shadow-[0_2px_8px_rgba(40,54,59,0.04)] hover:border-[#c98260]/60 hover:shadow-[0_4px_16px_rgba(40,54,59,0.07)] transition-all duration-200 group"
         >
           <div className="flex items-center justify-between mb-3">
-            <div className="p-2.5 rounded-xl bg-secondary/80 border border-border/60 transition-transform group-hover:scale-105">
+            <div className="p-2.5 rounded-xl bg-secondary border border-[#e3e1dc] transition-transform group-hover:scale-105">
               {action.icon}
             </div>
             <ArrowUpRight
               size={14}
-              className="text-muted-foreground transition-all duration-200 group-hover:text-foreground group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+              className="text-[#718087] transition-all duration-200 group-hover:text-[#c98260] group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
             />
           </div>
 
-          <div className="space-y-1">
-            <h3 className="font-semibold text-xs text-foreground tracking-normal group-hover:text-primary">
+          <div>
+            <h3 className="font-bold text-xs text-[#202b30] tracking-normal group-hover:text-[#28363b]">
               {action.label}
             </h3>
-            <p className="text-[11px] text-muted-foreground font-normal leading-relaxed">
-              {action.detail}
-            </p>
           </div>
         </Link>
       ))}

@@ -34,74 +34,69 @@ export default function SystemServicesGrid({ health }: SystemServicesGridProps):
     details: { device: "CPU" },
   };
 
-  const poolActive = Number(health.database_pool?.active_queries ?? 1);
-  const poolMax = Number(health.database_pool?.max_connections ?? 20);
-  const activeDevice = (health.hardware_status?.active_device as string) ?? "CPU";
-  const storageProvider = (storageService.details?.provider as string) ?? "Local Storage";
-
   const services: ServiceItem[] = [
     {
       id: "postgresql",
       name: "PostgreSQL Database",
-      detail: `PostgreSQL 15+ • ${poolActive}/${poolMax} active connections`,
+      detail: "",
       latency: pgService.latency_ms,
       status: pgService.status,
       icon: <Database size={17} />,
-      iconBg: "bg-blue-500/10",
-      iconColor: "text-blue-500",
+      iconBg: "bg-[#eeece7] border border-[#e3e1dc]",
+      iconColor: "text-[#28363b]",
     },
     {
       id: "redis",
       name: "Redis Cache",
-      detail: "In-memory sessions and rate limiting",
+      detail: "",
       latency: redisService.latency_ms,
       status: redisService.status,
       icon: <Zap size={17} />,
-      iconBg: "bg-emerald-500/10",
-      iconColor: "text-emerald-500",
+      iconBg: "bg-[#e8f3ed] border border-[#c6e2d3]",
+      iconColor: "text-[#247653]",
     },
     {
       id: "storage",
       name: "Object Storage",
-      detail: `${storageProvider} for face photos and avatars`,
+      detail: "",
       latency: storageService.latency_ms,
       status: storageService.status,
       icon: <HardDrive size={17} />,
-      iconBg: "bg-purple-500/10",
-      iconColor: "text-purple-500",
+      iconBg: "bg-[#eeece7] border border-[#e3e1dc]",
+      iconColor: "text-[#526f78]",
     },
     {
       id: "biometric",
-      name: "Biometric Engine",
-      detail: `Face recognition inference • ${activeDevice} compute`,
+      name: "Biometric AI Engine",
+      detail: "",
       latency: hwService.latency_ms,
       status: hwService.status,
       icon: <Cpu size={17} />,
-      iconBg: "bg-amber-500/10",
-      iconColor: "text-amber-500",
+      iconBg: "bg-[#f7efea] border border-[#f0ded4]",
+      iconColor: "text-[#c98260]",
     },
   ];
 
   const renderStatus = (status: ServiceHealthItem["status"]): React.ReactElement => {
     if (status === "healthy") {
       return (
-        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/20">
-          <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-[#247653] bg-[#e8f3ed] border border-[#c6e2d3]">
+          <span className="h-1.5 w-1.5 rounded-full bg-[#247653]" />
           <span>Operational</span>
         </span>
       );
     }
     if (status === "warning" || status === "degraded") {
       return (
-        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium text-amber-600 dark:text-amber-400 bg-amber-500/10 border border-amber-500/20">
-          <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
+        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-[#8a5b12] bg-[#fbf1df] border border-[#f2deba]">
+          <span className="h-1.5 w-1.5 rounded-full bg-[#8a5b12]" />
           <span>Degraded</span>
         </span>
       );
     }
     return (
-      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium text-destructive bg-destructive/10 border border-destructive/20">
-        <span className="h-1.5 w-1.5 rounded-full bg-destructive" />
+      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-[#b54242] bg-[#f9eaea] border border-[#f0c9c9]">
+        <span className="h-1.5 w-1.5 rounded-full bg-[#b54242]" />
         <span>Offline</span>
       </span>
     );
@@ -130,7 +125,7 @@ export default function SystemServicesGrid({ health }: SystemServicesGridProps):
               </div>
               <div className="min-w-0">
                 <p className="text-sm font-semibold text-foreground truncate">{item.name}</p>
-                <p className="text-xs text-muted-foreground truncate">{item.detail}</p>
+                {item.detail ? <p className="text-xs text-muted-foreground truncate">{item.detail}</p> : null}
               </div>
             </div>
 

@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Inbox } from "lucide-react";
+import { FolderOpen } from "lucide-react";
 import GlassButton from "./GlassButton";
 import { cn } from "@/lib/utils";
 
@@ -10,23 +10,25 @@ export interface GlassEmptyStateProps {
   message?: string;
   actionLabel?: string;
   onAction?: () => void;
+  icon?: React.ReactNode;
   className?: string;
 }
 
 export default function GlassEmptyState({
-  title = "No data yet",
+  title = "No records yet",
   message = "There is nothing to display right now.",
   actionLabel,
   onAction,
+  icon,
   className = "",
 }: GlassEmptyStateProps): React.ReactElement {
   return (
-    <div className={cn("rounded-xl border border-border bg-card p-12 text-center shadow-sm", className)}>
-      <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-secondary text-muted-foreground">
-        <Inbox size={24} />
+    <div className={cn("rounded-xl border border-border bg-card p-10 sm:p-14 text-center shadow-xs", className)}>
+      <div className="mx-auto mb-3.5 flex h-12 w-12 items-center justify-center rounded-2xl bg-secondary text-[#526f78] border border-[#e3e1dc]">
+        {icon || <FolderOpen size={22} />}
       </div>
-      <h3 className="text-base font-semibold text-foreground">{title}</h3>
-      <p className="mt-1 text-sm text-muted-foreground max-w-sm mx-auto">{message}</p>
+      <h3 className="text-base font-bold text-[#202b30]">{title}</h3>
+      <p className="mt-1 text-xs sm:text-sm text-[#526f78] max-w-sm mx-auto leading-relaxed">{message}</p>
       {actionLabel && onAction && (
         <div className="mt-5">
           <GlassButton variant="primary" size="sm" onClick={onAction}>

@@ -15,7 +15,7 @@ export interface GlassCardProps {
 const padMap: Record<"none" | "sm" | "md" | "lg", string> = {
   none: "p-0",
   sm: "p-4",
-  md: "p-6",
+  md: "p-5 sm:p-6",
   lg: "p-6 sm:p-8",
 };
 
@@ -29,9 +29,9 @@ export default function GlassCard({
   return (
     <div
       className={cn(
-        "rounded-xl border border-border bg-card text-card-foreground shadow-sm transition-all duration-200",
+        "rounded-xl border border-border bg-card text-card-foreground shadow-[0_2px_8px_rgba(40,54,59,0.05)] transition-all duration-200",
         padMap[padding],
-        hoverable && "hover:border-slate-300 hover:shadow-md",
+        hoverable && "hover:border-[#c98260]/60 hover:shadow-[0_4px_16px_rgba(40,54,59,0.08)]",
         onClick && "cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
         className
       )}

@@ -2,7 +2,7 @@ import json
 from typing import Optional
 from prisma.models import SystemConfiguration
 from app.repositories.system_config_repository import SystemConfigRepository
-from app.db.redis import get_redis
+from app.db.redis import safe_redis
 from app.core.logging_config import get_logger
 
 logger = get_logger("app.system_config")
@@ -19,26 +19,27 @@ class SystemConfigService:
 
     async def get_config(self, tenant_id: Optional[str] = None) -> SystemConfiguration:
         cache_key = self._get_cache_key(tenant_id)
-        try:
-            redis_client = get_redis()
-            cached = await redis_client.get(cache_key)
-            if cached:
-                data = json.loads(cached)
-                return SystemConfiguration.model_validate(data)
-        except Exception:
-            logger.warning("Redis config cache read failed. Falling back to DB.")
+        redis_client = safe_redis()
+        if redis_client:
+            try:
+                cached = await redis_client.get(cache_key)
+                if cached:
+                    data = json.loads(cached)
+                    return SystemConfiguration.model_validate(data)
+            except Exception:
+                logger.warning("Redis config cache read failed. Falling back to DB.")
 
         config = await self.repo.get_config(tenant_id=tenant_id)
 
-        try:
-            redis_client = get_redis()
-            await redis_client.set(
-                cache_key,
-                json.dumps(config.model_dump(mode="json")),
-                ex=300,
-            )
-        except Exception as e:
-            logger.warning("Redis config cache write failed: %s", e)
+        if redis_client:
+            try:
+                await redis_client.set(
+                    cache_key,
+                    json.dumps(config.model_dump(mode="json")),
+                    ex=300,
+                )
+            except Exception as e:
+                logger.warning("Redis config cache write failed: %s", e)
 
         return config
 
@@ -57,14 +58,15 @@ class SystemConfigService:
         )
 
         cache_key = self._get_cache_key(tenant_id)
-        try:
-            redis_client = get_redis()
-            await redis_client.set(
-                cache_key,
-                json.dumps(config.model_dump(mode="json")),
-                ex=300,
-            )
-        except Exception as e:
-            logger.warning("Redis config cache write failed: %s", e)
+        redis_client = safe_redis()
+        if redis_client:
+            try:
+                await redis_client.set(
+                    cache_key,
+                    json.dumps(config.model_dump(mode="json")),
+                    ex=300,
+                )
+            except Exception as e:
+                logger.warning("Redis config cache write failed: %s", e)
 
         return config

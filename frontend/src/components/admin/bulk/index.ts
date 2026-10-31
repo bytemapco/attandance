@@ -6,3 +6,4 @@ export * from "./bulkTypes";
 export * from "./bulkPayloadBuilder";
 export * from "./bulkCsvSamples";
 export * from "./useBulkImportProcessor";
+export * from "./parseBulkCsv";

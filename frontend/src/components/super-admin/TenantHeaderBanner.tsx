@@ -34,9 +34,6 @@ export default function TenantHeaderBanner({
               {tenant.status}
             </GlassBadge>
           </div>
-          <p className="text-xs text-muted-foreground font-mono mt-0.5">
-            {tenant.slug} • {tenant.type}
-          </p>
         </div>
       </div>
 
@@ -62,7 +59,7 @@ export default function TenantHeaderBanner({
         {onDelete && (
           <GlassButton variant="danger" onClick={onDelete} className="gap-1.5">
             <Trash2 size={13} />
-            <span>Delete Tenant</span>
+            <span>Delete Institution</span>
           </GlassButton>
         )}
       </div>

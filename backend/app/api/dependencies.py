@@ -5,7 +5,8 @@ from prisma.models import User, Student, Teacher
 from app.core.config import settings
 from app.core.logging_config import get_logger
 from app.core.security import decode_access_token
-from app.db.redis import get_redis
+from app.core.redis_scripts import atomic_incr_expire
+from app.db.redis import safe_redis
 from app.repositories.user_repository import UserRepository
 from app.repositories.student_repository import StudentRepository
 from app.repositories.teacher_repository import TeacherRepository
@@ -20,8 +21,17 @@ _INACTIVE = "User account is inactive or disabled"
 
 
 async def _check_token_revoked(token: str) -> None:
+    r = safe_redis()
+    if not r:
+        if getattr(settings, "TOKEN_REVOCATION_FAIL_CLOSED", False):
+            raise HTTPException(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                detail="Authentication service temporarily unavailable due to revocation cache outage.",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+        return
+
     try:
-        r = await get_redis()
         if await r.get(f"denylist:{token}"):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
@@ -147,14 +157,19 @@ async def get_tenant_context(current_user: User = Depends(get_current_user)) -> 
 async def auth_rate_limit(request: Request) -> None:
     if settings.ENVIRONMENT == "development":
         return
-    forwarded = request.headers.get("X-Forwarded-For")
-    ip = forwarded.split(",")[0].strip() if forwarded else (request.client.host if request.client else "unknown")
-    r = await get_redis()
+    r = safe_redis()
+    if not r:
+        return
+    ip = request.client.host if request.client and request.client.host else "unknown"
     key = f"ratelimit:auth:{ip}"
-    count = await r.incr(key)
-    if count == 1:
-        await r.expire(key, 60)
-    if count > 10:
-        raise HTTPException(
-            status_code=status.HTTP_429_TOO_MANY_REQUESTS, detail="Too many requests. Please try again later."
-        )
+    try:
+        count = await atomic_incr_expire(r, key, 60)
+        if count > 10:
+            raise HTTPException(
+                status_code=status.HTTP_429_TOO_MANY_REQUESTS, detail="Too many requests. Please try again later."
+            )
+    except HTTPException:
+        raise
+    except Exception as err:
+        logger.warning("Auth rate limit error: %s", err)
+        return

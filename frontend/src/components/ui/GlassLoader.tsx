@@ -9,11 +9,11 @@ export interface GlassLoaderProps {
   className?: string;
 }
 
-export default function GlassLoader({ text = "Loading...", className = "" }: GlassLoaderProps): React.ReactElement {
+export default function GlassLoader({ text = "Loading records...", className = "" }: GlassLoaderProps): React.ReactElement {
   return (
     <div className={cn("flex flex-col items-center justify-center py-16 gap-3", className)}>
-      <Loader2 size={28} className="text-primary animate-spin" />
-      <p className="text-xs font-medium text-muted-foreground">{text}</p>
+      <Loader2 size={26} className="text-[#28363b] animate-spin" />
+      <p className="text-xs font-semibold text-[#526f78] tracking-wide">{text}</p>
     </div>
   );
 }

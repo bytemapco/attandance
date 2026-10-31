@@ -48,7 +48,7 @@ process.stdout.write(`\n${colors.green}${colors.bold}Starting Backend (FastAPI :
 
 const backendProcess = spawn(
   pythonExec,
-  ["-m", "uvicorn", "main:app", "--reload", "--port", "8000"],
+  ["-m", "uvicorn", "main:app", "--reload", "--host", "0.0.0.0", "--port", "8000"],
   {
     cwd: backendDir,
     env: { ...process.env, PYTHONUNBUFFERED: "1" },

@@ -14,28 +14,28 @@ export default function BroadcastPreview({ broadcast }: BroadcastPreviewProps): 
     switch (broadcast.type) {
       case "critical":
         return {
-          bg: "bg-destructive/10 border-destructive/20",
-          text: "text-destructive",
-          icon: <AlertCircle size={13} />,
+          bg: "bg-[#f9eaea] border-[#b54242]/30",
+          text: "text-[#b54242]",
+          icon: <AlertCircle size={12} />,
         };
       case "warning":
         return {
-          bg: "bg-amber-500/10 border-amber-500/20",
-          text: "text-amber-600 dark:text-amber-400",
-          icon: <AlertTriangle size={13} />,
+          bg: "bg-[#fbf1df] border-[#8a5b12]/30",
+          text: "text-[#8a5b12]",
+          icon: <AlertTriangle size={12} />,
         };
       case "success":
         return {
-          bg: "bg-emerald-500/10 border-emerald-500/20",
-          text: "text-emerald-600 dark:text-emerald-400",
-          icon: <CheckCircle2 size={13} />,
+          bg: "bg-[#e8f3ed] border-[#247653]/30",
+          text: "text-[#247653]",
+          icon: <CheckCircle2 size={12} />,
         };
       case "info":
       default:
         return {
-          bg: "bg-blue-500/10 border-blue-500/20",
-          text: "text-blue-600 dark:text-blue-400",
-          icon: <Info size={13} />,
+          bg: "bg-[#eaf2f6] border-[#306b8a]/30",
+          text: "text-[#306b8a]",
+          icon: <Info size={12} />,
         };
     }
   };
@@ -44,32 +44,29 @@ export default function BroadcastPreview({ broadcast }: BroadcastPreviewProps): 
 
   return (
     <GlassCard className="p-6">
-      <div className="flex items-center gap-3 pb-4 mb-4 border-b border-border">
-        <div className="p-2.5 rounded-xl bg-purple-500/10 text-purple-500 shrink-0">
-          <Bell size={20} />
+      <div className="flex items-center gap-3 pb-4 mb-4 border-b border-[#e3e1dc]">
+        <div className="p-2 rounded-lg bg-[#f7efea] text-[#c98260] border border-[#f0ded4] shrink-0">
+          <Bell size={18} />
         </div>
-        <div>
-          <h3 className="text-base font-bold text-foreground">Preview</h3>
-          <p className="text-xs text-muted-foreground">Notification display on client</p>
-        </div>
+        <h3 className="text-base font-semibold text-[#28363b]">Preview</h3>
       </div>
 
-      <div className="rounded-xl border border-border/70 bg-card/70 p-4 space-y-2.5">
+      <div className="rounded-lg border border-[#e3e1dc] bg-[#f5f2ed]/50 p-4 space-y-3">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="h-5 w-5 rounded-md bg-foreground text-background flex items-center justify-center shrink-0">
+            <div className="h-5 w-5 rounded-md bg-[#28363b] text-white flex items-center justify-center shrink-0">
               <Bell size={11} />
             </div>
-            <span className="text-xs font-semibold text-foreground">
-              Attendance System
+            <span className="text-xs font-semibold text-[#28363b]">
+              SAHAJ Notice
             </span>
-            <span className="text-[11px] text-muted-foreground">•</span>
-            <span className="text-[11px] text-muted-foreground font-mono">Now</span>
+            <span className="text-[11px] text-[#718087]">•</span>
+            <span className="text-[11px] text-[#718087] font-mono">Now</span>
           </div>
 
           <span
-            className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium border ${badge.bg} ${badge.text}`}
+            className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold border ${badge.bg} ${badge.text}`}
           >
             {badge.icon}
             <span className="capitalize">{broadcast.category}</span>
@@ -78,16 +75,16 @@ export default function BroadcastPreview({ broadcast }: BroadcastPreviewProps): 
 
         {/* Title & Body */}
         <div className="space-y-1">
-          <h4 className="text-sm font-semibold text-foreground">
+          <h4 className="text-sm font-semibold text-[#202b30]">
             {broadcast.title || "Announcement Title"}
           </h4>
-          <p className="text-xs text-muted-foreground leading-relaxed whitespace-pre-wrap">
-            {broadcast.message || "Message will appear here."}
+          <p className="text-xs text-[#526f78] leading-relaxed whitespace-pre-wrap">
+            {broadcast.message || "Message content will be displayed here."}
           </p>
         </div>
 
         {/* Scope Footer */}
-        <div className="pt-2 border-t border-border/40 text-[11px] text-muted-foreground">
+        <div className="pt-2 border-t border-[#e3e1dc] text-[11px] text-[#718087]">
           Audience: {broadcast.target_role ? broadcast.target_role.replace(/_/g, " ") : "All users"}
         </div>
       </div>

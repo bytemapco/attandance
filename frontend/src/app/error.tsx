@@ -2,7 +2,7 @@
 
 import React, { useEffect } from "react";
 import Link from "next/link";
-import { AlertTriangle, RefreshCw, Home } from "lucide-react";
+import { AlertCircle, RefreshCw, Home } from "lucide-react";
 import GlassButton from "@/components/ui/GlassButton";
 
 export default function RootError({
@@ -18,30 +18,27 @@ export default function RootError({
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 bg-background text-foreground relative overflow-hidden">
-      <div className="absolute -top-32 -left-32 w-96 h-96 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
-
       <div className="w-full max-w-md text-center z-10">
-        <div className="rounded-2xl border border-border bg-card p-8 sm:p-10 shadow-lg backdrop-blur-xs">
-          <div className="inline-flex p-3 rounded-2xl bg-destructive/10 text-destructive mb-6 shadow-2xs">
-            <AlertTriangle size={36} aria-hidden="true" />
+        <div className="rounded-2xl border border-[#e3e1dc] bg-card p-8 sm:p-10 shadow-[0_8px_24px_rgba(40,54,59,0.08)]">
+          <div className="inline-flex p-3 rounded-2xl bg-[#f9eaea] text-[#b54242] border border-[#f0c9c9] mb-5">
+            <AlertCircle size={32} aria-hidden="true" />
           </div>
 
-          <h1 className="text-2xl font-bold tracking-tight text-foreground mb-2">
-            Something went wrong
+          <h1 className="text-xl font-bold tracking-tight text-[#28363b] mb-2">
+            Something unexpected occurred
           </h1>
 
-          <p className="text-xs sm:text-sm text-muted-foreground mb-6 max-w-sm mx-auto leading-relaxed">
-            {error.message || "Something went wrong while processing your request."}
+          <p className="text-xs sm:text-sm text-[#526f78] mb-6 max-w-sm mx-auto leading-relaxed">
+            {error.message || "An unexpected error interrupted this session. Please try reloading."}
           </p>
 
           {error.digest && (
-            <p className="text-[11px] text-muted-foreground font-mono mb-6 bg-muted/50 py-1 px-2.5 rounded border border-border inline-block">
-              Code: {error.digest}
+            <p className="text-[11px] text-[#718087] font-mono mb-6 bg-secondary/70 py-1 px-2.5 rounded border border-[#e3e1dc] inline-block">
+              Reference: {error.digest}
             </p>
           )}
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5">
             <GlassButton
               variant="primary"
               size="md"
@@ -52,12 +49,15 @@ export default function RootError({
               Try Again
             </GlassButton>
 
-            <Link
-              href="/"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2 rounded-md border border-border bg-secondary/50 text-foreground font-semibold text-xs hover:bg-secondary transition-all cursor-pointer"
-            >
-              <Home size={14} />
-              <span>Go Home</span>
+            <Link href="/" className="w-full sm:w-auto">
+              <GlassButton
+                variant="secondary"
+                size="md"
+                icon={<Home size={14} />}
+                className="w-full"
+              >
+                Go Home
+              </GlassButton>
             </Link>
           </div>
         </div>

@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useState, useRef, useEffect, useId } from "react";
-import { Search, ChevronDown, Check, X } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import ComboboxDropdown from "./ComboboxDropdown";
 
 export interface ComboboxOption {
   value: string;
@@ -108,12 +109,11 @@ export default function GlassCombobox({
   return (
     <div className="flex flex-col gap-1.5 w-full relative" ref={containerRef} onKeyDown={handleKeyDown}>
       {label && (
-        <label htmlFor={comboboxId} className="text-sm font-medium text-foreground">
+        <label htmlFor={comboboxId} className="text-sm font-semibold text-[#202b30]">
           {label}
         </label>
       )}
 
-      {/* Hidden native select for Playwright e2e test compatibility and HTML form access */}
       <select
         id={comboboxId}
         value={value}
@@ -123,17 +123,12 @@ export default function GlassCombobox({
         aria-hidden="true"
         className="sr-only pointer-events-none"
       >
-        <option value="" disabled>
-          {placeholder}
-        </option>
+        <option value="" disabled>{placeholder}</option>
         {options.map((opt) => (
-          <option key={opt.value} value={opt.value}>
-            {opt.label}
-          </option>
+          <option key={opt.value} value={opt.value}>{opt.label}</option>
         ))}
       </select>
 
-      {/* Trigger Button */}
       <div className="relative w-full">
         <button
           type="button"
@@ -142,91 +137,42 @@ export default function GlassCombobox({
           aria-haspopup="listbox"
           aria-expanded={isOpen}
           className={cn(
-            "flex h-9 w-full items-center justify-between rounded-md border border-input bg-card px-3 py-1 text-sm shadow-sm transition-colors text-left cursor-pointer",
-            "text-foreground hover:border-slate-400 dark:hover:border-slate-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:border-transparent",
-            "disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-slate-50",
-            error && "border-destructive focus-visible:ring-destructive",
+            "flex h-9 w-full items-center justify-between rounded-md border border-[#e3e1dc] bg-card px-3 py-1 text-sm shadow-xs transition-colors text-left cursor-pointer",
+            "text-[#202b30] hover:border-[#c98260]/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#526f78]",
+            "disabled:cursor-not-allowed disabled:opacity-50",
+            error && "border-[#b54242] focus-visible:ring-[#b54242]",
             className
           )}
         >
-          <span className={cn("truncate", !selectedOption && "text-muted-foreground")}>
+          <span className={cn("truncate", !selectedOption && "text-[#526f78]")}>
             {selectedOption ? selectedOption.label : placeholder}
           </span>
           <ChevronDown
             size={16}
             className={cn(
-              "text-muted-foreground shrink-0 transition-transform duration-200 ml-2",
+              "text-[#526f78] shrink-0 transition-transform duration-200 ml-2",
               isOpen && "rotate-180"
             )}
           />
         </button>
 
-        {/* Dropdown Popover */}
         {isOpen && (
-          <div className="absolute left-0 top-full z-50 mt-1 w-full rounded-md border border-border bg-card text-card-foreground shadow-lg animate-in fade-in-0 zoom-in-95 duration-100">
-            {/* Search Input Bar */}
-            <div className="flex items-center border-b border-border px-2.5 py-2">
-              <Search size={14} className="text-muted-foreground mr-2 shrink-0" />
-              <input
-                ref={searchInputRef}
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder={searchPlaceholder}
-                className="w-full bg-transparent text-xs text-foreground placeholder:text-muted-foreground focus:outline-none"
-              />
-              {searchQuery && (
-                <button
-                  type="button"
-                  onClick={() => setSearchQuery("")}
-                  className="text-muted-foreground hover:text-foreground p-0.5 cursor-pointer"
-                  aria-label="Clear search"
-                >
-                  <X size={13} />
-                </button>
-              )}
-            </div>
-
-            {/* Options List */}
-            <ul
-              ref={listRef}
-              role="listbox"
-              className="max-h-60 overflow-y-auto p-1 text-xs focus:outline-none"
-            >
-              {filteredOptions.length === 0 ? (
-                <li className="p-3 text-center text-muted-foreground">
-                  No matching options found
-                </li>
-              ) : (
-                filteredOptions.map((opt, index) => {
-                  const isSelected = opt.value === value;
-                  const isHighlighted = index === highlightedIndex;
-                  return (
-                    <li
-                      key={opt.value}
-                      role="option"
-                      aria-selected={isSelected}
-                      onClick={() => handleSelect(opt.value)}
-                      onMouseEnter={() => setHighlightedIndex(index)}
-                      className={cn(
-                        "relative flex cursor-pointer items-center justify-between rounded px-2.5 py-2 transition-colors",
-                        isHighlighted && "bg-accent text-accent-foreground",
-                        isSelected && !isHighlighted && "bg-accent/40 font-medium",
-                        !isSelected && !isHighlighted && "text-foreground hover:bg-accent/50"
-                      )}
-                    >
-                      <span className="truncate pr-2">{opt.label}</span>
-                      {isSelected && <Check size={14} className="text-primary shrink-0 ml-1.5" />}
-                    </li>
-                  );
-                })
-              )}
-            </ul>
-          </div>
+          <ComboboxDropdown
+            searchInputRef={searchInputRef}
+            listRef={listRef}
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            searchPlaceholder={searchPlaceholder}
+            filteredOptions={filteredOptions}
+            selectedValue={value}
+            highlightedIndex={highlightedIndex}
+            onHighlightIndex={setHighlightedIndex}
+            onSelectOption={handleSelect}
+          />
         )}
       </div>
 
-      {error && <p className="text-xs font-medium text-destructive mt-0.5">{error}</p>}
+      {error && <p className="text-xs font-medium text-[#b54242] mt-0.5">{error}</p>}
     </div>
   );
 }

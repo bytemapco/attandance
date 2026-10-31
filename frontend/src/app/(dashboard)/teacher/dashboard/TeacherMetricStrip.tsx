@@ -23,40 +23,36 @@ export default function TeacherMetricStrip({
       value: classCount,
       href: "/teacher/classes",
       icon: BookOpen,
-      iconColor: "text-blue-500 dark:text-blue-400",
-      bgColor: "bg-blue-500/10",
-      borderColor: "border-blue-500/20",
-      description: "Active classes",
+      iconColor: "text-[#526f78]",
+      bgColor: "bg-[#eeece7]",
+      borderColor: "border-[#e3e1dc]",
     },
     {
-      label: "Live Sessions",
+      label: "Active Sessions",
       value: activeSessionCount,
       href: "/teacher/sessions",
       icon: Radio,
-      iconColor: activeSessionCount > 0 ? "text-emerald-500 dark:text-emerald-400" : "text-muted-foreground",
-      bgColor: activeSessionCount > 0 ? "bg-emerald-500/10" : "bg-muted/50",
-      borderColor: activeSessionCount > 0 ? "border-emerald-500/25" : "border-border/60",
-      description: activeSessionCount > 0 ? "In progress" : "No active session",
+      iconColor: activeSessionCount > 0 ? "text-[#247653]" : "text-[#526f78]",
+      bgColor: activeSessionCount > 0 ? "bg-[#e8f3ed]" : "bg-[#eeece7]",
+      borderColor: activeSessionCount > 0 ? "border-[#c6e2d3]" : "border-[#e3e1dc]",
     },
     {
-      label: "Flagged Records",
+      label: "Flagged Attendance",
       value: flaggedCount,
       href: "/teacher/review",
       icon: ShieldAlert,
-      iconColor: flaggedCount > 0 ? "text-rose-500 dark:text-rose-400" : "text-muted-foreground",
-      bgColor: flaggedCount > 0 ? "bg-rose-500/10" : "bg-muted/50",
-      borderColor: flaggedCount > 0 ? "border-rose-500/25" : "border-border/60",
-      description: flaggedCount > 0 ? "Needs review" : "All clear",
+      iconColor: flaggedCount > 0 ? "text-[#8a5b12]" : "text-[#526f78]",
+      bgColor: flaggedCount > 0 ? "bg-[#fbf1df]" : "bg-[#eeece7]",
+      borderColor: flaggedCount > 0 ? "border-[#f2deba]" : "border-[#e3e1dc]",
     },
     {
       label: "Leave Requests",
       value: pendingLeaveCount,
       href: "/teacher/leaves",
       icon: CalendarClock,
-      iconColor: pendingLeaveCount > 0 ? "text-amber-500 dark:text-amber-400" : "text-muted-foreground",
-      bgColor: pendingLeaveCount > 0 ? "bg-amber-500/10" : "bg-muted/50",
-      borderColor: pendingLeaveCount > 0 ? "border-amber-500/25" : "border-border/60",
-      description: pendingLeaveCount > 0 ? "Pending approval" : "All clear",
+      iconColor: pendingLeaveCount > 0 ? "text-[#306b8a]" : "text-[#526f78]",
+      bgColor: pendingLeaveCount > 0 ? "bg-[#eaf2f6]" : "bg-[#eeece7]",
+      borderColor: pendingLeaveCount > 0 ? "border-[#c5dce8]" : "border-[#e3e1dc]",
     },
   ];
 
@@ -68,25 +64,19 @@ export default function TeacherMetricStrip({
           <Link
             key={item.label}
             href={item.href}
-            className={`group relative overflow-hidden rounded-2xl border p-4 sm:p-5 bg-card/80 backdrop-blur-xl transition-all duration-200 hover:border-foreground/25 hover:shadow-sm active:scale-[0.99] ${item.borderColor}`}
+            className="group relative overflow-hidden rounded-xl border border-[#e3e1dc] p-4 sm:p-5 bg-card transition-all duration-200 hover:border-[#c98260]/60 hover:shadow-[0_4px_16px_rgba(40,54,59,0.06)] active:scale-[0.99]"
           >
             <div className="flex items-center justify-between gap-3">
-              <span className="text-xs font-medium text-muted-foreground truncate">
-                {item.label}
+              <span className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#202b30] font-mono tabular-nums">
+                {item.value}
               </span>
               <div className={`p-2 rounded-xl border shrink-0 ${item.bgColor} ${item.borderColor}`}>
                 <Icon size={16} className={item.iconColor} />
               </div>
             </div>
 
-            <div className="mt-3 flex items-baseline gap-2">
-              <span className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground font-mono tabular-nums">
-                {item.value}
-              </span>
-            </div>
-
-            <p className="mt-1 text-[11px] text-muted-foreground truncate">
-              {item.description}
+            <p className="mt-2 text-xs font-semibold text-[#526f78] uppercase tracking-wider truncate">
+              {item.label}
             </p>
           </Link>
         );

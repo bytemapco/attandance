@@ -13,25 +13,20 @@ export default function TeacherRecentSessionsCard({
   sessions,
 }: TeacherRecentSessionsCardProps): React.ReactElement {
   return (
-    <div className="rounded-2xl border border-border/80 bg-card/70 backdrop-blur-xl shadow-xs overflow-hidden">
-      <div className="p-4 sm:p-5 border-b border-border/60 flex items-center justify-between">
+    <div className="rounded-2xl border border-[#e3e1dc] bg-card shadow-[0_2px_8px_rgba(40,54,59,0.05)] overflow-hidden">
+      <div className="p-4 sm:p-5 border-b border-[#e3e1dc] flex items-center justify-between">
         <div className="flex items-center gap-2.5">
-          <div className="p-2 rounded-xl bg-purple-500/10 text-purple-500 border border-purple-500/20">
+          <div className="p-2 rounded-xl bg-secondary text-[#526f78] border border-[#e3e1dc]">
             <Clock size={16} />
           </div>
-          <div>
-            <h2 className="text-sm font-bold tracking-tight text-foreground">
-              Recent Sessions
-            </h2>
-            <p className="text-[11px] text-muted-foreground">
-              Past attendance sessions
-            </p>
-          </div>
+          <h2 className="text-sm font-bold tracking-tight text-[#202b30]">
+            Recent Sessions
+          </h2>
         </div>
 
         <Link
           href="/teacher/sessions"
-          className="inline-flex items-center gap-1 text-xs font-semibold text-primary hover:text-primary/80 transition-colors"
+          className="inline-flex items-center gap-1 text-xs font-semibold text-[#28363b] hover:text-[#c98260] transition-colors"
         >
           <span>All Sessions</span>
           <ArrowRight size={13} />
@@ -41,10 +36,10 @@ export default function TeacherRecentSessionsCard({
       <div className="p-4 sm:p-5 space-y-2.5">
         {sessions.length === 0 ? (
           <div className="py-8 text-center space-y-2">
-            <Clock size={28} className="mx-auto text-muted-foreground/60" />
-            <p className="text-xs font-medium text-foreground">No sessions yet</p>
-            <p className="text-[11px] text-muted-foreground">
-              Start a session to record attendance.
+            <Clock size={28} className="mx-auto text-[#718087]" />
+            <p className="text-xs font-semibold text-[#202b30]">No sessions yet</p>
+            <p className="text-[11px] text-[#526f78]">
+              Start a session to record class attendance.
             </p>
           </div>
         ) : (
@@ -59,11 +54,11 @@ export default function TeacherRecentSessionsCard({
             return (
               <Link
                 key={session.id}
-                href={`/teacher/sessions/${session.id}/roster`}
-                className="group flex items-center justify-between gap-3 p-3 rounded-xl border border-border/60 bg-card/50 hover:bg-secondary/40 hover:border-foreground/20 transition-all shadow-2xs"
+                href={`/teacher/sessions/${session.id}/attendance-roll`}
+                className="group flex items-center justify-between gap-3 p-3 rounded-xl border border-[#e3e1dc] bg-card hover:border-[#c98260]/60 hover:shadow-[0_2px_8px_rgba(40,54,59,0.05)] transition-all"
               >
                 <div className="min-w-0 flex items-center gap-3">
-                  <div className={`p-2 rounded-lg shrink-0 ${session.isActive ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400" : "bg-muted text-muted-foreground"}`}>
+                  <div className={`p-2 rounded-lg shrink-0 ${session.isActive ? "bg-[#e8f3ed] text-[#247653] border border-[#c6e2d3]" : "bg-[#eeece7] text-[#526f78] border border-[#e3e1dc]"}`}>
                     {session.isActive ? (
                       <Radio size={14} className="animate-pulse" />
                     ) : (
@@ -72,11 +67,11 @@ export default function TeacherRecentSessionsCard({
                   </div>
 
                   <div className="min-w-0">
-                    <p className="text-xs font-semibold text-foreground group-hover:text-primary transition-colors truncate">
+                    <p className="text-xs font-bold text-[#202b30] group-hover:text-[#28363b] transition-colors truncate">
                       {session.class_name || "Class"}
                     </p>
-                    <div className="flex items-center gap-2 text-[11px] text-muted-foreground mt-0.5">
-                      <span>{dateStr}</span>
+                    <div className="flex items-center gap-2 text-[11px] text-[#526f78] mt-0.5">
+                      <span className="font-mono">{dateStr}</span>
                       {session.subject && (
                         <>
                           <span>•</span>
@@ -89,17 +84,17 @@ export default function TeacherRecentSessionsCard({
 
                 <div className="shrink-0 flex items-center gap-2">
                   <span
-                    className={`px-2 py-0.5 rounded-md text-[10px] font-semibold uppercase tracking-wider border ${
+                    className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border ${
                       session.isActive
-                        ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/25"
-                        : "bg-muted/70 text-muted-foreground border-border/60"
+                        ? "bg-[#e8f3ed] text-[#247653] border-[#c6e2d3]"
+                        : "bg-[#eeece7] text-[#526f78] border-[#e3e1dc]"
                     }`}
                   >
                     {session.isActive ? "Live" : "Completed"}
                   </span>
                   <ArrowRight
                     size={13}
-                    className="text-muted-foreground group-hover:text-foreground group-hover:translate-x-0.5 transition-all"
+                    className="text-[#718087] group-hover:text-[#c98260] group-hover:translate-x-0.5 transition-all"
                   />
                 </div>
               </Link>

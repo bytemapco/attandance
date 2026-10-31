@@ -14,31 +14,38 @@ export interface GlassStatCardProps {
   subtext?: string;
 }
 
-const colorStyles: Record<string, { icon: string; border: string; glow: string }> = {
+const colorStyles: Record<string, { icon: string; border: string }> = {
+  copper: {
+    icon: "text-[#c98260] bg-[#f7efea] border-[#f0ded4]",
+    border: "hover:border-[#c98260]/60",
+  },
+  mineral: {
+    icon: "text-[#526f78] bg-[#eeece7] border-[#e3e1dc]",
+    border: "hover:border-[#526f78]/60",
+  },
+  carbon: {
+    icon: "text-[#28363b] bg-[#eeece7] border-[#e3e1dc]",
+    border: "hover:border-[#28363b]/60",
+  },
   blue: {
-    icon: "text-blue-600 bg-blue-500/10 border-blue-500/20 dark:text-blue-400",
-    border: "hover:border-blue-500/30",
-    glow: "from-blue-500/5",
+    icon: "text-[#306b8a] bg-[#eaf2f6] border-[#c5dce8]",
+    border: "hover:border-[#306b8a]/40",
   },
   emerald: {
-    icon: "text-emerald-600 bg-emerald-500/10 border-emerald-500/20 dark:text-emerald-400",
-    border: "hover:border-emerald-500/30",
-    glow: "from-emerald-500/5",
+    icon: "text-[#247653] bg-[#e8f3ed] border-[#c6e2d3]",
+    border: "hover:border-[#247653]/40",
   },
   purple: {
-    icon: "text-purple-600 bg-purple-500/10 border-purple-500/20 dark:text-purple-400",
-    border: "hover:border-purple-500/30",
-    glow: "from-purple-500/5",
+    icon: "text-[#526f78] bg-[#eeece7] border-[#e3e1dc]",
+    border: "hover:border-[#526f78]/40",
   },
   amber: {
-    icon: "text-amber-600 bg-amber-500/10 border-amber-500/20 dark:text-amber-400",
-    border: "hover:border-amber-500/30",
-    glow: "from-amber-500/5",
+    icon: "text-[#8a5b12] bg-[#fbf1df] border-[#f2deba]",
+    border: "hover:border-[#8a5b12]/40",
   },
   rose: {
-    icon: "text-rose-600 bg-rose-500/10 border-rose-500/20 dark:text-rose-400",
-    border: "hover:border-rose-500/30",
-    glow: "from-rose-500/5",
+    icon: "text-[#b54242] bg-[#f9eaea] border-[#f0c9c9]",
+    border: "hover:border-[#b54242]/40",
   },
 };
 
@@ -48,21 +55,20 @@ export default function GlassStatCard({
   value,
   trend,
   trendUp = true,
-  accentColor = "blue",
+  accentColor = "mineral",
   subtext,
 }: GlassStatCardProps): React.ReactElement {
-  const theme = colorStyles[accentColor] || colorStyles.blue;
+  const theme = colorStyles[accentColor] || colorStyles.mineral;
 
   return (
     <GlassCard
       hoverable
       padding="none"
       className={cn(
-        "relative overflow-hidden bg-card border border-border transition-all duration-200 p-5 shadow-xs group",
+        "relative overflow-hidden bg-card border border-border transition-all duration-200 p-5 shadow-[0_2px_8px_rgba(40,54,59,0.05)] group",
         theme.border
       )}
     >
-      <div className={cn("absolute -right-6 -top-6 w-24 h-24 rounded-full bg-gradient-to-br to-transparent pointer-events-none opacity-60 group-hover:opacity-100 transition-opacity", theme.glow)} />
       <div className="flex items-center justify-between mb-3.5 relative">
         <div className={cn("p-2.5 rounded-xl border flex items-center justify-center shrink-0 shadow-2xs", theme.icon)}>
           {icon}
@@ -70,10 +76,10 @@ export default function GlassStatCard({
         {trend && (
           <span
             className={cn(
-              "text-[11px] font-semibold px-2.5 py-0.5 rounded-full border flex items-center gap-1 shadow-2xs",
+              "text-[11px] font-semibold px-2 py-0.5 rounded-full border flex items-center gap-1 shadow-2xs tabular-nums",
               trendUp
-                ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/20"
-                : "bg-rose-500/10 text-rose-700 dark:text-rose-400 border-rose-500/20"
+                ? "bg-[#e8f3ed] text-[#247653] border-[#c6e2d3]"
+                : "bg-[#f9eaea] text-[#b54242] border-[#f0c9c9]"
             )}
           >
             <span>{trendUp ? "↑" : "↓"}</span>
@@ -82,15 +88,15 @@ export default function GlassStatCard({
         )}
       </div>
       <div className="relative">
-        <p className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">
+        <p className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#202b30] font-mono tabular-nums">
           {typeof value === "number" ? value.toLocaleString() : value}
         </p>
-        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mt-1">
+        <p className="text-xs font-semibold text-[#526f78] uppercase tracking-wider mt-1">
           {label}
         </p>
         {subtext && (
-          <p className="text-[11px] text-muted-foreground mt-1.5 flex items-center gap-1.5 font-normal">
-            <span className="w-1.5 h-1.5 rounded-full bg-slate-300 dark:bg-slate-600 inline-block" />
+          <p className="text-[11px] text-[#718087] mt-1.5 flex items-center gap-1.5 font-normal">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#d4d0c8] inline-block" />
             <span>{subtext}</span>
           </p>
         )}

@@ -1,10 +1,12 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { QrCode, X, CheckCircle2, AlertCircle, Camera, RefreshCw } from "lucide-react";
+import { QrCode, X, CheckCircle2, AlertCircle } from "lucide-react";
 import api, { getApiErrorMessage } from "@/lib/api";
 import GlassButton from "@/components/ui/GlassButton";
 import GlassInput from "@/components/ui/GlassInput";
+import ScannerCameraViewport from "@/components/scanner/ScannerCameraViewport";
+import { useBarcodeScanner } from "@/components/scanner/useBarcodeScanner";
 import type { SmartPassVerifyResponse } from "@/types";
 
 interface SmartPassScannerModalProps {
@@ -102,116 +104,55 @@ export default function SmartPassScannerModal({
     [sessionId, onSuccess]
   );
 
-  useEffect(() => {
-    let animId: number;
-    let detector: unknown = null;
-    let scanning = true;
-
-    if (cameraActive && typeof window !== "undefined" && "BarcodeDetector" in window) {
-      try {
-        const BarcodeDetectorClass = (
-          window as unknown as {
-            BarcodeDetector: new (opts: { formats: string[] }) => {
-              detect: (source: ImageBitmapSource) => Promise<Array<{ rawValue: string }>>;
-            };
-          }
-        ).BarcodeDetector;
-        detector = new BarcodeDetectorClass({ formats: ["qr_code"] });
-      } catch {
-        detector = null;
-      }
-    }
-
-    const scanFrame = async () => {
-      if (!scanning) return;
-      if (detector && videoRef.current && videoRef.current.readyState >= 2 && !loading) {
-        try {
-          const det = detector as { detect: (source: ImageBitmapSource) => Promise<Array<{ rawValue: string }>> };
-          const barcodes = await det.detect(videoRef.current);
-          if (barcodes && barcodes.length > 0 && barcodes[0].rawValue) {
-            const detectedVal = barcodes[0].rawValue.trim();
-            if (detectedVal) {
-              scanning = false;
-              setManualToken(detectedVal);
-              await verifyToken(detectedVal);
-              return;
-            }
-          }
-        } catch {
-          // Ignore transient frame detection error
-        }
-      }
-      if (scanning) {
-        animId = requestAnimationFrame(scanFrame);
-      }
-    };
-
-    if (cameraActive && detector) {
-      animId = requestAnimationFrame(scanFrame);
-    }
-
-    return () => {
-      scanning = false;
-      if (animId) cancelAnimationFrame(animId);
-    };
-  }, [cameraActive, loading, verifyToken]);
+  useBarcodeScanner({
+    cameraActive,
+    videoRef,
+    loading,
+    onDetect: (token) => {
+      setManualToken(token);
+      void verifyToken(token);
+    },
+  });
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/40 backdrop-blur-sm">
-      <div className="relative w-full max-w-lg overflow-hidden rounded-xl border border-border bg-card p-6 shadow-xl">
-        <div className="flex items-center justify-between pb-3 border-b border-border">
-          <div className="flex items-center gap-2">
-            <div className="p-1.5 rounded-lg bg-emerald-50 text-emerald-600 border border-emerald-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#28363b]/50 backdrop-blur-sm animate-fade-in">
+      <div className="relative w-full max-w-lg overflow-hidden rounded-2xl border border-[#e3e1dc] bg-card p-6 shadow-xl">
+        <div className="flex items-center justify-between pb-3 border-b border-[#e3e1dc]">
+          <div className="flex items-center gap-2.5">
+            <div className="p-2 rounded-xl bg-[#247653]/10 text-[#247653] border border-[#247653]/20">
               <QrCode size={18} />
             </div>
             <div>
-              <h3 className="text-base font-bold text-foreground">Smart Pass Verification</h3>
-              <p className="text-xs text-muted-foreground">Scan rotating QR pass or enter security token</p>
+              <h3 className="text-base font-semibold text-[#28363b]">Smart Pass Verification</h3>
+              <p className="text-xs text-[#526f78]">Scan rotating QR pass or enter security token</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+            className="p-1.5 rounded-lg text-[#526f78] hover:text-[#28363b] hover:bg-[#eeece7] transition-colors"
           >
             <X size={18} />
           </button>
         </div>
 
-        <div className="my-4 relative rounded-lg overflow-hidden bg-slate-100 border border-border aspect-video flex items-center justify-center">
-          {cameraActive ? (
-            <>
-              <video ref={videoRef} className="w-full h-full object-cover" playsInline muted />
-              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <div className="w-44 h-44 border-2 border-emerald-500 rounded-lg relative animate-pulse">
-                  <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-emerald-500" />
-                  <div className="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 border-emerald-500" />
-                  <div className="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2 border-emerald-500" />
-                  <div className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-emerald-500" />
-                </div>
-              </div>
-            </>
-          ) : (
-            <div className="text-center p-6 space-y-2">
-              <Camera size={28} className="mx-auto text-muted-foreground" />
-              <p className="text-xs text-muted-foreground">{cameraError || "Camera ready to initialize"}</p>
-              <GlassButton variant="secondary" size="sm" onClick={startCamera}>
-                <RefreshCw size={13} className="mr-1" /> Initialize Camera
-              </GlassButton>
-            </div>
-          )}
-        </div>
+        <ScannerCameraViewport
+          cameraActive={cameraActive}
+          cameraError={cameraError}
+          videoRef={videoRef}
+          onStartCamera={startCamera}
+        />
 
         {feedback && (
           <div
-            className={`mb-3 p-2.5 rounded-md border flex items-center gap-2 text-xs font-medium ${
+            className={`mb-3 p-3 rounded-xl border flex items-center gap-2 text-xs font-medium ${
               feedback.type === "success"
-                ? "bg-emerald-50 border-emerald-200 text-emerald-800"
-                : "bg-red-50 border-red-200 text-red-800"
+                ? "bg-[#247653]/10 border-[#247653]/30 text-[#247653]"
+                : "bg-[#b54242]/10 border-[#b54242]/30 text-[#b54242]"
             }`}
           >
-            {feedback.type === "success" ? <CheckCircle2 size={15} /> : <AlertCircle size={15} />}
+            {feedback.type === "success" ? <CheckCircle2 size={16} /> : <AlertCircle size={16} />}
             <span>{feedback.message}</span>
           </div>
         )}

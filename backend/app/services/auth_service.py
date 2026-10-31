@@ -1,21 +1,18 @@
-import json
-import secrets
 from typing import Optional, Dict, Any
 
 from fastapi import HTTPException, status
 
-from app.core.config import settings
 from app.core.logging_config import get_logger
+from app.core.redis_scripts import atomic_incr_expire
 from app.core.security import hash_password, verify_password, create_access_token, create_refresh_token
 from app.db.client import db
-from app.db.redis import get_redis
+from app.db.redis import safe_redis
 from app.repositories.user_repository import UserRepository
 from app.repositories.student_repository import StudentRepository
 from app.repositories.teacher_repository import TeacherRepository
 from app.schemas.auth import Token, UserLogin
 from app.schemas.student import StudentCreate, StudentResponse
 from app.schemas.teacher import TeacherCreate, TeacherResponse
-from app.services.email_service import email_service
 
 logger = get_logger("app.services.auth")
 
@@ -44,11 +41,7 @@ class AuthService:
                 )
 
         login_key = f"failed_login:{identifier.lower()}"
-        redis = None
-        try:
-            redis = get_redis()
-        except Exception:
-            pass
+        redis = safe_redis()
 
         if redis:
             try:
@@ -66,9 +59,7 @@ class AuthService:
         if not user or not verify_password(login_data.password, user.hashedPassword):
             if redis:
                 try:
-                    attempts = await redis.incr(login_key)
-                    if attempts == 1:
-                        await redis.expire(login_key, 900)
+                    await atomic_incr_expire(redis, login_key, 900)
                 except Exception as exc:
                     logger.warning("Redis increment failed login error: %s", exc)
             return None
@@ -102,22 +93,22 @@ class AuthService:
                 elif login_data.device_uuid:
                     await db.student.update(where={"id": student.id}, data={"deviceUuid": login_data.device_uuid})
 
-        tid = getattr(user, "tenantId", None)
+        tenant_id = getattr(user, "tenantId", None)
         tenant_slug, tenant_name = None, None
-        if tid:
-            t = await db.tenant.find_unique(where={"id": tid})
-            if t:
-                if t.status != "ACTIVE":
+        if tenant_id:
+            tenant_record = await db.tenant.find_unique(where={"id": tenant_id})
+            if tenant_record:
+                if tenant_record.status != "ACTIVE":
                     raise HTTPException(
                         status_code=status.HTTP_403_FORBIDDEN,
-                        detail=f"Institution account '{t.name}' is currently {t.status.lower()}. Please contact system administration.",
+                        detail=f"Institution account '{tenant_record.name}' is currently {tenant_record.status.lower()}. Please contact system administration.",
                     )
-                tenant_slug, tenant_name = t.slug, t.name
+                tenant_slug, tenant_name = tenant_record.slug, tenant_record.name
 
         token = create_access_token(
             subject=user.id,
             role=user.role,
-            extra_data={"tid": tid, "tenant_id": tid} if tid else None,
+            extra_data={"tid": tenant_id, "tenant_id": tenant_id} if tenant_id else None,
         )
         refresh_token = create_refresh_token(subject=user.id, role=user.role)
         return Token(
@@ -126,7 +117,7 @@ class AuthService:
             token_type="bearer",
             role=user.role,
             must_change_password=getattr(user, "mustChangePassword", False),
-            tenant_id=tid,
+            tenant_id=tenant_id,
             tenant_slug=tenant_slug,
             tenant_name=tenant_name,
         )
@@ -178,100 +169,25 @@ class AuthService:
         )
 
     async def create_invitation_token(self, user_id: str, email: str, role: str, name: str) -> str:
-        token = secrets.token_urlsafe(32)
-        ttl = settings.INVITATION_TOKEN_EXPIRE_HOURS * 3600
-        payload = {"user_id": user_id, "email": email, "role": role, "name": name}
-        redis = get_redis()
-        await redis.setex(f"invite:{token}", ttl, json.dumps(payload))
-        return token
+        from app.services.auth_token_service import AuthTokenService
+        return await AuthTokenService(self.user_repo, self.student_repo).create_invitation_token(user_id, email, role, name)
 
     async def verify_invitation_token(self, token: str) -> Optional[Dict[str, Any]]:
-        redis = get_redis()
-        data = await redis.get(f"invite:{token}")
-        if not data:
-            return None
-        return json.loads(data)
+        from app.services.auth_token_service import AuthTokenService
+        return await AuthTokenService(self.user_repo, self.student_repo).verify_invitation_token(token)
 
     async def complete_onboarding(self, token: str, password: str) -> bool:
-        data = await self.verify_invitation_token(token)
-        if not data:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid or expired invitation link.")
-
-        user_id = data["user_id"]
-        user = await self.user_repo.get_by_id(user_id)
-        if not user:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="User account not found.")
-        if user.isActive:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="This invitation link has already been used.",
-            )
-
-        hashed = hash_password(password)
-        await db.user.update(
-            where={"id": user_id},
-            data={"hashedPassword": hashed, "isActive": True, "mustChangePassword": False},
-        )
-        redis = get_redis()
-        await redis.delete(f"invite:{token}")
-        logger.info("Onboarding completed successfully: user_id=%s email=%s", user_id, data.get("email"))
-        return True
+        from app.services.auth_token_service import AuthTokenService
+        return await AuthTokenService(self.user_repo, self.student_repo).complete_onboarding(token, password)
 
     async def request_password_reset(self, email: str, frontend_url: Optional[str] = None) -> bool:
-        clean_email = email.strip().lower()
-        user = await self.user_repo.get_by_email(clean_email)
-        if not user:
-            # Avoid leaking user existence, return True
-            return True
-
-        name = "User"
-        if user.role == "STUDENT":
-            st = await self.student_repo.get_by_user_id(user.id)
-            if st and st.firstName:
-                name = f"{st.firstName} {st.lastName or ''}".strip()
-        elif user.role == "TEACHER":
-            tc = await db.teacher.find_unique(where={"userId": user.id})
-            if tc and tc.firstName:
-                name = f"{tc.firstName} {tc.lastName or ''}".strip()
-        elif user.role == "ADMIN":
-            name = "Administrator"
-
-        token = secrets.token_urlsafe(32)
-        ttl = settings.RESET_TOKEN_EXPIRE_MINUTES * 60
-        payload = {"user_id": user.id, "email": user.email, "role": user.role, "name": name}
-        redis = get_redis()
-        await redis.setex(f"reset:{token}", ttl, json.dumps(payload))
-
-        await email_service.send_password_reset_email(
-            to_email=user.email,
-            recipient_name=name,
-            reset_token=token,
-            role=user.role,
-            frontend_url=frontend_url,
-        )
-        return True
+        from app.services.auth_token_service import AuthTokenService
+        return await AuthTokenService(self.user_repo, self.student_repo).request_password_reset(email, frontend_url)
 
     async def verify_reset_token(self, token: str) -> Optional[Dict[str, Any]]:
-        redis = get_redis()
-        data = await redis.get(f"reset:{token}")
-        if not data:
-            return None
-        return json.loads(data)
+        from app.services.auth_token_service import AuthTokenService
+        return await AuthTokenService(self.user_repo, self.student_repo).verify_reset_token(token)
 
     async def reset_password(self, token: str, new_password: str) -> bool:
-        data = await self.verify_reset_token(token)
-        if not data:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid or expired password reset link."
-            )
-
-        user_id = data["user_id"]
-        hashed = hash_password(new_password)
-        await db.user.update(
-            where={"id": user_id},
-            data={"hashedPassword": hashed, "mustChangePassword": False},
-        )
-        redis = get_redis()
-        await redis.delete(f"reset:{token}")
-        logger.info("Password reset successfully: user_id=%s", user_id)
-        return True
+        from app.services.auth_token_service import AuthTokenService
+        return await AuthTokenService(self.user_repo, self.student_repo).reset_password(token, new_password)

@@ -1,12 +1,12 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { QRCodeSVG } from "qrcode.react";
-import { QrCode, X, Copy, Check, RefreshCw, Maximize2, Minimize2, ShieldCheck } from "lucide-react";
+import { QrCode, X, RefreshCw, Maximize2, Minimize2 } from "lucide-react";
 import toast from "react-hot-toast";
 import api, { getApiErrorMessage } from "@/lib/api";
 import { getWebSocket } from "@/lib/websocket";
 import GlassButton from "@/components/ui/GlassButton";
+import SmartPassQrCanvas from "@/components/scanner/SmartPassQrCanvas";
 import type { TeacherSmartPassResponse } from "@/types";
 
 interface SmartPassGeneratorModalProps {
@@ -28,7 +28,6 @@ export default function SmartPassGeneratorModal({
 }: SmartPassGeneratorModalProps): React.ReactElement | null {
   const [passData, setPassData] = useState<TeacherSmartPassResponse | null>(null);
   const [loading, setLoading] = useState(false);
-  const [copied, setCopied] = useState(false);
   const [fullscreen, setFullscreen] = useState(false);
   const [secondsRemaining, setSecondsRemaining] = useState(5);
   const [verifiedCount, setVerifiedCount] = useState(initialVerifiedCount);
@@ -82,45 +81,33 @@ export default function SmartPassGeneratorModal({
     };
   }, [isOpen, sessionId, fetchPass, onStudentVerified]);
 
-  const handleCopy = async () => {
-    if (!passData?.qr_token) return;
-    try {
-      await navigator.clipboard.writeText(passData.qr_token);
-      setCopied(true);
-      toast.success("Security token copied to clipboard");
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      toast.error("Failed to copy token");
-    }
-  };
-
   if (!isOpen) return null;
 
   const isUrgent = secondsRemaining <= 2;
   const qrSize = fullscreen ? 360 : 220;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#28363b]/70 backdrop-blur-md animate-fade-in">
       <div
-        className={`relative w-full overflow-hidden rounded-2xl border border-border bg-card p-6 shadow-2xl transition-all duration-300 ${
+        className={`relative w-full overflow-hidden rounded-2xl border border-[#e3e1dc] bg-card p-6 shadow-2xl transition-all duration-300 ${
           fullscreen ? "max-w-3xl py-10" : "max-w-lg"
         }`}
       >
-        <div className="flex items-center justify-between pb-4 border-b border-border">
+        <div className="flex items-center justify-between pb-4 border-b border-[#e3e1dc]">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
+            <div className="p-2 rounded-xl bg-[#247653]/10 text-[#247653] border border-[#247653]/20">
               <QrCode size={22} />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-foreground">Dynamic Smart Pass QR</h3>
-              <p className="text-xs text-muted-foreground">{className} • Session ID: {sessionId.slice(0, 8)}</p>
+              <h3 className="text-lg font-bold text-[#28363b]">Smart Pass QR</h3>
+              <p className="text-xs text-[#526f78]">{className}</p>
             </div>
           </div>
           <div className="flex items-center gap-1.5">
             <button
               onClick={() => setFullscreen((prev) => !prev)}
               aria-label={fullscreen ? "Exit Projector Mode" : "Enter Projector Mode"}
-              className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+              className="p-1.5 rounded-lg text-[#526f78] hover:text-[#28363b] hover:bg-[#eeece7] transition-colors"
               title={fullscreen ? "Exit Projector Mode" : "Projector Mode"}
             >
               {fullscreen ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
@@ -128,78 +115,38 @@ export default function SmartPassGeneratorModal({
             <button
               onClick={onClose}
               aria-label="Close modal"
-              className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+              className="p-1.5 rounded-lg text-[#526f78] hover:text-[#28363b] hover:bg-[#eeece7] transition-colors"
             >
               <X size={18} />
             </button>
           </div>
         </div>
 
-        <div className="my-6 flex flex-col items-center justify-center">
-          <div className="relative rounded-2xl p-4 bg-white border-2 border-emerald-500/30 shadow-inner flex items-center justify-center">
-            {passData ? (
-              <QRCodeSVG
-                value={passData.qr_token}
-                size={qrSize}
-                level="M"
-                includeMargin={false}
-                className="transition-all duration-300"
-              />
-            ) : (
-              <div
-                style={{ width: qrSize, height: qrSize }}
-                className="flex items-center justify-center text-slate-400 text-xs"
-              >
-                <RefreshCw size={24} className="animate-spin text-emerald-500" />
-              </div>
-            )}
+        <SmartPassQrCanvas
+          passData={passData}
+          qrSize={qrSize}
+          loading={loading}
+          isUrgent={isUrgent}
+          secondsRemaining={secondsRemaining}
+        />
+
+        <div className="flex items-center justify-between pt-3 border-t border-[#e3e1dc]">
+          <div className="flex items-center gap-2 text-xs text-[#526f78]">
+            <span>Live check-ins:</span>
+            <span className="font-semibold text-sm text-[#28363b]">
+              {verifiedCount} {verifiedCount === 1 ? "student" : "students"}
+            </span>
           </div>
 
-          <div className="mt-4 flex items-center gap-3">
-            <div
-              className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold transition-colors ${
-                isUrgent
-                  ? "bg-rose-500/10 text-rose-500 border border-rose-500/20"
-                  : "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20"
-              }`}
-            >
-              <RefreshCw size={12} className={loading ? "animate-spin" : ""} />
-              <span>Rotates in {secondsRemaining}s</span>
-            </div>
-
-            <div className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20">
-              <ShieldCheck size={13} />
-              <span>Encrypted JWT</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="flex flex-col gap-3 pt-2 border-t border-border">
-          <div className="flex items-center justify-between text-xs px-1 text-muted-foreground">
-            <span>Live check-ins this session:</span>
-            <span className="font-bold text-foreground">{verifiedCount} scanned</span>
-          </div>
-
-          <div className="flex gap-2">
-            <GlassButton
-              variant="secondary"
-              className="flex-1 text-xs"
-              icon={copied ? <Check size={14} className="text-emerald-500" /> : <Copy size={14} />}
-              onClick={() => void handleCopy()}
-              disabled={!passData}
-            >
-              {copied ? "Copied Token" : "Copy Security Token"}
-            </GlassButton>
-            <GlassButton
-              variant="primary"
-              className="flex-1 text-xs"
-              icon={<RefreshCw size={14} className={loading ? "animate-spin" : ""} />}
-              onClick={() => void fetchPass()}
-              loading={loading}
-            >
-              Rotate Now
-            </GlassButton>
-          </div>
+          <GlassButton
+            variant="ghost"
+            size="sm"
+            icon={<RefreshCw size={13} className={loading ? "animate-spin" : ""} />}
+            onClick={() => void fetchPass()}
+            loading={loading}
+          >
+            Refresh QR
+          </GlassButton>
         </div>
       </div>
     </div>

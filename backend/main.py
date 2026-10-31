@@ -32,6 +32,8 @@ from app.api import (
     search,
     super_admin,
     scim,
+    timetable,
+    faculty_register,
 )
 from app.middleware.request_logging import RequestLoggingMiddleware
 from app.middleware.security_headers import SecurityHeadersMiddleware
@@ -80,9 +82,18 @@ app = FastAPI(
 app.add_middleware(SecurityHeadersMiddleware)
 app.add_middleware(RequestLoggingMiddleware)
 app.add_middleware(TenantResolutionMiddleware)
+# CORS configuration: allow configured frontend URLs plus local development origins
+cors_origins = [url.strip() for url in settings.FRONTEND_URL.split(",") if url.strip()]
+if settings.ENVIRONMENT == "development":
+    # Allow localhost and local private network origins (192.168.x.x, 10.x.x.x, 127.0.0.1)
+    cors_origin_regex = r"^https?://(localhost|127\.0\.0\.1|192\.168\.\d+\.\d+|10\.\d+\.\d+\.\d+)(:\d+)?$"
+else:
+    cors_origin_regex = None
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.FRONTEND_URL.split(",") if "," in settings.FRONTEND_URL else [settings.FRONTEND_URL],
+    allow_origins=cors_origins,
+    allow_origin_regex=cors_origin_regex,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -100,6 +111,8 @@ app.include_router(notifications.router, prefix=settings.API_V1_STR)
 app.include_router(websocket_router.router, prefix=settings.API_V1_STR)
 app.include_router(search.router, prefix=settings.API_V1_STR)
 app.include_router(scim.router, prefix=settings.API_V1_STR)
+app.include_router(timetable.router, prefix=settings.API_V1_STR)
+app.include_router(faculty_register.router, prefix=settings.API_V1_STR)
 
 
 @app.exception_handler(RequestValidationError)

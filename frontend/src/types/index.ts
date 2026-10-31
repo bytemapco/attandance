@@ -2,51 +2,8 @@ export * from "./models";
 export * from "./attendance";
 export * from "./notification";
 export * from "./tenant";
-
-export type UserRole =
-  | "SUPER_ADMIN"
-  | "TENANT_ADMIN"
-  | "TEACHER"
-  | "STUDENT"
-  | "ADMIN";
-
-export interface LoginRequest {
-  email: string;
-  password: string;
-}
-
-export interface TokenResponse {
-  access_token: string;
-  token_type: string;
-  role: UserRole;
-  must_change_password?: boolean;
-}
-
-export interface UserProfile {
-  id: string;
-  email: string;
-  role: UserRole;
-  is_active: boolean;
-  tenant_id?: string | null;
-  tenant_slug?: string | null;
-  tenant_name?: string | null;
-  must_change_password?: boolean;
-  student_profile: {
-    id: string;
-    enrollment_number: string;
-    first_name?: string;
-    last_name?: string;
-    face_registered?: boolean;
-  } | null;
-  teacher_profile: {
-    id: string;
-    employee_id: string;
-    first_name: string;
-    last_name: string;
-    department: string;
-    designation: string;
-  } | null;
-}
+export * from "./auth";
+export * from "./timetable";
 
 export interface AssignTeacherRequest {
   teacher_id: string;
@@ -112,7 +69,7 @@ export interface SessionWithClassResponse {
   isActive: boolean;
 }
 
-export interface StudentRosterItem {
+export interface SessionStudentAttendanceItem {
   student_id: string;
   enrollment_number: string;
   full_name: string;
@@ -122,11 +79,15 @@ export interface StudentRosterItem {
   marked_at: string | null;
 }
 
+export type StudentRosterItem = SessionStudentAttendanceItem;
+
 export interface SessionAttendanceResponse {
   session_id: string;
   class_name: string;
-  roster: StudentRosterItem[];
+  roster: SessionStudentAttendanceItem[];
+  attendance_roll?: SessionStudentAttendanceItem[];
 }
+
 
 export interface ServiceHealthItem {
   status: "healthy" | "degraded" | "unhealthy";
@@ -174,7 +135,6 @@ export interface TeacherSmartPassResponse {
   refresh_interval_seconds: number;
 }
 
-
 export interface PaginatedResponse<T> {
   items: T[];
   page: number;
@@ -192,7 +152,7 @@ export interface BulkImportResponse {
   errors: string[];
 }
 
-export type SearchCategory = "student" | "faculty" | "class" | "session" | "action" | "navigation";
+export type SearchCategory = "student" | "faculty" | "class" | "session" | "action" | "navigation" | "tenant";
 
 export interface SearchResultItem {
   id: string;

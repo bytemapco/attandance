@@ -9,6 +9,10 @@ class TenantAdminInput(BaseModel):
     role: Optional[str] = Field(default="TENANT_ADMIN", pattern=r"^(TENANT_ADMIN|ADMIN)$")
 
 
+class TenantAdminEmailUpdateRequest(BaseModel):
+    email: EmailStr
+
+
 class TenantProvisionRequest(BaseModel):
     name: str = Field(..., min_length=2, max_length=150)
     slug: str = Field(..., min_length=2, max_length=50, pattern=r"^[a-z0-9-]+$")

@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Mail, KeyRound, ArrowLeft, CheckCircle2, RotateCw } from "lucide-react";
+import { Mail, ArrowLeft, CheckCircle2, RotateCw } from "lucide-react";
 import toast from "react-hot-toast";
 
 import api, { getApiErrorMessage, applyValidationErrorsToForm } from "@/lib/api";
@@ -72,7 +72,7 @@ export default function ForgotPasswordPage(): React.ReactElement {
     <div className="w-full max-w-md mx-auto my-auto py-8">
       <div className="w-full">
         <div className="text-center mb-6">
-          <Link href="/login" className="inline-block group cursor-pointer hover:opacity-90 transition-opacity">
+          <Link href="/login" className="inline-block group cursor-pointer hover:opacity-95 transition-opacity">
             <div className="inline-flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
               <img
                 src="/sahaj-app-icon.png"
@@ -80,24 +80,24 @@ export default function ForgotPasswordPage(): React.ReactElement {
                 className="w-14 h-14 rounded-2xl shadow-sm object-contain"
               />
             </div>
-            <h1 className="text-2xl font-bold tracking-tight text-foreground">
+            <h1 className="text-2xl font-bold tracking-tight text-[#28363b]">
               SAHAJ
             </h1>
-            <p className="text-xs text-muted-foreground mt-0.5 font-medium">Campus, made effortless.</p>
+            <p className="text-xs text-[#526f78] mt-0.5 font-medium">Campus, made effortless.</p>
           </Link>
         </div>
 
         {submitted ? (
-          <div className="rounded-2xl border border-border bg-card p-7 text-center space-y-5 shadow-sm">
-            <div className="inline-flex p-3 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-500">
+          <div className="rounded-2xl border border-[#e3e1dc] bg-card p-6 sm:p-7 text-center space-y-5 shadow-[0_4px_16px_rgba(40,54,59,0.06)]">
+            <div className="inline-flex p-3 rounded-full bg-[#e8f3ed] border border-[#c6e2d3] text-[#247653]">
               <CheckCircle2 size={32} />
             </div>
             <div className="space-y-1.5">
-              <h2 className="text-lg font-semibold text-foreground">Check Your Inbox</h2>
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                If an account exists for <strong className="text-foreground">{emailValue}</strong>, we sent a password reset link.
+              <h2 className="text-lg font-bold text-[#202b30]">Check Your Inbox</h2>
+              <p className="text-xs text-[#526f78] leading-relaxed">
+                If an account exists for <strong className="text-[#202b30]">{emailValue}</strong>, we sent a password reset link.
               </p>
-              <p className="text-[11px] text-muted-foreground/80 pt-1">
+              <p className="text-[11px] text-[#718087] pt-1">
                 Check your spam folder if it doesn&apos;t arrive in a few minutes.
               </p>
             </div>
@@ -108,7 +108,7 @@ export default function ForgotPasswordPage(): React.ReactElement {
                 size="md"
                 onClick={() => void handleResend()}
                 disabled={resendCooldown > 0 || resending}
-                className="w-full justify-center text-xs font-medium"
+                className="w-full justify-center text-xs font-semibold"
               >
                 <RotateCw size={13} className={resending ? "animate-spin mr-1.5" : "mr-1.5"} />
                 {resendCooldown > 0 ? `Resend email in ${resendCooldown}s` : "Resend Reset Link"}
@@ -118,11 +118,11 @@ export default function ForgotPasswordPage(): React.ReactElement {
                 <button
                   type="button"
                   onClick={() => setSubmitted(false)}
-                  className="text-muted-foreground hover:text-foreground transition-colors font-medium cursor-pointer"
+                  className="text-[#526f78] hover:text-[#202b30] transition-colors font-medium cursor-pointer"
                 >
                   Use a different email
                 </button>
-                <Link href="/login" className="text-primary hover:underline font-medium">
+                <Link href="/login" className="text-[#28363b] hover:text-[#c98260] font-semibold transition-colors">
                   Back to Sign In
                 </Link>
               </div>
@@ -132,12 +132,12 @@ export default function ForgotPasswordPage(): React.ReactElement {
           <form
             noValidate
             onSubmit={handleSubmit(onSubmit)}
-            className="rounded-2xl border border-border bg-card p-7 space-y-5 shadow-sm"
+            className="rounded-2xl border border-[#e3e1dc] bg-card p-6 sm:p-7 space-y-5 shadow-[0_4px_16px_rgba(40,54,59,0.06)]"
           >
             <div className="space-y-1">
-              <h2 className="text-base font-semibold text-foreground">Reset Password</h2>
-              <p className="text-xs text-muted-foreground">
-                Enter your email and we&apos;ll send you a reset link.
+              <h2 className="text-base font-bold text-[#202b30]">Reset Password</h2>
+              <p className="text-xs text-[#526f78]">
+                Enter your institutional email and we&apos;ll send you a recovery link.
               </p>
             </div>
 
@@ -157,14 +157,14 @@ export default function ForgotPasswordPage(): React.ReactElement {
                 variant="primary"
                 size="lg"
                 loading={isSubmitting}
-                className="w-full font-medium"
+                className="w-full font-semibold"
               >
                 Send Reset Link
               </GlassButton>
 
               <Link
                 href="/login"
-                className="flex items-center justify-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors pt-1"
+                className="flex items-center justify-center gap-1 text-xs text-[#526f78] hover:text-[#202b30] transition-colors pt-1"
               >
                 <ArrowLeft size={13} /> Back to Sign In
               </Link>

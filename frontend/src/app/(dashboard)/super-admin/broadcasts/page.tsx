@@ -7,7 +7,6 @@ import { superAdminService } from "@/services/superAdminService";
 import { getApiErrorMessage } from "@/lib/api";
 import GlassBreadcrumb from "@/components/ui/GlassBreadcrumb";
 import GlassPageHeader from "@/components/ui/GlassPageHeader";
-import BroadcastKpiStrip from "@/components/super-admin/BroadcastKpiStrip";
 import BroadcastForm from "@/components/super-admin/BroadcastForm";
 import BroadcastPreview from "@/components/super-admin/BroadcastPreview";
 import BroadcastHistoryTable from "@/components/super-admin/BroadcastHistoryTable";
@@ -54,7 +53,6 @@ export default function SuperAdminBroadcastsPage(): React.ReactElement {
   const [form, setForm] = useState<GlobalBroadcastRequest>(INITIAL_FORM);
   const [submitting, setSubmitting] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
-  const [totalSent, setTotalSent] = useState(0);
 
   const handleChange = (updated: Partial<GlobalBroadcastRequest>): void => {
     setForm((prev) => ({ ...prev, ...updated }));
@@ -108,16 +106,15 @@ export default function SuperAdminBroadcastsPage(): React.ReactElement {
 
       <GlassPageHeader
         title="Announcements"
-        description="Send platform notices to users."
         actions={
-          <div className="flex items-center gap-1.5">
-            <span className="text-xs text-muted-foreground mr-1 hidden sm:inline">Templates:</span>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-[#526f78] font-medium hidden sm:inline">Templates:</span>
             {TEMPLATES.map((tpl) => (
               <button
                 key={tpl.label}
                 type="button"
                 onClick={() => handleApplyTemplate(tpl)}
-                className="px-2.5 py-1 rounded-lg bg-card/60 hover:bg-muted border border-border/60 text-xs text-muted-foreground hover:text-foreground font-medium transition-colors cursor-pointer"
+                className="px-2.5 py-1 rounded-lg bg-card hover:bg-secondary border border-[#e3e1dc] text-xs text-[#202b30] font-semibold transition-colors cursor-pointer"
               >
                 {tpl.label}
               </button>
@@ -125,9 +122,6 @@ export default function SuperAdminBroadcastsPage(): React.ReactElement {
           </div>
         }
       />
-
-      {/* Top KPI Metrics Row matching other pages */}
-      <BroadcastKpiStrip totalSent={totalSent} />
 
       {/* Main Composer & Preview */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
@@ -146,10 +140,7 @@ export default function SuperAdminBroadcastsPage(): React.ReactElement {
       </div>
 
       {/* History Table */}
-      <BroadcastHistoryTable
-        refreshTrigger={refreshTrigger}
-        onCountChange={(count) => setTotalSent(count)}
-      />
+      <BroadcastHistoryTable refreshTrigger={refreshTrigger} />
     </div>
   );
 }

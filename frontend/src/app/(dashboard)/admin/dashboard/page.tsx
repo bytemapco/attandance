@@ -11,15 +11,12 @@ import { useAuthStore } from "@/store/authStore";
 import GlassStatCard from "@/components/ui/GlassStatCard";
 import GlassLoader from "@/components/ui/GlassLoader";
 import AdminQuickActions from "@/components/admin/AdminQuickActions";
-import SystemEventsCard from "@/components/admin/SystemEventsCard";
-import type { AdminStatsResponse, SystemHealthResponse, AuditLogResponse } from "@/types";
+import type { AdminStatsResponse } from "@/types";
 
 export default function AdminDashboardPage(): React.ReactElement {
   const router = useRouter();
   const { user } = useAuthStore();
   const [stats, setStats] = useState<AdminStatsResponse | null>(null);
-  const [health, setHealth] = useState<SystemHealthResponse | null>(null);
-  const [auditEvents, setAuditEvents] = useState<AuditLogResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -30,7 +27,23 @@ export default function AdminDashboardPage(): React.ReactElement {
     return "Good evening";
   })();
 
-  const displayName = user?.email ? user.email.split("@")[0] : "Administrator";
+  const displayName = (() => {
+    if (user?.teacher_profile?.first_name) {
+      return `${user.teacher_profile.first_name} ${user.teacher_profile.last_name || ""}`.trim();
+    }
+    if (user?.student_profile?.first_name) {
+      return `${user.student_profile.first_name} ${user.student_profile.last_name || ""}`.trim();
+    }
+    if (user?.email) {
+      const handle = user.email.split("@")[0].replace(/[._-]/g, " ");
+      return handle
+        .split(" ")
+        .filter(Boolean)
+        .map((w) => (w.length <= 3 ? w.toUpperCase() : w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()))
+        .join(" ");
+    }
+    return "Administrator";
+  })();
 
   const todayStr = new Intl.DateTimeFormat("en-US", {
     weekday: "long",
@@ -41,21 +54,8 @@ export default function AdminDashboardPage(): React.ReactElement {
 
   const fetchDashboardData = useCallback(async (): Promise<void> => {
     try {
-      const [statsRes, healthRes, auditRes] = await Promise.allSettled([
-        api.get<AdminStatsResponse>("/admin/stats"),
-        api.get<SystemHealthResponse>("/health"),
-        api.get<AuditLogResponse[]>("/admin/audit", { params: { page_size: 10 } }),
-      ]);
-
-      if (statsRes.status === "fulfilled") setStats(statsRes.value.data);
-      else toast.error("Could not load latest institution statistics");
-
-      if (healthRes.status === "fulfilled") setHealth(healthRes.value.data);
-      if (auditRes.status === "fulfilled") {
-        const raw = auditRes.value.data;
-        const items = Array.isArray(raw) ? raw : (raw as { items?: AuditLogResponse[] })?.items || [];
-        setAuditEvents(items);
-      }
+      const statsRes = await api.get<AdminStatsResponse>("/admin/stats");
+      setStats(statsRes.data);
     } catch {
       toast.error("Failed to load dashboard metrics");
       setStats({ studentCount: 0, teacherCount: 0, classCount: 0 });
@@ -76,27 +76,13 @@ export default function AdminDashboardPage(): React.ReactElement {
 
   if (loading) return <GlassLoader />;
 
-  const isHealthy = health?.status === "healthy";
-
   return (
     <div className="space-y-6 pb-6">
-      {/* Top Banner */}
-      <div className="relative overflow-hidden rounded-2xl border border-border bg-card p-5 sm:p-6 shadow-xs flex flex-col md:flex-row md:items-center md:justify-between gap-5">
+      {/* Top Welcome Banner */}
+      <div className="relative overflow-hidden rounded-2xl border border-[#e3e1dc] bg-card p-5 sm:p-6 shadow-[0_2px_8px_rgba(40,54,59,0.05)] flex flex-col md:flex-row md:items-center md:justify-between gap-5">
         <div className="space-y-1 z-10">
-          <div className="flex items-center gap-2">
-            <p className="text-xs font-medium text-muted-foreground">{todayStr}</p>
-            <span
-              className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold border ${
-                isHealthy
-                  ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20"
-                  : "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20"
-              }`}
-            >
-              <span className={`h-1.5 w-1.5 rounded-full ${isHealthy ? "bg-emerald-500" : "bg-amber-500"}`} />
-              {isHealthy ? "System Online" : "Degraded"}
-            </span>
-          </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">
+          <p className="text-xs font-medium text-[#526f78]">{todayStr}</p>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#28363b]">
             {greeting}, {displayName}
           </h1>
         </div>
@@ -105,19 +91,19 @@ export default function AdminDashboardPage(): React.ReactElement {
         <div className="flex items-center gap-2.5 z-10 self-start md:self-center">
           <button
             onClick={() => router.push("/admin/notifications/broadcast")}
-            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border border-border bg-secondary/50 text-xs font-semibold text-foreground hover:bg-secondary transition-all shadow-2xs cursor-pointer"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-[#e3e1dc] bg-secondary text-xs font-semibold text-[#202b30] hover:bg-secondary/70 transition-all shadow-2xs cursor-pointer"
           >
-            <Megaphone size={14} className="text-primary" />
-            <span>Announcement</span>
+            <Megaphone size={14} className="text-[#c98260]" />
+            <span>New Announcement</span>
           </button>
 
           <button
             onClick={handleRefresh}
             disabled={refreshing}
-            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border border-border bg-card text-xs font-semibold text-foreground hover:bg-secondary transition-all shadow-2xs disabled:opacity-50 cursor-pointer"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-[#e3e1dc] bg-card text-xs font-semibold text-[#202b30] hover:bg-secondary transition-all shadow-2xs disabled:opacity-50 cursor-pointer"
           >
-            <RefreshCw size={13} className={refreshing ? "animate-spin text-primary" : "text-muted-foreground"} />
-            <span>{refreshing ? "Refreshing..." : "Refresh"}</span>
+            <RefreshCw size={13} className={refreshing ? "animate-spin text-[#c98260]" : "text-[#526f78]"} />
+            <span>{refreshing ? "Updating..." : "Refresh"}</span>
           </button>
         </div>
       </div>
@@ -128,41 +114,36 @@ export default function AdminDashboardPage(): React.ReactElement {
           icon={<GraduationCap size={20} />}
           label="Students"
           value={stats?.studentCount ?? 0}
-          accentColor="blue"
+          accentColor="mineral"
         />
         <GlassStatCard
           icon={<Users size={20} />}
           label="Faculty"
           value={stats?.teacherCount ?? 0}
-          accentColor="emerald"
+          accentColor="carbon"
         />
         <GlassStatCard
           icon={<BookOpen size={20} />}
           label="Classes"
           value={stats?.classCount ?? 0}
-          accentColor="purple"
+          accentColor="copper"
         />
         <GlassStatCard
           icon={<ShieldCheck size={20} />}
-          label="Verification Rate"
+          label="Attendance Rate"
           value={stats?.biometricPassRate !== undefined && (stats.attendanceCount ?? 0) > 0 ? `${stats.biometricPassRate}%` : "0.0%"}
-          accentColor="amber"
+          accentColor="emerald"
         />
       </div>
 
       {/* Administration Controls Hub */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <h2 className="text-xs font-bold text-foreground uppercase tracking-wider">
+          <h2 className="text-xs font-bold text-[#526f78] uppercase tracking-wider">
             Quick Actions
           </h2>
         </div>
         <AdminQuickActions />
-      </div>
-
-      {/* Activity Stream */}
-      <div>
-        <SystemEventsCard events={auditEvents} />
       </div>
     </div>
   );

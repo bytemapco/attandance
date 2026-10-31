@@ -244,6 +244,7 @@ class BulkImportService:
                         data={
                             k: v
                             for k, v in {
+                                "tenantId": tenant_id,
                                 "userId": user.id,
                                 "employeeId": item.employee_id,
                                 "firstName": item.first_name,

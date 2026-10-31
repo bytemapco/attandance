@@ -70,17 +70,17 @@ class ResetPasswordNotifier extends StateNotifier<ResetPasswordState> {
 
     state = state.copyWith(isVerifying: true, errorMessage: null);
     try {
-      final res = await _repo.verifyResetToken(token);
-      final valid = res['valid'] == true;
+      final verificationResult = await _repo.verifyResetToken(token);
+      final valid = verificationResult['valid'] == true;
       state = state.copyWith(
         isVerifying: false,
         isValid: valid,
-        email: res['email']?.toString(),
-        name: res['name']?.toString(),
-        role: res['role']?.toString(),
+        email: verificationResult['email']?.toString(),
+        name: verificationResult['name']?.toString(),
+        role: verificationResult['role']?.toString(),
         errorMessage: valid
             ? null
-            : (res['message']?.toString() ?? 'Link has expired.'),
+            : (verificationResult['message']?.toString() ?? 'Link has expired.'),
       );
     } catch (e) {
       state = state.copyWith(
