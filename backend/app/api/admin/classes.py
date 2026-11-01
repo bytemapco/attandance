@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from prisma.models import User
 
 from app.api.admin.helpers import (
@@ -64,8 +64,8 @@ async def bulk_create_classes(
     dependencies=[Depends(rate_limiter(requests_limit=120, window_seconds=60))],
 )
 async def get_classes(
-    page: int = 1,
-    page_size: int = 10,
+    page: int = Query(1, ge=1),
+    page_size: int = Query(10, ge=1, le=100),
     sort_by: str | None = None,
     sort_order: str = "asc",
     q: str | None = None,
@@ -77,7 +77,7 @@ async def get_classes(
 ):
     return await admin_service.get_all_classes(
         page=page,
-        page_size=min(page_size, 100),
+        page_size=page_size,
         sort_by=sort_by,
         sort_order=sort_order,
         q=q,

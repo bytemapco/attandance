@@ -3,6 +3,7 @@ from types import SimpleNamespace
 from unittest.mock import AsyncMock, patch
 import pytest
 
+from app.core.datetime_utils import get_ist_today
 from app.core.security import create_access_token
 from app.schemas.academic_year import AcademicYearCreate, TimeSlotCreate
 from app.services.academic_year_service import AcademicYearService
@@ -112,7 +113,7 @@ async def test_teacher_start_stop_attendance_workflow() -> None:
         substituteFacultyId=None,
         isAttendanceLocked=False,
         status="SCHEDULED",
-        date=datetime(2025, 9, 1),
+        date=datetime.combine(get_ist_today(), datetime.min.time()),
         courseSection=SimpleNamespace(
             academicYear=SimpleNamespace(verificationWindowMin=45),
             enrollments=[

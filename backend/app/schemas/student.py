@@ -1,6 +1,8 @@
 from datetime import datetime
-from typing import Optional
+from typing import Literal, Optional
 from pydantic import BaseModel, EmailStr, Field, ConfigDict, field_validator
+
+GenderCode = Literal["M", "F", "O"]
 
 
 class StudentCreate(BaseModel):
@@ -11,11 +13,10 @@ class StudentCreate(BaseModel):
     first_name: str = Field(..., min_length=1, max_length=100, description="Student first name")
     last_name: str = Field(..., min_length=1, max_length=100, description="Student last name")
     department_id: str = Field(..., min_length=1, max_length=64, description="UUID of the student's department")
-    branch: str = Field(..., min_length=1, max_length=50, description="Academic branch e.g. CE, IT, AI")
-    semester: int = Field(..., ge=1, le=12, description="Current academic semester (1–12)")
-    batch: str = Field(..., min_length=1, max_length=20, description="Batch year range e.g. 2022-2026")
+    semester: int = Field(..., ge=1, le=8, description="Current academic semester (1–8)")
+    batch_id: str = Field(..., min_length=1, max_length=64, description="UUID of the student's batch, e.g. CE-A-1")
     phone: str = Field(..., min_length=5, max_length=20, description="Contact phone number")
-    gender: str = Field(..., min_length=1, max_length=20, description="Gender identity")
+    gender: GenderCode = Field(..., description="Gender code: M, F or O")
     date_of_birth: datetime = Field(..., description="Date of birth")
     send_invite: Optional[bool] = Field(default=True, description="Whether to dispatch an invitation email")
 
@@ -25,7 +26,7 @@ class StudentCreate(BaseModel):
         return v.strip().lower() if isinstance(v, str) else v
 
     @field_validator(
-        "enrollment_number", "first_name", "last_name", "phone", "gender", "branch", "batch", mode="before"
+        "enrollment_number", "first_name", "last_name", "phone", "gender", mode="before"
     )
     @classmethod
     def strip_text(cls, v: Optional[str]) -> Optional[str]:
@@ -39,19 +40,23 @@ class StudentUpdate(BaseModel):
     first_name: Optional[str] = Field(None, min_length=1, max_length=100)
     last_name: Optional[str] = Field(None, min_length=1, max_length=100)
     phone: Optional[str] = Field(None, max_length=20)
-    gender: Optional[str] = Field(None, max_length=20)
-    branch: Optional[str] = Field(None, max_length=50)
+    gender: Optional[GenderCode] = Field(None)
     date_of_birth: Optional[datetime] = Field(None)
-    semester: Optional[int] = Field(None, ge=1, le=12)
-    batch: Optional[str] = Field(None, max_length=20)
-    department_id: Optional[str] = Field(None, max_length=64)
+    semester: Optional[int] = Field(None, ge=1, le=8)
+    batch_id: Optional[str] = Field(None, min_length=1, max_length=64)
+    department_id: Optional[str] = Field(None, min_length=1, max_length=64)
 
     @field_validator(
-        "enrollment_number", "first_name", "last_name", "phone", "gender", "branch", "batch", mode="before"
+        "enrollment_number", "first_name", "last_name", "phone", "gender", mode="before"
     )
     @classmethod
     def strip_text(cls, v: Optional[str]) -> Optional[str]:
         return v.strip() if isinstance(v, str) else v
+
+    @field_validator("gender", mode="before")
+    @classmethod
+    def blank_gender_is_none(cls, v: Optional[str]) -> Optional[str]:
+        return (v.strip() or None) if isinstance(v, str) else v
 
 
 class StudentResponse(BaseModel):
@@ -65,12 +70,13 @@ class StudentResponse(BaseModel):
     last_name: Optional[str] = Field(None, description="Student last name")
     phone: Optional[str] = Field(None, description="Contact phone number")
     gender: Optional[str] = Field(None, description="Gender identity")
-    branch: Optional[str] = Field(None, description="Academic branch")
     date_of_birth: Optional[datetime] = Field(None, description="Date of birth")
-    department_id: Optional[str] = Field(None, description="Raw department UUID")
-    department_name: Optional[str] = Field(None, description="Resolved department name")
+    department_id: str = Field(..., description="Raw department UUID")
+    department_name: str = Field(..., description="Resolved department name")
     semester: Optional[int] = Field(None, description="Current semester")
-    batch: Optional[str] = Field(None, description="Batch year range")
+    batch: Optional[str] = Field(None, description="Batch code, e.g. CE-A-1")
+    invitation_sent: Optional[bool] = Field(None, description="Whether the invite email was delivered; null when no invite was requested")
+    batch_id: Optional[str] = Field(None, description="Batch UUID")
     is_active: bool = Field(True, description="Account active status")
 
 

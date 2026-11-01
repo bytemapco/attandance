@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 
 from app.core.logging_config import get_logger
 from app.repositories.student_repository import StudentRepository
@@ -105,19 +105,6 @@ class GamificationService:
         await self.student_repo.update_streak(student_id, current_streak, highest_streak)
         await self._update_redis_score(student_id, current_streak, highest_streak)
         return {"current_streak": current_streak, "highest_streak": highest_streak}
-
-    async def calculate_consecutive_absences(self, student_id: str, days: int = 3) -> int:
-        end = datetime.now(timezone.utc)
-        records = await self.attendance_repo.get_by_student_in_date_range(
-            student_id=student_id, start_date=end - timedelta(days=7), end_date=end
-        )
-        consecutive = 0
-        for record in sorted(records, key=lambda r: r.createdAt, reverse=True):
-            if record.status == "Absent":
-                consecutive += 1
-            else:
-                break
-        return consecutive
 
     async def get_student_stats(self, student_id: str) -> dict:
         student = await self.student_repo.get_by_id(student_id)

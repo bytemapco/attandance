@@ -1,6 +1,8 @@
 from fastapi import APIRouter, Depends
 
 from app.api.admin.academic_years import router as academic_years_router
+from app.api.admin.batches import router as batches_router
+from app.api.admin.class_management import router as class_management_router
 from app.api.admin.classes import router as classes_router
 from app.api.admin.classrooms import router as classrooms_router
 from app.api.admin.departments import router as departments_router
@@ -19,7 +21,9 @@ router.include_router(academic_years_router)
 router.include_router(students_router)
 router.include_router(teachers_router)
 router.include_router(classes_router)
+router.include_router(class_management_router)
 router.include_router(departments_router)
+router.include_router(batches_router)
 router.include_router(subjects_router)
 router.include_router(classrooms_router)
 router.include_router(designations_router)

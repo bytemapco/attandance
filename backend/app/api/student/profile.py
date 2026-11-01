@@ -7,9 +7,9 @@ from app.db.client import db
 from app.schemas.common import MessageResponse
 from app.schemas.student import FcmTokenRequest, StudentClassResponse
 from app.services.attendance_service import AttendanceService
+from app.services import student_subjects_service
 from app.services.biometric_consent_service import BiometricConsentService
 from app.services.s3_service import s3_service
-from app.services.student_service import StudentService
 
 router = APIRouter()
 
@@ -65,11 +65,8 @@ async def register_face(
 
 
 @router.get("/classes", response_model=list[StudentClassResponse])
-async def get_my_classes(
-    student: Student = Depends(get_current_student),
-    student_service: StudentService = Depends(),
-) -> list[StudentClassResponse]:
-    return await student_service.get_student_classes(student.userId)
+async def get_my_classes(student: Student = Depends(get_current_student)) -> list[StudentClassResponse]:
+    return await student_subjects_service.list_classes(student)
 
 
 @router.post("/fcm-token", response_model=MessageResponse, status_code=status.HTTP_200_OK)

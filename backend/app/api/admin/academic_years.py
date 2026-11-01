@@ -7,6 +7,9 @@ from app.schemas.academic_year import (
     AcademicYearUpdate,
     CalendarEventCreate,
     CalendarEventResponse,
+    SemesterCreate,
+    SemesterResponse,
+    SemesterUpdate,
     TimeSlotCreate,
     TimeSlotResponse,
     TimeSlotUpdate,
@@ -126,6 +129,63 @@ async def activate_academic_year(id: str, tenant_id: str = Depends(get_tenant_co
 @router.delete("/academic-years/{id}")
 async def delete_academic_year(id: str, tenant_id: str = Depends(get_tenant_context)):
     return await AcademicYearService.delete_academic_year(tenant_id, id)
+
+
+# Semesters
+@router.get("/semesters", response_model=List[SemesterResponse])
+async def list_semesters(academic_year_id: Optional[str] = Query(None), tenant_id: str = Depends(get_tenant_context)):
+    items = await AcademicYearService.list_semesters(tenant_id, academic_year_id)
+    return [
+        SemesterResponse(
+            id=s.id,
+            tenant_id=s.tenantId,
+            academic_year_id=s.academicYearId,
+            number=s.number,
+            start_date=s.startDate.date() if hasattr(s.startDate, "date") else s.startDate,
+            end_date=s.endDate.date() if hasattr(s.endDate, "date") else s.endDate,
+            classes_count=len(s.classTerms) if hasattr(s, "classTerms") and s.classTerms else 0,
+            created_at=s.createdAt,
+            updated_at=s.updatedAt,
+        )
+        for s in items
+    ]
+
+
+@router.post("/academic-years/{year_id}/semesters", response_model=SemesterResponse, status_code=status.HTTP_201_CREATED)
+async def create_semester(year_id: str, data: SemesterCreate, tenant_id: str = Depends(get_tenant_context)):
+    s = await AcademicYearService.create_semester(tenant_id, year_id, data)
+    return SemesterResponse(
+        id=s.id,
+        tenant_id=s.tenantId,
+        academic_year_id=s.academicYearId,
+        number=s.number,
+        start_date=s.startDate.date() if hasattr(s.startDate, "date") else s.startDate,
+        end_date=s.endDate.date() if hasattr(s.endDate, "date") else s.endDate,
+        classes_count=len(s.classTerms) if hasattr(s, "classTerms") and s.classTerms else 0,
+        created_at=s.createdAt,
+        updated_at=s.updatedAt,
+    )
+
+
+@router.put("/semesters/{id}", response_model=SemesterResponse)
+async def update_semester(id: str, data: SemesterUpdate, tenant_id: str = Depends(get_tenant_context)):
+    s = await AcademicYearService.update_semester(tenant_id, id, data)
+    return SemesterResponse(
+        id=s.id,
+        tenant_id=s.tenantId,
+        academic_year_id=s.academicYearId,
+        number=s.number,
+        start_date=s.startDate.date() if hasattr(s.startDate, "date") else s.startDate,
+        end_date=s.endDate.date() if hasattr(s.endDate, "date") else s.endDate,
+        classes_count=len(s.classTerms) if hasattr(s, "classTerms") and s.classTerms else 0,
+        created_at=s.createdAt,
+        updated_at=s.updatedAt,
+    )
+
+
+@router.delete("/semesters/{id}")
+async def delete_semester(id: str, tenant_id: str = Depends(get_tenant_context)):
+    return await AcademicYearService.delete_semester(tenant_id, id)
 
 
 # Time Slots

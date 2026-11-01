@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from prisma.models import User
 
 from app.api.admin.helpers import get_client_ip, handle_generic_err, require_student_in_tenant
@@ -55,29 +55,27 @@ async def bulk_create_students(
     dependencies=[Depends(rate_limiter(requests_limit=120, window_seconds=60))],
 )
 async def get_students(
-    page: int = 1,
-    page_size: int = 10,
+    page: int = Query(1, ge=1),
+    page_size: int = Query(10, ge=1, le=1000),
     sort_by: str | None = None,
     sort_order: str = "asc",
     q: str | None = None,
     department_id: str | None = None,
     semester: int | None = None,
-    batch: str | None = None,
-    branch: str | None = None,
+    batch_id: str | None = None,
     status: str | None = None,
     tenant_id: str = Depends(get_tenant_context),
     admin_service: AdminService = Depends(),
 ):
     return await admin_service.get_all_students(
         page=page,
-        page_size=min(page_size, 1000),
+        page_size=page_size,
         sort_by=sort_by,
         sort_order=sort_order,
         q=q,
         department_id=department_id,
         semester=semester,
-        batch=batch,
-        branch=branch,
+        batch_id=batch_id,
         status=status,
         tenant_id=tenant_id,
     )
@@ -116,6 +114,7 @@ async def get_student_by_id(
         department_name=student.department.name if student.department else None,
         semester=student.semester,
         batch=student.batch,
+        batch_id=student.batchId,
     )
 
 

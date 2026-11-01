@@ -1,6 +1,8 @@
 from typing import Optional
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
 
+from app.schemas.student import GenderCode
+
 
 class BulkImportResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -16,11 +18,10 @@ class StudentBulkItem(BaseModel):
     enrollment_number: str = Field(..., min_length=3, max_length=30)
     first_name: str = Field(..., min_length=1, max_length=100)
     last_name: str = Field(..., min_length=1, max_length=100)
-    department_id: Optional[str] = Field(None, max_length=64)
-    gender: Optional[str] = Field(None, max_length=20)
-    branch: Optional[str] = Field(None, max_length=50)
+    department_id: str = Field(..., min_length=1, max_length=64)
+    gender: Optional[GenderCode] = None
     semester: Optional[int] = Field(None, ge=1, le=8)
-    batch: Optional[str] = Field(None, max_length=20)
+    batch_code: Optional[str] = Field(None, max_length=50, description="Batch code within the department, e.g. CE-A-1")
     phone: Optional[str] = Field(None, max_length=20)
     password: Optional[str] = Field(None, min_length=6, max_length=100)
 

@@ -17,11 +17,46 @@ from app.schemas.attendance import (
 from app.schemas.common import MessageResponse
 from app.schemas.student import StudentAttendanceHistoryResponse, StudentAttendanceNoteRequest
 from app.services.attendance.attendance_queue_service import AttendanceQueueService
-from app.services.attendance_service import AttendanceService, AttendanceSubmission
+from app.services import occurrence_face_review_service as face_review
+from app.services.attendance_service import AttendanceSubmission
 from app.services.s3_service import s3_service
 from app.services.student_service import StudentService
 
 router = APIRouter()
+
+
+async def _analyze(
+    student: Student, session_id: str, latitude: float, longitude: float, accuracy: float, image: UploadFile | None
+) -> dict:
+    """`session_id` is the class occurrence the teacher opened for attendance."""
+    await rate_limit_student(student.id, max_requests=10, window_seconds=60)
+    image_url = None
+    if image:
+        validate_image(image)
+        image_url, _ = await save_uploaded_image(image, "attendance")
+    try:
+        return await face_review.analyze_occurrence(student, session_id, latitude, longitude, accuracy, image_url)
+    except Exception:
+        if image_url:
+            s3_service.delete_file(image_url)
+        raise
+
+
+async def _confirm(student: Student, review_token: str) -> AttendanceMarkResponse:
+    record, result = await face_review.confirm_occurrence(student, review_token)
+    return AttendanceMarkResponse(
+        id=record.id,
+        student_id=record.studentId,
+        session_id=record.occurrenceId,
+        status=result["predicted_status"],
+        face_score=result["face_score"],
+        liveness_score=result["liveness_score"],
+        background_score=result["background_score"],
+        final_ai_score=result["final_ai_score"],
+        gps_latitude=record.gpsLatitude,
+        gps_longitude=record.gpsLongitude,
+        created_at=record.verifiedAt,
+    )
 
 
 @router.post("/attendance/mark", response_model=AttendanceMarkResponse)
@@ -32,28 +67,9 @@ async def mark_attendance(
     accuracy: float = Form(...),
     image: UploadFile | None = File(None),
     student: Student = Depends(get_current_student),
-    attendance_service: AttendanceService = Depends(),
 ) -> AttendanceMarkResponse:
-    await rate_limit_student(student.id, max_requests=10, window_seconds=60)
-    image_url = None
-    if image:
-        validate_image(image)
-        image_url, _ = await save_uploaded_image(image, "attendance")
-    submission = AttendanceSubmission(
-        student_id=student.id,
-        session_id=session_id,
-        latitude=latitude,
-        longitude=longitude,
-        accuracy=accuracy,
-        image_path=image_url,
-    )
-    try:
-        attendance = await attendance_service.mark_attendance(submission)
-        return AttendanceMarkResponse.model_validate(attendance)
-    except ValueError as err:
-        if image_url:
-            s3_service.delete_file(image_url)
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(err))
+    analysis = await _analyze(student, session_id, latitude, longitude, accuracy, image)
+    return await _confirm(student, analysis["review_token"])
 
 
 @router.post("/attendance/analyze", response_model=AttendanceAnalyzeResponse)
@@ -64,43 +80,16 @@ async def analyze_attendance(
     accuracy: float = Form(...),
     image: UploadFile | None = File(None),
     student: Student = Depends(get_current_student),
-    attendance_service: AttendanceService = Depends(),
 ) -> AttendanceAnalyzeResponse:
-    await rate_limit_student(student.id, max_requests=10, window_seconds=60)
-    image_url = None
-    image_bytes = None
-    if image:
-        validate_image(image)
-        image_url, image_bytes = await save_uploaded_image(image, "attendance")
-    submission = AttendanceSubmission(
-        student_id=student.id,
-        session_id=session_id,
-        latitude=latitude,
-        longitude=longitude,
-        accuracy=accuracy,
-        image_path=image_url,
-        image_bytes=image_bytes,
-    )
-    try:
-        result = await attendance_service.analyze_attendance(submission)
-        return AttendanceAnalyzeResponse(**result)
-    except ValueError as err:
-        if image_url:
-            s3_service.delete_file(image_url)
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(err))
+    return AttendanceAnalyzeResponse(**await _analyze(student, session_id, latitude, longitude, accuracy, image))
 
 
 @router.post("/attendance/confirm", response_model=AttendanceMarkResponse)
 async def confirm_attendance(
     review_token: str = Form(...),
     student: Student = Depends(get_current_student),
-    attendance_service: AttendanceService = Depends(),
 ) -> AttendanceMarkResponse:
-    try:
-        attendance = await attendance_service.confirm_attendance(student.id, review_token)
-        return AttendanceMarkResponse.model_validate(attendance)
-    except ValueError as err:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(err))
+    return await _confirm(student, review_token)
 
 
 @router.post("/attendance/async-mark", response_model=AttendanceAsyncEnqueueResponse, status_code=status.HTTP_202_ACCEPTED)

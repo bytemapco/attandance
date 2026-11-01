@@ -76,6 +76,19 @@ class BulkImportService:
                         continue
                     dept_id = found_dept.id
 
+                batch_id, batch_code = None, None
+                if item.batch_code:
+                    found_batch = await db.batch.find_first(
+                        where={"tenantId": tenant_id, "departmentId": dept_id, "code": item.batch_code.strip()}
+                    ) if tenant_id else await db.batch.find_first(
+                        where={"departmentId": dept_id, "code": item.batch_code.strip()}
+                    )
+                    if not found_batch or found_batch.status != "ACTIVE":
+                        errors.append(f"Row {idx + 1}: Active batch '{item.batch_code}' not found in this department.")
+                        failed_count += 1
+                        continue
+                    batch_id, batch_code = found_batch.id, found_batch.code
+
                 plain_password = getattr(item, "password", None) or generate_temporary_password()
                 must_change = not bool(getattr(item, "password", None))
                 user_data = {
@@ -94,15 +107,16 @@ class BulkImportService:
                             k: v
                             for k, v in {
                                 "userId": user.id,
+                                "tenantId": tenant_id,
                                 "enrollmentNumber": item.enrollment_number,
                                 "firstName": item.first_name,
                                 "lastName": item.last_name,
                                 "gender": item.gender,
-                                "branch": item.branch,
                                 "phone": item.phone,
                                 "dateOfBirth": getattr(item, "date_of_birth", None),
                                 "semester": item.semester,
-                                "batch": item.batch,
+                                "batchId": batch_id,
+                                "batch": batch_code,
                                 "departmentId": dept_id,
                             }.items()
                             if v is not None

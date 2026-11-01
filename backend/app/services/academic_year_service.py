@@ -2,7 +2,13 @@ from datetime import date, datetime, timedelta
 from typing import Optional
 from fastapi import HTTPException, status
 from app.db.client import db
-from app.schemas.academic_year import AcademicYearCreate, AcademicYearUpdate, CalendarEventCreate
+from app.schemas.academic_year import (
+    AcademicYearCreate,
+    AcademicYearUpdate,
+    CalendarEventCreate,
+    SemesterCreate,
+    SemesterUpdate,
+)
 from app.services.occurrence_generator import OccurrenceGenerator
 
 
@@ -162,3 +168,73 @@ class AcademicYearService:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Calendar event not found.")
         await db.academiccalendarevent.delete(where={"id": event_id})
         return {"success": True, "message": "Calendar event deleted successfully."}
+
+    # Semesters
+    @staticmethod
+    async def list_semesters(tenant_id: str, academic_year_id: Optional[str] = None):
+        where = {"tenantId": tenant_id}
+        if academic_year_id:
+            where["academicYearId"] = academic_year_id
+        return await db.semester.find_many(
+            where=where,
+            include={"classTerms": True},
+            order=[{"academicYearId": "asc"}, {"number": "asc"}],
+        )
+
+    @staticmethod
+    async def create_semester(tenant_id: str, academic_year_id: str, data: SemesterCreate):
+        year = await AcademicYearService.get_academic_year(tenant_id, academic_year_id)
+        if data.start_date >= data.end_date:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="start_date must be strictly before end_date.",
+            )
+        existing = await db.semester.find_first(
+            where={"tenantId": tenant_id, "academicYearId": academic_year_id, "number": data.number}
+        )
+        if existing:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail=f"Semester {data.number} already exists for '{year.name}'.",
+            )
+        return await db.semester.create(
+            data={
+                "tenantId": tenant_id,
+                "academicYearId": academic_year_id,
+                "number": data.number,
+                "startDate": _to_dt(data.start_date),
+                "endDate": _to_dt(data.end_date),
+            },
+            include={"classTerms": True},
+        )
+
+    @staticmethod
+    async def update_semester(tenant_id: str, semester_id: str, data: SemesterUpdate):
+        sem = await db.semester.find_first(where={"id": semester_id, "tenantId": tenant_id})
+        if not sem:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Semester not found.")
+        update_data = {}
+        if data.number is not None:
+            update_data["number"] = data.number
+        if data.start_date is not None:
+            update_data["startDate"] = _to_dt(data.start_date)
+        if data.end_date is not None:
+            update_data["endDate"] = _to_dt(data.end_date)
+        return await db.semester.update(
+            where={"id": semester_id}, data=update_data, include={"classTerms": True}
+        )
+
+    @staticmethod
+    async def delete_semester(tenant_id: str, semester_id: str):
+        sem = await db.semester.find_first(
+            where={"id": semester_id, "tenantId": tenant_id}, include={"classTerms": True}
+        )
+        if not sem:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Semester not found.")
+        if sem.classTerms:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Cannot delete a semester that has classes assigned to it.",
+            )
+        await db.semester.delete(where={"id": semester_id})
+        return {"success": True, "message": "Semester deleted successfully."}

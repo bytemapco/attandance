@@ -23,6 +23,8 @@ class DesignationService:
         data = {"name": name, "code": code, "description": description}
         if tenant_id:
             data["tenantId"] = tenant_id
+        if await db.designation.find_first(where={"tenantId": tenant_id, "code": code}):
+            raise ValueError(f"Designation code '{code}' already exists.")
         return await db.designation.create(data=data)
 
     @staticmethod

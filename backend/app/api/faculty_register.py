@@ -3,7 +3,7 @@ from typing import Optional
 from fastapi import APIRouter, Depends, Query
 from prisma.models import Teacher, User
 
-from app.api.dependencies import get_current_teacher, get_current_user, get_tenant_context
+from app.api.dependencies import RoleChecker, get_current_teacher, get_current_user, get_tenant_context
 from app.core.datetime_utils import get_ist_today
 from app.schemas.timetable import AttendanceRegisterBulkUpdate
 from app.services.occurrence_register_service import OccurrenceRegisterService
@@ -36,6 +36,9 @@ async def get_daily_schedule(
             "substitute_faculty_id": o.substituteFacultyId,
             "status": o.status,
             "is_attendance_locked": o.isAttendanceLocked,
+            "verification_active": o.verificationActive,
+            "verification_expires": o.verificationExpires,
+            "class_code": o.courseSection.name if o.courseSection else "",
             "course_name": o.courseSection.subject.name if o.courseSection and o.courseSection.subject else "Class",
             "subject_code": o.courseSection.subject.code if o.courseSection and o.courseSection.subject else "",
             "section_name": o.courseSection.name if o.courseSection else "",
@@ -58,9 +61,9 @@ async def get_daily_schedule(
 async def get_occurrence_register(
     occurrence_id: str,
     tenant_id: str = Depends(get_tenant_context),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(RoleChecker(["TEACHER", "ADMIN"])),
 ):
-    return await OccurrenceRegisterService.get_occurrence_register(tenant_id, occurrence_id)
+    return await OccurrenceRegisterService.get_occurrence_register(tenant_id, occurrence_id, current_user)
 
 
 @router.put("/occurrences/{occurrence_id}/register")
@@ -68,11 +71,11 @@ async def update_occurrence_register(
     occurrence_id: str,
     payload: AttendanceRegisterBulkUpdate,
     tenant_id: str = Depends(get_tenant_context),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(RoleChecker(["TEACHER", "ADMIN"])),
 ):
     return await OccurrenceRegisterService.update_register_bulk(
         tenant_id=tenant_id,
-        user_id=current_user.id,
+        user=current_user,
         occurrence_id=occurrence_id,
         updates=payload.updates,
         reason=payload.reason,

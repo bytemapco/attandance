@@ -39,9 +39,3 @@ class StudentRepository:
             data={"currentStreak": current_streak, "highestStreak": highest_streak},
         )
         return True
-
-    async def get_all_active(self) -> List[Student]:
-        return await db.student.find_many(
-            where={"user": {"is": {"isActive": True}}},
-            include={"user": True},
-        )

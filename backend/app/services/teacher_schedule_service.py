@@ -1,6 +1,7 @@
 from datetime import datetime, timezone, timedelta
 from typing import Optional
 from fastapi import HTTPException, status
+from app.core.datetime_utils import get_ist_today
 from app.db.client import db
 
 
@@ -66,6 +67,10 @@ class TeacherScheduleService:
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Unauthorized for this occurrence.")
         if occurrence.isAttendanceLocked:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Occurrence attendance is locked.")
+        if occurrence.status == "CANCELLED":
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="This class was cancelled.")
+        if occurrence.date.date() != get_ist_today():
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Attendance can only be started on the day of the class.")
 
         window_min = 60
         if occurrence.courseSection and occurrence.courseSection.academicYear:

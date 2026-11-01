@@ -1,5 +1,6 @@
 from functools import wraps
 from fastapi import HTTPException, Request, status
+from prisma.errors import PrismaError
 
 from app.core.logging_config import get_logger
 from app.db.client import db
@@ -26,6 +27,8 @@ def handle_value_err(func):
             if "not found" in err_msg.lower():
                 raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=err_msg)
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=err_msg)
+        except PrismaError:
+            raise
         except Exception as err:
             logger.error("Admin operation error: %s", err, exc_info=True)
             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal server error")
@@ -45,6 +48,8 @@ def handle_generic_err(func):
             if "not found" in err_msg.lower():
                 raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=err_msg)
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=err_msg)
+        except PrismaError:
+            raise
         except Exception as err:
             logger.error("Admin generic operation error: %s", err, exc_info=True)
             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal server error")

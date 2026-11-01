@@ -115,40 +115,8 @@ class SuperAdminStatsResponse(BaseModel):
     total_attendance: int
 
 
-class GlobalUserItem(BaseModel):
-    id: str
-    email: str
-    role: str
-    is_active: bool
-    tenant_id: Optional[str] = None
-    tenant_name: Optional[str] = None
-    tenant_slug: Optional[str] = None
-    first_name: Optional[str] = None
-    last_name: Optional[str] = None
-    identifier: Optional[str] = None  # Roll no or employee id
-    created_at: datetime
-
-
 class GlobalUserStatusUpdateRequest(BaseModel):
     is_active: bool
-
-
-class GlobalUserPasswordResetRequest(BaseModel):
-    new_password: str = Field(..., min_length=6)
-
-
-class SuperAdminAuditLogItem(BaseModel):
-    id: str
-    timestamp: datetime
-    event_type: str
-    severity: str
-    actor: str
-    target: str
-    description: str
-    ip_address: Optional[str] = None
-    tenant_id: Optional[str] = None
-    tenant_name: Optional[str] = None
-    metadata: Optional[Dict[str, Any]] = None
 
 
 class PlatformHealthService(BaseModel):

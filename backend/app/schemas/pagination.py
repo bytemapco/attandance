@@ -1,15 +1,7 @@
 from typing import Generic, TypeVar, Sequence
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 T = TypeVar("T")
-
-
-class PaginationParams(BaseModel):
-    page: int = Field(1, ge=1, description="1-based page index")
-    page_size: int = Field(10, ge=1, le=100, description="Items per page (max 100)")
-    sort_by: str | None = Field(None, description="Field name to sort by")
-    sort_order: str = Field("asc", pattern="^(asc|desc)$", description="Sort direction")
-    q: str | None = Field(None, description="Search query string")
 
 
 class PaginatedResponse(BaseModel, Generic[T]):

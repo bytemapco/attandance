@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, Request, status
+from prisma.errors import PrismaError
 from prisma.models import User
 
 from app.api.admin.helpers import get_client_ip, handle_generic_err, logger, require_classroom_in_tenant
@@ -84,6 +85,8 @@ async def delete_classroom(
         return MessageResponse(status="success", message="Classroom deleted successfully")
     except ValueError as err:
         raise HTTPException(status_code=400, detail=str(err))
+    except PrismaError:
+        raise
     except Exception as exc:
         logger.error("Failed to delete classroom %s: %s", id, exc, exc_info=True)
         raise HTTPException(status_code=500, detail="Internal server error")

@@ -26,8 +26,6 @@ class ClassAdminService:
             if not sub and tenant_id:
                 sub = await db.subject.find_first(where={"tenantId": tenant_id})
             if not sub:
-                sub = await db.subject.find_first()
-            if not sub:
                 sub = await db.subject.create(data={
                     "name": "General Studies",
                     "code": "GEN101",
@@ -44,18 +42,20 @@ class ClassAdminService:
             if not t and tenant_id:
                 t = await db.teacher.find_first(where={"tenantId": tenant_id})
             if not t:
-                t = await db.teacher.find_first()
-            if not t:
                 raise ValueError("No teacher profile available to assign to this class.")
             teacher_id = t.id
 
         if tenant_id and db.is_connected():
-            if not await db.teacher.find_first(where={"id": teacher_id}):
+            if not await db.teacher.find_first(where={"id": teacher_id, "tenantId": tenant_id}):
                 raise ValueError("Teacher profile not found.")
-            if not await db.subject.find_first(where={"id": subject_id}):
+            if not await db.subject.find_first(where={"id": subject_id, "tenantId": tenant_id}):
                 raise ValueError(f"Subject with id '{subject_id}' not found.")
             if data.classroom_id and not await db.classroom.find_first(where={"id": data.classroom_id, "tenantId": tenant_id}):
                 raise ValueError(f"Classroom with id '{data.classroom_id}' not found.")
+
+        if data.batch and tenant_id and db.is_connected():
+            if not await db.batch.find_first(where={"tenantId": tenant_id, "code": data.batch}):
+                raise ValueError(f"Batch '{data.batch}' not found. Add it under Master Data > Departments.")
 
         year_id = data.academic_year_id or data.academic_term_id
         resolved_name = (data.name or "").strip()

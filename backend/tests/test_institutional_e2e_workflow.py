@@ -57,7 +57,7 @@ async def test_complete_institutional_academic_attendance_workflow() -> None:
         assert occurrences[0].status == "SCHEDULED"
 
     # Step 6: Attendance Register Submission, Status Transition, and Audit Log
-    mock_occ = SimpleNamespace(id="occ-1", isAttendanceLocked=False, status="SCHEDULED")
+    mock_occ = SimpleNamespace(id="occ-1", courseSectionId="sec-1", isAttendanceLocked=False, status="SCHEDULED")
     mock_rec = SimpleNamespace(id="rec-1", status="ABSENT", remarks=None)
     with patch("app.services.occurrence_register_service.db") as mock_db:
         mock_db.classoccurrence.find_first = AsyncMock(return_value=mock_occ)
@@ -65,10 +65,13 @@ async def test_complete_institutional_academic_attendance_workflow() -> None:
         mock_db.attendanceauditlog.create = AsyncMock()
         mock_db.attendancerecord.update = AsyncMock()
         mock_db.classoccurrence.update = AsyncMock()
+        mock_db.courseenrollment.find_many = AsyncMock(
+            return_value=[SimpleNamespace(studentId="stud-1"), SimpleNamespace(studentId="stud-2")]
+        )
 
         result = await OccurrenceRegisterService.update_register_bulk(
             tenant_id=tenant_id,
-            user_id="user-teach-1",
+            user=SimpleNamespace(id="user-admin-1", role="ADMIN"),
             occurrence_id="occ-1",
             updates=[
                 AttendanceRegisterItem(student_id="stud-1", status="PRESENT", remarks="Attended"),
@@ -88,7 +91,7 @@ async def test_complete_institutional_academic_attendance_workflow() -> None:
         with pytest.raises(Exception) as exc:
             await OccurrenceRegisterService.update_register_bulk(
                 tenant_id=tenant_id,
-                user_id="user-teach-1",
+                user=SimpleNamespace(id="user-admin-1", role="ADMIN"),
                 occurrence_id="occ-locked",
                 updates=[AttendanceRegisterItem(student_id="stud-1", status="PRESENT")],
             )

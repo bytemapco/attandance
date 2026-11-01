@@ -146,15 +146,17 @@ async def get_me(current_user: User = Depends(get_current_user)) -> UserProfileR
                 last_name=student.lastName,
                 phone=student.phone,
                 gender=student.gender,
-                branch=student.branch,
                 semester=student.semester,
                 batch=student.batch,
+                batch_id=student.batchId,
                 department_id=student.departmentId,
                 department_name=student.department.name if student.department else None,
                 face_registered=embedding is not None and len(embedding) > 0,
             )
     elif current_user.role == "TEACHER":
-        teacher = await db.teacher.find_unique(where={"userId": current_user.id})
+        teacher = await db.teacher.find_unique(
+            where={"userId": current_user.id}, include={"department": True, "designation": True}
+        )
         if teacher:
             teacher_profile = TeacherProfileBrief(
                 id=teacher.id,
@@ -246,7 +248,7 @@ async def forgot_password(
     frontend_url = resolve_frontend_url(request)
     await auth_service.request_password_reset(data.email, frontend_url=frontend_url)
     return MessageResponse(
-        status="success", message="If the email is registered, a password reset link has been dispatched."
+        status="success", message="Password reset link sent. Check your inbox."
     )
 
 

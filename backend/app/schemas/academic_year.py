@@ -96,6 +96,36 @@ class CalendarEventCreate(BaseModel):
     description: Optional[str] = None
 
 
+class SemesterCreate(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    number: int = Field(..., ge=1, le=12, description="Semester number within the academic year, e.g. 1 or 2")
+    start_date: date
+    end_date: date
+
+
+class SemesterUpdate(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    number: Optional[int] = Field(None, ge=1, le=12)
+    start_date: Optional[date] = None
+    end_date: Optional[date] = None
+
+
+class SemesterResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str
+    tenant_id: str
+    academic_year_id: str
+    number: int
+    start_date: date
+    end_date: date
+    classes_count: Optional[int] = 0
+    created_at: datetime
+    updated_at: datetime
+
+
 class CalendarEventResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 

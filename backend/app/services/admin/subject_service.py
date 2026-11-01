@@ -44,6 +44,8 @@ class SubjectService:
             data["departmentId"] = resolved_dept_id
         if tenant_id:
             data["tenantId"] = tenant_id
+        if await db.subject.find_first(where={"tenantId": tenant_id, "code": code}):
+            raise ValueError(f"Subject code '{code}' already exists.")
         return await db.subject.create(data=data)
 
     @staticmethod

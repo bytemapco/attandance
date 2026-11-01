@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from prisma.models import User
 
 from app.api.admin.helpers import get_client_ip, handle_generic_err, require_teacher_in_tenant
@@ -53,8 +53,8 @@ async def bulk_create_teachers(
     dependencies=[Depends(rate_limiter(requests_limit=120, window_seconds=60))],
 )
 async def get_teachers(
-    page: int = 1,
-    page_size: int = 10,
+    page: int = Query(1, ge=1),
+    page_size: int = Query(10, ge=1, le=1000),
     sort_by: str | None = None,
     sort_order: str = "asc",
     q: str | None = None,
@@ -66,7 +66,7 @@ async def get_teachers(
 ):
     return await admin_service.get_all_teachers(
         page=page,
-        page_size=min(page_size, 100),
+        page_size=page_size,
         sort_by=sort_by,
         sort_order=sort_order,
         q=q,
@@ -95,15 +95,12 @@ async def get_teacher_by_id(
         employee_id=teacher.employeeId,
         first_name=teacher.firstName,
         last_name=teacher.lastName,
+        name_initials=teacher.nameInitials,
         department_id=teacher.departmentId,
         designation_id=teacher.designationId,
         department=teacher.department.name if teacher.department else "",
         designation=teacher.designation.name if teacher.designation else "",
         phone=teacher.phone,
-        qualification=teacher.qualification,
-        specialization=teacher.specialization,
-        experience_years=teacher.experienceYears,
-        joining_date=teacher.joiningDate,
     )
 
 

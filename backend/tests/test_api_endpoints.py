@@ -46,10 +46,10 @@ async def test_student_biometric_consent_unauthorized(async_client: AsyncClient)
 
 
 @pytest.mark.anyio
-async def test_teacher_sessions_unauthorized(async_client: AsyncClient) -> None:
+async def test_teacher_classes_unauthorized(async_client: AsyncClient) -> None:
     # Requires X-Tenant-ID header to pass TenantResolutionMiddleware
     response = await async_client.get(
-        "/teacher/sessions/all",
+        "/faculty/classes",
         headers={"X-Tenant-ID": "test-tenant-id"},
     )
     assert response.status_code == 401

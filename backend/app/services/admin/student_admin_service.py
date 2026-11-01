@@ -3,6 +3,7 @@ from app.core.logging_config import get_logger
 from app.core.security import hash_password, generate_temporary_password
 from app.db.client import db
 from app.schemas.student import StudentCreate, StudentResponse
+from app.services.batch_service import resolve_assignable_batch
 
 logger = get_logger("app.services.admin.student")
 
@@ -25,14 +26,14 @@ class StudentAdminService:
     @staticmethod
     async def create_student(data: StudentCreate, tenant_id: Optional[str] = None, db_client=None) -> StudentResponse:
         database = db_client or db
-        if data.department_id:
-            if tenant_id and _check_db_connected(database):
-                dept_where = {"id": data.department_id, "tenantId": tenant_id}
-                if not await database.department.find_first(where=dept_where):
-                    raise ValueError("Department not found.")
-            else:
-                if not await database.department.find_unique(where={"id": data.department_id}):
-                    raise ValueError("Department not found.")
+        if tenant_id and _check_db_connected(database):
+            dept_where = {"id": data.department_id, "tenantId": tenant_id}
+            if not await database.department.find_first(where=dept_where):
+                raise ValueError("Department not found.")
+        else:
+            if not await database.department.find_unique(where={"id": data.department_id}):
+                raise ValueError("Department not found.")
+        batch = await resolve_assignable_batch(tenant_id, data.batch_id, data.department_id, client=database)
 
         if tenant_id and _check_db_connected(database):
             tenant = await database.tenant.find_unique(where={"id": tenant_id})
@@ -63,15 +64,16 @@ class StudentAdminService:
             k: v
             for k, v in {
                 "userId": user.id,
+                "tenantId": tenant_id,
                 "enrollmentNumber": data.enrollment_number,
                 "firstName": data.first_name,
                 "lastName": data.last_name,
                 "phone": data.phone,
                 "gender": data.gender,
-                "branch": data.branch,
                 "dateOfBirth": data.date_of_birth,
                 "semester": data.semester,
-                "batch": data.batch,
+                "batchId": batch.id,
+                "batch": batch.code,
                 "departmentId": data.department_id,
             }.items()
             if v is not None
@@ -86,7 +88,9 @@ class StudentAdminService:
                 logger.error("Failed to rollback user %s after student creation failure: %s", user.id, cleanup_exc)
             raise exc
 
+        invitation_sent: Optional[bool] = None
         if data.send_invite:
+            invitation_sent = False
             try:
                 from app.services.auth_service import AuthService
                 from app.services.email_service import email_service
@@ -104,6 +108,7 @@ class StudentAdminService:
                     identifier_value=data.enrollment_number,
                     temp_password=plain_password if must_change else None,
                 )
+                invitation_sent = bool(sent)
                 if not sent:
                     logger.warning("Student invitation email was not sent (check SMTP settings) for %s", user.email)
             except Exception as e:
@@ -118,12 +123,13 @@ class StudentAdminService:
             last_name=student.lastName,
             phone=student.phone,
             gender=student.gender,
-            branch=student.branch,
             date_of_birth=student.dateOfBirth,
             department_id=student.departmentId,
-            department_name=student.department.name if student.department else None,
+            department_name=student.department.name if student.department else "",
             semester=student.semester,
             batch=student.batch,
+            batch_id=student.batchId,
+            invitation_sent=invitation_sent,
         )
 
     @staticmethod
@@ -135,8 +141,7 @@ class StudentAdminService:
         q: Optional[str] = None,
         department_id: Optional[str] = None,
         semester: Optional[int] = None,
-        batch: Optional[str] = None,
-        branch: Optional[str] = None,
+        batch_id: Optional[str] = None,
         status: Optional[str] = None,
         tenant_id: Optional[str] = None,
     ) -> dict:
@@ -147,10 +152,8 @@ class StudentAdminService:
             where["departmentId"] = department_id
         if semester is not None and semester > 0:
             where["semester"] = semester
-        if batch and batch.strip() and batch != "all":
-            where["batch"] = batch.strip()
-        if branch and branch.strip() and branch != "all":
-            where["branch"] = branch.strip()
+        if batch_id and batch_id != "all":
+            where["batchId"] = batch_id
         if status and status.strip() and status != "all":
             is_active_val = status.lower() == "active"
             existing_user_where = where.get("user", {}).get("is", {})
@@ -162,7 +165,6 @@ class StudentAdminService:
                 {"firstName": {"contains": query_str, "mode": "insensitive"}},
                 {"lastName": {"contains": query_str, "mode": "insensitive"}},
                 {"enrollmentNumber": {"contains": query_str, "mode": "insensitive"}},
-                {"branch": {"contains": query_str, "mode": "insensitive"}},
                 {"user": {"is": {"email": {"contains": query_str, "mode": "insensitive"}}}},
             ]
 
@@ -195,12 +197,12 @@ class StudentAdminService:
                 last_name=s.lastName,
                 phone=s.phone,
                 gender=s.gender,
-                branch=s.branch,
                 date_of_birth=s.dateOfBirth,
                 department_id=s.departmentId,
-                department_name=s.department.name if s.department else None,
+                department_name=s.department.name if s.department else "",
                 semester=s.semester,
                 batch=s.batch,
+                batch_id=s.batchId,
                 is_active=s.user.isActive if s.user else True,
             )
             for s in students
@@ -218,6 +220,7 @@ class StudentAdminService:
 
     @staticmethod
     async def update_student(id: str, data: dict, tenant_id: Optional[str] = None) -> StudentResponse:
+        existing = None
         if tenant_id and db.is_connected():
             existing = await db.student.find_first(where={"id": id, "user": {"is": {"tenantId": tenant_id}}})
             if not existing:
@@ -236,13 +239,14 @@ class StudentAdminService:
             "last_name": "lastName",
             "phone": "phone",
             "gender": "gender",
-            "branch": "branch",
             "date_of_birth": "dateOfBirth",
             "semester": "semester",
-            "batch": "batch",
             "department_id": "departmentId",
         }
         update_data = {mapping[k]: v for k, v in data.items() if k in mapping}
+        if "department_id" in data or "batch_id" in data:
+            update_data.update(await StudentAdminService._batch_update_fields(id, data, tenant_id, existing))
+
         student = await db.student.update(
             where={"id": id}, data=update_data, include={"user": True, "department": True}
         )
@@ -255,48 +259,38 @@ class StudentAdminService:
             last_name=student.lastName,
             phone=student.phone,
             gender=student.gender,
-            branch=student.branch,
             date_of_birth=student.dateOfBirth,
             department_id=student.departmentId,
-            department_name=student.department.name if student.department else None,
+            department_name=student.department.name if student.department else "",
             semester=student.semester,
             batch=student.batch,
+            batch_id=student.batchId,
             is_active=student.user.isActive if student.user else True,
         )
 
     @staticmethod
+    async def _batch_update_fields(id: str, data: dict, tenant_id: Optional[str], existing) -> dict:
+        current = existing or await db.student.find_unique(where={"id": id})
+        department_id = data.get("department_id") or current.departmentId
+        department_changed = department_id != current.departmentId
+        if "batch_id" in data:
+            batch_id = data["batch_id"]
+        else:
+            batch_id = None if department_changed else current.batchId
+        batch = await resolve_assignable_batch(tenant_id, batch_id, department_id)
+        if batch is None:
+            raise ValueError("Select a batch for this student's department.")
+        return {"batchId": batch.id, "batch": batch.code}
+
+    @staticmethod
     async def get_filter_facets(tenant_id: Optional[str] = None) -> dict:
-        branches: list[str] = []
-        batches: list[str] = []
         semesters: list[int] = []
 
         if not _check_db_connected(db):
-            return {"branches": branches, "batches": batches, "semesters": semesters}
+            return {"semesters": semesters}
 
         try:
             if tenant_id:
-                branch_rows = await db.query_raw(
-                    """
-                    SELECT DISTINCT TRIM(s.branch) as val
-                    FROM students s
-                    LEFT JOIN users u ON s.user_id = u.id
-                    WHERE (u.tenant_id = $1 OR s.tenant_id = $1)
-                      AND s.branch IS NOT NULL AND TRIM(s.branch) != ''
-                    ORDER BY val ASC
-                    """,
-                    tenant_id,
-                )
-                batch_rows = await db.query_raw(
-                    """
-                    SELECT DISTINCT TRIM(s.batch) as val
-                    FROM students s
-                    LEFT JOIN users u ON s.user_id = u.id
-                    WHERE (u.tenant_id = $1 OR s.tenant_id = $1)
-                      AND s.batch IS NOT NULL AND TRIM(s.batch) != ''
-                    ORDER BY val DESC
-                    """,
-                    tenant_id,
-                )
                 semester_rows = await db.query_raw(
                     """
                     SELECT DISTINCT s.semester as val
@@ -309,22 +303,6 @@ class StudentAdminService:
                     tenant_id,
                 )
             else:
-                branch_rows = await db.query_raw(
-                    """
-                    SELECT DISTINCT TRIM(branch) as val
-                    FROM students
-                    WHERE branch IS NOT NULL AND TRIM(branch) != ''
-                    ORDER BY val ASC
-                    """
-                )
-                batch_rows = await db.query_raw(
-                    """
-                    SELECT DISTINCT TRIM(batch) as val
-                    FROM students
-                    WHERE batch IS NOT NULL AND TRIM(batch) != ''
-                    ORDER BY val DESC
-                    """
-                )
                 semester_rows = await db.query_raw(
                     """
                     SELECT DISTINCT semester as val
@@ -333,28 +311,8 @@ class StudentAdminService:
                     ORDER BY val ASC
                     """
                 )
-
-            branches = [str(r["val"]).strip() for r in branch_rows if r.get("val")]
-            batches = [str(r["val"]).strip() for r in batch_rows if r.get("val")]
             semesters = [int(r["val"]) for r in semester_rows if r.get("val") is not None]
         except Exception as exc:
-            logger.warning("Error fetching student facets via raw query: %s. Falling back to find_many.", exc)
-            try:
-                where: dict = {}
-                if tenant_id:
-                    where["user"] = {"is": {"tenantId": tenant_id}}
-                students = await db.student.find_many(where=where)
-                branch_set = {s.branch.strip() for s in students if s.branch and s.branch.strip()}
-                batch_set = {s.batch.strip() for s in students if s.batch and s.batch.strip()}
-                semester_set = {s.semester for s in students if s.semester is not None and s.semester > 0}
-                branches = sorted(branch_set)
-                batches = sorted(batch_set, reverse=True)
-                semesters = sorted(semester_set)
-            except Exception as fallback_exc:
-                logger.error("Fallback finding facets also failed: %s", fallback_exc)
+            logger.error("Error fetching student facets: %s", exc)
 
-        return {
-            "branches": branches,
-            "batches": batches,
-            "semesters": semesters,
-        }
+        return {"semesters": semesters}

@@ -1,27 +1,6 @@
-from datetime import datetime, date
+from datetime import datetime
 from typing import Optional, Literal
 from pydantic import BaseModel, Field, field_validator, ConfigDict
-
-
-class LeaveRequestCreate(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
-    start_date: date = Field(..., description="Leave start date")
-    end_date: date = Field(..., description="Leave end date")
-    reason: str = Field(..., min_length=10, max_length=500, description="Reason for leave")
-    document_url: Optional[str] = Field(None, max_length=1000, description="Supporting document URL")
-
-    @field_validator("reason", mode="before")
-    @classmethod
-    def strip_reason(cls, v: str) -> str:
-        return v.strip() if isinstance(v, str) else v
-
-    @field_validator("end_date")
-    @classmethod
-    def validate_date_range(cls, v: date, info) -> date:
-        if "start_date" in info.data and v < info.data["start_date"]:
-            raise ValueError("end_date must be after or equal to start_date")
-        return v
 
 
 class LeaveRequestResponse(BaseModel):

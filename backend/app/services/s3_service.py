@@ -1,11 +1,7 @@
-import mimetypes
-import os
-import uuid
 from typing import Optional
 import boto3
 from botocore.config import Config
 from botocore.exceptions import ClientError
-from fastapi import UploadFile
 
 from app.core.config import settings
 from app.core.logging_config import get_logger
@@ -78,46 +74,6 @@ class S3Service:
             ContentType=content_type,
         )
         return self.get_file_url(key)
-
-    async def upload_uploadfile(
-        self,
-        upload_file: UploadFile,
-        folder: str,
-        tenant_id: Optional[str] = None,
-    ) -> tuple[str, str, bytes]:
-        contents = await upload_file.read()
-        await upload_file.seek(0)
-        ext = (
-            os.path.splitext(upload_file.filename)[1].lower()
-            if upload_file.filename
-            else (mimetypes.guess_extension(upload_file.content_type or "") or ".jpg")
-        )
-        if ext == ".jpe":
-            ext = ".jpg"
-        if not ext:
-            ext = ".jpg"
-
-        effective_tenant = tenant_id
-        if not effective_tenant:
-            try:
-                from app.middleware.tenant import get_current_tenant_id
-
-                effective_tenant = get_current_tenant_id()
-            except Exception:
-                effective_tenant = None
-
-        if effective_tenant and effective_tenant != "default-institution":
-            key = f"tenants/{effective_tenant}/{folder}/{uuid.uuid4()}{ext}"
-        else:
-            key = f"{folder}/{uuid.uuid4()}{ext}"
-
-        content_type = (
-            upload_file.content_type
-            or mimetypes.guess_type(upload_file.filename or "")[0]
-            or "application/octet-stream"
-        )
-        url = self.upload_bytes(contents, key, content_type=content_type)
-        return key, url, contents
 
     def download_bytes(self, key_or_url: str) -> bytes:
         key = self._extract_key(key_or_url)

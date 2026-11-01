@@ -88,7 +88,9 @@ class TeacherAdminService:
                 logger.error("Failed to rollback user %s after teacher creation failure: %s", user.id, cleanup_exc)
             raise exc
 
+        invitation_sent: Optional[bool] = None
         if data.send_invite:
+            invitation_sent = False
             try:
                 from app.services.auth_service import AuthService
                 from app.services.email_service import email_service
@@ -106,6 +108,7 @@ class TeacherAdminService:
                     identifier_value=data.employee_id,
                     temp_password=plain_password if must_change else None,
                 )
+                invitation_sent = bool(sent)
                 if not sent:
                     logger.warning("Teacher invitation email was not sent (check SMTP settings) for %s", user.email)
             except Exception as e:
@@ -128,6 +131,7 @@ class TeacherAdminService:
             specialization=getattr(teacher, "specialization", None),
             experience_years=getattr(teacher, "experienceYears", None),
             joining_date=getattr(teacher, "joiningDate", None),
+            invitation_sent=invitation_sent,
         )
 
     @staticmethod

@@ -1,5 +1,5 @@
 from datetime import date, datetime
-from typing import Optional, List
+from typing import Literal, Optional, List
 from pydantic import BaseModel, Field, ConfigDict, field_validator
 
 
@@ -87,57 +87,11 @@ class TimetableRuleResponse(BaseModel):
     classroom_name: Optional[str] = None
 
 
-class ClassOccurrenceResponse(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-
-    id: str
-    tenant_id: str
-    course_section_id: str
-    timetable_rule_id: Optional[str] = None
-    date: date
-    time_slot_id: str
-    classroom_id: Optional[str] = None
-    faculty_id: str
-    substitute_faculty_id: Optional[str] = None
-    status: str
-    cancellation_reason: Optional[str] = None
-    topic_covered: Optional[str] = None
-    is_attendance_locked: bool
-    verification_active: bool
-    verification_expires: Optional[datetime] = None
-    conducted_at: Optional[datetime] = None
-    course_name: Optional[str] = None
-    subject_code: Optional[str] = None
-    section_name: Optional[str] = None
-    classroom_name: Optional[str] = None
-    faculty_name: Optional[str] = None
-    start_time: Optional[str] = None
-    end_time: Optional[str] = None
-    present_count: Optional[int] = 0
-    total_enrolled: Optional[int] = 0
-
-
-class AttendanceRecordResponse(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-
-    id: str
-    occurrence_id: str
-    student_id: str
-    status: str
-    method: str
-    face_score: Optional[float] = None
-    liveness_score: Optional[float] = None
-    remarks: Optional[str] = None
-    verified_at: datetime
-    student_name: Optional[str] = None
-    enrollment_number: Optional[str] = None
-
-
 class AttendanceRegisterItem(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     student_id: str
-    status: str = Field(..., description="PRESENT, ABSENT, EXCUSED, LATE")
+    status: Literal["PRESENT", "ABSENT", "EXCUSED", "LATE"]
     method: Optional[str] = None
     remarks: Optional[str] = None
 

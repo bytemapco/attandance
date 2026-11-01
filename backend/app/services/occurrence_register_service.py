@@ -1,6 +1,7 @@
 from datetime import date, datetime
 from typing import List, Optional
 from fastapi import HTTPException, status
+from prisma.models import User
 from app.db.client import db
 from app.schemas.timetable import AttendanceRegisterItem
 from app.services.occurrence_generator import OccurrenceGenerator
@@ -8,6 +9,15 @@ from app.services.occurrence_generator import OccurrenceGenerator
 
 def _to_dt(d: date) -> datetime:
     return datetime(d.year, d.month, d.day, 0, 0, 0)
+
+
+async def _authorize_register_access(occurrence, user: User) -> None:
+    """Teachers may only open the register of a class they take or substitute; admins are tenant-scoped upstream."""
+    if user.role != "TEACHER":
+        return
+    teacher = await db.teacher.find_first(where={"userId": user.id, "tenantId": occurrence.tenantId})
+    if not teacher or teacher.id not in (occurrence.facultyId, occurrence.substituteFacultyId):
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You are not assigned to this class.")
 
 
 class OccurrenceRegisterService:
@@ -32,7 +42,7 @@ class OccurrenceRegisterService:
         )
 
     @staticmethod
-    async def get_occurrence_register(tenant_id: str, occurrence_id: str):
+    async def get_occurrence_register(tenant_id: str, occurrence_id: str, user: User):
         occurrence = await db.classoccurrence.find_first(
             where={"id": occurrence_id, "tenantId": tenant_id},
             include={
@@ -49,6 +59,7 @@ class OccurrenceRegisterService:
         )
         if not occurrence:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Class occurrence not found")
+        await _authorize_register_access(occurrence, user)
 
         records_by_student = {r.studentId: r for r in occurrence.attendanceRecords}
         students_payload = []
@@ -80,6 +91,10 @@ class OccurrenceRegisterService:
             "date": occurrence.date,
             "status": occurrence.status,
             "is_attendance_locked": occurrence.isAttendanceLocked,
+            "verification_active": occurrence.verificationActive,
+            "verification_expires": occurrence.verificationExpires,
+            "class_code": occurrence.courseSection.name,
+            "classroom_name": occurrence.classroom.name if occurrence.classroom else None,
             "course_name": occurrence.courseSection.subject.name if occurrence.courseSection.subject else "Class",
             "section_name": occurrence.courseSection.name,
             "time_slot": f"{occurrence.timeSlot.startTime} - {occurrence.timeSlot.endTime}",
@@ -89,20 +104,33 @@ class OccurrenceRegisterService:
     @staticmethod
     async def update_register_bulk(
         tenant_id: str,
-        user_id: str,
+        user: User,
         occurrence_id: str,
         updates: List[AttendanceRegisterItem],
         reason: Optional[str] = "Manual faculty attendance submission",
     ):
+        user_id = user.id
         occurrence = await db.classoccurrence.find_first(
             where={"id": occurrence_id, "tenantId": tenant_id}
         )
         if not occurrence:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Class occurrence not found")
+        await _authorize_register_access(occurrence, user)
         if occurrence.isAttendanceLocked:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Attendance register for this class is locked and cannot be modified.",
+            )
+
+        student_ids = {item.student_id for item in updates}
+        enrolled = await db.courseenrollment.find_many(
+            where={"courseSectionId": occurrence.courseSectionId, "studentId": {"in": list(student_ids)}}
+        )
+        unknown = student_ids - {e.studentId for e in enrolled}
+        if unknown:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"{len(unknown)} student(s) are not enrolled in this class.",
             )
 
         updated_count = 0

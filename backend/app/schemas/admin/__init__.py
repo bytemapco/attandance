@@ -36,13 +36,9 @@ from app.schemas.admin.infrastructure import (
 )
 from app.schemas.admin.system import (
     AbsenteeAnomalyItem,
-    AbsenteeScanAnomalyItem,
-    AbsenteeScanResponse,
     AdminStatsResponse,
     AuditLogResponse,
-    LicenseDetailResponse,
     LicenseRequestCreate,
-    LicenseRequestResponse,
     StudentFilterFacetsResponse,
 )
 
@@ -63,14 +59,10 @@ __all__ = [
     "DesignationCreate",
     "DesignationUpdate",
     "AuditLogResponse",
-    "AbsenteeScanAnomalyItem",
-    "AbsenteeScanResponse",
     "AbsenteeAnomalyItem",
     "AdminStatsResponse",
     "StudentFilterFacetsResponse",
-    "LicenseDetailResponse",
     "LicenseRequestCreate",
-    "LicenseRequestResponse",
     "BulkImportResponse",
     "StudentBulkItem",
     "StudentBulkCreateRequest",

@@ -49,15 +49,6 @@ class AdminSearchService:
                 icon_type="cpu",
                 badge="AI Tool",
             ),
-            SearchResultItem(
-                id="admin-act-settings",
-                title="Verification Settings",
-                subtitle="Facial match, geofence, and Bluetooth configuration",
-                category="action",
-                href="/admin/setup/verification-settings",
-                icon_type="shield-check",
-                badge="Settings",
-            ),
         ]
 
         if not query:

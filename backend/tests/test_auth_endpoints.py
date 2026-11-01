@@ -31,7 +31,8 @@ async def test_auth_me_student_profile(async_client: AsyncClient) -> None:
         gender="Female",
         branch="CS",
         semester=4,
-        batch="2023-2027",
+        batch="CS-A-1",
+        batchId="batch-1",
         departmentId="dept-1",
         department=SimpleNamespace(name="Computer Science"),
     )
@@ -109,7 +110,7 @@ async def test_auth_forgot_and_reset_password(async_client: AsyncClient) -> None
 
         res_forgot = await async_client.post("/auth/forgot-password", json={"email": "student@univ.edu"})
         assert res_forgot.status_code == 200
-        assert "password reset link" in res_forgot.json()["message"]
+        assert "reset link sent" in res_forgot.json()["message"]
 
         res_reset = await async_client.post(
             "/auth/reset-password",

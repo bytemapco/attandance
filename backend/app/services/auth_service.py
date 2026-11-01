@@ -11,8 +11,6 @@ from app.repositories.user_repository import UserRepository
 from app.repositories.student_repository import StudentRepository
 from app.repositories.teacher_repository import TeacherRepository
 from app.schemas.auth import Token, UserLogin
-from app.schemas.student import StudentCreate, StudentResponse
-from app.schemas.teacher import TeacherCreate, TeacherResponse
 
 logger = get_logger("app.services.auth")
 
@@ -141,32 +139,6 @@ class AuthService:
             data={"hashedPassword": hashed, "mustChangePassword": False},
         )
         return True
-
-    async def register_student(self, data: StudentCreate) -> Optional[StudentResponse]:
-        if await self.user_repo.get_by_email(data.email):
-            return None
-        hashed = hash_password(data.password)
-        user = await self.user_repo.create(email=data.email, password_hash=hashed, role="STUDENT")
-        student = await self.student_repo.create(user_id=user.id, enrollment=data.enrollment_number)
-        return StudentResponse(
-            id=student.id, user_id=user.id, enrollment_number=student.enrollmentNumber, email=user.email
-        )
-
-    async def register_teacher(self, data: TeacherCreate) -> Optional[TeacherResponse]:
-        if await self.user_repo.get_by_email(data.email):
-            return None
-        hashed = hash_password(data.password)
-        user = await self.user_repo.create(email=data.email, password_hash=hashed, role="TEACHER")
-        teacher = await self.teacher_repo.create(
-            user_id=user.id, department=data.department_id, designation=data.designation_id
-        )
-        return TeacherResponse(
-            id=teacher.id,
-            user_id=user.id,
-            department=teacher.department,
-            designation=teacher.designation,
-            email=user.email,
-        )
 
     async def create_invitation_token(self, user_id: str, email: str, role: str, name: str) -> str:
         from app.services.auth_token_service import AuthTokenService

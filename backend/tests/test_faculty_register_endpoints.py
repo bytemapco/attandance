@@ -29,6 +29,8 @@ async def test_faculty_daily_schedule_endpoint(async_client: AsyncClient) -> Non
         substituteFacultyId=None,
         status="SCHEDULED",
         isAttendanceLocked=False,
+        verificationActive=False,
+        verificationExpires=None,
         courseSection=SimpleNamespace(
             name="Section A",
             subject=SimpleNamespace(name="Algorithms", code="CS301"),
@@ -98,3 +100,18 @@ async def test_faculty_occurrence_register_get_and_put(async_client: AsyncClient
         )
         assert res_put.status_code == 200
         assert res_put.json()["records_processed"] == 1
+
+
+@pytest.mark.anyio
+async def test_student_cannot_read_or_write_register(async_client: AsyncClient) -> None:
+    student_user = SimpleNamespace(id="user-stud-1", role="STUDENT", tenantId="test-tenant-id", isActive=True)
+    token = create_access_token(subject="user-stud-1", role="STUDENT", extra_data={"tenant_id": "test-tenant-id"})
+    headers = {"X-Tenant-ID": "test-tenant-id", "Authorization": f"Bearer {token}"}
+    with patch("app.repositories.user_repository.UserRepository.get_by_id", return_value=student_user):
+        assert (await async_client.get("/faculty/occurrences/occ-801/register", headers=headers)).status_code == 403
+        res = await async_client.put(
+            "/faculty/occurrences/occ-801/register",
+            json={"occurrence_id": "occ-801", "updates": [{"student_id": "me", "status": "PRESENT"}]},
+            headers=headers,
+        )
+        assert res.status_code == 403

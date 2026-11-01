@@ -12,8 +12,9 @@ from app.schemas.student import (
     StudentSmartPassScanResponse,
     StudentStatsResponse,
 )
+from app.db.client import db
+from app.services import occurrence_qr_service
 from app.services.gamification_service import GamificationService
-from app.services.student_service import StudentService
 
 router = APIRouter()
 
@@ -38,16 +39,24 @@ async def get_smart_pass(student: Student = Depends(get_current_student)) -> Sma
 async def scan_smart_pass(
     data: StudentSmartPassScanRequest,
     student: Student = Depends(get_current_student),
-    student_service: StudentService = Depends(),
 ) -> StudentSmartPassScanResponse:
+    """The student scans the rotating QR on the teacher's screen. The device is bound at login."""
     await rate_limit_student(student.id, max_requests=15, window_seconds=60)
-    return await student_service.verify_teacher_smart_pass_and_mark(
-        student=student,
-        qr_token=data.qr_token,
-        latitude=data.latitude,
-        longitude=data.longitude,
-        accuracy=data.accuracy,
-        device_uuid=data.device_uuid,
+    record, occurrence, newly_marked = await occurrence_qr_service.mark_by_qr(
+        student, data.qr_token, data.latitude, data.longitude, data.accuracy
+    )
+    section = await db.coursesection.find_unique(where={"id": occurrence.courseSectionId}, include={"subject": True})
+    flagged = record.status == "FLAGGED"
+    return StudentSmartPassScanResponse(
+        status="success" if newly_marked else "already_marked",
+        session_id=occurrence.id,
+        class_name=section.name,
+        subject=section.subject.name,
+        attendance_status="Flagged" if flagged else "Present",
+        student_name=resolve_student_name(student),
+        enrollment_number=student.enrollmentNumber,
+        marked_at=record.verifiedAt.isoformat(),
+        message="Marked, but your teacher will review it." if flagged else "Attendance marked.",
     )
 
 

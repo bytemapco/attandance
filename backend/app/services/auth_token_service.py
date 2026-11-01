@@ -59,10 +59,10 @@ class AuthTokenService:
         user = await self.user_repo.get_by_id(user_id)
         if not user:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="User account not found.")
-        if user.isActive:
+        if not user.isActive:
             raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="This invitation link has already been used.",
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="This account has been disabled. Contact your administrator.",
             )
 
         hashed = hash_password(password)
@@ -79,7 +79,9 @@ class AuthTokenService:
         clean_email = email.strip().lower()
         user = await self.user_repo.get_by_email(clean_email)
         if not user:
-            return True
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No account is registered with this email.")
+        if not user.isActive:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="This account is disabled. Contact your administrator.")
 
         name = "User"
         if user.role == "STUDENT":
@@ -99,13 +101,19 @@ class AuthTokenService:
         redis = self._require_redis()
         await redis.setex(f"reset:{token}", ttl, json.dumps(payload))
 
-        await email_service.send_password_reset_email(
+        sent = await email_service.send_password_reset_email(
             to_email=user.email,
             recipient_name=name,
             reset_token=token,
             role=user.role,
             frontend_url=frontend_url,
         )
+        if not sent:
+            await redis.delete(f"reset:{token}")
+            raise HTTPException(
+                status_code=status.HTTP_502_BAD_GATEWAY,
+                detail="We could not send the reset email. Please try again later or contact support.",
+            )
         return True
 
     async def verify_reset_token(self, token: str) -> Optional[Dict[str, Any]]:

@@ -1,8 +1,6 @@
-import json
 from typing import Optional
 from prisma.models import Attendance
 from app.core.logging_config import get_logger
-from app.db.redis import safe_redis
 from app.repositories.attendance_repository import AttendanceRepository
 from app.repositories.session_repository import SessionRepository
 from app.repositories.student_repository import StudentRepository
@@ -83,71 +81,6 @@ class AttendanceService:
         if status == "Flagged":
             await self.notifier.dispatch_flagged_notifications(submission.student_id, session.academicClassId, record.id)
         return record
-
-    async def analyze_attendance(self, submission: AttendanceSubmission) -> dict:
-        import uuid
-        from datetime import timedelta
-        from app.core.security import create_access_token
-
-        session = await self._get_active_session(submission.session_id)
-        config = await SystemConfigService().get_config()
-
-        geofence_missing = False
-        if config.isGpsVerificationEnabled:
-            geofence_missing, _ = await self.geofence_validator.validate_student_location(
-                session.academicClassId, submission.student_id, submission.latitude, submission.longitude, submission.accuracy
-            )
-
-        face_embedding = await self.student_repo.get_face_embedding(submission.student_id) if config.isFaceRecognitionEnabled else []
-        if config.isFaceRecognitionEnabled and not face_embedding:
-            raise ValueError("Student face embedding is not registered.")
-
-        if await self.attendance_repo.get_by_student_and_session(submission.student_id, submission.session_id):
-            raise ValueError("Attendance already submitted for this session.")
-
-        if config.isFaceRecognitionEnabled or config.isAiBackgroundValidationEnabled:
-            img_input = submission.image_bytes if submission.image_bytes is not None else submission.image_path
-            if not img_input:
-                raise ValueError("Image is required when verification is enabled.")
-            ai_results = await self.ai_orchestrator.analyze_attendance(img_input, face_embedding)
-        else:
-            ai_results = {"face_score": 1.0, "liveness_score": 1.0, "background_score": 1.0}
-
-        active_scores = []
-        is_verified = True
-        if config.isFaceRecognitionEnabled:
-            active_scores.extend([ai_results["face_score"], ai_results["liveness_score"]])
-            if ai_results["face_score"] < 0.60 or ai_results["liveness_score"] < 0.50:
-                is_verified = False
-        if config.isAiBackgroundValidationEnabled:
-            active_scores.append(ai_results["background_score"])
-            if ai_results["background_score"] < 0.50:
-                is_verified = False
-
-        final_score = round(sum(active_scores) / len(active_scores), 4) if active_scores else 1.0
-        predicted_status = "Flagged" if (geofence_missing or not is_verified) else "Present"
-
-        review_id = str(uuid.uuid4())
-        review_data = {
-            "session_id": submission.session_id, "student_id": submission.student_id,
-            "face_score": ai_results["face_score"], "liveness_score": ai_results["liveness_score"],
-            "background_score": ai_results["background_score"], "final_ai_score": final_score,
-            "predicted_status": predicted_status, "geofence_missing": geofence_missing,
-            "image_path": submission.image_path, "latitude": submission.latitude, "longitude": submission.longitude,
-        }
-        r = safe_redis()
-        if not r:
-            raise ValueError("Review cache is temporarily unavailable. Please retry in a few moments.")
-        await r.setex(f"attendance_review:{review_id}", 300, json.dumps(review_data))
-
-        review_token = create_access_token(
-            subject=submission.student_id, role="STUDENT", expires_delta=timedelta(minutes=5),
-            extra_data={"type": "attendance_review", "review_id": review_id},
-        )
-        return {**ai_results, "final_ai_score": final_score, "predicted_status": predicted_status, "review_token": review_token}
-
-    async def confirm_attendance(self, student_id: str, review_token: str) -> Attendance:
-        return await self.review_service.confirm_attendance(student_id, review_token, self._get_active_session)
 
     async def register_face(self, student_id: str, image_input: str | bytes) -> bool:
         return await self.face_service.register_face(student_id, image_input)

@@ -6,6 +6,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
+from app.core.db_errors import register_db_error_handlers
 from app.core.config import settings
 from app.core.hardware import hardware_manager
 from app.core.logging_config import setup_logging, get_logger
@@ -34,6 +35,7 @@ from app.api import (
     scim,
     timetable,
     faculty_register,
+    faculty_sessions,
 )
 from app.middleware.request_logging import RequestLoggingMiddleware
 from app.middleware.security_headers import SecurityHeadersMiddleware
@@ -113,6 +115,10 @@ app.include_router(search.router, prefix=settings.API_V1_STR)
 app.include_router(scim.router, prefix=settings.API_V1_STR)
 app.include_router(timetable.router, prefix=settings.API_V1_STR)
 app.include_router(faculty_register.router, prefix=settings.API_V1_STR)
+app.include_router(faculty_sessions.router, prefix=settings.API_V1_STR)
+
+
+register_db_error_handlers(app)
 
 
 @app.exception_handler(RequestValidationError)
