@@ -1,7 +1,7 @@
 # 📚 SAHAJ Workspace Organization Guide
 
 **Last Updated:** 2026-10-31  
-**Project:** SAHAJ — Smart Attendance System  
+**Project:** SAHAJ  
 **Status:** Production Multi-Tenant SaaS
 
 ---
@@ -39,8 +39,7 @@ SAHAJ/
 │
 ├── 📚 docs/                   → Product & deployment docs
 │   ├── PRD.md                 → Product requirements (source of truth)
-│   ├── sahaj_brand_kit.md     → Web/admin branding
-│   ├── smart_attendance_mobile_brand_kit.md → Mobile branding
+│   ├── sahaj_brand_kit.md     → Unified brand & product design system
 │   ├── devops-ci-cd.md        → CI/CD pipeline & infrastructure
 │   ├── deployment-guide.md    → Production deployment steps
 │   └── qa_audit_report.md     → QA findings & test coverage
@@ -156,7 +155,7 @@ SAHAJ/
 4. **Test in browser** → `npm run dev:frontend` + Reticle or manual browser test
 
 ### UI Changes (Mobile)
-1. **Design review** → Check `docs/smart_attendance_mobile_brand_kit.md`
+1. **Design review** → Check `docs/sahaj_brand_kit.md`
 2. **Screen location** → `mobile/lib/screens/`
 3. **Theme tokens** → `mobile/lib/theme/app_theme.dart`
 4. **Responsive rules** → See `AGENTS.md` (mandatory on all screens)

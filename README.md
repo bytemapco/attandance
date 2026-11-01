@@ -1,6 +1,6 @@
-# Smart Attendance System
+# SAHAJ — Campus Platform
 
-An asynchronous, AI-powered multi-layered attendance verification system engineered to eliminate proxy check-ins, buddy punching, and attendance manipulation. The system pairs a high-performance **FastAPI** Python backend with **DeepFace** and custom computer vision pipelines, a responsive **Next.js 16 (React 19)** web dashboard for Administrators and Teachers, and a **Flutter 3.8+** mobile application for Students.
+An asynchronous, AI-powered multi-layered campus attendance and verification platform engineered to eliminate proxy check-ins, buddy punching, and attendance manipulation. The system pairs a high-performance **FastAPI** Python backend with **DeepFace** and custom computer vision pipelines, a responsive **Next.js 16 (React 19)** web dashboard for Administrators and Teachers, and a **Flutter 3.8+** mobile application for Students.
 
 ---
 

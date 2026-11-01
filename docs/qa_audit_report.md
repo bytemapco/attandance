@@ -1,4 +1,4 @@
-# Smart Attendance System — QA Audit Report
+# SAHAJ — QA Audit Report
 
 > **Auditor:** Senior Software Engineer & QA Architect (AI-assisted)
 > **Audit Date:** 2026-10-26

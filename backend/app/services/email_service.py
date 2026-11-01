@@ -148,7 +148,7 @@ class EmailService:
     ) -> bool:
         base_url = frontend_url or resolve_frontend_url()
         reset_url = f"{base_url}/reset-password?token={reset_token}"
-        app_reset_url = f"smartattendance://reset-password?token={reset_token}"
+        app_reset_url = f"sahaj://reset-password?token={reset_token}"
 
         return await self.send_email(
             to_email=to_email,

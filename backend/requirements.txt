@@ -1,5 +1,5 @@
 # ============================================================
-# Smart Attendance System - Backend Dependencies
+# SAHAJ - Backend Dependencies
 # ============================================================
 # Core application requirements (Top-level dependencies)
 # All dependencies verified against PyPI latest stable releases

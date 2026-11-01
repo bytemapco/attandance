@@ -83,6 +83,7 @@
 			<string>com.smartattendance.smart_attendance_app</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
+				<string>sahaj</string>
 				<string>smartattendance</string>
 			</array>
 		</dict>

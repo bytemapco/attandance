@@ -74,7 +74,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
-    description="Asynchronous AI-powered Multi-Layered Smart Attendance verification backend.",
+    description="Asynchronous AI-powered Multi-Layered SAHAJ attendance verification backend.",
     version="1.0.0",
     docs_url="/docs",
     redoc_url="/redoc",

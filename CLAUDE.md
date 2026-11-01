@@ -1,4 +1,4 @@
-# CLAUDE.md — SAHAJ (Smart Attendance System)
+# CLAUDE.md — SAHAJ
 
 Multi-tenant attendance SaaS for Indian institutions. Backend: FastAPI + Prisma + PostgreSQL/pgvector + Redis. Web: Next.js 16 / React 19. Mobile: Flutter (Riverpod).
 **Source of truth for product intent: [docs/PRD.md](docs/PRD.md).** UI and engineering rules: this document. Brand: `docs/sahaj_brand_kit.md`.

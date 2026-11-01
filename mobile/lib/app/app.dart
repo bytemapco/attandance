@@ -23,14 +23,14 @@ String inferNotificationSeverity(Map<String, dynamic> data) {
   return kSeverityInfo;
 }
 
-class SmartAttendanceApp extends ConsumerStatefulWidget {
-  const SmartAttendanceApp({super.key});
+class SahajApp extends ConsumerStatefulWidget {
+  const SahajApp({super.key});
 
   @override
-  ConsumerState<SmartAttendanceApp> createState() => _SmartAttendanceAppState();
+  ConsumerState<SahajApp> createState() => _SahajAppState();
 }
 
-class _SmartAttendanceAppState extends ConsumerState<SmartAttendanceApp> {
+class _SahajAppState extends ConsumerState<SahajApp> {
   String? _pendingRoute;
 
   @override

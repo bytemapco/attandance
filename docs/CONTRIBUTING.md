@@ -1,6 +1,6 @@
 # 🤝 Contributing to SAHAJ
 
-Thank you for contributing to the Smart Attendance System! This guide ensures consistency, quality, and smooth collaboration.
+Thank you for contributing to SAHAJ! This guide ensures consistency, quality, and smooth collaboration.
 
 ---
 

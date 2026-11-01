@@ -18,7 +18,7 @@ export default function StudentMobileAppCallout({
         As a student, you can also complete this reset directly in the mobile application.
       </p>
       <a
-        href={`smartattendance://reset-password?token=${encodeURIComponent(token)}`}
+        href={`sahaj://reset-password?token=${encodeURIComponent(token)}`}
         className="inline-flex items-center justify-center w-full px-3 py-2 text-xs font-medium rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
       >
         Open in SAHAJ App

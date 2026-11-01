@@ -1,6 +1,6 @@
 # CI/CD Pipeline Architecture
 
-This document details the decoupled Continuous Integration (CI) and Continuous Deployment (CD) pipelines for the **Smart Attendance System**, establishing automated quality gates, secret management, and zero-docker native PM2 deployment.
+This document details the decoupled Continuous Integration (CI) and Continuous Deployment (CD) pipelines for the **SAHAJ Platform**, establishing automated quality gates, secret management, and zero-docker native PM2 deployment.
 
 ---
 

@@ -1,6 +1,6 @@
-# smart_attendance_app
+# SAHAJ Mobile App
 
-A new Flutter project.
+The official student companion mobile app for SAHAJ campus platform.
 
 ## Getting Started
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Explicit One-Shot Database Migration Runner for Smart Attendance System (Staging / Dev Only).
+"""Explicit One-Shot Database Migration Runner for SAHAJ Platform (Staging / Dev Only).
 
 Executes pending Prisma migrations safely via `prisma migrate deploy`.
 Never runs automatically during normal web application startup.
@@ -103,7 +103,7 @@ def run_prisma_migrations() -> None:
     sanitized_target, env_name = validate_environment()
 
     print("==================================================================")
-    print("🚀 SMART ATTENDANCE SYSTEM - CONTROLLED DATABASE MIGRATION")
+    print("🚀 SAHAJ - CONTROLLED DATABASE MIGRATION")
     print(f"  Target Environment: {env_name}")
     print(f"  Target Endpoint:    {sanitized_target}")
     print(f"  Migration Source:   {migrations_dir}")

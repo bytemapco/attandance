@@ -1,6 +1,6 @@
 # Server Deployment & Operations Guide
 
-This guide covers the host environment, PM2 process management, and day-to-day operations for the **Smart Attendance System** deployed on `jarvis` (`100.101.187.9`).
+This guide covers the host environment, PM2 process management, and day-to-day operations for the **SAHAJ Platform** deployed on `jarvis` (`100.101.187.9`).
 
 ---
 
@@ -31,8 +31,8 @@ Services are managed natively via PM2:
 
 | Service Name | Working Directory | Runtime / Command | Port | Auto-Restart |
 | :--- | :--- | :--- | :--- | :--- |
-| `smart-attendance-backend` | `.../backend` | `venv/bin/uvicorn main:app --host 0.0.0.0 --port 8011 --workers 1` | `8011` | Yes (delay: 3s) |
-| `smart-attendance-frontend` | `.../frontend` | `node server.js` | `3011` | Yes (delay: 3s) |
+| `sahaj-backend` | `.../backend` | `venv/bin/uvicorn main:app --host 0.0.0.0 --port 8011 --workers 1` | `8011` | Yes (delay: 3s) |
+| `sahaj-frontend` | `.../frontend` | `node server.js` | `3011` | Yes (delay: 3s) |
 
 ---
 
@@ -52,10 +52,10 @@ pm2 list
 pm2 logs
 
 # View last 50 lines for backend only
-pm2 logs smart-attendance-backend --lines 50 --nostream
+pm2 logs sahaj-backend --lines 50 --nostream
 
 # View last 50 lines for frontend only
-pm2 logs smart-attendance-frontend --lines 50 --nostream
+pm2 logs sahaj-frontend --lines 50 --nostream
 ```
 
 ### Restarting / Reloading Services
@@ -64,8 +64,8 @@ pm2 logs smart-attendance-frontend --lines 50 --nostream
 pm2 startOrReload ecosystem.config.cjs --update-env
 
 # Restart a specific process
-pm2 restart smart-attendance-backend
-pm2 restart smart-attendance-frontend
+pm2 restart sahaj-backend
+pm2 restart sahaj-frontend
 
 # Save process list so it persists across host reboots
 pm2 save

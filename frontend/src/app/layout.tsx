@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     template: "%s | SAHAJ",
   },
   description: "Connected campus technology platform — attendance, operations & academic management",
-  keywords: ["SAHAJ", "Campus Platform", "Smart Attendance", "AI Verification", "Geofence Attendance"],
+  keywords: ["SAHAJ", "Campus Platform", "Attendance Platform", "AI Verification", "Geofence Attendance"],
   icons: {
     icon: "/favicon.ico",
     apple: "/sahaj-app-icon.png",

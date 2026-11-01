@@ -1,8 +1,8 @@
 {
   "project_info": {
     "project_number": "000000000000",
-    "project_id": "smart-attendance-system",
-    "storage_bucket": "smart-attendance-system.appspot.com"
+    "project_id": "sahaj-app",
+    "storage_bucket": "sahaj-app.appspot.com"
   },
   "client": [
     {

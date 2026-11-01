@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: 'smart-attendance-backend',
+      name: 'sahaj-backend',
       cwd: '/home/jarvis/SharedDrive/bytemap/attendance/backend',
       script: '/home/jarvis/SharedDrive/bytemap/attendance/backend/venv/bin/uvicorn',
       args: 'main:app --host 0.0.0.0 --port 8011 --workers 1',
@@ -16,7 +16,7 @@ module.exports = {
       },
     },
     {
-      name: 'smart-attendance-frontend',
+      name: 'sahaj-frontend',
       cwd: '/home/jarvis/SharedDrive/bytemap/attendance/frontend',
       script: 'server.js',
       interpreter: 'node',

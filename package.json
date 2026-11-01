@@ -1,8 +1,8 @@
 {
-  "name": "smart-attendance-system-workspace",
+  "name": "sahaj-workspace",
   "version": "1.0.0",
   "private": true,
-  "description": "Multi-layer AI-powered Smart Attendance System workspace CLI & runner",
+  "description": "Multi-layer AI-powered SAHAJ campus platform workspace CLI & runner",
   "type": "module",
   "bin": {
     "setup": "./scripts/setup.mjs",

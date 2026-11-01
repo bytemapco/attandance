@@ -14,7 +14,7 @@ export const logger = {
   banner() {
     process.stdout.write(
       `\n${colors.cyan}${colors.bold}=======================================================\n` +
-      `       SMART ATTENDANCE SYSTEM - WORKSPACE SETUP       \n` +
+      `                 SAHAJ - WORKSPACE SETUP               \n` +
       `=======================================================${colors.reset}\n\n`
     );
   },

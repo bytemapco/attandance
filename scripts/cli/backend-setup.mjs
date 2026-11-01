@@ -60,7 +60,7 @@ function ensureBackendEnv(backendDir) {
     );
   } else {
     envContent = [
-      'PROJECT_NAME="Smart Attendance System API"',
+      'PROJECT_NAME="SAHAJ API"',
       'API_V1_STR="/api/v1"',
       'DATABASE_URL="postgresql://postgres:postgres@localhost:5432/smart_attendance"',
       `JWT_SECRET="${defaultSecret}"`,

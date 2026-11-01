@@ -1,4 +1,4 @@
-# Smart Attendance System — Class Management Feature Summary
+# SAHAJ — Class Management Feature Summary
 
 **Status:** ✅ Complete and Verified (Lab batches removed; Subjects & teachers fully functional)  
 **Date:** 2026-10-31  

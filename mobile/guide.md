@@ -1,6 +1,6 @@
-# Smart Attendance iPhone Update Guide (Ubuntu + Codemagic + iLoader)
+# SAHAJ iPhone Update Guide (Ubuntu + Codemagic + iLoader)
 
-This guide repeats the workflow used to install **Smart Attendance App** on a physical iPhone from an Ubuntu computer using a free Apple Account.
+This guide repeats the workflow used to install **SAHAJ App** on a physical iPhone from an Ubuntu computer using a free Apple Account.
 
 ## How the workflow works
 
@@ -42,7 +42,7 @@ Make your code changes, test what you can, then commit and push:
 
 ```bash
 git add .
-git commit -m "Update Smart Attendance app"
+git commit -m "Update SAHAJ app"
 git push
 ```
 

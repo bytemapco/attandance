@@ -88,7 +88,7 @@ Future<void> main() async {
             hiveServiceProvider.overrideWithValue(hiveService),
             notificationServiceProvider.overrideWithValue(notificationService),
           ],
-          child: const SmartAttendanceApp(),
+          child: const SahajApp(),
         ),
       );
     },

@@ -6,7 +6,7 @@ export 'package:smart_attendance_app/app/dimensions.dart';
 class SasColors {
   SasColors._();
 
-  // Core Brand Palette — "Smart Attendance Brand Kit"
+  // Core Brand Palette — "SAHAJ Brand Kit"
   static const Color brandOrange = Color(0xFFF95721); // Primary warm orange
   static const Color brandOrangeAlt = Color(
     0xFFFF8A00,

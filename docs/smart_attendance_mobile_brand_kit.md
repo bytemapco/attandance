@@ -1,7 +1,10 @@
-# Smart Attendance — Mobile App Brand Kit
+# SAHAJ — Mobile App Brand Kit (Legacy Reference)
+
+> [!NOTE]
+> This document is retained for historical mobile UI reference. The canonical, unified design system for all SAHAJ web and mobile products is located at [sahaj_brand_kit.md](file:///home/pratham/Disk2/Projects/Smart%20Attandance%20System/docs/sahaj_brand_kit.md).
 
 **Version:** 1.0  
-**Purpose:** The single source of truth for designing and implementing consistent Smart Attendance screens in Flutter.  
+**Purpose:** Legacy reference for SAHAJ mobile screens in Flutter.  
 **Design direction:** Premium, friendly, academic, clear, and practical — visually distinctive without being flashy or overly minimal.
 
 ---

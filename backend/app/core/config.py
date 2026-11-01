@@ -56,7 +56,7 @@ class Settings(BaseSettings):
     SMTP_TLS: bool = True
     SMTP_SSL: bool = False
     EMAILS_FROM_EMAIL: str = ""
-    EMAILS_FROM_NAME: str = "Smart Attendance System"
+    EMAILS_FROM_NAME: str = "SAHAJ"
     INVITATION_TOKEN_EXPIRE_HOURS: int = 48
     RESET_TOKEN_EXPIRE_MINUTES: int = 15
 
