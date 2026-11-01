@@ -56,8 +56,8 @@ export default function TeacherFormProfile({
         </div>
       </GlassCard>
 
-      <GlassCard className="!p-0 overflow-hidden">
-        <div className="p-5 border-b border-border bg-muted/40">
+      <GlassCard className="!p-0">
+        <div className="p-5 border-b border-border bg-muted/40 rounded-t-[inherit]">
           <h3 className="text-base font-semibold text-foreground flex items-center gap-2">
             <Briefcase size={18} className="text-primary" />
             Institutional Assignment

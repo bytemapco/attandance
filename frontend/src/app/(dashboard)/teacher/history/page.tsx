@@ -1,188 +1,126 @@
 "use client";
 
-import React, { useEffect, useState, useMemo } from "react";
-import { useRouter } from "next/navigation";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import api, { getApiErrorMessage } from "@/lib/api";
-import GlassPageHeader from "@/components/ui/GlassPageHeader";
-import GlassBreadcrumb from "@/components/ui/GlassBreadcrumb";
-import GlassTable from "@/components/ui/GlassTable";
-import GlassButton from "@/components/ui/GlassButton";
-import GlassLoader from "@/components/ui/GlassLoader";
+import GlassBadge from "@/components/ui/GlassBadge";
 import GlassEmptyState from "@/components/ui/GlassEmptyState";
-import toast from "react-hot-toast";
-import HistoryFilters from "./HistoryFilters";
-import { getSessionLogColumns, type SessionLogItem } from "./HistoryColumns";
+import GlassErrorState from "@/components/ui/GlassErrorState";
+import GlassLoader from "@/components/ui/GlassLoader";
+import GlassPageHeader from "@/components/ui/GlassPageHeader";
+import type { HistoryItem } from "@/types";
 
-interface AcademicClass {
-  id: string;
-  name: string;
-  subject: string;
+function formatDate(iso: string): string {
+  return new Intl.DateTimeFormat("en-IN", { weekday: "short", day: "numeric", month: "short", year: "numeric" }).format(new Date(iso));
 }
 
-export default function HistoryPage(): React.ReactElement {
-  const router = useRouter();
-  const [sessions, setSessions] = useState<SessionLogItem[]>([]);
-  const [classes, setClasses] = useState<AcademicClass[]>([]);
-  const [loading, setLoading] = useState(true);
+export default function AttendanceHistoryPage(): React.ReactElement {
+  const [items, setItems] = useState<HistoryItem[] | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [sectionId, setSectionId] = useState("");
+  const [query, setQuery] = useState("");
 
-  const [selectedClass, setSelectedClass] = useState("all");
-  const [searchTerm, setSearchTerm] = useState("");
-  const [dateFilter, setDateFilter] = useState("");
-  const [exportingId, setExportingId] = useState<string | null>(null);
-
-  const handleExportCSV = async (
-    sessionId: string,
-    className: string,
-    subjectName: string,
-    startTime: string
-  ): Promise<void> => {
-    setExportingId(sessionId);
+  const load = useCallback(async (): Promise<void> => {
     try {
-      const { data } = await api.get<{ roster: { enrollment_number: string; full_name: string; email: string; status: string; final_score: number; marked_at: string | null }[] }>(
-        `/teacher/sessions/${sessionId}/attendance`
-      );
-      
-      if (!data.roster || data.roster.length === 0) {
-        toast.error("No student records found to export.");
-        return;
-      }
-
-      const headers = ["Enrollment Number", "Student Name", "Email", "Status", "AI Score", "Marked At"];
-      const rows = data.roster.map((s) => [
-        s.enrollment_number,
-        s.full_name,
-        s.email,
-        s.status,
-        s.final_score.toFixed(2),
-        s.marked_at ? new Date(s.marked_at).toLocaleString() : "N/A"
-      ]);
-
-      const csvContent = [
-        headers.join(","),
-        ...rows.map((row) => row.map((val) => `"${String(val).replace(/"/g, '""')}"`).join(","))
-      ].join("\n");
-
-      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      const sanitizedClass = className.replace(/[^a-z0-9]/gi, "_").toLowerCase();
-      const dateStr = new Date(startTime).toISOString().slice(0, 10);
-      
-      link.setAttribute("href", url);
-      link.setAttribute("download", `attendance_${sanitizedClass}_${dateStr}.csv`);
-      link.style.visibility = "hidden";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      
-      toast.success("CSV exported successfully!");
+      const { data } = await api.get<HistoryItem[]>("/faculty/history");
+      setItems(data);
+      setError(null);
     } catch (err: unknown) {
-      toast.error(getApiErrorMessage(err, "Failed to export CSV"));
-    } finally {
-      setExportingId(null);
+      setError(getApiErrorMessage(err, "Could not load attendance history"));
     }
-  };
-
-  useEffect(() => {
-    async function initPage(): Promise<void> {
-      try {
-        const [sessionsRes, classesRes] = await Promise.all([
-          api.get<SessionLogItem[]>("/teacher/sessions/all"),
-          api.get<AcademicClass[]>("/teacher/my-classes")
-        ]);
-        setSessions(sessionsRes.data);
-        setClasses(classesRes.data);
-      } catch (err: unknown) {
-        toast.error(getApiErrorMessage(err, "Failed to load history"));
-      } finally {
-        setLoading(false);
-      }
-    }
-    void initPage();
   }, []);
 
-  function handleResetFilters(): void {
-    setSelectedClass("all");
-    setSearchTerm("");
-    setDateFilter("");
-  }
+  useEffect(() => {
+    void load();
+  }, [load]);
 
-  const filteredSessions = useMemo(() => {
-    return sessions.filter((session) => {
-      if (selectedClass !== "all" && session.academicClassId !== selectedClass) {
-        return false;
-      }
+  const classes = useMemo(() => {
+    const seen = new Map<string, string>();
+    (items ?? []).forEach((i) => seen.set(i.course_section_id, `${i.subject_name} · ${i.class_code}`));
+    return [...seen.entries()];
+  }, [items]);
 
-      if (searchTerm) {
-        const term = searchTerm.toLowerCase();
-        const matchesName = session.class_name.toLowerCase().includes(term);
-        const matchesSubject = session.subject.toLowerCase().includes(term);
-        const matchesId = session.id.toLowerCase().includes(term);
-        if (!matchesName && !matchesSubject && !matchesId) return false;
-      }
+  const rows = useMemo(() => {
+    const needle = query.trim().toLowerCase();
+    return (items ?? []).filter(
+      (i) =>
+        (!sectionId || i.course_section_id === sectionId) &&
+        (!needle || `${i.subject_name} ${i.class_code}`.toLowerCase().includes(needle))
+    );
+  }, [items, sectionId, query]);
 
-      if (dateFilter) {
-        const sessionDate = new Date(session.startTime).toDateString();
-        const filterDate = new Date(dateFilter).toDateString();
-        if (sessionDate !== filterDate) return false;
-      }
-
-      return true;
-    });
-  }, [sessions, selectedClass, searchTerm, dateFilter]);
-
-  const columns = useMemo(() => getSessionLogColumns({
-    onPreview: (id) => router.push(`/teacher/sessions/${id}/preview`),
-    onRoster: (id) => router.push(`/teacher/sessions/${id}/attendance-roll`),
-    onManual: (id) => router.push(`/teacher/sessions/${id}/manual`),
-    onExport: (id, className, subject, startTime) => void handleExportCSV(id, className, subject, startTime),
-    exportingId,
-  }), [router, exportingId]);
-
-  if (loading) return <GlassLoader text="Loading history..." />;
+  if (error) return <GlassErrorState message={error} onRetry={() => void load()} />;
+  if (!items) return <GlassLoader />;
 
   return (
-    <div className="animate-fade-in space-y-6">
-      <GlassBreadcrumb items={[{ label: "Teacher", href: "/teacher/classes" }, { label: "History" }]} />
-      <GlassPageHeader
-        title="Attendance History"
-        description="Review past class sessions, inspect attendance sheets, and export records."
-      />
-
-      <HistoryFilters
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
-        selectedClass={selectedClass}
-        setSelectedClass={setSelectedClass}
-        dateFilter={dateFilter}
-        setDateFilter={setDateFilter}
-        classes={classes}
-        onReset={handleResetFilters}
-      />
-
-      {filteredSessions.length > 0 ? (
-        <GlassTable
-          columns={columns}
-          data={filteredSessions as (SessionLogItem & Record<string, unknown>)[]}
-          emptyMessage="No matching sessions found for current filters"
-          pageSize={10}
-        />
+    <div className="space-y-5">
+      <GlassPageHeader title="Attendance history" description="Every session you have taken. Open one to see or review its register." />
+      {items.length === 0 ? (
+        <GlassEmptyState title="No sessions yet" message="Sessions you start from My Classes will be listed here." />
       ) : (
-        <div className="p-8 text-center rounded-2xl bg-card border border-[#e3e1dc]">
-          <GlassEmptyState
-            title="No Sessions Match Filters"
-            message="Try adjusting your search terms or selecting a different class."
-          />
-          {(selectedClass !== "all" || searchTerm || dateFilter) && (
-            <div className="mt-4">
-              <GlassButton
-                variant="secondary"
-                size="sm"
-                onClick={handleResetFilters}
+        <div className="overflow-hidden rounded-[14px] border border-border bg-card">
+          <div className="flex flex-col gap-3 border-b border-border p-4 sm:flex-row">
+            <label className="sm:w-72">
+              <span className="sr-only">Class</span>
+              <select
+                value={sectionId}
+                onChange={(e) => setSectionId(e.target.value)}
+                className="h-9 w-full rounded-[10px] border border-input bg-background px-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-[#526f78]"
               >
-                Reset Filters
-              </GlassButton>
-            </div>
+                <option value="">All classes</option>
+                {classes.map(([id, label]) => (
+                  <option key={id} value={id}>{label}</option>
+                ))}
+              </select>
+            </label>
+            <label className="sm:w-72">
+              <span className="sr-only">Search</span>
+              <input
+                type="search"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search class or subject"
+                className="h-9 w-full rounded-[10px] border border-input bg-background px-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-[#526f78]"
+              />
+            </label>
+          </div>
+          {rows.length === 0 ? (
+            <p className="px-4 py-10 text-center text-sm text-muted-foreground">No sessions match.</p>
+          ) : (
+            <table className="w-full text-left text-sm">
+              <thead className="bg-secondary/60 text-xs text-muted-foreground">
+                <tr>
+                  <th className="px-4 py-2.5 font-semibold">Date</th>
+                  <th className="px-4 py-2.5 font-semibold">Class</th>
+                  <th className="px-4 py-2.5 font-semibold">Period</th>
+                  <th className="px-4 py-2.5 text-right font-semibold">Present</th>
+                  <th className="px-4 py-2.5 font-semibold">Status</th>
+                  <th className="px-4 py-2.5"><span className="sr-only">Open</span></th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {rows.map((i) => (
+                  <tr key={i.occurrence_id}>
+                    <td className="px-4 py-3 whitespace-nowrap">{formatDate(i.date)}</td>
+                    <td className="px-4 py-3">
+                      <span className="font-semibold text-foreground">{i.subject_name}</span>
+                      <span className="block text-xs text-muted-foreground">{i.class_code}</span>
+                    </td>
+                    <td className="px-4 py-3 whitespace-nowrap tabular-nums text-muted-foreground">{i.time_slot}</td>
+                    <td className="px-4 py-3 text-right tabular-nums">{i.present} / {i.total}</td>
+                    <td className="px-4 py-3">
+                      {i.locked ? <GlassBadge variant="info">Closed</GlassBadge> : <GlassBadge variant="success">Live</GlassBadge>}
+                      {i.flagged > 0 && <GlassBadge variant="warning" className="ml-1.5">{i.flagged} flagged</GlassBadge>}
+                    </td>
+                    <td className="px-4 py-3 text-right">
+                      <Link href={`/teacher/attendance/${i.occurrence_id}`} className="text-xs font-semibold text-[#526f78] underline-offset-2 hover:underline">
+                        Open register
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           )}
         </div>
       )}

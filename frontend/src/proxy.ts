@@ -95,7 +95,7 @@ export function proxy(request: NextRequest): NextResponse {
   const getDefaultDashboard = (): string => {
     if (isSuperAdmin) return "/super-admin/dashboard";
     if (isAdmin) return "/admin/dashboard";
-    if (isTeacher) return "/teacher/classes";
+    if (isTeacher) return "/teacher/dashboard";
     return "/login";
   };
 

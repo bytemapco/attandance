@@ -71,7 +71,7 @@ export default function TeacherProfilePage(): React.ReactElement {
     <div className="space-y-6 animate-fade-in">
       <GlassBreadcrumb
         items={[
-          { label: "Teacher", href: "/teacher/classes" },
+          { label: "Teacher", href: "/teacher/dashboard" },
           { label: "Profile" },
         ]}
       />

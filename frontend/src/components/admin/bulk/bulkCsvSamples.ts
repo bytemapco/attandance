@@ -3,10 +3,10 @@ import { BulkImportEntityType } from "./bulkTypes";
 export function getSampleCsv(entityType: BulkImportEntityType): string {
   if (entityType === "students") {
     return (
-      "email,enrollment_number,first_name,last_name,department_code,semester,branch,gender\n" +
-      "alex.carter@yopmail.com,STU2026001,Alex,Carter,CSE,5,CE,Male\n" +
-      "brooke.hayes@yopmail.com,STU2026002,Brooke,Hayes,IT,5,IT,Female\n" +
-      "connor.reed@yopmail.com,STU2026003,Connor,Reed,ECE,3,EC,Male"
+      "email,enrollment_number,first_name,last_name,department_code,batch_code\n" +
+      "alex.carter@yopmail.com,STU2026001,Alex,Carter,CSE,CSE-A-1\n" +
+      "brooke.hayes@yopmail.com,STU2026002,Brooke,Hayes,CSE,CSE-A-1\n" +
+      "connor.reed@yopmail.com,STU2026003,Connor,Reed,CSE,CSE-A-2"
     );
   }
   if (entityType === "teachers") {

@@ -301,3 +301,13 @@ table, .tabular-nums, .font-mono, [data-tabular="true"] {
   color: #526f78 !important;
   font-size: 12px !important;
 }
+
+/* Live attendance QR: bar drains over one rotation */
+@keyframes qr-countdown {
+  from { transform: scaleX(1); }
+  to { transform: scaleX(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .qr-countdown-bar { animation: none !important; }
+}

@@ -4,6 +4,7 @@ export * from "./notification";
 export * from "./tenant";
 export * from "./auth";
 export * from "./timetable";
+export * from "./classManagement";
 
 export interface AssignTeacherRequest {
   teacher_id: string;

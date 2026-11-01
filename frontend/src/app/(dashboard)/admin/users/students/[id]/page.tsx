@@ -3,8 +3,8 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { 
-  Pencil, Mail, Hash, User, Phone, GraduationCap, Building2, CalendarDays, 
-  MapPin, Clock, Award, ShieldCheck, GitBranch, KeyRound
+  Pencil, Mail, Hash, User, Phone, GraduationCap, Building2, CalendarDays,
+  MapPin, Clock, Award, ShieldCheck, KeyRound, Layers
 } from "lucide-react";
 import toast from "react-hot-toast";
 import api, { getApiErrorMessage } from "@/lib/api";
@@ -15,6 +15,8 @@ import GlassLoader from "@/components/ui/GlassLoader";
 import GlassBadge from "@/components/ui/GlassBadge";
 import GlassResetPasswordDialog from "@/components/ui/GlassResetPasswordDialog";
 import type { StudentResponse } from "@/types";
+
+const GENDER_LABELS: Record<string, string> = { M: "Male", F: "Female", O: "Other" };
 
 const colorVariants: Record<string, string> = {
   blue: "bg-[#eaf2f6] text-[#306b8a] border border-[#c5dce8]",
@@ -145,7 +147,7 @@ export default function StudentDetailPage(): React.ReactElement {
           <div className="p-3 space-y-1">
             <InfoItem icon={Mail} label="Email Address" value={student.email} color="blue" />
             <InfoItem icon={Phone} label="Phone Number" value={student.phone || "Not provided"} color="purple" />
-            <InfoItem icon={User} label="Gender" value={student.gender || "Unspecified"} color="pink" />
+            <InfoItem icon={User} label="Gender" value={(student.gender && GENDER_LABELS[student.gender]) || "Unspecified"} color="pink" />
             <InfoItem 
               icon={CalendarDays} 
               label="Date of Birth" 
@@ -165,8 +167,8 @@ export default function StudentDetailPage(): React.ReactElement {
           </div>
           <div className="p-3 space-y-1">
             <InfoItem icon={Hash} label="Enrollment Number" value={student.enrollment_number} color="emerald" />
-            <InfoItem icon={Building2} label="Department" value={student.department_name || "Not assigned"} color="rose" />
-            <InfoItem icon={GitBranch} label="Branch" value={student.branch || "Not provided"} color="blue" />
+            <InfoItem icon={Building2} label="Department" value={student.department_name} color="rose" />
+            <InfoItem icon={Layers} label="Batch" value={student.batch || "Not assigned"} color="blue" />
             <InfoItem 
               icon={Award} 
               label="Semester & Batch" 

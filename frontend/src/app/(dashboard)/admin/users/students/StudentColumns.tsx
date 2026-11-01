@@ -40,21 +40,6 @@ export const studentColumns: TableColumn<StudentResponse & Record<string, unknow
     ),
   },
   {
-    key: "branch",
-    header: "Branch",
-    sortable: true,
-    render: (r) => {
-      const branch = r.branch || (r as { branch?: string }).branch;
-      return branch ? (
-        <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold bg-primary/10 text-primary border border-primary/20">
-          {branch}
-        </span>
-      ) : (
-        <span className="text-muted-foreground text-xs">—</span>
-      );
-    },
-  },
-  {
     key: "department",
     header: "Department",
     sortable: true,
@@ -69,6 +54,19 @@ export const studentColumns: TableColumn<StudentResponse & Record<string, unknow
         </span>
       );
     },
+  },
+  {
+    key: "batch",
+    header: "Batch",
+    sortable: true,
+    render: (r) =>
+      r.batch ? (
+        <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold bg-primary/10 text-primary border border-primary/20">
+          {r.batch}
+        </span>
+      ) : (
+        <span className="text-xs text-amber-700">Not assigned</span>
+      ),
   },
   {
     key: "status",

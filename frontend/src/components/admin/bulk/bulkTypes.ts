@@ -15,6 +15,8 @@ export interface ParsedBulkRecord {
   last_name: string; // last_name or classroom_name
   semester?: number;
   batch?: string;
+  departmentCode?: string; // students/teachers: department id, code or name
+  batchCode?: string; // students: batch code within the department, e.g. CE-A-1
   isValid: boolean;
   validationError?: string;
 }

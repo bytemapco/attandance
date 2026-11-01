@@ -2,6 +2,7 @@ import React from "react";
 import { UseFormRegister, Control, FieldErrors, Controller } from "react-hook-form";
 import GlassInput from "@/components/ui/GlassInput";
 import GlassSelect from "@/components/ui/GlassSelect";
+import DepartmentBatchSelect from "@/components/admin/batches/DepartmentBatchSelect";
 import type { StudentFormData } from "@/lib/validations/student";
 
 interface StudentFormFieldsProps {
@@ -9,13 +10,13 @@ interface StudentFormFieldsProps {
   control: Control<StudentFormData>;
   errors: FieldErrors<StudentFormData>;
   deptOptions: { value: string; label: string }[];
+  departmentId?: string;
 }
 
 const GENDER_OPTIONS = [
-  { value: "Male", label: "Male" },
-  { value: "Female", label: "Female" },
-  { value: "Other", label: "Other" },
-  { value: "Prefer not to say", label: "Prefer not to say" },
+  { value: "M", label: "Male" },
+  { value: "F", label: "Female" },
+  { value: "O", label: "Other" },
 ];
 
 const SEMESTER_OPTIONS = Array.from({ length: 8 }, (_, i) => ({
@@ -28,6 +29,7 @@ export default function StudentFormFields({
   control,
   errors,
   deptOptions,
+  departmentId,
 }: StudentFormFieldsProps): React.ReactElement {
   return (
     <div className="p-5 grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -82,11 +84,18 @@ export default function StudentFormFields({
           />
         )}
       />
-      <GlassInput
-        label="Branch *"
-        placeholder="e.g. CE, IoT-IT, AI"
-        {...register("branch")}
-        error={errors.branch?.message}
+      <Controller
+        control={control}
+        name="batch_id"
+        render={({ field }) => (
+          <DepartmentBatchSelect
+            label="Batch *"
+            departmentId={departmentId ?? ""}
+            value={typeof field.value === "string" ? field.value : ""}
+            onChange={field.onChange}
+            error={errors.batch_id?.message}
+          />
+        )}
       />
       <Controller
         control={control}
@@ -101,14 +110,6 @@ export default function StudentFormFields({
           />
         )}
       />
-      <div className="sm:col-span-2">
-        <GlassInput
-          label="Batch *"
-          placeholder="e.g. 2022-2026"
-          {...register("batch")}
-          error={errors.batch?.message}
-        />
-      </div>
     </div>
   );
 }

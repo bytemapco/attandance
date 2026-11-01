@@ -6,11 +6,10 @@ export interface StudentCreate {
   last_name: string;
   phone?: string;
   gender?: string;
-  branch?: string;
   date_of_birth?: string;
   semester?: number;
-  batch?: string;
-  department_id?: string;
+  batch_id: string;
+  department_id: string;
 }
 
 export interface StudentResponse {
@@ -22,14 +21,31 @@ export interface StudentResponse {
   last_name?: string | null;
   phone?: string | null;
   gender?: string | null;
-  branch?: string | null;
   date_of_birth?: string | null;
-  department_id?: string | null;
-  department_name?: string | null;
+  department_id: string;
+  department_name: string;
   semester?: number | null;
   batch?: string | null;
+  batch_id?: string | null;
   is_active?: boolean | null;
+  invitation_sent?: boolean | null;
 }
+
+export type BatchStatus = "ACTIVE" | "ARCHIVED";
+
+export interface BatchResponse {
+  id: string;
+  department_id: string;
+  section: string;
+  number: number;
+  code: string;
+  status: BatchStatus;
+  student_count: number;
+  class_count: number;
+  created_at: string;
+  updated_at: string;
+}
+
 
 export interface TeacherCreate {
   email: string;
@@ -56,6 +72,7 @@ export interface TeacherResponse {
   designation: string;
   phone?: string | null;
   is_active?: boolean | null;
+  invitation_sent?: boolean | null;
 }
 
 export interface ClassCreate {
@@ -150,7 +167,106 @@ export interface DeviceChangeRequest {
 }
 
 export interface StudentFilterFacetsResponse {
-  branches: string[];
-  batches: string[];
   semesters: number[];
+}
+
+export type AcademicYearStatus = "PLANNING" | "ACTIVE" | "LOCKED" | "ARCHIVED";
+
+export interface AcademicYearCreate {
+  name: string;
+  start_date: string;
+  end_date: string;
+  attendance_start_date?: string;
+  attendance_end_date?: string;
+  min_attendance_pct?: number;
+  saturday_enabled?: boolean;
+  verification_window_min?: number;
+}
+
+export interface AcademicYearUpdate extends Partial<AcademicYearCreate> {
+  status?: AcademicYearStatus;
+}
+
+export interface AcademicYearResponse {
+  id: string;
+  tenant_id: string;
+  name: string;
+  start_date: string;
+  end_date: string;
+  attendance_start_date?: string | null;
+  attendance_end_date?: string | null;
+  min_attendance_pct: number;
+  saturday_enabled: boolean;
+  verification_window_min: number;
+  status: AcademicYearStatus;
+  created_at: string;
+  updated_at: string;
+  sections_count?: number;
+}
+
+export interface TimeSlotCreate {
+  slot_number: number;
+  name: string;
+  start_time: string;
+  end_time: string;
+  is_break?: boolean;
+  is_lab_block?: boolean;
+}
+
+export type TimeSlotUpdate = Partial<TimeSlotCreate>;
+
+export interface SemesterCreate {
+  number: number;
+  start_date: string;
+  end_date: string;
+}
+
+export type SemesterUpdate = Partial<SemesterCreate>;
+
+export interface SemesterResponse {
+  id: string;
+  tenant_id: string;
+  academic_year_id: string;
+  number: number;
+  start_date: string;
+  end_date: string;
+  classes_count?: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface TimeSlotResponse {
+  id: string;
+  tenant_id?: string | null;
+  slot_number: number;
+  name: string;
+  start_time: string;
+  end_time: string;
+  is_break: boolean;
+  is_lab_block: boolean;
+}
+
+export type CalendarEventType = "HOLIDAY" | "EXAM_DAY" | "NON_INSTRUCTIONAL" | "TIMETABLE_OVERRIDE";
+
+export interface CalendarEventCreate {
+  academic_year_id: string;
+  title: string;
+  date: string;
+  event_type: CalendarEventType;
+  affects_all_courses?: boolean;
+  substitute_day_of_week?: number;
+  description?: string;
+}
+
+export interface CalendarEventResponse {
+  id: string;
+  tenant_id: string;
+  academic_year_id: string;
+  title: string;
+  date: string;
+  event_type: CalendarEventType;
+  affects_all_courses: boolean;
+  substitute_day_of_week?: number | null;
+  description?: string | null;
+  created_at: string;
 }

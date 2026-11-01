@@ -92,7 +92,7 @@ export default function LeaveReviewDetailPage(): React.ReactElement {
     <div className="space-y-6 pb-12 animate-fade-in max-w-7xl mx-auto">
       <GlassBreadcrumb
         items={[
-          { label: "Faculty", href: "/teacher/classes" },
+          { label: "Faculty", href: "/teacher/dashboard" },
           { label: "Leave Requests", href: "/teacher/leaves" },
           { label: `Review: ${leave.student_name}` },
         ]}

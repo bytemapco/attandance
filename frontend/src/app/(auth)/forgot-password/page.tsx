@@ -95,7 +95,7 @@ export default function ForgotPasswordPage(): React.ReactElement {
             <div className="space-y-1.5">
               <h2 className="text-lg font-bold text-[#202b30]">Check Your Inbox</h2>
               <p className="text-xs text-[#526f78] leading-relaxed">
-                If an account exists for <strong className="text-[#202b30]">{emailValue}</strong>, we sent a password reset link.
+                We sent a password reset link to <strong className="text-[#202b30]">{emailValue}</strong>.
               </p>
               <p className="text-[11px] text-[#718087] pt-1">
                 Check your spam folder if it doesn&apos;t arrive in a few minutes.

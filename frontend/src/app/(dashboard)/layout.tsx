@@ -40,7 +40,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     }
 
     if (isTeacherRole && (pathname.startsWith("/admin") || pathname.startsWith("/super-admin"))) {
-      router.replace("/teacher/classes");
+      router.replace("/teacher/dashboard");
       return;
     }
     if (isAdminRole && (pathname.startsWith("/teacher") || pathname.startsWith("/super-admin"))) {

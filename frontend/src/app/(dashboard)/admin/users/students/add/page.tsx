@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -14,7 +14,7 @@ import GlassInput from "@/components/ui/GlassInput";
 import GlassButton from "@/components/ui/GlassButton";
 import StudentFormFields from "./StudentFormFields";
 import { studentFormSchema, StudentFormData } from "@/lib/validations/student";
-import type { DepartmentResponse } from "@/types";
+import type { DepartmentResponse, StudentResponse } from "@/types";
 
 export default function AddStudentPage(): React.ReactElement {
   const router = useRouter();
@@ -26,6 +26,8 @@ export default function AddStudentPage(): React.ReactElement {
     control,
     handleSubmit,
     setError,
+    setValue,
+    watch,
     formState: { errors },
   } = useForm<StudentFormData>({
     resolver: zodResolver(studentFormSchema),
@@ -37,13 +39,19 @@ export default function AddStudentPage(): React.ReactElement {
       phone: "",
       gender: "",
       date_of_birth: "",
-      branch: "",
       semester: undefined,
-      batch: "",
+      batch_id: "",
       department_id: "",
       send_invite: true,
     },
   });
+
+  const departmentId = watch("department_id");
+  const prevDepartmentRef = useRef<string>("");
+  useEffect(() => {
+    if (prevDepartmentRef.current && prevDepartmentRef.current !== departmentId) setValue("batch_id", "");
+    prevDepartmentRef.current = departmentId;
+  }, [departmentId, setValue]);
 
   useEffect(() => {
     async function fetchDepartments(): Promise<void> {
@@ -64,8 +72,12 @@ export default function AddStudentPage(): React.ReactElement {
         ...formData,
         date_of_birth: new Date(formData.date_of_birth).toISOString(),
       };
-      await api.post("/admin/users/student", payload);
-      toast.success("Student created and temporary password sent via email");
+      const { data: created } = await api.post<StudentResponse>("/admin/users/student", payload);
+      if (created.invitation_sent === false) {
+        toast("Student created, but the invitation email could not be sent. Share the credentials manually or retry later.", { icon: "⚠️", duration: 7000 });
+      } else {
+        toast.success("Student created and temporary password sent via email");
+      }
       router.push("/admin/users/students");
     } catch (err: unknown) {
       applyValidationErrorsToForm(err, setError);
@@ -124,8 +136,8 @@ export default function AddStudentPage(): React.ReactElement {
           </div>
 
           <div className="lg:col-span-2">
-            <GlassCard className="!p-0 overflow-hidden h-full">
-              <div className="p-5 border-b border-border bg-muted/40">
+            <GlassCard className="!p-0 h-full">
+              <div className="p-5 border-b border-border bg-muted/40 rounded-t-[inherit]">
                 <h3 className="text-base font-semibold text-foreground flex items-center gap-2">
                   <GraduationCap size={18} className="text-primary" />
                   Student Profile
@@ -137,6 +149,7 @@ export default function AddStudentPage(): React.ReactElement {
                 control={control}
                 errors={errors}
                 deptOptions={deptOptions}
+                departmentId={departmentId}
               />
             </GlassCard>
           </div>

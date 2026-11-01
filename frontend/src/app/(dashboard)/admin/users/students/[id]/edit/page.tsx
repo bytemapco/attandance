@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -31,6 +31,8 @@ export default function EditStudentPage(): React.ReactElement {
     handleSubmit,
     reset,
     setError,
+    setValue,
+    watch,
     formState: { errors },
   } = useForm<StudentUpdateFormData>({
     resolver: zodResolver(studentUpdateSchema),
@@ -42,10 +44,17 @@ export default function EditStudentPage(): React.ReactElement {
       gender: "",
       date_of_birth: "",
       semester: undefined,
-      batch: "",
+      batch_id: "",
       department_id: "",
     },
   });
+
+  const departmentId = watch("department_id");
+  const prevDepartmentRef = useRef<string>("");
+  useEffect(() => {
+    if (prevDepartmentRef.current && prevDepartmentRef.current !== departmentId) setValue("batch_id", "");
+    prevDepartmentRef.current = departmentId;
+  }, [departmentId, setValue]);
 
   useEffect(() => {
     async function fetchStudentAndDeps(): Promise<void> {
@@ -64,10 +73,9 @@ export default function EditStudentPage(): React.ReactElement {
             last_name: found.last_name || "",
             phone: found.phone ?? "",
             gender: found.gender ?? "",
-            branch: found.branch ?? "",
             date_of_birth: found.date_of_birth ? new Date(found.date_of_birth).toISOString().split("T")[0] : "",
             semester: found.semester ?? undefined,
-            batch: found.batch ?? "",
+            batch_id: found.batch_id ?? "",
             department_id: found.department_id ?? "",
           });
         }
@@ -90,11 +98,10 @@ export default function EditStudentPage(): React.ReactElement {
         last_name: formData.last_name,
         phone: formData.phone || undefined,
         gender: formData.gender || undefined,
-        branch: formData.branch || undefined,
         date_of_birth: formData.date_of_birth ? new Date(formData.date_of_birth).toISOString() : undefined,
         semester: formData.semester !== undefined && formData.semester !== null ? Number(formData.semester) : undefined,
-        batch: formData.batch || undefined,
-        department_id: formData.department_id || undefined,
+        batch_id: formData.batch_id,
+        department_id: formData.department_id,
       });
       toast.success("Student updated successfully");
       router.push(`/admin/users/students/${id}`);
@@ -149,8 +156,8 @@ export default function EditStudentPage(): React.ReactElement {
           </div>
 
           <div className="lg:col-span-2">
-            <GlassCard className="!p-0 overflow-hidden h-full">
-              <div className="p-5 border-b border-border bg-muted/40">
+            <GlassCard className="!p-0 h-full">
+              <div className="p-5 border-b border-border bg-muted/40 rounded-t-[inherit]">
                 <h3 className="text-base font-semibold text-foreground flex items-center gap-2">
                   <GraduationCap size={18} className="text-primary" />
                   Student Profile
@@ -162,6 +169,7 @@ export default function EditStudentPage(): React.ReactElement {
                 control={control}
                 errors={errors}
                 deptOptions={deptOptions}
+                departmentId={departmentId}
               />
             </GlassCard>
           </div>

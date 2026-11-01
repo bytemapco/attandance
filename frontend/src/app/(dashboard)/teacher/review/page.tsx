@@ -1,105 +1,78 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { Eye } from "lucide-react";
-import api from "@/lib/api";
-import GlassPageHeader from "@/components/ui/GlassPageHeader";
-import GlassTable, { type TableColumn } from "@/components/ui/GlassTable";
+import React, { useCallback, useEffect, useState } from "react";
+import Link from "next/link";
+import { AlertTriangle, ArrowRight } from "lucide-react";
+import api, { getApiErrorMessage } from "@/lib/api";
 import GlassBadge from "@/components/ui/GlassBadge";
-import GlassLoader from "@/components/ui/GlassLoader";
 import GlassEmptyState from "@/components/ui/GlassEmptyState";
-import type { FlaggedAttendanceResponse } from "@/types";
+import GlassErrorState from "@/components/ui/GlassErrorState";
+import GlassLoader from "@/components/ui/GlassLoader";
+import GlassPageHeader from "@/components/ui/GlassPageHeader";
+import type { FlaggedRecord } from "@/types";
 
-import GlassSearch from "@/components/ui/GlassSearch";
-import GlassSelect from "@/components/ui/GlassSelect";
+const METHOD: Record<string, string> = { AI_BIOMETRIC: "Face", QR_CODE: "QR code", SMART_PASS_OFFLINE: "Smart Pass" };
 
-import GlassButton from "@/components/ui/GlassButton";
-import GlassCard from "@/components/ui/GlassCard";
+function formatDate(iso: string): string {
+  return new Intl.DateTimeFormat("en-IN", { day: "numeric", month: "short", year: "numeric" }).format(new Date(iso));
+}
 
 export default function ReviewQueuePage(): React.ReactElement {
-  const router = useRouter();
-  const [records, setRecords] = useState<FlaggedAttendanceResponse[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filterClass, setFilterClass] = useState("all");
+  const [items, setItems] = useState<FlaggedRecord[] | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    async function fetch(): Promise<void> {
-      try { const { data } = await api.get<FlaggedAttendanceResponse[]>("/teacher/attendance/flagged"); setRecords(data); }
-      catch { setRecords([]); }
-      finally { setLoading(false); }
+  const load = useCallback(async (): Promise<void> => {
+    try {
+      const { data } = await api.get<FlaggedRecord[]>("/faculty/flagged");
+      setItems(data);
+      setError(null);
+    } catch (err: unknown) {
+      setError(getApiErrorMessage(err, "Could not load flagged records"));
     }
-    fetch();
   }, []);
 
-  if (loading) return <GlassLoader text="Loading flagged records..." />;
-  if (records.length === 0) return <><GlassPageHeader title="Review Queue" /><GlassEmptyState title="All Clear" message="No flagged records require review." /></>;
+  useEffect(() => {
+    void load();
+  }, [load]);
 
-  const columns: TableColumn<FlaggedAttendanceResponse & Record<string, unknown>>[] = [
-    { key: "enrollment_number", header: "Enrollment #" },
-    { key: "student_name", header: "Student", sortable: true },
-    { key: "class_name", header: "Class" },
-    { key: "final_ai_score", header: "AI Score", render: (r) => {
-      const score = Number(r.final_ai_score);
-      const colorClass = score >= 0.7
-        ? "text-[#247653] font-semibold"
-        : score >= 0.4
-        ? "text-[#8A5B12] font-semibold"
-        : "text-[#B54242] font-semibold";
-      return <span className={`font-mono text-sm ${colorClass}`}>{(score * 100).toFixed(1)}%</span>;
-    }},
-    { key: "created_at", header: "Date", render: (r) => <span className="text-xs text-foreground/80 font-medium">{new Date(String(r.created_at)).toLocaleDateString()}</span> },
-    { key: "actions", header: "", render: (row) => (
-      <GlassButton
-        variant="ghost"
-        size="sm"
-        onClick={() => router.push(`/teacher/review/${row.id}`)}
-        className="text-foreground hover:text-primary text-xs h-7 px-2"
-        icon={<Eye size={14} className="text-[#526F78]" />}
-      >
-        Review
-      </GlassButton>
-    )},
-  ];
-
-  const uniqueClasses = Array.from(new Set(records.map(r => r.class_name)));
-  const classOptions = [
-    { value: "all", label: "All Classes" },
-    ...uniqueClasses.map(c => ({ value: c, label: c }))
-  ];
-
-  const filteredRecords = records.filter(r => {
-    const matchesSearch = r.student_name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                          r.enrollment_number.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesClass = filterClass === "all" || r.class_name === filterClass;
-    return matchesSearch && matchesClass;
-  });
+  if (error) return <GlassErrorState message={error} onRetry={() => void load()} />;
+  if (!items) return <GlassLoader />;
 
   return (
-    <div className="animate-fade-in-up">
-      <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-6">
-        <GlassPageHeader title="Review Queue" />
-        {records.length > 0 && <GlassBadge variant="warning" className="mt-2">{records.length} pending</GlassBadge>}
-      </div>
-      
-      <GlassCard padding="sm" className="mb-6">
-        <div className="flex flex-col sm:flex-row gap-4">
-          <div className="flex-1">
-            <GlassSearch placeholder="Search by name or ID..." onSearch={setSearchTerm} />
-          </div>
-          <div className="w-full sm:w-64">
-            <GlassSelect 
-              options={classOptions} 
-              value={filterClass} 
-              onChange={setFilterClass} 
-              placeholder="Filter by Class"
-            />
-          </div>
-        </div>
-      </GlassCard>
-
-      <GlassTable columns={columns} data={filteredRecords as (FlaggedAttendanceResponse & Record<string, unknown>)[]} emptyMessage="No records match your search." />
+    <div className="space-y-5">
+      <GlassPageHeader
+        title="Pending reviews"
+        description="Students whose attendance needs your decision. Open the register to mark them present or absent."
+      />
+      {items.length === 0 ? (
+        <GlassEmptyState title="No records need review" message="Flagged attendance will appear here. Nothing needs your action right now." />
+      ) : (
+        <ul className="divide-y divide-border overflow-hidden rounded-[14px] border border-border bg-card">
+          {items.map((item) => (
+            <li key={item.record_id} className="flex flex-wrap items-center gap-4 px-5 py-4">
+              <div className="min-w-0 flex-1 space-y-1">
+                <p className="text-sm font-semibold text-foreground">
+                  {item.student_name} <span className="font-mono text-xs font-normal text-muted-foreground">{item.enrollment_number}</span>
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {item.subject_name} · {item.class_code} · {formatDate(item.date)}, {item.time_slot}
+                </p>
+                <p className="flex items-start gap-1.5 text-xs text-[#8a5b12]">
+                  <AlertTriangle size={13} className="mt-px shrink-0" aria-hidden />
+                  {item.remarks ?? "Needs your review"}
+                </p>
+              </div>
+              <GlassBadge variant="warning">Flagged · {METHOD[item.method] ?? item.method}</GlassBadge>
+              <Link
+                href={`/teacher/attendance/${item.occurrence_id}`}
+                className="inline-flex h-9 items-center gap-2 rounded-[10px] border border-border bg-card px-4 text-xs font-semibold text-foreground outline-none hover:bg-secondary focus-visible:ring-2 focus-visible:ring-[#526f78]"
+              >
+                {item.locked ? "View register" : "Review in register"} <ArrowRight size={14} aria-hidden />
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }

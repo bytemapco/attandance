@@ -131,14 +131,18 @@ export function parseBulkCsvContent(
       const identifier = parts[1] || "";
       const firstName = parts[2] || "";
       const lastName = parts[3] || "";
+      const departmentCode = parts[4] || "";
+      const batchCode = entityType === "students" ? parts[5] || "" : "";
       const isValidEmail = emailRegex.test(email);
       const hasIdentifier = identifier.length >= 3;
-      const isValid = isValidEmail && hasIdentifier && firstName.length > 0;
+      const hasDepartment = entityType !== "students" || departmentCode.length > 0;
+      const isValid = isValidEmail && hasIdentifier && firstName.length > 0 && hasDepartment;
 
       let validationError: string | undefined;
       if (!isValidEmail) validationError = "Invalid email format";
       else if (!hasIdentifier) validationError = "ID too short (min 3 characters)";
       else if (!firstName) validationError = "First name is required";
+      else if (!hasDepartment) validationError = "Department code is required";
 
       records.push({
         id: `row-${i}-${Date.now()}`,
@@ -146,6 +150,8 @@ export function parseBulkCsvContent(
         identifier,
         first_name: firstName,
         last_name: lastName,
+        departmentCode: departmentCode || undefined,
+        batchCode: batchCode || undefined,
         isValid,
         validationError,
       });

@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { ShieldCheck, KeyRound, BookOpen, QrCode, ArrowUpRight } from "lucide-react";
+import { KeyRound, BookOpen, QrCode, ArrowUpRight } from "lucide-react";
 
 interface QuickActionItem {
   label: string;
@@ -12,11 +12,6 @@ interface QuickActionItem {
 
 export default function AdminQuickActions(): React.ReactElement {
   const quickActions: QuickActionItem[] = [
-    {
-      label: "Verification Settings",
-      href: "/admin/setup/verification-settings",
-      icon: <ShieldCheck size={18} className="text-[#247653]" />,
-    },
     {
       label: "Manage Licenses",
       href: "/admin/licenses",

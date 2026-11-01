@@ -36,7 +36,7 @@ export default function LoginPage(): React.ReactElement {
   function handleSuccessRedirect(profile: UserProfile): void {
     if (profile.role === "SUPER_ADMIN") router.push("/super-admin/dashboard");
     else if (profile.role === "ADMIN" || profile.role === "TENANT_ADMIN") router.push("/admin/dashboard");
-    else router.push("/teacher/classes");
+    else router.push("/teacher/dashboard");
   }
 
   async function onSubmit(formData: LoginFormData): Promise<void> {

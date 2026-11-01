@@ -1,19 +1,16 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
-import { Radio, RefreshCw } from "lucide-react";
+import { RefreshCw } from "lucide-react";
 import { useAuthStore } from "@/store/authStore";
 
 interface TeacherDashboardHeaderProps {
   todayStr: string;
-  refreshing: boolean;
   onRefresh: () => void;
 }
 
 export default function TeacherDashboardHeader({
   todayStr,
-  refreshing,
   onRefresh,
 }: TeacherDashboardHeaderProps): React.ReactElement {
   const { user } = useAuthStore();
@@ -53,25 +50,13 @@ export default function TeacherDashboardHeader({
       </div>
 
       <div className="flex items-center gap-2.5 self-start md:self-center shrink-0">
-        <Link
-          href="/teacher/sessions"
-          className="inline-flex items-center gap-2 h-9 px-4 rounded-lg bg-[#28363b] text-white text-xs font-semibold hover:bg-[#1f2b2f] transition-all shadow-xs active:scale-95 cursor-pointer"
-        >
-          <Radio size={14} className="text-[#c98260]" />
-          <span>Start Session</span>
-        </Link>
-
         <button
           type="button"
           onClick={onRefresh}
-          disabled={refreshing}
-          className="inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg border border-[#e3e1dc] bg-card text-xs font-semibold text-[#202b30] hover:bg-secondary transition-all shadow-2xs active:scale-95 disabled:opacity-50 cursor-pointer"
+          className="inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg border border-[#e3e1dc] bg-card text-xs font-semibold text-[#202b30] hover:bg-secondary transition-all shadow-2xs active:scale-95 cursor-pointer"
         >
-          <RefreshCw
-            size={13}
-            className={refreshing ? "animate-spin text-[#c98260]" : "text-[#526f78]"}
-          />
-          <span>{refreshing ? "Updating..." : "Refresh"}</span>
+          <RefreshCw size={13} className="text-[#526f78]" />
+          <span>Refresh</span>
         </button>
       </div>
     </div>

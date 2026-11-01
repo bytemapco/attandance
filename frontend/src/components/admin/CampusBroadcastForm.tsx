@@ -76,7 +76,7 @@ export default function CampusBroadcastForm({
           <input
             id="broadcast-link"
             type="text"
-            placeholder="e.g. /teacher/classes or https://portal.institution.edu/notices"
+            placeholder="e.g. /teacher/dashboard or https://portal.institution.edu/notices"
             value={formData.link || ""}
             onChange={(e) => onChange({ ...formData, link: e.target.value })}
             className="w-full px-3 py-1.5 rounded-xl border border-[#e3e1dc] bg-white text-xs text-[#28363b] placeholder:text-[#526f78]/60 focus:outline-none focus:ring-1 focus:ring-[#c98260] focus:border-[#c98260] transition-all font-mono"

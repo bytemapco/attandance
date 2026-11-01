@@ -12,27 +12,26 @@ import BulkImportModal from "@/components/admin/BulkImportModal";
 import { useTableQuery } from "@/hooks/useTableQuery";
 import { studentColumns } from "./StudentColumns";
 import { useStudentFacets } from "./useStudentFacets";
-import type { StudentResponse, DepartmentResponse, StudentFilterFacetsResponse } from "@/types";
+import type { BatchResponse, StudentResponse, DepartmentResponse, StudentFilterFacetsResponse } from "@/types";
 
 export default function StudentsPage(): React.ReactElement {
   const router = useRouter();
   const [departments, setDepartments] = useState<{ value: string; label: string }[]>([]);
-  const [facets, setFacets] = useState<StudentFilterFacetsResponse>({ branches: [], batches: [], semesters: [] });
+  const [facets, setFacets] = useState<StudentFilterFacetsResponse>({ semesters: [] });
+  const [batchFilterOptions, setBatchFilterOptions] = useState<{ value: string; label: string }[]>([]);
   const [isBulkImportOpen, setIsBulkImportOpen] = useState(false);
 
   const [department, setDepartment] = useState<string>("all");
   const [semester, setSemester] = useState<string>("all");
-  const [branch, setBranch] = useState<string>("all");
   const [batch, setBatch] = useState<string>("all");
   const [status, setStatus] = useState<string>("all");
 
   const extraParams = useMemo(() => ({
     department_id: department !== "all" ? department : undefined,
     semester: semester !== "all" ? Number(semester) : undefined,
-    branch: branch !== "all" ? branch : undefined,
-    batch: batch !== "all" ? batch : undefined,
+    batch_id: batch !== "all" ? batch : undefined,
     status: status !== "all" ? status : undefined,
-  }), [department, semester, branch, batch, status]);
+  }), [department, semester, batch, status]);
 
   const {
     data: students,
@@ -64,6 +63,8 @@ export default function StudentsPage(): React.ReactElement {
           api.get<DepartmentResponse[]>("/admin/departments"),
           api.get<StudentFilterFacetsResponse>("/admin/users/students/facets"),
         ]);
+        const batchRes = await api.get<BatchResponse[]>("/admin/batches").catch(() => ({ data: [] as BatchResponse[] }));
+        setBatchFilterOptions(batchRes.data.map((b) => ({ value: b.id, label: b.code })));
         if (deptRes.status === "fulfilled") {
           setDepartments(deptRes.value.data.map((d) => ({ value: d.id, label: d.name })));
         }
@@ -77,7 +78,7 @@ export default function StudentsPage(): React.ReactElement {
     void loadMetadata();
   }, []);
 
-  const { branchOptions, batchOptions, semesterOptions } = useStudentFacets({
+  const { semesterOptions } = useStudentFacets({
     facets,
     students,
   });
@@ -86,7 +87,6 @@ export default function StudentsPage(): React.ReactElement {
     setSearchQuery("");
     setDepartment("all");
     setSemester("all");
-    setBranch("all");
     setBatch("all");
     setStatus("all");
     setCurrentPage(1);
@@ -108,16 +108,9 @@ export default function StudentsPage(): React.ReactElement {
       onChange: (val) => { setSemester(val); setCurrentPage(1); },
     },
     {
-      id: "branch",
-      label: "Branch",
-      options: branchOptions,
-      value: branch,
-      onChange: (val) => { setBranch(val); setCurrentPage(1); },
-    },
-    {
       id: "batch",
       label: "Batch",
-      options: batchOptions,
+      options: batchFilterOptions,
       value: batch,
       onChange: (val) => { setBatch(val); setCurrentPage(1); },
     },

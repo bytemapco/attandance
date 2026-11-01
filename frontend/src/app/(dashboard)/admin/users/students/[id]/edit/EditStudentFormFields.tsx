@@ -2,6 +2,7 @@ import React from "react";
 import { UseFormRegister, Control, FieldErrors, Controller } from "react-hook-form";
 import GlassInput from "@/components/ui/GlassInput";
 import GlassSelect from "@/components/ui/GlassSelect";
+import DepartmentBatchSelect from "@/components/admin/batches/DepartmentBatchSelect";
 import type { StudentUpdateFormData } from "@/lib/validations/student";
 
 interface EditStudentFormFieldsProps {
@@ -9,13 +10,13 @@ interface EditStudentFormFieldsProps {
   control: Control<StudentUpdateFormData>;
   errors: FieldErrors<StudentUpdateFormData>;
   deptOptions: { value: string; label: string }[];
+  departmentId?: string;
 }
 
 const GENDER_OPTIONS = [
-  { value: "Male", label: "Male" },
-  { value: "Female", label: "Female" },
-  { value: "Other", label: "Other" },
-  { value: "Prefer not to say", label: "Prefer not to say" },
+  { value: "M", label: "Male" },
+  { value: "F", label: "Female" },
+  { value: "O", label: "Other" },
 ];
 
 const SEMESTER_OPTIONS = Array.from({ length: 8 }, (_, i) => ({
@@ -28,6 +29,7 @@ export default function EditStudentFormFields({
   control,
   errors,
   deptOptions,
+  departmentId,
 }: EditStudentFormFieldsProps): React.ReactElement {
   return (
     <div className="p-5 grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -79,27 +81,29 @@ export default function EditStudentFormFields({
           />
         )}
       />
-      <GlassInput
-        label="Branch (optional)"
-        placeholder="e.g. CE, IoT-IT, AI"
-        {...register("branch")}
-        error={errors.branch?.message}
-      />
-      <GlassInput
-        label="Batch (optional)"
-        {...register("batch")}
-        error={errors.batch?.message}
-      />
       <Controller
         control={control}
         name="department_id"
         render={({ field }) => (
           <GlassSelect
-            label="Department (optional)"
+            label="Department *"
             options={deptOptions}
             value={typeof field.value === "string" ? field.value : ""}
             onChange={field.onChange}
             error={errors.department_id?.message}
+          />
+        )}
+      />
+      <Controller
+        control={control}
+        name="batch_id"
+        render={({ field }) => (
+          <DepartmentBatchSelect
+            label="Batch *"
+            departmentId={departmentId ?? ""}
+            value={typeof field.value === "string" ? field.value : ""}
+            onChange={field.onChange}
+            error={errors.batch_id?.message}
           />
         )}
       />

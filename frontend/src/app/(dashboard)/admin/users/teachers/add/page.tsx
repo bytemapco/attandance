@@ -14,7 +14,7 @@ import GlassInput from "@/components/ui/GlassInput";
 import GlassButton from "@/components/ui/GlassButton";
 import TeacherFormProfile from "./TeacherFormProfile";
 import { teacherFormSchema, TeacherFormData } from "@/lib/validations/teacher";
-import type { DepartmentResponse, DesignationResponse } from "@/types";
+import type { DepartmentResponse, DesignationResponse, TeacherResponse } from "@/types";
 
 export default function AddTeacherPage(): React.ReactElement {
   const router = useRouter();
@@ -65,8 +65,12 @@ export default function AddTeacherPage(): React.ReactElement {
         ...formData,
         phone: formData.phone || undefined,
       };
-      await api.post("/admin/users/teacher", payload);
-      toast.success("Teacher created and temporary password sent via email");
+      const { data: created } = await api.post<TeacherResponse>("/admin/users/teacher", payload);
+      if (created.invitation_sent === false) {
+        toast("Teacher created, but the invitation email could not be sent. Share the credentials manually or retry later.", { icon: "⚠️", duration: 7000 });
+      } else {
+        toast.success("Teacher created and temporary password sent via email");
+      }
       router.push("/admin/users/teachers");
     } catch (err: unknown) {
       applyValidationErrorsToForm(err, setError);
