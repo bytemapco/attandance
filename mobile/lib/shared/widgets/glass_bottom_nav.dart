@@ -113,6 +113,10 @@ class _NavTabItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final reduceMotion = MediaQuery.disableAnimationsOf(context);
+    final transitionDuration = reduceMotion
+        ? Duration.zero
+        : SasDurations.normal;
     final activeColor = SasColors.osageOrange;
     final inactiveColor = isDark
         ? const Color(0xFFCBD5E1)
@@ -132,54 +136,54 @@ class _NavTabItem extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-              // Animated pill behind icon
-              AnimatedContainer(
-                duration: SasDurations.spring,
-                curve: Curves.easeOutCubic,
-                width: selected ? 56 : 32,
-                height: 32,
-                decoration: BoxDecoration(
-                  color: selected
-                      ? SasColors.osageOrange.withValues(
-                          alpha: isDark ? 0.18 : 0.12,
-                        )
-                      : Colors.transparent,
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Center(
-                  child: AnimatedSwitcher(
-                    duration: SasDurations.normal,
-                    switchInCurve: Curves.easeOut,
-                    switchOutCurve: Curves.easeIn,
-                    transitionBuilder: (child, animation) => ScaleTransition(
-                      scale: animation,
-                      child: FadeTransition(opacity: animation, child: child),
-                    ),
-                    child: Icon(
-                      selected ? item.filledIcon : item.outlinedIcon,
-                      key: ValueKey(selected),
-                      size: 22,
-                      color: selected ? activeColor : inactiveColor,
+                // Animated pill behind icon
+                AnimatedContainer(
+                  duration: reduceMotion ? Duration.zero : SasDurations.spring,
+                  curve: Curves.easeOutCubic,
+                  width: selected ? 56 : 32,
+                  height: 32,
+                  decoration: BoxDecoration(
+                    color: selected
+                        ? SasColors.osageOrange.withValues(
+                            alpha: isDark ? 0.18 : 0.12,
+                          )
+                        : Colors.transparent,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Center(
+                    child: AnimatedSwitcher(
+                      duration: transitionDuration,
+                      switchInCurve: Curves.easeOut,
+                      switchOutCurve: Curves.easeIn,
+                      transitionBuilder: (child, animation) => ScaleTransition(
+                        scale: animation,
+                        child: FadeTransition(opacity: animation, child: child),
+                      ),
+                      child: Icon(
+                        selected ? item.filledIcon : item.outlinedIcon,
+                        key: ValueKey(selected),
+                        size: 22,
+                        color: selected ? activeColor : inactiveColor,
+                      ),
                     ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 2),
-              AnimatedDefaultTextStyle(
-                duration: SasDurations.normal,
-                style: TextStyle(
-                  fontSize: 11.5,
-                  fontWeight: selected ? FontWeight.w700 : FontWeight.w600,
-                  color: selected ? activeColor : inactiveColor,
-                  letterSpacing: selected ? -0.1 : 0,
+                const SizedBox(height: 2),
+                AnimatedDefaultTextStyle(
+                  duration: transitionDuration,
+                  style: TextStyle(
+                    fontSize: 11.5,
+                    fontWeight: selected ? FontWeight.w700 : FontWeight.w600,
+                    color: selected ? activeColor : inactiveColor,
+                    letterSpacing: selected ? -0.1 : 0,
+                  ),
+                  child: Text(item.label),
                 ),
-                child: Text(item.label),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
-    ),
-  );
-}
+    );
+  }
 }

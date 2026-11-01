@@ -38,7 +38,7 @@ export default function SessionHeader({
         </div>
         <p className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground">
           <span className="font-semibold text-foreground">{register.class_code}</span>
-          <span className="inline-flex items-center gap-1.5"><Clock size={14} aria-hidden /> {register.time_slot}</span>
+          <span className="inline-flex items-center gap-1.5"><Clock size={14} aria-hidden /> {register.time_range}</span>
           {register.classroom_name && <span className="inline-flex items-center gap-1.5"><DoorOpen size={14} aria-hidden /> {register.classroom_name}</span>}
         </p>
       </div>

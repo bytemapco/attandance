@@ -69,7 +69,7 @@ export default function DeleteTenantModal({
 
         <div className="p-6 space-y-4">
           <p className="text-xs text-muted-foreground leading-relaxed">
-            This action cannot be undone. All classes, user accounts, attendance records, and custom domain routing for <strong className="text-foreground">{tenant.name}</strong> will be permanently removed.
+            This action cannot be undone. All classes, user accounts, and attendance records for <strong className="text-foreground">{tenant.name}</strong> will be permanently removed.
           </p>
 
           {error && (

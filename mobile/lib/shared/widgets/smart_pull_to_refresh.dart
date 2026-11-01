@@ -103,7 +103,7 @@ class _SmartPullToRefreshState extends State<SmartPullToRefresh>
       _isRefreshing = true;
       _pullOffset = 60.0;
     });
-    _pulseController.repeat();
+    if (!MediaQuery.disableAnimationsOf(context)) _pulseController.repeat();
     HapticFeedback.heavyImpact();
 
     try {

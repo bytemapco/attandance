@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import GlassErrorState from "./GlassErrorState";
 import GlassTableHeader, { type TableColumnHeader } from "./GlassTableHeader";
 import GlassTablePagination from "./GlassTablePagination";
+import { Skeleton } from "./Skeleton";
 
 export type TableColumn<T> = TableColumnHeader<T>;
 
@@ -82,9 +83,17 @@ export default function GlassTable<T extends Record<string, unknown>>({
   if (loading) {
     return (
       <div className={cn("rounded-xl border border-border bg-card shadow-xs overflow-hidden", className)}>
-        <div className="p-4 space-y-3">
+        <div className="space-y-4 p-4" role="status" aria-label="Loading table data" aria-busy="true">
+          <span className="sr-only">Loading table data</span>
           {Array.from({ length: 5 }).map((_, i) => (
-            <div key={i} className="h-10 w-full rounded-lg bg-secondary/70 animate-pulse" />
+            <div key={i} aria-hidden="true" className="flex items-center gap-3 border-b border-border pb-3 last:border-0 last:pb-0">
+              <Skeleton className="size-8 shrink-0 rounded-full" />
+              <div className="min-w-0 flex-1 space-y-2">
+                <Skeleton className="h-3 w-1/3" />
+                <Skeleton className="h-3 w-2/3" />
+              </div>
+              <Skeleton className="hidden h-7 w-24 sm:block" />
+            </div>
           ))}
         </div>
       </div>

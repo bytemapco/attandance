@@ -10,13 +10,10 @@ class TenantQueryService:
         page_size: int = 10,
         q: Optional[str] = None,
         status: Optional[str] = None,
-        type: Optional[str] = None,
     ) -> dict:
         where: dict = {}
         if status and status != "all":
             where["status"] = status
-        if type and type != "all":
-            where["type"] = type
         if q and q.strip():
             query_str = q.strip()
             where["OR"] = [
@@ -40,7 +37,6 @@ class TenantQueryService:
                     name=t.name,
                     type=t.type,
                     status=t.status,
-                    domain=t.domain,
                     license_count=t.licenseCount,
                     created_at=t.createdAt,
                     student_count=student_count,
@@ -84,7 +80,6 @@ class TenantQueryService:
             name=t.name,
             type=t.type,
             status=t.status,
-            domain=t.domain,
             license_count=t.licenseCount,
             created_at=t.createdAt,
             config=t.config if isinstance(t.config, dict) else {},

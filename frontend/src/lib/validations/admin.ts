@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const classFormSchema = z.object({
+const classFormSchema = z.object({
   name: z
     .string()
     .trim()
@@ -26,11 +26,3 @@ export const assignTeacherSchema = z.object({
 });
 
 export type AssignTeacherFormData = z.infer<typeof assignTeacherSchema>;
-
-export const systemConfigSchema = z.object({
-  is_face_recognition_enabled: z.boolean(),
-  is_gps_verification_enabled: z.boolean(),
-  is_ai_background_validation_enabled: z.boolean(),
-});
-
-export type SystemConfigFormData = z.infer<typeof systemConfigSchema>;

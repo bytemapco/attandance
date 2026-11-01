@@ -48,6 +48,7 @@ class GlassAppBar extends StatelessWidget implements PreferredSizeWidget {
             children: [
               if (showBack || canPop)
                 IconButton(
+                  tooltip: 'Back',
                   icon: Icon(Icons.arrow_back_ios_new_rounded, size: 18),
                   color: textColor,
                   onPressed: () {

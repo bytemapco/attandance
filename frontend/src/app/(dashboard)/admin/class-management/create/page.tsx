@@ -20,14 +20,13 @@ import GlassSelect from "@/components/ui/GlassSelect";
 import GlassButton from "@/components/ui/GlassButton";
 import { useDepartmentBatches } from "@/components/admin/batches/useDepartmentBatches";
 import StudentSelectionList from "./StudentSelectionList";
-import type { AcademicYearItem, ClassDetail, DepartmentResponse, StudentResponse } from "@/types";
+import type { ClassDetail, DepartmentResponse, StudentResponse } from "@/types";
 
 const SEMESTERS = Array.from({ length: 8 }, (_, i) => ({ value: String(i + 1), label: `Semester ${i + 1}` }));
 
 export default function CreateClassPage(): React.ReactElement {
   const router = useRouter();
   const [departments, setDepartments] = useState<DepartmentResponse[]>([]);
-  const [years, setYears] = useState<AcademicYearItem[]>([]);
   const [students, setStudents] = useState<StudentResponse[]>([]);
   const [selected, setSelected] = useState<Set<string>>(new Set());
 
@@ -39,7 +38,7 @@ export default function CreateClassPage(): React.ReactElement {
     formState: { errors, isSubmitting },
   } = useForm<ClassCreateFormInput, unknown, ClassCreateFormData>({
     resolver: zodResolver(classCreateSchema),
-    defaultValues: { department_id: "", academic_year_id: "", semester_number: 1, batch_id: "" },
+    defaultValues: { department_id: "", semester_number: 1, batch_id: "" },
   });
   const departmentId = useWatch({ control, name: "department_id" });
   const semester = Number(useWatch({ control, name: "semester_number" }));
@@ -49,22 +48,18 @@ export default function CreateClassPage(): React.ReactElement {
   useEffect(() => {
     async function loadOptions(): Promise<void> {
       try {
-        const [deptRes, yearRes, studentRes] = await Promise.all([
+        const [deptRes, studentRes] = await Promise.all([
           api.get<DepartmentResponse[]>("/admin/departments"),
-          api.get<AcademicYearItem[]>("/admin/academic-years"),
           api.get<StudentResponse[] | { items: StudentResponse[] }>("/admin/users/students?page_size=1000"),
         ]);
         setDepartments(deptRes.data);
-        setYears(yearRes.data);
         setStudents(Array.isArray(studentRes.data) ? studentRes.data : studentRes.data.items ?? []);
-        const active = yearRes.data.find((y) => y.status === "ACTIVE");
-        if (active) setValue("academic_year_id", active.id);
       } catch (err: unknown) {
-        toast.error(getApiErrorMessage(err, "Failed to load departments, terms and students"));
+        toast.error(getApiErrorMessage(err, "Failed to load departments and students"));
       }
     }
     void loadOptions();
-  }, [setValue]);
+  }, []);
 
   const matching = useMemo(
     () => (batchId ? studentsForClass(students, departmentId, semester, batchId) : []),
@@ -169,20 +164,6 @@ export default function CreateClassPage(): React.ReactElement {
           {batchId && matching.length === 0 && (
             <p className="text-xs text-[#8a5b12]">No students in this batch for the selected semester.</p>
           )}
-          <Controller
-            control={control}
-            name="academic_year_id"
-            render={({ field }) => (
-              <GlassSelect
-                label="Academic Year / Term"
-                placeholder="Select academic year"
-                value={field.value}
-                onChange={field.onChange}
-                options={years.map((y) => ({ value: y.id, label: y.name }))}
-                error={errors.academic_year_id?.message}
-              />
-            )}
-          />
           {matching.length > 0 && (
             <StudentSelectionList students={matching} selected={selected} onToggle={toggle} onToggleAll={toggleAll} />
           )}

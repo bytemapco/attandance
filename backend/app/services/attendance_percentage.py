@@ -8,7 +8,7 @@ def attendance_percentage(
 ) -> Optional[float]:
     """PRD 5.3: (PRESENT + LATE + EXCUSED_if_counted) / conducted occurrences.
 
-    `conducted` must already exclude cancelled classes, holidays and classes still being taken.
+    `conducted` must already exclude cancelled classes and classes still being taken.
     Returns None when nothing has been conducted yet, so callers never show a fake 0% or 100%.
     """
     if conducted <= 0:

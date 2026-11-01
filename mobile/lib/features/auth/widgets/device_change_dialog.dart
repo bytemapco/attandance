@@ -89,11 +89,13 @@ class _DeviceChangeDialogState extends ConsumerState<DeviceChangeDialog> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final dialogBg = isDark ? const Color(0xFF1E2838) : Colors.white;
     final primaryText = isDark ? SasColors.brilliance : const Color(0xFF0F172A);
-    final secondaryText =
-        isDark ? const Color(0xFFCBD5E1) : const Color(0xFF64748B);
+    final secondaryText = isDark
+        ? const Color(0xFFCBD5E1)
+        : const Color(0xFF64748B);
     final inputBg = isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC);
-    final inputBorder =
-        isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0);
+    final inputBorder = isDark
+        ? const Color(0xFF334155)
+        : const Color(0xFFE2E8F0);
 
     return Dialog(
       backgroundColor: Colors.transparent,

@@ -35,6 +35,8 @@ class AuthIdentifierInputField extends StatelessWidget {
         color: primaryTextColor,
       ),
       decoration: InputDecoration(
+        labelText: 'Student ID or email',
+        floatingLabelBehavior: FloatingLabelBehavior.never,
         hintText: 'STU-2026-001 or email',
         hintStyle: SasTypography.style(
           fontSize: 13.5,

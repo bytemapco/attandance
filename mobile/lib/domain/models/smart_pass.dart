@@ -1,3 +1,5 @@
+import 'package:smart_attendance_app/core/server_time.dart';
+
 class SmartPass {
   final String qrToken;
   final DateTime expiresAt;
@@ -14,7 +16,7 @@ class SmartPass {
   factory SmartPass.fromJson(Map<String, dynamic> json) {
     return SmartPass(
       qrToken: json['qr_token'] as String,
-      expiresAt: DateTime.parse(json['expires_at'] as String),
+      expiresAt: parseServerTime(json['expires_at'] as String)!,
       studentName: json['student_name'] as String,
       enrollmentNumber: json['enrollment_number'] as String,
     );
@@ -57,9 +59,7 @@ class SmartPassScanResult {
       attendanceStatus: json['attendance_status'] as String? ?? 'Present',
       studentName: json['student_name'] as String? ?? '',
       enrollmentNumber: json['enrollment_number'] as String? ?? '',
-      markedAt:
-          DateTime.tryParse(json['marked_at'] as String? ?? '') ??
-          DateTime.now(),
+      markedAt: parseServerTime(json['marked_at'] as String?) ?? DateTime.now(),
       message: json['message'] as String? ?? 'Attendance marked successfully',
     );
   }

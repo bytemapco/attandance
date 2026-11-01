@@ -1,5 +1,3 @@
-import type { SessionStudentAttendanceItem } from "@/types";
-
 export function exportToCSV(filename: string, rows: Record<string, unknown>[]): void {
   if (!rows || rows.length === 0) return;
 
@@ -28,21 +26,4 @@ export function exportToCSV(filename: string, rows: Record<string, unknown>[]): 
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
 }
-
-export function exportAttendanceRollToCSV(className: string, roll: SessionStudentAttendanceItem[]): void {
-  const formattedRows = roll.map((item) => ({
-    "Enrollment Number": item.enrollment_number,
-    "Full Name": item.full_name,
-    "Email": item.email,
-    "Attendance Status": item.status,
-    "AI Confidence Score": `${(item.final_score * 100).toFixed(1)}%`,
-    "Timestamp": item.marked_at ? new Date(item.marked_at).toLocaleString() : "N/A",
-  }));
-
-  const cleanClassName = className.replace(/[^a-zA-Z0-9_-]/g, "_");
-  const dateStr = new Date().toISOString().split("T")[0];
-  exportToCSV(`Attendance_${cleanClassName}_${dateStr}`, formattedRows);
-}
-
-export const exportRosterToCSV = exportAttendanceRollToCSV;
 

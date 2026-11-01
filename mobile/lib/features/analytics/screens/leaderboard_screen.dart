@@ -8,6 +8,7 @@ import 'package:smart_attendance_app/features/auth/providers/auth_provider.dart'
 import 'package:smart_attendance_app/shared/widgets/animated_background.dart';
 import 'package:smart_attendance_app/shared/widgets/glass_app_bar.dart';
 import 'package:smart_attendance_app/shared/widgets/glass_card.dart';
+import 'package:smart_attendance_app/shared/widgets/shimmer_placeholder.dart';
 
 class LeaderboardScreen extends ConsumerWidget {
   const LeaderboardScreen({super.key});
@@ -39,8 +40,10 @@ class LeaderboardScreen extends ConsumerWidget {
     String? currentStudentId,
   ) {
     if (state.isLoading && state.data == null) {
-      return const Center(
-        child: CircularProgressIndicator(color: SasColors.accentEmerald),
+      return ListView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.all(16),
+        children: const [ShimmerPlaceholder(itemCount: 5, itemHeight: 78)],
       );
     }
 

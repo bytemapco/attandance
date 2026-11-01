@@ -20,7 +20,6 @@ export interface TenantListParams {
   page_size?: number;
   q?: string;
   status?: string;
-  type?: string;
 }
 
 export interface PaginatedTenants {
@@ -107,8 +106,8 @@ export const superAdminService = {
     await api.delete(`/super-admin/tenants/${id}`);
   },
 
-  async addTenantAdmin(tenantId: string, payload: { name: string; email: string; role?: string }): Promise<{ id: string; email: string; role: string }> {
-    const { data } = await api.post<{ id: string; email: string; role: string }>(`/super-admin/tenants/${tenantId}/admins`, payload);
+  async addTenantAdmin(tenantId: string, payload: { name: string; email: string; role?: string }): Promise<{ id: string; email: string; role: string; invitation_sent: boolean }> {
+    const { data } = await api.post<{ id: string; email: string; role: string; invitation_sent: boolean }>(`/super-admin/tenants/${tenantId}/admins`, payload);
     return data;
   },
 

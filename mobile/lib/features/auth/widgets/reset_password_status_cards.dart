@@ -57,7 +57,8 @@ class ResetPasswordInvalidCard extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            errorMessage ?? 'This reset link is invalid or has already been used.',
+            errorMessage ??
+                'This reset link is invalid or has already been used.',
             textAlign: TextAlign.center,
             style: const TextStyle(color: SasColors.textMuted, fontSize: 13),
           ),

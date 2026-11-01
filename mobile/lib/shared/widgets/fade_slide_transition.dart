@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 /// Lightweight micro-animation wrapper for smooth staggered entrance transitions.
@@ -26,6 +28,7 @@ class _FadeSlideTransitionState extends State<FadeSlideTransition>
   late final AnimationController _controller;
   late final Animation<double> _fadeAnimation;
   late final Animation<Offset> _slideAnimation;
+  Timer? _startTimer;
 
   @override
   void initState() {
@@ -43,20 +46,31 @@ class _FadeSlideTransitionState extends State<FadeSlideTransition>
     if (widget.delay == Duration.zero) {
       _controller.forward();
     } else {
-      Future.delayed(widget.delay, () {
+      _startTimer = Timer(widget.delay, () {
         if (mounted) _controller.forward();
       });
     }
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (MediaQuery.disableAnimationsOf(context)) {
+      _startTimer?.cancel();
+      _controller.value = 1;
+    }
+  }
+
+  @override
   void dispose() {
+    _startTimer?.cancel();
     _controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    if (MediaQuery.disableAnimationsOf(context)) return widget.child;
     return FadeTransition(
       opacity: _fadeAnimation,
       child: SlideTransition(position: _slideAnimation, child: widget.child),

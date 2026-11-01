@@ -73,7 +73,6 @@ export function proxy(request: NextRequest): NextResponse {
     "/logo.png",
     "/icon-192.png",
     "/icon-512.png",
-    "/sw.js",
   ];
   if (
     publicPaths.some((p) => pathname.startsWith(p)) ||

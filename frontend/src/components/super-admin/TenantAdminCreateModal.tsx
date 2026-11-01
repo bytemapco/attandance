@@ -35,12 +35,16 @@ export default function TenantAdminCreateModal({
     }
     setSubmitting(true);
     try {
-      await superAdminService.addTenantAdmin(tenantId, {
+      const createdAdmin = await superAdminService.addTenantAdmin(tenantId, {
         name: name.trim(),
         email: email.trim().toLowerCase(),
         role: "TENANT_ADMIN",
       });
-      toast.success(`Administrator created! Invitation sent to ${email.trim().toLowerCase()}`);
+      if (createdAdmin.invitation_sent) {
+        toast.success(`Administrator created. Invitation sent to ${createdAdmin.email}`);
+      } else {
+        toast.error(`Administrator created, but the invitation could not be sent to ${createdAdmin.email}. Check SMTP settings, then use Send Password Reset.`);
+      }
       setName("");
       setEmail("");
       onSuccess();

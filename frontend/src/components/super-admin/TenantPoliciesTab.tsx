@@ -11,7 +11,6 @@ interface TenantPoliciesTabProps {
   tenant: TenantDetail;
   onSave: (payload: {
     name: string;
-    domain?: string;
     license_count: number;
     config?: Record<string, unknown>;
   }) => Promise<void>;
@@ -24,14 +23,12 @@ export default function TenantPoliciesTab({
   saving,
 }: TenantPoliciesTabProps): React.ReactElement {
   const [name, setName] = useState(tenant.name || "");
-  const [domain, setDomain] = useState(tenant.domain || "");
   const [licenseCount, setLicenseCount] = useState<number>(tenant.license_count || 0);
 
   const handleSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
     await onSave({
       name,
-      domain: domain.trim() || undefined,
       license_count: Number(licenseCount),
     });
   };
@@ -41,21 +38,15 @@ export default function TenantPoliciesTab({
       <GlassCard className="p-6 space-y-6">
         <div>
           <h3 className="text-sm font-bold text-foreground">General Settings</h3>
-          <p className="text-xs text-muted-foreground">Institution name, domain, and license quota.</p>
+          <p className="text-xs text-muted-foreground">Institution name and license quota.</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <GlassInput
             label="Institution Name"
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
-          />
-          <GlassInput
-            label="Custom Domain"
-            placeholder="e.g. portal.school.edu"
-            value={domain}
-            onChange={(e) => setDomain(e.target.value)}
           />
           <GlassInput
             label="License Quota"

@@ -52,13 +52,6 @@ export const teacherUpdateSchema = z.object({
 
 export type TeacherUpdateFormData = z.infer<typeof teacherUpdateSchema>;
 
-export const sessionStartSchema = z.object({
-  academic_class_id: z.string().min(1, "Class is required"),
-  duration_minutes: z.coerce.number().int().min(1, "Duration must be at least 1 minute").max(180, "Duration cannot exceed 180 minutes").default(10),
-});
-
-export type SessionStartFormData = z.infer<typeof sessionStartSchema>;
-
 export const geofenceSchema = z.object({
   latitude: z.coerce.number().min(-90).max(90, "Latitude must be between -90 and 90"),
   longitude: z.coerce.number().min(-180).max(180, "Longitude must be between -180 and 180"),

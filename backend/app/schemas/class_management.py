@@ -1,6 +1,8 @@
 from datetime import datetime
 from typing import List, Optional
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
+
+from app.schemas.clock_time import ClockTime, require_end_after_start
 
 
 class ClassCreate(BaseModel):
@@ -8,9 +10,14 @@ class ClassCreate(BaseModel):
 
     department_id: str
     batch_id: str = Field(..., min_length=1, max_length=64, description="Batch UUID, e.g. CE-A-1")
-    academic_year_id: str
     semester_number: int = Field(..., ge=1, le=8)
     student_ids: List[str] = Field(default_factory=list, max_length=500)
+
+
+class ClassUpdate(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    semester_number: int = Field(..., ge=1, le=8)
 
 
 class ClassMembersAdd(BaseModel):
@@ -46,22 +53,6 @@ class ClassSectionUpdate(BaseModel):
     primary_teacher_id: str
 
 
-class BacklogEnrollment(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
-    student_id: str
-    course_section_id: str
-
-
-class PromoteRequest(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
-    next_academic_year_id: str
-    dry_run: bool = True
-    detained_student_ids: List[str] = Field(default_factory=list)
-    backlogs: List[BacklogEnrollment] = Field(default_factory=list)
-
-
 class MemberItem(BaseModel):
     student_id: str
     enrollment_number: str
@@ -73,17 +64,21 @@ class SectionScheduleCreate(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     day_of_week: int = Field(..., ge=1, le=7, description="1=Monday..7=Sunday")
-    time_slot_id: str
+    start_time: ClockTime
+    end_time: ClockTime
     classroom_id: Optional[str] = None
+
+    @model_validator(mode="after")
+    def end_is_after_start(self) -> "SectionScheduleCreate":
+        require_end_after_start(self.start_time, self.end_time)
+        return self
 
 
 class ScheduleItem(BaseModel):
     id: str
     day_of_week: int
-    time_slot_id: str
-    slot_name: Optional[str] = None
-    start_time: Optional[str] = None
-    end_time: Optional[str] = None
+    start_time: str
+    end_time: str
     room_name: Optional[str] = None
 
 
@@ -103,13 +98,10 @@ class SectionItem(BaseModel):
 class ClassSummary(BaseModel):
     id: str
     code: str
-    group_id: str
     department_id: str
     department_name: str
     batch: str
     semester_number: int
-    academic_year_id: str
-    academic_year_name: str
     member_count: int
     subject_count: int
     status: str
@@ -119,13 +111,3 @@ class ClassSummary(BaseModel):
 class ClassDetail(ClassSummary):
     members: List[MemberItem]
     sections: List[SectionItem]
-
-
-class PromotionPreview(BaseModel):
-    dry_run: bool
-    next_class_id: Optional[str] = None
-    next_semester_number: Optional[int] = None
-    promoted: int
-    detained: int
-    backlog_enrollments: int
-    graduated: bool

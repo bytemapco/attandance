@@ -1,49 +1,30 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Plus } from "lucide-react";
+import { Plus, AlertCircle, ChevronRight } from "lucide-react";
 import toast from "react-hot-toast";
 
 import api, { getApiErrorMessage } from "@/lib/api";
 import GlassBreadcrumb from "@/components/ui/GlassBreadcrumb";
-import GlassPageHeader from "@/components/ui/GlassPageHeader";
 import GlassButton from "@/components/ui/GlassButton";
-import GlassSearch from "@/components/ui/GlassSearch";
-import GlassSelect from "@/components/ui/GlassSelect";
-import GlassBadge from "@/components/ui/GlassBadge";
 import GlassTable, { type TableColumn } from "@/components/ui/GlassTable";
-import type { AcademicYearItem, ClassSummary, DepartmentResponse } from "@/types";
+import EnterpriseTableToolbar, { type ToolbarFilterConfig } from "@/components/ui/EnterpriseTableToolbar";
+import type { ClassSummary, DepartmentResponse } from "@/types";
 
 type ClassRow = ClassSummary & Record<string, unknown>;
 
 const SEMESTER_FILTER = [
-  { value: "", label: "All semesters" },
+  { value: "all", label: "All semesters" },
   ...Array.from({ length: 8 }, (_, i) => ({ value: String(i + 1), label: `Semester ${i + 1}` })),
-];
-
-const COLUMNS: TableColumn<ClassRow>[] = [
-  { key: "code", header: "Class", sortable: true, render: (row) => <span className="font-semibold">{row.code}</span> },
-  { key: "department_name", header: "Department", sortable: true },
-  { key: "semester_number", header: "Semester", sortable: true, render: (row) => `Sem ${row.semester_number}` },
-  { key: "academic_year_name", header: "Term" },
-  { key: "member_count", header: "Students", sortable: true },
-  { key: "subject_count", header: "Subjects", sortable: true },
-  {
-    key: "status",
-    header: "Status",
-    render: (row) => <GlassBadge variant={row.status === "ACTIVE" ? "success" : "neutral"}>{row.status}</GlassBadge>,
-  },
 ];
 
 export default function ClassManagementPage(): React.ReactElement {
   const router = useRouter();
   const [classes, setClasses] = useState<ClassRow[]>([]);
   const [departments, setDepartments] = useState<DepartmentResponse[]>([]);
-  const [years, setYears] = useState<AcademicYearItem[]>([]);
-  const [departmentId, setDepartmentId] = useState("");
-  const [yearId, setYearId] = useState("");
-  const [semester, setSemester] = useState("");
+  const [departmentId, setDepartmentId] = useState("all");
+  const [semester, setSemester] = useState("all");
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -51,12 +32,8 @@ export default function ClassManagementPage(): React.ReactElement {
   useEffect(() => {
     async function loadFilters(): Promise<void> {
       try {
-        const [deptRes, yearRes] = await Promise.all([
-          api.get<DepartmentResponse[]>("/admin/departments"),
-          api.get<AcademicYearItem[]>("/admin/academic-years"),
-        ]);
+        const deptRes = await api.get<DepartmentResponse[]>("/admin/departments");
         setDepartments(deptRes.data);
-        setYears(yearRes.data);
       } catch (err: unknown) {
         toast.error(getApiErrorMessage(err, "Failed to load filters"));
       }
@@ -70,9 +47,8 @@ export default function ClassManagementPage(): React.ReactElement {
     try {
       const { data } = await api.get<ClassSummary[]>("/admin/class-management/classes", {
         params: {
-          department_id: departmentId || undefined,
-          academic_year_id: yearId || undefined,
-          semester_number: semester || undefined,
+          department_id: departmentId && departmentId !== "all" ? departmentId : undefined,
+          semester_number: semester && semester !== "all" ? Number(semester) : undefined,
           search: search.trim() || undefined,
         },
       });
@@ -82,50 +58,150 @@ export default function ClassManagementPage(): React.ReactElement {
     } finally {
       setLoading(false);
     }
-  }, [departmentId, yearId, semester, search]);
+  }, [departmentId, semester, search]);
 
   useEffect(() => {
     void fetchClasses();
   }, [fetchClasses]);
 
+  const handleResetAll = (): void => {
+    setSearch("");
+    setDepartmentId("all");
+    setSemester("all");
+  };
+
+  const toolbarFilters: ToolbarFilterConfig[] = useMemo(() => [
+    {
+      id: "department",
+      label: "Department",
+      options: [{ value: "all", label: "All departments" }, ...departments.map((d) => ({ value: d.id, label: d.name }))],
+      value: departmentId,
+      onChange: setDepartmentId,
+    },
+    {
+      id: "semester",
+      label: "Semester",
+      options: SEMESTER_FILTER,
+      value: semester,
+      onChange: setSemester,
+    },
+  ], [departments, departmentId, semester]);
+
+  const columns: TableColumn<ClassRow>[] = useMemo(() => [
+    {
+      key: "code",
+      header: "Class",
+      sortable: true,
+      render: (row) => (
+        <div className="flex items-center gap-2">
+          <span className="font-semibold text-foreground text-sm">{row.code}</span>
+          <span className="inline-block text-[11px] font-medium text-muted-foreground bg-muted/60 px-1.5 py-0.5 rounded border border-border/60">
+            Sem {row.semester_number}
+          </span>
+          {row.status !== "ACTIVE" && (
+            <span className="text-[11px] font-medium text-muted-foreground bg-muted px-1.5 py-0.5 rounded border border-border">
+              {row.status}
+            </span>
+          )}
+        </div>
+      ),
+    },
+    {
+      key: "department_name",
+      header: "Department",
+      sortable: true,
+      render: (row) => (
+        <span className="text-sm text-foreground font-medium">{row.department_name}</span>
+      ),
+    },
+    {
+      key: "member_count",
+      header: "Students",
+      sortable: true,
+      render: (row) => (
+        <span className="text-sm font-semibold text-foreground">{row.member_count}</span>
+      ),
+    },
+    {
+      key: "subject_count",
+      header: "Subjects",
+      sortable: true,
+      render: (row) => {
+        if (row.subject_count > 0) {
+          return (
+            <span className="text-sm font-semibold text-foreground">{row.subject_count}</span>
+          );
+        }
+        return (
+          <span className="inline-flex items-center gap-1 text-xs font-medium text-amber-700 bg-amber-50 border border-amber-200/80 px-2 py-0.5 rounded-full">
+            <AlertCircle size={11} /> Needs setup
+          </span>
+        );
+      },
+    },
+    {
+      key: "actions",
+      header: "",
+      render: (row) => (
+        <div className="flex items-center justify-end">
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              router.push(`/admin/class-management/${row.id}`);
+            }}
+            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-border hover:border-[#526f78] bg-card hover:bg-muted text-xs font-semibold text-foreground transition-all cursor-pointer shadow-2xs"
+          >
+            Manage
+            <ChevronRight size={13} className="text-[#526f78]" />
+          </button>
+        </div>
+      ),
+    },
+  ], [router]);
+
   return (
     <div className="animate-fade-in-up space-y-4">
       <GlassBreadcrumb items={[{ label: "Admin", href: "/admin/dashboard" }, { label: "Classes" }]} />
-      <GlassPageHeader
-        title="Classes"
-        description="Divisions per department and semester, with students, lab batches and subjects."
-        actions={
-          <GlassButton variant="primary" icon={<Plus size={16} />} onClick={() => router.push("/admin/class-management/create")}>
-            Create Class
-          </GlassButton>
-        }
-      />
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <GlassSearch placeholder="Search by class code, e.g. CE-A" onSearch={setSearch} />
-        <GlassSelect
-          value={departmentId}
-          onChange={setDepartmentId}
-          placeholder="All departments"
-          options={[{ value: "", label: "All departments" }, ...departments.map((d) => ({ value: d.id, label: d.name }))]}
-        />
-        <GlassSelect
-          value={yearId}
-          onChange={setYearId}
-          placeholder="All terms"
-          options={[{ value: "", label: "All terms" }, ...years.map((y) => ({ value: y.id, label: y.name }))]}
-        />
-        <GlassSelect value={semester} onChange={setSemester} placeholder="All semesters" options={SEMESTER_FILTER} />
+
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-2 border-b border-border">
+        <div className="flex items-center gap-2.5">
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">Classes</h1>
+          <span className="text-xs font-medium text-muted-foreground">({classes.length} total)</span>
+        </div>
+        <GlassButton 
+          variant="primary" 
+          size="md"
+          icon={<Plus size={15} />} 
+          onClick={() => router.push("/admin/class-management/create")}
+        >
+          Create Class
+        </GlassButton>
       </div>
-      <GlassTable
-        columns={COLUMNS}
-        data={classes}
-        loading={loading}
-        error={error}
-        onRetry={() => void fetchClasses()}
-        emptyMessage="No classes yet. Create the first class to get started."
-        onRowClick={(row) => router.push(`/admin/class-management/${row.id}`)}
-        rowKey={(row) => row.id}
+
+      {/* Filter Toolbar */}
+      <EnterpriseTableToolbar
+        searchPlaceholder="Search by class code or department..."
+        searchValue={search}
+        onSearch={setSearch}
+        filters={toolbarFilters}
+        onResetAll={handleResetAll}
       />
+
+      {/* Clean Structured Table */}
+      <div className="rounded-2xl border border-border bg-card shadow-[0_2px_8px_rgba(40,54,59,0.04)] overflow-hidden">
+        <GlassTable
+          columns={columns}
+          data={classes}
+          loading={loading}
+          error={error}
+          onRetry={() => void fetchClasses()}
+          emptyMessage="No classes found matching your criteria."
+          onRowClick={(row) => router.push(`/admin/class-management/${row.id}`)}
+          rowKey={(row) => row.id}
+        />
+      </div>
     </div>
   );
 }

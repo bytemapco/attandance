@@ -1,4 +1,3 @@
-from datetime import datetime, timezone
 from typing import List, Optional
 from app.db.client import db
 from app.repositories.teacher_repository import TeacherRepository
@@ -57,7 +56,6 @@ class ClassAdminService:
             if not await db.batch.find_first(where={"tenantId": tenant_id, "code": data.batch}):
                 raise ValueError(f"Batch '{data.batch}' not found. Add it under Master Data > Departments.")
 
-        year_id = data.academic_year_id or data.academic_term_id
         resolved_name = (data.name or "").strip()
         if not resolved_name:
             resolved_name = data.batch or f"Class Sem-{data.semester or 1}"
@@ -68,7 +66,6 @@ class ClassAdminService:
                 "teacherId": teacher_id,
                 "subjectId": subject_id,
                 "classroomId": data.classroom_id,
-                "academicYearId": year_id,
                 "semester": data.semester,
                 "batch": data.batch,
             }.items() if v is not None
@@ -78,7 +75,7 @@ class ClassAdminService:
 
         academic_class = await db.academicclass.create(
             data=create_data,
-            include={"subject": True, "classroom": True, "enrollments": True, "academicYear": True},
+            include={"subject": True, "classroom": True, "enrollments": True},
         )
 
         if data.batch and db.is_connected():
@@ -96,7 +93,7 @@ class ClassAdminService:
                 )
                 academic_class = await db.academicclass.find_unique(
                     where={"id": academic_class.id},
-                    include={"subject": True, "classroom": True, "enrollments": True, "academicYear": True},
+                    include={"subject": True, "classroom": True, "enrollments": True},
                 )
 
         return self._format_class_response(academic_class)
@@ -109,8 +106,6 @@ class ClassAdminService:
         sort_order: str = "asc",
         q: Optional[str] = None,
         subject_id: Optional[str] = None,
-        term_id: Optional[str] = None,
-        active_only: bool = False,
         tenant_id: Optional[str] = None,
     ) -> dict:
         where: dict = {}
@@ -118,14 +113,6 @@ class ClassAdminService:
             where["tenantId"] = tenant_id
         if subject_id and subject_id != "all":
             where["subjectId"] = subject_id
-        if term_id:
-            where["academicYearId"] = term_id
-        elif active_only:
-            now = datetime.now(timezone.utc)
-            where["OR"] = [
-                {"academicYearId": None},
-                {"academicYear": {"is": {"endDate": {"gte": now}}}},
-            ]
 
         if q and q.strip():
             query_str = q.strip()
@@ -142,7 +129,7 @@ class ClassAdminService:
         skip = (page - 1) * page_size
         classes = await db.academicclass.find_many(
             where=where,
-            include={"subject": True, "classroom": True, "enrollments": True, "academicYear": True},
+            include={"subject": True, "classroom": True, "enrollments": True},
             skip=skip,
             take=page_size,
             order={order_col: order_dir},
@@ -165,7 +152,6 @@ class ClassAdminService:
             if not existing:
                 raise ValueError("Academic class not found.")
 
-        year_id = data.get("academic_year_id") or data.get("academic_term_id")
         mapping = {
             "name": "name",
             "subject_id": "subjectId",
@@ -175,13 +161,11 @@ class ClassAdminService:
             "batch": "batch",
         }
         update_data = {mapping[k]: v for k, v in data.items() if k in mapping and v is not None}
-        if year_id is not None:
-            update_data["academicYearId"] = year_id
 
         academic_class = await db.academicclass.update(
             where={"id": class_id},
             data=update_data,
-            include={"subject": True, "classroom": True, "enrollments": True, "academicYear": True},
+            include={"subject": True, "classroom": True, "enrollments": True},
         )
         return self._format_class_response(academic_class)
 
@@ -195,7 +179,7 @@ class ClassAdminService:
         academic_class = await db.academicclass.update(
             where={"id": class_id},
             data={"teacherId": teacher_id},
-            include={"subject": True, "classroom": True, "enrollments": True, "academicYear": True},
+            include={"subject": True, "classroom": True, "enrollments": True},
         )
         return self._format_class_response(academic_class)
 
@@ -203,7 +187,6 @@ class ClassAdminService:
         return await self.enrollment_svc.enroll_students(class_id, student_ids, tenant_id=tenant_id)
 
     def _format_class_response(self, c) -> ClassResponse:
-        year_obj = getattr(c, "academicYear", None)
         return ClassResponse(
             id=c.id,
             name=c.name,
@@ -211,10 +194,6 @@ class ClassAdminService:
             subject_code=c.subject.code if c.subject else "",
             teacherId=c.teacherId,
             classroom_name=c.classroom.name if c.classroom else None,
-            academicYearId=c.academicYearId,
-            year_name=year_obj.name if year_obj else None,
-            academicTermId=c.academicYearId,
-            term_name=year_obj.name if year_obj else None,
             semester=c.semester,
             batch=c.batch,
             enrolled_count=len(c.enrollments) if c.enrollments else 0,

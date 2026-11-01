@@ -1,13 +1,10 @@
 export interface ClassSummary {
   id: string;
   code: string;
-  group_id: string;
   department_id: string;
   department_name: string;
   batch: string;
   semester_number: number;
-  academic_year_id: string;
-  academic_year_name: string;
   member_count: number;
   subject_count: number;
   status: string;
@@ -24,10 +21,8 @@ export interface ClassMemberItem {
 export interface ScheduleItem {
   id: string;
   day_of_week: number;
-  time_slot_id: string;
-  slot_name?: string | null;
-  start_time?: string | null;
-  end_time?: string | null;
+  start_time: string;
+  end_time: string;
   room_name?: string | null;
 }
 
@@ -47,14 +42,4 @@ export interface ClassSectionItem {
 export interface ClassDetail extends ClassSummary {
   members: ClassMemberItem[];
   sections: ClassSectionItem[];
-}
-
-export interface PromotionPreview {
-  dry_run: boolean;
-  next_class_id?: string | null;
-  next_semester_number?: number | null;
-  promoted: number;
-  detained: number;
-  backlog_enrollments: number;
-  graduated: boolean;
 }

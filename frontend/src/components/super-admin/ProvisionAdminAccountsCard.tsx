@@ -33,7 +33,7 @@ export default function ProvisionAdminAccountsCard({
               Administrator Accounts
             </h2>
             <p className="text-xs text-muted-foreground">
-              Initial accounts to manage academic years, classes, and staff.
+              Initial accounts to manage classes and staff.
             </p>
           </div>
         </div>

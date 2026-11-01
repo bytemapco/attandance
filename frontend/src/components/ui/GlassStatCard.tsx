@@ -16,7 +16,7 @@ export interface GlassStatCardProps {
 
 const colorStyles: Record<string, { icon: string; border: string }> = {
   copper: {
-    icon: "text-[#c98260] bg-[#f7efea] border-[#f0ded4]",
+    icon: "text-[#8a4d30] bg-[#f7efea] border-[#f0ded4]",
     border: "hover:border-[#c98260]/60",
   },
   mineral: {
@@ -88,14 +88,14 @@ export default function GlassStatCard({
         )}
       </div>
       <div className="relative">
-        <p className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#202b30] font-mono tabular-nums">
+          <p className="text-2xl sm:text-3xl font-bold tracking-tight text-[#202b30] font-sans tabular-nums">
           {typeof value === "number" ? value.toLocaleString() : value}
         </p>
         <p className="text-xs font-semibold text-[#526f78] uppercase tracking-wider mt-1">
           {label}
         </p>
         {subtext && (
-          <p className="text-[11px] text-[#718087] mt-1.5 flex items-center gap-1.5 font-normal">
+          <p className="text-[11px] text-[#526f78] mt-1.5 flex items-center gap-1.5 font-normal">
             <span className="w-1.5 h-1.5 rounded-full bg-[#d4d0c8] inline-block" />
             <span>{subtext}</span>
           </p>

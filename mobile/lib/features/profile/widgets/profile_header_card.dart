@@ -81,10 +81,7 @@ class ProfileHeaderCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Peach Squircle Avatar
-          ProfileAvatar(
-            initials: _getInitials(),
-            isDark: isDark,
-          ),
+          ProfileAvatar(initials: _getInitials(), isDark: isDark),
           const SizedBox(width: 14),
 
           // User details and badges

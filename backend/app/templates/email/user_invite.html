@@ -1,54 +1,41 @@
 {% extends "base_email.html" %}
 
+{% block preheader %}Set a password to start using your SAHAJ account.{% endblock %}
+
 {% block content %}
-  <h2 class="text-title" style="margin:0 0 12px 0; font-size:18px; font-weight:700; line-height:1.35; color:#202b30; letter-spacing:-0.02em;">Welcome to {{ system_name }}</h2>
-  <p class="text-body" style="margin:0 0 20px 0; font-size:14px; line-height:1.6; color:#526f78;">
-    Hi <strong class="text-title" style="color:#202b30;">{{ recipient_name }}</strong>, your account is set up with the role of <strong class="text-title" style="color:#202b30;">{{ role_title }}</strong>. Sign in below to get started.
+  <h1 class="text-title" style="margin:0 0 12px; color:#28363b; font-size:24px; font-weight:700; line-height:1.3; letter-spacing:-0.02em;">Set up your SAHAJ account</h1>
+  <p class="text-body" style="margin:0 0 20px; color:#526f78; font-size:15px; line-height:1.65;">
+    Hello <strong class="text-title" style="color:#202b30;">{{ recipient_name }}</strong>, your institution created a SAHAJ account for you as a {{ role_title|lower }}. Choose a password below to sign in.
   </p>
 
-  <!-- Primary CTA -->
-  <table role="presentation" border="0" cellpadding="0" cellspacing="0" style="margin:24px 0;">
-    <tr>
-      <td style="border-radius:8px; background-color:#28363b; text-align:center;">
-        <a href="{{ login_url or invite_url }}" target="_blank" style="background-color:#28363b; border:1px solid #28363b; border-radius:8px; color:#ffffff !important; display:inline-block; font-size:13px; font-weight:600; line-height:1; padding:13px 26px; text-decoration:none;">
-          Sign In to Your Account &rarr;
-        </a>
-      </td>
-    </tr>
+  <table role="presentation" border="0" cellpadding="0" cellspacing="0" style="margin:24px 0 12px;">
+    <tr><td style="border-radius:8px; background-color:#28363b;">
+      <a href="{{ invite_url }}" target="_blank" style="display:inline-block; padding:14px 24px; border:1px solid #28363b; border-radius:8px; background-color:#28363b; color:#ffffff !important; font-size:14px; font-weight:700; line-height:1.2; text-decoration:none;">Set up your account</a>
+    </td></tr>
   </table>
+  <p class="text-muted" style="margin:0 0 24px; color:#526f78; font-size:13px; line-height:1.6;">This link expires in {{ expire_hours }} hours. After that, ask your institution to send a new one.</p>
 
-  <!-- Details Table -->
-  <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" class="info-table" style="border:1px solid #e2e8f0; border-radius:8px; border-collapse:separate; border-spacing:0; margin:20px 0; background-color:#ffffff; font-size:13px; overflow:hidden;">
+  <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" class="info-table" style="margin:0 0 22px; border:1px solid #e3e1dc; border-radius:10px; border-collapse:separate; border-spacing:0; background-color:#ffffff; font-size:14px; overflow:hidden;">
     <tr>
-      <td width="36%" class="info-header-cell" style="padding:12px 16px; color:#64748b; font-weight:500; background-color:#f8fafc; border-bottom:1px solid #f1f5f9; border-right:1px solid #f1f5f9;">Account Email</td>
-      <td class="info-value-cell" style="padding:12px 16px; color:#0f172a; font-weight:600; border-bottom:1px solid #f1f5f9;">{{ email }}</td>
+      <td width="36%" class="info-header-cell" style="padding:12px 14px; background-color:#f5f2ed; border-bottom:1px solid #e3e1dc; color:#526f78; font-weight:600;">Email address</td>
+      <td class="info-value-cell" style="padding:12px 14px; border-bottom:1px solid #e3e1dc; color:#202b30; font-weight:600; word-break:break-word;">{{ email }}</td>
     </tr>
     {% if identifier_label and identifier_value %}
     <tr>
-      <td width="36%" class="info-header-cell" style="padding:12px 16px; color:#64748b; font-weight:500; background-color:#f8fafc; border-bottom:1px solid #f1f5f9; border-right:1px solid #f1f5f9;">{{ identifier_label }}</td>
-      <td class="info-value-cell" style="padding:12px 16px; color:#0f172a; font-weight:600; border-bottom:1px solid #f1f5f9;">{{ identifier_value }}</td>
-    </tr>
-    {% endif %}
-    {% if temp_password %}
-    <tr>
-      <td width="36%" class="info-header-cell" style="padding:12px 16px; color:#64748b; font-weight:500; background-color:#f8fafc; border-bottom:1px solid #f1f5f9; border-right:1px solid #f1f5f9;">Temporary Password</td>
-      <td class="info-value-cell" style="padding:12px 16px; border-bottom:1px solid #f1f5f9;">
-        <span style="display:inline-block; background-color:#f8fafc; border:1px dashed #cbd5e1; border-radius:6px; padding:6px 12px; font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size:13px; font-weight:700; color:#0f172a; letter-spacing:0.04em;">
-          {{ temp_password }}
-        </span>
-      </td>
-    </tr>
-    <tr>
-      <td width="36%" class="info-header-cell" style="padding:12px 16px; color:#64748b; font-weight:500; background-color:#f8fafc; border-right:1px solid #f1f5f9;">Note</td>
-      <td class="info-value-cell text-muted" style="padding:12px 16px; color:#64748b; font-size:12px; line-height:1.5;">You will be asked to choose a permanent password on your first sign-in.</td>
+      <td width="36%" class="info-header-cell" style="padding:12px 14px; background-color:#f5f2ed; color:#526f78; font-weight:600;">{{ identifier_label }}</td>
+      <td class="info-value-cell" style="padding:12px 14px; color:#202b30; font-weight:600; word-break:break-word;">{{ identifier_value }}</td>
     </tr>
     {% endif %}
   </table>
 
-  <!-- Fallback Box -->
-  <div class="fallback-box" style="margin-top:20px; padding:12px 14px; background-color:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; font-size:12px; line-height:1.5; color:#64748b; word-break:break-all;">
-    <span style="font-weight:600; color:#334155;">Trouble with the button?</span> Paste this URL into your browser:<br />
-    <a href="{{ login_url or invite_url }}" target="_blank" style="color:#0f172a; text-decoration:underline;">{{ login_url or invite_url }}</a>
+  {% if temp_password %}
+  <h2 class="text-title" style="margin:0 0 8px; color:#28363b; font-size:16px; font-weight:700; line-height:1.4;">Temporary password</h2>
+  <p class="text-body" style="margin:0 0 12px; color:#526f78; font-size:14px; line-height:1.6;">You can use this password to sign in. SAHAJ will ask you to choose a new one. Or use the button above to set your own password now.</p>
+  <p class="info-table" style="margin:0 0 22px; padding:13px 15px; border:1px solid #e3e1dc; border-radius:8px; background-color:#f5f2ed; color:#202b30; font-family:Arial, Helvetica, sans-serif; font-size:15px; font-weight:700; letter-spacing:0.02em; word-break:break-all;">{{ temp_password }}</p>
+  {% endif %}
+
+  <div class="fallback-box" style="padding:14px 16px; border:1px solid #e3e1dc; border-radius:8px; background-color:#f5f2ed; color:#526f78; font-size:13px; line-height:1.6; word-break:break-all;">
+    <strong class="text-title" style="color:#28363b;">Can’t open the button?</strong> Copy this link into your browser:<br />
+    <a href="{{ invite_url }}" target="_blank" class="secondary-link" style="color:#526f78; text-decoration:underline;">{{ invite_url }}</a>
   </div>
 {% endblock %}
-

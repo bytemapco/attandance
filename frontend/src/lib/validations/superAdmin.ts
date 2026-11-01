@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const tenantAdminItemSchema = z.object({
+const tenantAdminItemSchema = z.object({
   name: z
     .string()
     .trim()
@@ -11,7 +11,7 @@ export const tenantAdminItemSchema = z.object({
     .trim()
     .email("Please provide a valid administrative email address"),
   role: z.literal("TENANT_ADMIN"),
-});
+}).strict();
 
 export const tenantProvisionSchema = z.object({
   name: z
@@ -25,15 +25,6 @@ export const tenantProvisionSchema = z.object({
     .min(2, "Short web name must be at least 2 characters")
     .max(50, "Short web name cannot exceed 50 characters")
     .regex(/^[a-z0-9-]+$/, "Short name must only contain lowercase letters, numbers, and hyphens"),
-  type: z.enum(["COLLEGE", "SCHOOL", "COACHING_CENTER"], {
-    errorMap: () => ({ message: "Please select an institution type" }),
-  }),
-  domain: z
-    .string()
-    .trim()
-    .max(100, "Domain cannot exceed 100 characters")
-    .optional()
-    .or(z.literal("")),
   license_count: z.coerce
     .number()
     .int("License count must be a whole number")
@@ -55,7 +46,6 @@ export const tenantProvisionSchema = z.object({
         if (lower) emails.add(lower);
       });
     }),
-});
+}).strict();
 
-export type TenantAdminItemFormData = z.infer<typeof tenantAdminItemSchema>;
 export type TenantProvisionFormData = z.infer<typeof tenantProvisionSchema>;

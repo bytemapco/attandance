@@ -29,17 +29,15 @@ class ForceChangePasswordHeader extends StatelessWidget {
         const SizedBox(height: 16),
         Text(
           'Set Permanent Password',
-          style: Theme.of(context).textTheme.headlineMedium
-              ?.copyWith(fontWeight: FontWeight.w800),
+          style: Theme.of(
+            context,
+          ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w800),
         ),
         const SizedBox(height: 6),
         const Text(
           'Create a secure password to activate and protect your account',
           textAlign: TextAlign.center,
-          style: TextStyle(
-            color: SasColors.textMuted,
-            fontSize: 13,
-          ),
+          style: TextStyle(color: SasColors.textMuted, fontSize: 13),
         ),
       ],
     );

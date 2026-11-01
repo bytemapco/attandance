@@ -99,6 +99,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 blendMode: BlendMode.dstIn,
                 child: Image.asset(
                   'assets/images/campus_header.png',
+                  excludeFromSemantics: true,
                   fit: BoxFit.cover,
                   alignment: const Alignment(0.35, 0.0),
                 ),
@@ -112,8 +113,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 constraints: const BoxConstraints(maxWidth: 600),
                 child: SmartPullToRefresh(
                   onRefresh: () async {
-                    await ref.read(sessionProvider.notifier).fetchSessions();
-                    await ref.read(historyProvider.notifier).fetch();
+                    await Future.wait([
+                      ref.read(sessionProvider.notifier).fetchSessions(),
+                      ref.read(historyProvider.notifier).fetch(),
+                    ]);
                   },
                   child: ListView(
                     physics: const AlwaysScrollableScrollPhysics(
@@ -151,6 +154,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                       // Today's Classes Card with in-card action buttons
                       HomeTodayClassesCard(
                         sessions: sessionState.sessions,
+                        isLoading: sessionState.isLoading,
+                        errorMessage: sessionState.errorMessage,
                         onViewAll: () => context.go('/history'),
                         onSmartPass: () => context.push('/smart-pass'),
                         onFaceMatch: () {
@@ -164,6 +169,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                             context.push('/smart-pass');
                           }
                         },
+                        onRetry: () =>
+                            ref.read(sessionProvider.notifier).fetchSessions(),
                       ),
                       const SizedBox(height: 14),
 

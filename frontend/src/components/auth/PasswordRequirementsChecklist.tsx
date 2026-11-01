@@ -7,7 +7,7 @@ interface PasswordRequirementsChecklistProps {
   password: string;
 }
 
-export function usePasswordRules(password: string) {
+function usePasswordRules(password: string) {
   const rules = useMemo(() => [
     { label: "At least 8 characters", valid: password.length >= 8 },
     { label: "Uppercase & lowercase letters", valid: /[a-z]/.test(password) && /[A-Z]/.test(password) },

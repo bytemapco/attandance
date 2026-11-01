@@ -52,40 +52,41 @@ class AIOrchestrator:
     def _preprocess_background(img: np.ndarray) -> np.ndarray:
         return preprocess_input(np.expand_dims(cv2.resize(img, (224, 224)), axis=0).astype(np.float32))
 
-    def _run_face_comparison(self, stored_embedding: List[float], live_img: np.ndarray) -> float:
+    def _run_face_comparison(self, stored_embedding: List[float], live_img: np.ndarray) -> Optional[float]:
+        """Cosine similarity to the enrolled embedding. None when the check could not run."""
         if not stored_embedding or live_img is None:
-            return 0.0
+            return None
         try:
             with _deepface_lock:
                 results = DeepFace.represent(img_path=live_img, model_name="Facenet", enforce_detection=False)
             if not results:
-                return 0.0
+                return None
             vec_s = np.array(stored_embedding, dtype=np.float32)
             vec_l = np.array(results[0]["embedding"], dtype=np.float32)
             norm_s, norm_l = np.linalg.norm(vec_s), np.linalg.norm(vec_l)
             if norm_s == 0.0 or norm_l == 0.0:
-                return 0.0
+                return None
             return max(0.0, min(1.0, float(np.dot(vec_s, vec_l) / (norm_s * norm_l))))
         except Exception as exc:
             logger.error("DeepFace face comparison failed safely: %s", exc, exc_info=True)
-            return 0.0
+            return None
 
-    def _run_liveness_inference(self, face_crop: np.ndarray) -> float:
+    def _run_liveness_inference(self, face_crop: np.ndarray) -> Optional[float]:
         if face_crop is None:
-            return 0.0
+            return None
         model = get_liveness_model()
         if model is None:
-            return 0.0
+            return None
         with _liveness_lock:
             processed = self._preprocess_liveness(cv2.cvtColor(face_crop, cv2.COLOR_RGB2BGR))
             return float(model.predict(processed, verbose=0)[0][0])
 
-    def _run_background_inference(self, img: np.ndarray) -> float:
+    def _run_background_inference(self, img: np.ndarray) -> Optional[float]:
         if img is None:
-            return 0.0
+            return None
         model = get_background_model()
         if model is None:
-            return 0.0
+            return None
         with _background_lock:
             return float(model.predict(self._preprocess_background(img), verbose=0)[0][0])
 
@@ -128,7 +129,12 @@ class AIOrchestrator:
             logger.error("Face embedding extraction thread run failed: %s", exc, exc_info=True)
             return []
 
-    async def analyze_attendance(self, image_input: str | bytes, face_embedding: List[float]) -> Dict[str, float]:
+    async def analyze_attendance(
+        self, image_input: str | bytes, face_embedding: List[float], check_background: bool = True
+    ) -> Dict[str, Optional[float]]:
+        """Each score is None when its check did not run (image unreadable, model missing, check disabled)."""
+        unavailable: Dict[str, Optional[float]] = {"face_score": None, "liveness_score": None, "background_score": None}
+
         def _load_and_crop():
             img = self._load_image_array(image_input)
             if img is None:
@@ -141,18 +147,21 @@ class AIOrchestrator:
             img_rgb, face_crop = await asyncio.to_thread(_load_and_crop)
         except Exception as exc:
             logger.error("Failed to load and crop image: %s", exc, exc_info=True)
-            return {"face_score": 0.0, "liveness_score": 0.0, "background_score": 0.0}
+            return unavailable
 
         if img_rgb is None:
-            return {"face_score": 0.0, "liveness_score": 0.0, "background_score": 0.0}
+            return unavailable
 
+        background = (
+            asyncio.to_thread(self._run_background_inference, img_rgb) if check_background else asyncio.sleep(0)
+        )
         try:
             face_score, liveness_score, bg_score = await asyncio.gather(
                 asyncio.to_thread(self._run_face_comparison, face_embedding, img_rgb),
                 asyncio.to_thread(self._run_liveness_inference, face_crop),
-                asyncio.to_thread(self._run_background_inference, img_rgb),
+                background,
             )
             return {"face_score": face_score, "liveness_score": liveness_score, "background_score": bg_score}
         except Exception as exc:
             logger.error("Concurrent AI inference failed: %s", exc, exc_info=True)
-            return {"face_score": 0.0, "liveness_score": 0.0, "background_score": 0.0}
+            return unavailable

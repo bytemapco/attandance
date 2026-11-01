@@ -1,6 +1,6 @@
 import { ParsedBulkRecord, BatchProgressItem, BulkImportEntityType } from "./bulkTypes";
 
-export const BULK_BATCH_SIZE = 10;
+const BULK_BATCH_SIZE = 10;
 
 export function buildBatches(list: ParsedBulkRecord[], batchSize = BULK_BATCH_SIZE): BatchProgressItem[] {
   const total = Math.ceil(list.length / batchSize);

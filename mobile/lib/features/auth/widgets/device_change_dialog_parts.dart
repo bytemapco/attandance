@@ -19,7 +19,9 @@ class DeviceChangeHeader extends StatelessWidget {
           width: 44,
           height: 44,
           decoration: BoxDecoration(
-            color: const Color(0xFFF95721).withValues(alpha: isDark ? 0.20 : 0.10),
+            color: const Color(
+              0xFFF95721,
+            ).withValues(alpha: isDark ? 0.20 : 0.10),
             shape: BoxShape.circle,
             border: Border.all(
               color: const Color(0xFFF95721).withValues(alpha: 0.25),

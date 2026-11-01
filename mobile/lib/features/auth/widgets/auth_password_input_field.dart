@@ -40,6 +40,8 @@ class AuthPasswordInputField extends StatelessWidget {
         color: primaryTextColor,
       ),
       decoration: InputDecoration(
+        labelText: 'Password',
+        floatingLabelBehavior: FloatingLabelBehavior.never,
         hintText: '••••••••••••',
         hintStyle: SasTypography.style(
           fontSize: 14,
@@ -52,6 +54,7 @@ class AuthPasswordInputField extends StatelessWidget {
           color: subtitleColor,
         ),
         suffixIcon: IconButton(
+          tooltip: obscurePassword ? 'Show password' : 'Hide password',
           icon: Icon(
             obscurePassword
                 ? Icons.visibility_off_outlined

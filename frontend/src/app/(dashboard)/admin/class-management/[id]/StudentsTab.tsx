@@ -1,10 +1,11 @@
 "use client";
 
 import React, { useState } from "react";
-import { UserMinus, UserPlus } from "lucide-react";
+import { Search, UserMinus, UserPlus } from "lucide-react";
 import toast from "react-hot-toast";
 import api, { getApiErrorMessage } from "@/lib/api";
 import GlassButton from "@/components/ui/GlassButton";
+import GlassInput from "@/components/ui/GlassInput";
 import GlassTable, { type TableColumn } from "@/components/ui/GlassTable";
 import AddStudentsPanel from "./AddStudentsPanel";
 import ReasonDialog from "./ReasonDialog";
@@ -21,6 +22,11 @@ export default function StudentsTab({ cls, onUpdated }: StudentsTabProps): React
   const [adding, setAdding] = useState(false);
   const [removing, setRemoving] = useState<ClassMemberItem | null>(null);
   const [saving, setSaving] = useState(false);
+  const [query, setQuery] = useState("");
+  const needle = query.trim().toLowerCase();
+  const visible = cls.members.filter(
+    (m) => !needle || m.name.toLowerCase().includes(needle) || m.enrollment_number.toLowerCase().includes(needle)
+  );
 
   async function removeMember(reason: string): Promise<void> {
     if (!removing) return;
@@ -56,16 +62,25 @@ export default function StudentsTab({ cls, onUpdated }: StudentsTabProps): React
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-end">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="w-full sm:max-w-xs">
+          <GlassInput
+            aria-label="Search students"
+            placeholder="Search name or enrollment no."
+            icon={<Search size={14} />}
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+          />
+        </div>
         <GlassButton variant="primary" icon={<UserPlus size={16} />} onClick={() => setAdding(true)}>
-          Add Students
+          Add students
         </GlassButton>
       </div>
       {adding && <AddStudentsPanel cls={cls} onUpdated={onUpdated} onClose={() => setAdding(false)} />}
       <GlassTable
         columns={columns}
-        data={cls.members as MemberRow[]}
-        emptyMessage="No students in this class yet."
+        data={visible as MemberRow[]}
+        emptyMessage={needle ? "No student matches your search." : "No students in this class yet."}
         rowKey={(row) => row.student_id}
         pageSize={20}
       />

@@ -28,7 +28,11 @@ class NotificationsFilterChips extends StatelessWidget {
         children: [
           _buildFilterChip(context, 'all', 'All (${notifications.length})'),
           const SizedBox(width: 8),
-          _buildFilterChip(context, 'broadcasts', 'Broadcasts ($broadcastCount)'),
+          _buildFilterChip(
+            context,
+            'broadcasts',
+            'Broadcasts ($broadcastCount)',
+          ),
           const SizedBox(width: 8),
           _buildFilterChip(context, 'unread', 'Unread ($unreadCount)'),
         ],

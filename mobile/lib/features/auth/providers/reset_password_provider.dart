@@ -80,7 +80,8 @@ class ResetPasswordNotifier extends StateNotifier<ResetPasswordState> {
         role: verificationResult['role']?.toString(),
         errorMessage: valid
             ? null
-            : (verificationResult['message']?.toString() ?? 'Link has expired.'),
+            : (verificationResult['message']?.toString() ??
+                  'Link has expired.'),
       );
     } catch (e) {
       state = state.copyWith(

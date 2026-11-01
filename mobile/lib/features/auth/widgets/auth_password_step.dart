@@ -148,13 +148,17 @@ class AuthPasswordStep extends StatelessWidget {
                                     ),
                                     if (errorMessage != null) ...[
                                       const SizedBox(height: 14),
-                                      LoginErrorBanner(
-                                        errorMessage: errorMessage!,
-                                        email: studentId,
-                                        password: controller.text,
-                                        isFormValid:
-                                            formKey.currentState?.validate() ??
-                                            false,
+                                      Semantics(
+                                        liveRegion: true,
+                                        child: LoginErrorBanner(
+                                          errorMessage: errorMessage!,
+                                          email: studentId,
+                                          password: controller.text,
+                                          isFormValid:
+                                              formKey.currentState
+                                                  ?.validate() ??
+                                              false,
+                                        ),
                                       ),
                                     ],
                                     const SizedBox(height: 28),

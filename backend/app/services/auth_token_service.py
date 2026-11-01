@@ -101,15 +101,22 @@ class AuthTokenService:
         redis = self._require_redis()
         await redis.setex(f"reset:{token}", ttl, json.dumps(payload))
 
-        sent = await email_service.send_password_reset_email(
-            to_email=user.email,
-            recipient_name=name,
-            reset_token=token,
-            role=user.role,
-            frontend_url=frontend_url,
-        )
+        try:
+            sent = await email_service.send_password_reset_email(
+                to_email=user.email,
+                recipient_name=name,
+                reset_token=token,
+                role=user.role,
+                frontend_url=frontend_url,
+            )
+        except Exception:
+            logger.exception("Password reset email delivery raised an unexpected error")
+            sent = False
         if not sent:
-            await redis.delete(f"reset:{token}")
+            try:
+                await redis.delete(f"reset:{token}")
+            except Exception:
+                logger.exception("Failed to remove an undelivered password reset token")
             raise HTTPException(
                 status_code=status.HTTP_502_BAD_GATEWAY,
                 detail="We could not send the reset email. Please try again later or contact support.",

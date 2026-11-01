@@ -53,8 +53,7 @@ class TenantProvisioningService:
             data={
                 "name": data.name,
                 "slug": data.slug,
-                "type": data.type,
-                "domain": data.domain,
+                "type": "COLLEGE",
                 "licenseCount": data.license_count,
                 "config": Json(default_config),
                 "status": "ACTIVE",
@@ -100,49 +99,41 @@ class TenantProvisioningService:
 
             r = get_redis()
             await r.setex(f"tenant:resolved:{tenant.slug}", 3600, f"ACTIVE:{tenant.id}")
-            if tenant.domain:
-                await r.setex(f"tenant:resolved:{tenant.domain.lower()}", 3600, f"ACTIVE:{tenant.id}")
         except Exception as cache_err:
             logger.warning("Failed to cache tenant resolution in Redis for %s: %s", tenant.slug, cache_err)
 
-        try:
-            from app.services.auth_service import AuthService
-            from app.services.email_service import email_service
+        async def send_admin_invitation(created_admin: dict, semaphore: asyncio.Semaphore) -> bool:
+            async with semaphore:
+                try:
+                    from app.services.auth_service import AuthService
+                    from app.services.email_service import email_service
 
-            auth_svc = AuthService()
-            for created_admin in created_admin_users:
-                token = await auth_svc.create_invitation_token(
-                    user_id=created_admin["id"],
-                    email=created_admin["email"],
-                    role=created_admin["role"],
-                    name=created_admin["name"],
-                )
-                admin_email = created_admin["email"]
-                invite_task = asyncio.create_task(
-                    email_service.send_invitation_email(
-                        to_email=admin_email,
+                    token = await AuthService().create_invitation_token(
+                        user_id=created_admin["id"],
+                        email=created_admin["email"],
+                        role=created_admin["role"],
+                        name=created_admin["name"],
+                    )
+                    return await email_service.send_invitation_email(
+                        to_email=created_admin["email"],
                         recipient_name=created_admin["name"],
                         role=created_admin["role"],
                         invite_token=token,
-                        identifier_label="Tenant Slug",
+                        identifier_label="Institution ID",
                         identifier_value=tenant.slug,
                         temp_password=created_admin["plain_pwd"] if created_admin["must_change"] else None,
                     )
-                )
+                except Exception:
+                    logger.exception("Failed preparing or sending admin invitation for %s", created_admin["email"])
+                    return False
 
-                def _create_admin_done_cb(email_addr: str):
-                    def _cb(t: asyncio.Task):
-                        try:
-                            sent = t.result()
-                            if not sent:
-                                logger.warning("Admin invitation email was not sent for %s (check SMTP settings)", email_addr)
-                        except Exception as exc:
-                            logger.error("Failed sending admin invitation email for %s: %s", email_addr, exc)
-                    return _cb
-
-                invite_task.add_done_callback(_create_admin_done_cb(admin_email))
-        except Exception as mail_err:
-            logger.warning("Failed preparing admin invitation tokens for tenant %s: %s", tenant.slug, mail_err)
+        semaphore = asyncio.Semaphore(5)
+        invitation_results = await asyncio.gather(
+            *(send_admin_invitation(admin, semaphore) for admin in created_admin_users)
+        )
+        invitations_sent = sum(invitation_results)
+        for created_admin, invitation_sent in zip(created_admin_users, invitation_results):
+            created_admin["invitation_sent"] = invitation_sent
 
         await db.auditlog.create(
             data={
@@ -150,7 +141,10 @@ class TenantProvisioningService:
                 "severity": "INFO",
                 "actor": actor,
                 "target": tenant.id,
-                "description": f"Provisioned tenant {tenant.name} ({tenant.slug}) with {len(created_admin_users)} admin(s)",
+                "description": (
+                    f"Provisioned tenant {tenant.name} ({tenant.slug}) with {len(created_admin_users)} admin(s); "
+                    f"invitations_sent={invitations_sent}"
+                ),
             }
         )
 
@@ -160,10 +154,17 @@ class TenantProvisioningService:
             name=tenant.name,
             type=tenant.type,
             status=tenant.status,
-            domain=tenant.domain,
             license_count=tenant.licenseCount,
             created_at=tenant.createdAt,
             config=default_config,
-            admin_users=[{"id": u["id"], "email": u["email"], "role": u["role"]} for u in created_admin_users],
+            admin_users=[
+                {
+                    "id": u["id"],
+                    "email": u["email"],
+                    "role": u["role"],
+                    "invitation_sent": u["invitation_sent"],
+                }
+                for u in created_admin_users
+            ],
         )
 

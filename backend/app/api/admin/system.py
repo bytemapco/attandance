@@ -138,6 +138,12 @@ async def update_system_config(
         is_face_recognition_enabled=data.is_face_recognition_enabled,
         is_gps_verification_enabled=data.is_gps_verification_enabled,
         is_ai_background_validation_enabled=data.is_ai_background_validation_enabled,
+        campus_latitude=data.campus_latitude,
+        campus_longitude=data.campus_longitude,
+        geofence_radius_meters=data.geofence_radius_meters,
+        min_attendance_pct=data.min_attendance_pct,
+        verification_window_min=data.verification_window_min,
+        saturday_enabled=data.saturday_enabled,
     )
 
 

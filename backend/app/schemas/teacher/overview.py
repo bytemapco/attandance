@@ -9,7 +9,7 @@ class HistoryItemResponse(BaseModel):
     date: datetime
     class_code: str
     subject_name: str
-    time_slot: str
+    time_range: str
     locked: bool
     present: int
     flagged: int
@@ -24,7 +24,7 @@ class FlaggedRecordResponse(BaseModel):
     class_code: str
     subject_name: str
     date: datetime
-    time_slot: str
+    time_range: str
     method: str
     remarks: Optional[str] = None
     locked: bool

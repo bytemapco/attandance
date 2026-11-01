@@ -26,7 +26,18 @@ class _GeofenceRadarIndicatorState extends State<GeofenceRadarIndicator>
     _radarController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 2000),
-    )..repeat();
+    );
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Respect the system "reduce motion" setting: the sweep stops and the static icon remains.
+    if (MediaQuery.disableAnimationsOf(context)) {
+      _radarController.stop();
+    } else if (!_radarController.isAnimating) {
+      _radarController.repeat();
+    }
   }
 
   @override
@@ -41,6 +52,8 @@ class _GeofenceRadarIndicatorState extends State<GeofenceRadarIndicator>
         return Icons.radar_rounded;
       case GeofenceStatus.success:
         return Icons.task_alt_rounded;
+      case GeofenceStatus.notConfigured:
+        return Icons.location_disabled_rounded;
       case GeofenceStatus.failed:
         return Icons.location_off_rounded;
       default:

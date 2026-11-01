@@ -5,8 +5,10 @@ import 'package:smart_attendance_app/domain/models/attendance.dart';
 class ScoreData {
   final double overall;
   final double face;
-  final double liveness;
-  final double background;
+
+  /// Null when that check did not run.
+  final double? liveness;
+  final double? background;
 
   const ScoreData({
     required this.overall,

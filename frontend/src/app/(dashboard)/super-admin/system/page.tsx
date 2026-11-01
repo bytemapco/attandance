@@ -8,6 +8,7 @@ import { superAdminService } from "@/services/superAdminService";
 import { getApiErrorMessage } from "@/lib/api";
 import GlassBreadcrumb from "@/components/ui/GlassBreadcrumb";
 import GlassPageHeader from "@/components/ui/GlassPageHeader";
+import { Skeleton } from "@/components/ui/Skeleton";
 import GlassButton from "@/components/ui/GlassButton";
 import GlassCard from "@/components/ui/GlassCard";
 import SystemMetricsGrid from "@/components/super-admin/SystemMetricsGrid";
@@ -67,14 +68,20 @@ export default function PlatformHealthPage(): React.ReactElement {
       />
 
       {loading || !health ? (
-        <div className="space-y-4">
-          <div className="h-16 rounded-2xl bg-card border border-border animate-pulse" />
+        <div className="space-y-4" role="status" aria-label="Loading system health" aria-busy="true">
+          <Skeleton className="h-16 rounded-xl" />
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="h-20 rounded-2xl bg-card border border-border animate-pulse" />
+              <div key={i} className="space-y-3 rounded-xl border border-border bg-card p-4">
+                <Skeleton className="h-3 w-24" />
+                <Skeleton className="h-6 w-16" />
+              </div>
             ))}
           </div>
-          <div className="h-56 rounded-2xl bg-card border border-border animate-pulse" />
+          <div className="space-y-4 rounded-xl border border-border bg-card p-4">
+            <Skeleton className="h-5 w-40" />
+            <Skeleton className="h-44 w-full rounded-lg" />
+          </div>
         </div>
       ) : (
         <div className="space-y-5">

@@ -39,9 +39,10 @@ class StatusChip extends StatelessWidget {
           )
         : SasColors.glassBorder;
     final textColor = isActive ? color : SasColors.textMuted;
+    final reduceMotion = MediaQuery.disableAnimationsOf(context);
 
     final child = AnimatedContainer(
-      duration: SasDurations.fast,
+      duration: reduceMotion ? Duration.zero : SasDurations.fast,
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
         color: bgColor,

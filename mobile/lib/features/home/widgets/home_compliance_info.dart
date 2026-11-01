@@ -32,13 +32,17 @@ class HomeComplianceInfo extends StatelessWidget {
               color: Color(0xFFF95721),
             ),
             const SizedBox(width: 8),
-            Text(
-              'Term Compliance',
-              style: SasTypography.style(
-                fontSize: 15,
-                fontWeight: FontWeight.w700,
-                color: primaryTextColor,
-                letterSpacing: -0.2,
+            Flexible(
+              child: Text(
+                'Term Compliance',
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: SasTypography.style(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
+                  color: primaryTextColor,
+                  letterSpacing: -0.2,
+                ),
               ),
             ),
             const SizedBox(width: 6),
@@ -64,7 +68,7 @@ class HomeComplianceInfo extends StatelessWidget {
             ),
           ],
         ),
-        const Spacer(),
+        const SizedBox(height: 10),
 
         // 0% Big Stat
         Text(
@@ -91,25 +95,33 @@ class HomeComplianceInfo extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 6),
-            Text(
-              'Goal ',
-              style: SasTypography.style(
-                fontSize: 13.5,
-                fontWeight: FontWeight.w500,
-                color: subtitleColor,
-              ),
-            ),
-            Text(
-              '75%',
-              style: SasTypography.style(
-                fontSize: 13.5,
-                fontWeight: FontWeight.w700,
-                color: primaryTextColor,
+            Expanded(
+              child: Text.rich(
+                TextSpan(
+                  children: [
+                    TextSpan(
+                      text: 'Goal ',
+                      style: SasTypography.style(
+                        fontSize: 13.5,
+                        fontWeight: FontWeight.w500,
+                        color: subtitleColor,
+                      ),
+                    ),
+                    TextSpan(
+                      text: '75%',
+                      style: SasTypography.style(
+                        fontSize: 13.5,
+                        fontWeight: FontWeight.w700,
+                        color: primaryTextColor,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
         ),
-        const Spacer(),
+        const SizedBox(height: 10),
 
         // Status Warning Badge
         Container(
@@ -133,14 +145,16 @@ class HomeComplianceInfo extends StatelessWidget {
                     : const Color(0xFF16A34A),
               ),
               const SizedBox(width: 5),
-              Text(
-                isBelowGoal ? 'Below 75%' : 'Good Standing',
-                style: SasTypography.style(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                  color: isBelowGoal
-                      ? const Color(0xFFEF4444)
-                      : const Color(0xFF16A34A),
+              Flexible(
+                child: Text(
+                  isBelowGoal ? 'Below 75%' : 'Good Standing',
+                  style: SasTypography.style(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    color: isBelowGoal
+                        ? const Color(0xFFEF4444)
+                        : const Color(0xFF16A34A),
+                  ),
                 ),
               ),
             ],

@@ -219,9 +219,7 @@ Output: {status: PRESENT|UNVERIFIED, scores: {...}}
 ### 3. Class Management Service (`app/services/class_management/`)
 
 **Core Concepts:**
-- **Semester** → Academic period (e.g., Fall 2026, Batch 2024)
-- **StudentGroup** → Cohort of students (e.g., CSE-2A, Batch 2026)
-- **ClassTerm** → Class assignment for a semester
+- **StudentGroup** → A class: a cohort of students (e.g., CSE-A-1) with a plain semester number
 - **ClassMember** → Student enrolled in class
 - **CourseSection** → Subject + section
 - **TimetableRule** → Recurring schedule (Mon/Wed/Fri 9am)
@@ -229,16 +227,16 @@ Output: {status: PRESENT|UNVERIFIED, scores: {...}}
 - **AttendanceRecord** → Student's attendance for occurrence
 
 **Modules:**
-- `class_term.py` → Create/manage classes
-- `class_member.py` → Add/remove students
-- `class_section.py` → Create subjects & sections
+- `class_service.py` → Create/manage classes, change a class's semester number
+- `class_member_service.py` → Add/remove students
+- `class_section_service.py` → Create subjects & sections
+- `class_schedule_service.py` → Weekly schedule slots
 - `enrollment_sync.py` → Auto-sync CourseEnrollment
-- `promotion.py` → Promote students to next semester
 
 **Example Workflow (Creating a Class):**
 ```
-1. Admin creates "CSE-2A" class for semester "Fall 2026"
-   → Inserts StudentGroup (CSE-2A) + ClassTerm
+1. Admin creates the "CSE-A-1" class and gives it semester 3
+   → Inserts StudentGroup (CSE-A-1, semester 3)
    
 2. Admin enrolls students (50 students)
    → Creates ClassMember rows (ACTIVE status)
@@ -343,36 +341,25 @@ User
   └── device_uuid (String, for device binding)
 
 -- Academic Structure
-Semester
+StudentGroup (a class)
   ├── id (UUID)
   ├── tenantId (UUID)
-  ├── name (String) → "Fall 2026"
+  ├── departmentId (FK)
+  ├── batch (String) → "CSE-A-1"
+  ├── semester (Int, 1–8, edited by an admin)
   └── status (ACTIVE | ARCHIVED)
-
-StudentGroup
-  ├── id (UUID)
-  ├── tenantId (UUID)
-  ├── name (String) → "CSE-2A"
-  └── capacity (Int)
-
-ClassTerm
-  ├── id (UUID)
-  ├── tenantId (UUID)
-  ├── studentGroupId (FK)
-  ├── semesterId (FK)
-  └── status (ACTIVE | CLOSED | PROMOTED)
 
 ClassMember
   ├── id (UUID)
   ├── tenantId (UUID)
-  ├── classTermId (FK)
+  ├── groupId (FK StudentGroup)
   ├── studentId (FK)
-  └── status (ACTIVE | REMOVED | DETAINED)
+  └── status (ACTIVE | TRANSFERRED)
 
 CourseSection
   ├── id (UUID)
   ├── tenantId (UUID)
-  ├── classTermId (FK)
+  ├── groupId (FK StudentGroup, nullable)
   ├── subjectId (FK)
   ├── teacherId (FK User)
   └── section (String) → "A", "B"

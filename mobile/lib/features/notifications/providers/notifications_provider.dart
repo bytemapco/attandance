@@ -5,7 +5,7 @@ import 'package:smart_attendance_app/data/api/websocket_service.dart';
 import 'package:smart_attendance_app/data/local/notification_service.dart';
 import 'package:smart_attendance_app/data/local/secure_storage.dart';
 import 'package:smart_attendance_app/utils/logger.dart';
-
+import 'package:smart_attendance_app/core/server_time.dart';
 
 final notificationsProvider =
     StateNotifierProvider<NotificationsNotifier, List<LocalNotification>>((
@@ -48,9 +48,8 @@ class NotificationsNotifier extends StateNotifier<List<LocalNotification>> {
             id: d['id'] as String?,
             title: d['title'] as String? ?? 'Announcement',
             body: d['message'] as String? ?? '',
-            timestamp: d['created_at'] != null
-                ? DateTime.tryParse(d['created_at'] as String) ?? DateTime.now()
-                : DateTime.now(),
+            timestamp:
+                parseServerTime(d['created_at'] as String?) ?? DateTime.now(),
             severity: d['type'] as String? ?? 'info',
             category: d['category'] as String? ?? 'system',
             link: d['link'] as String?,

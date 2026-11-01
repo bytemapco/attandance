@@ -1,4 +1,4 @@
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from typing import List, Optional
 from fastapi import HTTPException, status
 from prisma.models import User
@@ -20,25 +20,40 @@ async def _authorize_register_access(occurrence, user: User) -> None:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You are not assigned to this class.")
 
 
+# A teacher's schedule can span at most this many days in one request.
+MAX_SCHEDULE_RANGE_DAYS = 31
+
+
+def validate_schedule_range(start: date, end: date) -> None:
+    if end < start:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="end_date must be on or after the start date.")
+    if (end - start).days >= MAX_SCHEDULE_RANGE_DAYS:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Choose at most {MAX_SCHEDULE_RANGE_DAYS} days at a time.",
+        )
+
+
 class OccurrenceRegisterService:
     @staticmethod
-    async def get_daily_schedule(tenant_id: str, faculty_id: str, target_date: date):
-        await OccurrenceGenerator.generate_occurrences_for_date(tenant_id, target_date)
-        target_dt = _to_dt(target_date)
+    async def get_daily_schedule(tenant_id: str, faculty_id: str, target_date: date, end_date: Optional[date] = None):
+        last_date = end_date or target_date
+        validate_schedule_range(target_date, last_date)
+        for offset in range((last_date - target_date).days + 1):
+            await OccurrenceGenerator.generate_occurrences_for_date(tenant_id, target_date + timedelta(days=offset))
         return await db.classoccurrence.find_many(
             where={
                 "tenantId": tenant_id,
-                "date": target_dt,
+                "date": {"gte": _to_dt(target_date), "lte": _to_dt(last_date)},
                 "OR": [{"facultyId": faculty_id}, {"substituteFacultyId": faculty_id}],
             },
             include={
                 "courseSection": {"include": {"subject": True, "enrollments": True}},
-                "timeSlot": True,
                 "classroom": True,
                 "faculty": {"include": {"user": True}},
                 "attendanceRecords": True,
             },
-            order={"timeSlot": {"startTime": "asc"}},
+            order=[{"date": "asc"}, {"startTime": "asc"}],
         )
 
     @staticmethod
@@ -52,7 +67,6 @@ class OccurrenceRegisterService:
                         "enrollments": {"include": {"student": {"include": {"user": True}}}},
                     }
                 },
-                "timeSlot": True,
                 "classroom": True,
                 "attendanceRecords": True,
             },
@@ -97,7 +111,7 @@ class OccurrenceRegisterService:
             "classroom_name": occurrence.classroom.name if occurrence.classroom else None,
             "course_name": occurrence.courseSection.subject.name if occurrence.courseSection.subject else "Class",
             "section_name": occurrence.courseSection.name,
-            "time_slot": f"{occurrence.timeSlot.startTime} - {occurrence.timeSlot.endTime}",
+            "time_range": f"{occurrence.startTime} - {occurrence.endTime}",
             "students": students_payload,
         }
 

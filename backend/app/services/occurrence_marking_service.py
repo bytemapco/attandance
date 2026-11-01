@@ -73,48 +73,59 @@ def require_open_window(occurrence) -> None:
         raise reject(status.HTTP_409_CONFLICT, "Attendance is not open for this class.")
 
 
-async def location_remarks(config, section_id: str, latitude: float, longitude: float, accuracy: float) -> list[str]:
-    """Raises when outside the fence. Returns a remark (the record gets flagged) when the check could not run."""
+async def location_remarks(config, latitude: float, longitude: float, accuracy: float) -> list[str]:
+    """Raises when outside the campus fence. Returns a remark (the record gets flagged) when the check could not run."""
     if not config.isGpsVerificationEnabled:
         return []
-    geofence = await db.geofence.find_unique(where={"courseSectionId": section_id})
-    if not geofence:
-        return ["No geofence is configured for this class; location not verified."]
+    if config.campusLatitude is None or config.campusLongitude is None:
+        return ["No campus location is set for this institution; location not verified."]
     student_point = GPSCoordinate(latitude, longitude)
-    centre = GPSCoordinate(geofence.latitude, geofence.longitude)
-    if not is_within_geofence(student_point, centre, geofence.radiusMeters, accuracy):
+    centre = GPSCoordinate(config.campusLatitude, config.campusLongitude)
+    radius = config.geofenceRadiusMeters
+    if not is_within_geofence(student_point, centre, radius, accuracy):
         distance = calculate_haversine_distance(student_point, centre)
         raise reject(
             status.HTTP_400_BAD_REQUEST,
-            f"You are outside the class location by {distance - geofence.radiusMeters - accuracy:.0f} m.",
+            f"You are outside the campus location by {distance - radius - accuracy:.0f} m.",
         )
     return []
 
 
+def _score_problems(scores: dict) -> list[str]:
+    """Each check that failed or could not run is a reason the record is flagged."""
+    problems = []
+    if scores["face"] < FACE_MIN:
+        problems.append("Face match below threshold.")
+    if scores["liveness"] is None:
+        problems.append("Liveness check could not run.")
+    elif scores["liveness"] < LIVENESS_MIN:
+        problems.append("Liveness below threshold.")
+    if scores["background_counted"]:
+        if scores["background"] is None:
+            problems.append("Background check could not run.")
+        elif scores["background"] < BACKGROUND_MIN:
+            problems.append("Background check failed.")
+    return problems
+
+
 async def _verify_face(config, student: Student, image_path: Optional[str]) -> tuple[dict, list[str]]:
-    """Returns (scores, problems). Scores are None for any check that could not run."""
+    """Returns (scores, problems). A score is None when its check did not run, never a made-up value."""
     embedding = await StudentRepository().get_face_embedding(student.id)
     if not embedding:
         raise reject(status.HTTP_400_BAD_REQUEST, "Register your face before marking attendance.")
     if not image_path:
         raise reject(status.HTTP_400_BAD_REQUEST, "A selfie is required to mark attendance.")
-    raw = await AIOrchestrator().analyze_attendance(image_path, embedding)
     background_counted = bool(config.isAiBackgroundValidationEnabled)
-    if not any(raw.values()):
-        unavailable = {"face": None, "liveness": None, "background": None, "background_counted": background_counted}
-        return unavailable, ["AI verification unavailable."]
-    problems = []
-    if raw["face_score"] < FACE_MIN or raw["liveness_score"] < LIVENESS_MIN:
-        problems.append("Face or liveness below threshold.")
-    if background_counted and raw["background_score"] < BACKGROUND_MIN:
-        problems.append("Background check failed.")
+    raw = await AIOrchestrator().analyze_attendance(image_path, embedding, check_background=background_counted)
     scores = {
         "face": raw["face_score"],
         "liveness": raw["liveness_score"],
         "background": raw["background_score"],
         "background_counted": background_counted,
     }
-    return scores, problems
+    if scores["face"] is None:
+        return scores, ["AI verification unavailable."]
+    return scores, _score_problems(scores)
 
 
 async def evaluate_face(
@@ -126,7 +137,7 @@ async def evaluate_face(
         raise reject(
             status.HTTP_409_CONFLICT, "Face verification is off for your institution. Scan the teacher's QR code instead."
         )
-    remarks = await location_remarks(config, occurrence.courseSectionId, latitude, longitude, accuracy)
+    remarks = await location_remarks(config, latitude, longitude, accuracy)
     scores, problems = await _verify_face(config, student, image_path)
     remarks.extend(problems)
     flagged = bool(remarks)

@@ -5,6 +5,8 @@ import 'package:smart_attendance_app/app/typography.dart';
 import 'package:smart_attendance_app/features/home/providers/session_provider.dart';
 import 'package:smart_attendance_app/features/home/widgets/home_active_session_card.dart';
 import 'package:smart_attendance_app/features/home/widgets/home_empty_classes.dart';
+import 'package:smart_attendance_app/shared/widgets/glass_card.dart';
+import 'package:smart_attendance_app/shared/widgets/shimmer_placeholder.dart';
 
 /// Section showing Today's Classes header and active class card matching reference design.
 class HomeTodayClassesCard extends StatelessWidget {
@@ -12,6 +14,9 @@ class HomeTodayClassesCard extends StatelessWidget {
   final VoidCallback onViewAll;
   final VoidCallback onSmartPass;
   final VoidCallback onFaceMatch;
+  final VoidCallback? onRetry;
+  final bool isLoading;
+  final String? errorMessage;
 
   const HomeTodayClassesCard({
     super.key,
@@ -19,6 +24,9 @@ class HomeTodayClassesCard extends StatelessWidget {
     required this.onViewAll,
     required this.onSmartPass,
     required this.onFaceMatch,
+    this.onRetry,
+    this.isLoading = false,
+    this.errorMessage,
   });
 
   @override
@@ -58,7 +66,7 @@ class HomeTodayClassesCard extends StatelessWidget {
     if (activeSession?.sessionEndTime != null) {
       timeText = DateFormat('h:mm a').format(activeSession!.sessionEndTime!);
     } else {
-      timeText = DateFormat('h:mm a').format(DateTime.now());
+      timeText = 'Time unavailable';
     }
 
     final formattedDate = DateFormat('EEE, MMM d').format(DateTime.now());
@@ -105,7 +113,11 @@ class HomeTodayClassesCard extends StatelessWidget {
         ),
 
         // Active Session Card or Empty State
-        if (sessions.isEmpty)
+        if (sessions.isEmpty && isLoading)
+          const _ClassesLoadingState()
+        else if (sessions.isEmpty && errorMessage != null)
+          _ClassesErrorState(message: errorMessage!, onRetry: onRetry)
+        else if (sessions.isEmpty)
           const HomeEmptyClasses()
         else
           HomeActiveSessionCard(
@@ -120,6 +132,46 @@ class HomeTodayClassesCard extends StatelessWidget {
             onFaceMatch: onFaceMatch,
           ),
       ],
+    );
+  }
+}
+
+class _ClassesLoadingState extends StatelessWidget {
+  const _ClassesLoadingState();
+
+  @override
+  Widget build(BuildContext context) {
+    return const ShimmerPlaceholder(itemCount: 1, itemHeight: 116);
+  }
+}
+
+class _ClassesErrorState extends StatelessWidget {
+  const _ClassesErrorState({required this.message, this.onRetry});
+
+  final String message;
+  final VoidCallback? onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    final textColor = SasColors.textPrimaryOf(context);
+    return GlassCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Semantics(
+            liveRegion: true,
+            child: Text(message, style: TextStyle(color: textColor)),
+          ),
+          if (onRetry != null) ...[
+            const SizedBox(height: 8),
+            TextButton.icon(
+              onPressed: onRetry,
+              icon: const Icon(Icons.refresh_rounded),
+              label: const Text('Retry'),
+            ),
+          ],
+        ],
+      ),
     );
   }
 }

@@ -5,7 +5,9 @@ import 'package:smart_attendance_app/core/attendance_utils.dart';
 class ReviewScoreRow extends StatelessWidget {
   final String label;
   final IconData icon;
-  final double score;
+
+  /// Null when the check did not run; the row shows a dash and an empty bar.
+  final double? score;
   final Animation<double> animation;
   final String hint;
 
@@ -20,7 +22,8 @@ class ReviewScoreRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = scoreColor(score);
+    final value = score;
+    final color = value == null ? const Color(0xFF94A3B8) : scoreColor(value);
     return Row(
       children: [
         Container(
@@ -66,7 +69,7 @@ class ReviewScoreRow extends StatelessWidget {
             builder: (_, __) => ClipRRect(
               borderRadius: BorderRadius.circular(4),
               child: LinearProgressIndicator(
-                value: (score * animation.value).clamp(0.0, 1.0),
+                value: ((value ?? 0) * animation.value).clamp(0.0, 1.0),
                 backgroundColor: SasColors.glassBorder,
                 valueColor: AlwaysStoppedAnimation<Color>(color),
                 minHeight: 6,
@@ -78,7 +81,9 @@ class ReviewScoreRow extends StatelessWidget {
         AnimatedBuilder(
           animation: animation,
           builder: (_, __) => Text(
-            '${(score * 100 * animation.value).toStringAsFixed(0)}%',
+            value == null
+                ? '—'
+                : '${(value * 100 * animation.value).toStringAsFixed(0)}%',
             style: TextStyle(
               color: color,
               fontWeight: FontWeight.w800,

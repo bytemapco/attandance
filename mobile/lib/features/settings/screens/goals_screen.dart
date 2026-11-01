@@ -42,6 +42,7 @@ class GoalsScreen extends ConsumerWidget {
                   Row(
                     children: [
                       IconButton(
+                        tooltip: 'Back',
                         onPressed: () => context.pop(),
                         icon: Icon(
                           Icons.chevron_left_rounded,

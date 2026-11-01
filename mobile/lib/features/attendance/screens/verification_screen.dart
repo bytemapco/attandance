@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:smart_attendance_app/app/theme.dart';
+import 'package:smart_attendance_app/core/attendance_policy.dart';
+import 'package:smart_attendance_app/data/local/hive_service.dart';
 import 'package:smart_attendance_app/data/local/preferences_service.dart';
 import 'package:smart_attendance_app/data/repositories/config_repository.dart';
 import 'package:smart_attendance_app/features/attendance/providers/attendance_provider.dart';
@@ -30,9 +33,18 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _checkFirstUse();
-    Future.microtask(() {
+    Future.microtask(() async {
       if (!mounted) return;
-      ref.read(configRepositoryProvider).fetchAndCacheConfig();
+      await ref.read(configRepositoryProvider).fetchAndCacheConfig();
+      if (!mounted) return;
+      final config = ref.read(hiveServiceProvider).getSystemConfig();
+      final mode = attendanceModeFor(
+        faceRecognitionEnabled: config.isFaceRecognitionEnabled,
+      );
+      if (mode == AttendanceMode.qrCode) {
+        context.pushReplacement('/smart-pass');
+        return;
+      }
       handleLocationVerify();
     });
   }
@@ -41,9 +53,13 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     clearTimers();
-    disposeCamera();
+    releaseCamera();
     super.dispose();
   }
+
+  static bool _isLocationSettled(GeofenceStatus? status) =>
+      status == GeofenceStatus.success ||
+      status == GeofenceStatus.notConfigured;
 
   Future<void> _checkFirstUse() async {
     final prefs = ref.read(preferencesServiceProvider);
@@ -88,9 +104,9 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen>
       next,
     ) {
       if (vState.step == VerificationStep.gps &&
-          next.status == GeofenceStatus.success &&
-          prev?.status != GeofenceStatus.success) {
-        onGpsSuccess(next);
+          _isLocationSettled(next.status) &&
+          !_isLocationSettled(prev?.status)) {
+        onLocationSettled(next);
       }
     });
 
@@ -143,6 +159,5 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen>
         ),
       ),
     );
-
   }
 }

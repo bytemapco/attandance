@@ -54,6 +54,8 @@ class SessionNotifier extends StateNotifier<SessionState> {
   final StudentApi _api;
   Timer? _pollTimer;
   Duration _currentInterval = kSessionPollMinInterval;
+  int _requestGeneration = 0;
+  bool _requestInFlight = false;
 
   SessionNotifier(this._api) : super(const SessionState());
 
@@ -102,6 +104,9 @@ class SessionNotifier extends StateNotifier<SessionState> {
       .toList();
 
   Future<void> fetchSessions({bool isPolling = false}) async {
+    if (_requestInFlight) return;
+    final generation = _requestGeneration;
+    _requestInFlight = true;
     if (!isPolling && state.sessions.isEmpty) {
       state = SessionState(
         sessions: state.sessions,
@@ -111,12 +116,14 @@ class SessionNotifier extends StateNotifier<SessionState> {
     }
     try {
       final classSessions = _mapClasses(await _api.getMyClasses());
+      if (generation != _requestGeneration) return;
       _adjustPollInterval(classSessions);
       state = SessionState(
         sessions: classSessions,
         markedSessionIds: state.markedSessionIds,
       );
     } on DioException catch (e) {
+      if (generation != _requestGeneration) return;
       AppLogger.error('Fetch sessions failed: $e');
       state = SessionState(
         sessions: state.sessions,
@@ -124,13 +131,24 @@ class SessionNotifier extends StateNotifier<SessionState> {
         markedSessionIds: state.markedSessionIds,
       );
     } catch (e) {
+      if (generation != _requestGeneration) return;
       AppLogger.error('Fetch sessions error: $e');
       state = SessionState(
         sessions: state.sessions,
         errorMessage: 'Failed to load sessions',
         markedSessionIds: state.markedSessionIds,
       );
+    } finally {
+      if (generation == _requestGeneration) _requestInFlight = false;
     }
+  }
+
+  void resetForLogout() {
+    _requestGeneration++;
+    _requestInFlight = false;
+    _currentInterval = kSessionPollMinInterval;
+    stopPolling();
+    state = const SessionState();
   }
 
   void markSessionSubmitted(String sessionId) {
@@ -159,7 +177,7 @@ final sessionProvider = StateNotifierProvider<SessionNotifier, SessionState>((
 
   ref.listen(authProvider, (previous, next) {
     if (next.status != AuthStatus.authenticated) {
-      notifier.stopPolling();
+      notifier.resetForLogout();
     }
   });
 

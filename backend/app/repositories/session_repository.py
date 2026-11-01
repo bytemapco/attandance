@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import datetime
 
 from prisma.models import Session
 from app.db.client import db
@@ -7,17 +7,6 @@ from app.db.client import db
 class SessionRepository:
     async def get_by_id(self, session_id: str) -> Session | None:
         return await db.session.find_unique(where={"id": session_id})
-
-    async def get_active_session_by_class(self, class_id: str) -> Session | None:
-        now = datetime.now(timezone.utc)
-        return await db.session.find_first(
-            where={"academicClassId": class_id, "isActive": True, "endTime": {"gt": now}}
-        )
-
-    async def create(self, class_id: str, start_time: datetime, end_time: datetime) -> Session:
-        return await db.session.create(
-            data={"academicClassId": class_id, "startTime": start_time, "endTime": end_time, "isActive": True}
-        )
 
     async def deactivate(self, session_id: str) -> Session:
         return await db.session.update(where={"id": session_id}, data={"isActive": False})

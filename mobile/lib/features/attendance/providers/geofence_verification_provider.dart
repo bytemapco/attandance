@@ -1,12 +1,28 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:smart_attendance_app/core/constants.dart';
-import 'package:smart_attendance_app/data/local/location_service.dart';
-import 'package:smart_attendance_app/features/attendance/providers/location_provider.dart';
+import 'package:smart_attendance_app/data/local/geofence_calculator.dart';
 import 'package:smart_attendance_app/data/local/hive_service.dart';
+import 'package:smart_attendance_app/data/local/location_service.dart';
 import 'package:smart_attendance_app/data/repositories/config_repository.dart';
+import 'package:smart_attendance_app/features/attendance/providers/location_provider.dart';
 
-enum GeofenceStatus { idle, scanning, success, failed }
+enum GeofenceStatus {
+  idle,
+  scanning,
+
+  /// Inside the campus boundary, or the institution does not check location.
+  success,
+
+  /// The institution has not set a campus location. The attendance is flagged for review.
+  notConfigured,
+
+  /// Outside the boundary, or no GPS fix could be taken.
+  failed,
+}
+
+const String kLocationUnavailableMessage =
+    'Could not get your location. Turn on GPS and try again.';
+const String kOutsideBoundaryMessage = 'You are outside the campus boundary.';
 
 class GeofenceVerificationState {
   final GeofenceStatus status;
@@ -52,77 +68,77 @@ class GeofenceVerificationNotifier
     return const GeofenceVerificationState();
   }
 
+  /// Decides the location outcome for one class. [classLat], [classLng] and [radius] come from
+  /// the institution's campus location. They are null until an admin sets it.
   Future<void> verifyLocation({
-    required double classLat,
-    required double classLng,
-    required double radius,
+    required double? classLat,
+    required double? classLng,
+    required double? radius,
   }) async {
     state = state.copyWith(status: GeofenceStatus.scanning, clearError: true);
 
+    final Position position;
     try {
-      try {
-        await ref.read(configRepositoryProvider).fetchAndCacheConfig();
-      } catch (_) {}
-      final config = ref.read(hiveServiceProvider).getSystemConfig();
-      if (!config.isGpsVerificationEnabled) {
-        final locationService = ref.read(locationServiceProvider);
-        Position? pos;
-        try {
-          pos = await locationService.getHighlyAccuratePosition();
-        } catch (_) {
-          pos = await Geolocator.getLastKnownPosition();
-        }
-        state = state.copyWith(
-          status: GeofenceStatus.success,
-          position: pos,
-          distanceMeters: 0.0,
-          radiusMeters: radius,
-          accuracy: pos?.accuracy ?? 0.0,
-        );
-        return;
-      }
-
-      final locationService = ref.read(locationServiceProvider);
-      final pos = await locationService.getHighlyAccuratePosition();
-
-      final distance = Geolocator.distanceBetween(
-        pos.latitude,
-        pos.longitude,
-        classLat,
-        classLng,
-      );
-
-      final isInside = distance <= (radius + kGeofenceGraceMeters);
-
-      if (isInside) {
-        state = state.copyWith(
-          status: GeofenceStatus.success,
-          position: pos,
-          distanceMeters: distance,
-          radiusMeters: radius,
-          accuracy: pos.accuracy,
-        );
-      } else {
-        state = state.copyWith(
-          status: GeofenceStatus.failed,
-          errorMessage: 'You are outside the classroom boundary.',
-          position: pos,
-          distanceMeters: distance,
-          radiusMeters: radius,
-          accuracy: pos.accuracy,
-        );
-      }
+      position = await ref
+          .read(locationServiceProvider)
+          .getHighlyAccuratePosition();
     } on LocationException catch (e) {
-      state = state.copyWith(
-        status: GeofenceStatus.failed,
-        errorMessage: e.message,
-      );
-    } catch (e) {
-      state = state.copyWith(
-        status: GeofenceStatus.failed,
-        errorMessage: 'Failed to acquire location: $e',
-      );
+      _fail(e.message);
+      return;
+    } catch (_) {
+      _fail(kLocationUnavailableMessage);
+      return;
     }
+
+    try {
+      await ref.read(configRepositoryProvider).fetchAndCacheConfig();
+    } catch (_) {}
+    final config = ref.read(hiveServiceProvider).getSystemConfig();
+
+    if (!config.isGpsVerificationEnabled) {
+      state = state.copyWith(
+        status: GeofenceStatus.success,
+        position: position,
+        accuracy: position.accuracy,
+      );
+      return;
+    }
+
+    if (classLat == null || classLng == null || radius == null) {
+      state = state.copyWith(
+        status: GeofenceStatus.notConfigured,
+        position: position,
+        accuracy: position.accuracy,
+      );
+      return;
+    }
+
+    final distance = GeofenceCalculator.distanceMeters(
+      fromLatitude: position.latitude,
+      fromLongitude: position.longitude,
+      toLatitude: classLat,
+      toLongitude: classLng,
+    );
+    final isInside = GeofenceCalculator.isWithinFence(
+      distance: distance,
+      radiusMeters: radius,
+      accuracy: position.accuracy,
+    );
+    state = state.copyWith(
+      status: isInside ? GeofenceStatus.success : GeofenceStatus.failed,
+      errorMessage: isInside ? null : kOutsideBoundaryMessage,
+      position: position,
+      distanceMeters: distance,
+      radiusMeters: radius,
+      accuracy: position.accuracy,
+    );
+  }
+
+  void _fail(String message) {
+    state = state.copyWith(
+      status: GeofenceStatus.failed,
+      errorMessage: message,
+    );
   }
 
   void reset() {

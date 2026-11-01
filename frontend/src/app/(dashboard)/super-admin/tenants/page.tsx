@@ -23,7 +23,6 @@ export default function SuperAdminTenantsPage(): React.JSX.Element {
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearch = useDebounce(searchQuery, 350);
   const [statusFilter, setStatusFilter] = useState("");
-  const [typeFilter, setTypeFilter] = useState("");
   const [loading, setLoading] = useState(true);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
 
@@ -37,7 +36,6 @@ export default function SuperAdminTenantsPage(): React.JSX.Element {
         page_size: pageSize,
         q: debouncedSearch.trim() || undefined,
         status: statusFilter || undefined,
-        type: typeFilter || undefined,
       });
       setTenants(data.items);
       setTotal(data.total_items ?? (data as unknown as { total?: number }).total ?? 0);
@@ -46,7 +44,7 @@ export default function SuperAdminTenantsPage(): React.JSX.Element {
     } finally {
       setLoading(false);
     }
-  }, [page, pageSize, debouncedSearch, statusFilter, typeFilter]);
+  }, [page, pageSize, debouncedSearch, statusFilter]);
 
   useEffect(() => {
     void fetchTenants();
@@ -75,7 +73,6 @@ export default function SuperAdminTenantsPage(): React.JSX.Element {
   function handleResetFilters(): void {
     setSearchQuery("");
     setStatusFilter("");
-    setTypeFilter("");
     setPage(1);
   }
 
@@ -96,8 +93,6 @@ export default function SuperAdminTenantsPage(): React.JSX.Element {
         onSearchChange={(q) => { setSearchQuery(q); setPage(1); }}
         statusFilter={statusFilter}
         onStatusChange={(s) => { setStatusFilter(s); setPage(1); }}
-        typeFilter={typeFilter}
-        onTypeChange={(t) => { setTypeFilter(t); setPage(1); }}
         onReset={handleResetFilters}
       />
 

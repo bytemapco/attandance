@@ -18,20 +18,14 @@ admin_only = Depends(RoleChecker(allowed_roles=["ADMIN", "SUPER_ADMIN"]))
 
 @router.get("/sections", response_model=List[CourseSectionResponse], dependencies=[admin_or_teacher])
 async def list_course_sections(
-    academic_year_id: Optional[str] = Query(None, description="Filter by Academic Year / Semester ID"),
-    term_id: Optional[str] = Query(None, description="Deprecated filter alias for Academic Year ID"),
     subject_id: Optional[str] = Query(None, description="Filter by Subject ID"),
     tenant_id: str = Depends(get_tenant_context),
 ):
-    sections = await TimetableService.list_course_sections(
-        tenant_id, year_id=academic_year_id, term_id=term_id, subject_id=subject_id
-    )
+    sections = await TimetableService.list_course_sections(tenant_id, subject_id=subject_id)
     return [
         CourseSectionResponse(
             id=s.id,
             tenant_id=s.tenantId,
-            academic_year_id=s.academicYearId,
-            academic_term_id=s.academicYearId,
             subject_id=s.subjectId,
             department_id=s.departmentId,
             name=s.name,
@@ -62,8 +56,6 @@ async def create_course_section(
     return CourseSectionResponse(
         id=s.id,
         tenant_id=s.tenantId,
-        academic_year_id=s.academicYearId,
-        academic_term_id=s.academicYearId,
         subject_id=s.subjectId,
         department_id=s.departmentId,
         name=s.name,
@@ -93,16 +85,14 @@ async def list_timetable_rules(
             id=r.id,
             tenant_id=r.tenantId,
             course_section_id=r.courseSectionId,
-            time_slot_id=r.timeSlotId,
             classroom_id=r.classroomId,
             teacher_id=r.teacherId,
             day_of_week=r.dayOfWeek,
+            start_time=r.startTime,
+            end_time=r.endTime,
             effective_from=r.effectiveFrom.date() if hasattr(r.effectiveFrom, "date") else r.effectiveFrom,
             effective_until=r.effectiveUntil.date() if hasattr(r.effectiveUntil, "date") else r.effectiveUntil,
             is_active=r.isActive,
-            time_slot_name=r.timeSlot.name if r.timeSlot else None,
-            start_time=r.timeSlot.startTime if r.timeSlot else None,
-            end_time=r.timeSlot.endTime if r.timeSlot else None,
             teacher_name=f"{r.teacher.firstName} {r.teacher.lastName}".strip() if r.teacher else None,
             classroom_name=r.classroom.name if r.classroom else None,
         )
@@ -125,10 +115,11 @@ async def create_timetable_rule(
         id=r.id,
         tenant_id=r.tenantId,
         course_section_id=r.courseSectionId,
-        time_slot_id=r.timeSlotId,
         classroom_id=r.classroomId,
         teacher_id=r.teacherId,
         day_of_week=r.dayOfWeek,
+        start_time=r.startTime,
+        end_time=r.endTime,
         effective_from=r.effectiveFrom.date() if hasattr(r.effectiveFrom, "date") else r.effectiveFrom,
         effective_until=r.effectiveUntil.date() if hasattr(r.effectiveUntil, "date") else r.effectiveUntil,
         is_active=r.isActive,

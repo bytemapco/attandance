@@ -79,31 +79,6 @@ To mark attendance, student selfie submissions undergo three automated verificat
 
 ---
 
-## 🧪 Comprehensive Unit Test Suite
-
-The repository includes a comprehensive, isolated unit test suite covering 100% of core backend services, API routers, RBAC middlewares, and frontend state stores, hooks, and components.
-
-### Test Execution Commands
-
-```bash
-# Run both test suites concurrently from root
-npm run test
-
-# Run backend unit tests (73 tests)
-npm run test:backend
-# or: cd backend && .venv/bin/pytest tests/ -v
-
-# Run frontend unit tests (31 tests)
-npm run test:frontend
-# or: cd frontend && npm run test
-```
-
-### Safety & Isolation Guarantees
-- **Zero Production Contact:** Runs against mock database layers and an in-memory Redis mock adapter.
-- **Fixture Format:** All mock user and credential fixtures adhere to realistic `@yopmail.com` domain conventions.
-
----
-
 ## ⚙️ Quick Start & Local Setup
 
 ### 1. Prerequisites

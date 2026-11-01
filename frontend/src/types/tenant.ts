@@ -1,4 +1,4 @@
-export type TenantType = "SCHOOL" | "COLLEGE" | "COACHING_CENTER";
+export type TenantType = "COLLEGE";
 export type TenantStatus = "ACTIVE" | "SUSPENDED" | "TRIAL" | "PROVISIONING";
 
 export interface Tenant {
@@ -7,7 +7,6 @@ export interface Tenant {
   name: string;
   type: TenantType;
   status: TenantStatus;
-  domain?: string | null;
   license_count: number;
   created_at: string;
   student_count?: number;
@@ -22,6 +21,7 @@ export interface TenantDetailAdminUser {
   role: string;
   is_active?: boolean;
   created_at?: string;
+  invitation_sent?: boolean;
 }
 
 export interface TenantDetail extends Tenant {
@@ -89,8 +89,6 @@ export interface TenantAdminProvisionItem {
 export interface TenantProvisionRequest {
   name: string;
   slug: string;
-  type: TenantType;
-  domain?: string;
   license_count?: number;
   admin_email?: string;
   admin_name?: string;
@@ -102,9 +100,7 @@ export interface TenantProvisionRequest {
 export interface TenantUpdateRequest {
   name?: string;
   slug?: string;
-  type?: TenantType;
   status?: TenantStatus;
-  domain?: string;
   license_count?: number;
   config?: Record<string, unknown>;
 }

@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_attendance_app/app/theme.dart';
 import 'package:smart_attendance_app/app/typography.dart';
+import 'package:smart_attendance_app/core/attendance_policy.dart';
+import 'package:smart_attendance_app/data/local/hive_service.dart';
 
-/// Smart Pass QR and Face Match action buttons rendered inside active session card.
-class HomeSessionActionButtons extends StatelessWidget {
+/// Smart Pass QR and Face Match actions inside the active session card.
+/// Face Match is shown only where face recognition is on. Otherwise the QR code is the only way to mark.
+class HomeSessionActionButtons extends ConsumerWidget {
   final VoidCallback onSmartPass;
   final VoidCallback onFaceMatch;
 
@@ -14,15 +18,20 @@ class HomeSessionActionButtons extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark
         ? SasColors.brilliance
         : const Color(0xFF0F172A);
+    final config = ref.watch(hiveServiceProvider).getSystemConfig();
+    final showFaceMatch =
+        attendanceModeFor(
+          faceRecognitionEnabled: config.isFaceRecognitionEnabled,
+        ) ==
+        AttendanceMode.biometric;
 
     return Row(
       children: [
-        // Smart Pass QR Button (Orange Gradient)
         Expanded(
           child: InkWell(
             onTap: onSmartPass,
@@ -66,47 +75,47 @@ class HomeSessionActionButtons extends StatelessWidget {
             ),
           ),
         ),
-        const SizedBox(width: 12),
-
-        // Face Match Button (White / Surface Bordered)
-        Expanded(
-          child: InkWell(
-            onTap: onFaceMatch,
-            borderRadius: BorderRadius.circular(14),
-            child: Container(
-              height: 44,
-              decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF0F172A) : Colors.white,
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(
-                  color: isDark
-                      ? const Color(0x33FFFFFF)
-                      : const Color(0xFFE2E8F0),
-                  width: 1.2,
-                ),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.filter_center_focus_rounded,
-                    size: 19,
-                    color: primaryTextColor,
+        if (showFaceMatch) ...[
+          const SizedBox(width: 12),
+          Expanded(
+            child: InkWell(
+              onTap: onFaceMatch,
+              borderRadius: BorderRadius.circular(14),
+              child: Container(
+                height: 44,
+                decoration: BoxDecoration(
+                  color: isDark ? const Color(0xFF0F172A) : Colors.white,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(
+                    color: isDark
+                        ? const Color(0x33FFFFFF)
+                        : const Color(0xFFE2E8F0),
+                    width: 1.2,
                   ),
-                  const SizedBox(width: 7),
-                  Text(
-                    'Face Match',
-                    style: SasTypography.style(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.filter_center_focus_rounded,
+                      size: 19,
                       color: primaryTextColor,
                     ),
-                  ),
-                ],
+                    const SizedBox(width: 7),
+                    Text(
+                      'Face Match',
+                      style: SasTypography.style(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                        color: primaryTextColor,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
-        ),
+        ],
       ],
     );
   }

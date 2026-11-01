@@ -15,14 +15,13 @@ def _today() -> datetime:
 def _class_payload(section) -> dict:
     live = next((o for o in section.occurrences or [] if window_is_open(o)), None)
     closed = next((o for o in section.occurrences or [] if o.isAttendanceLocked), None)
-    term = section.classTerm
     return {
         "course_section_id": section.id,
         "class_code": section.name,
         "subject_name": section.subject.name,
         "subject_code": section.subject.code,
         "department_name": section.department.name if section.department else None,
-        "semester": term.semester.number if term and term.semester else None,
+        "semester": section.group.semester if section.group else None,
         "student_count": len(section.enrollments or []),
         "live_occurrence_id": live.id if live else None,
         "window_closes_at": live.verificationExpires if live else None,
@@ -35,12 +34,11 @@ async def list_my_classes(tenant_id: str, teacher: Teacher) -> list[dict]:
         where={
             "tenantId": tenant_id,
             "faculties": {"some": {"teacherId": teacher.id}},
-            "academicYear": {"is": {"status": {"not": "ARCHIVED"}}},
         },
         include={
             "subject": True,
             "department": True,
-            "classTerm": {"include": {"semester": True}},
+            "group": True,
             "enrollments": {"where": {"status": "ACTIVE", "endedAt": None}},
             "occurrences": {"where": {"date": _today()}},
         },
@@ -49,37 +47,42 @@ async def list_my_classes(tenant_id: str, teacher: Teacher) -> list[dict]:
     return [_class_payload(s) for s in sections]
 
 
-async def _pick_time_slot(tenant_id: str):
-    """The period running now, else the next one today, else the last one of the day."""
-    slots = await db.timeslot.find_many(
-        where={"tenantId": tenant_id, "isBreak": False}, order={"startTime": "asc"}
-    )
-    if not slots:
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail="No class periods are set up. Ask your admin to add time slots.",
-        )
-    now = get_ist_now().strftime("%H:%M")
-    current = next((s for s in slots if s.startTime <= now < s.endTime), None)
-    upcoming = next((s for s in slots if s.startTime > now), None)
-    return current or upcoming or slots[-1]
+# A class that is not on the weekly schedule is recorded as one hour long.
+UNSCHEDULED_CLASS_MINUTES = 60
+
+
+def _end_time(start_time: str, minutes: int) -> str:
+    hours, mins = (int(part) for part in start_time.split(":"))
+    total = min(hours * 60 + mins + minutes, 23 * 60 + 59)
+    return f"{total // 60:02d}:{total % 60:02d}"
+
+
+def _pick_occurrence(occurrences, now: str):
+    """Today's class running now, else the next one that is still open."""
+    running = next((o for o in occurrences if o.startTime <= now < o.endTime), None)
+    if running:
+        return running
+    upcoming = sorted((o for o in occurrences if o.startTime > now and not o.isAttendanceLocked), key=lambda o: o.startTime)
+    return upcoming[0] if upcoming else None
 
 
 async def _occurrence_for_now(tenant_id: str, teacher: Teacher, section) -> str:
-    slot = await _pick_time_slot(tenant_id)
-    key = {"courseSectionId": section.id, "date": _today(), "timeSlotId": slot.id}
-    occurrence = await db.classoccurrence.find_unique(where={"courseSectionId_date_timeSlotId": key})
-    if occurrence and occurrence.isAttendanceLocked:
+    now = get_ist_now().strftime("%H:%M")
+    picked = _pick_occurrence(section.occurrences or [], now)
+    if picked and picked.isAttendanceLocked:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail=f"Attendance for {slot.name} is already closed for this class.",
+            detail=f"Attendance for {picked.startTime}–{picked.endTime} is already closed for this class.",
         )
-    if occurrence:
-        return occurrence.id
+    if picked:
+        return picked.id
     created = await db.classoccurrence.create(
         data={
-            **key,
             "tenantId": tenant_id,
+            "courseSectionId": section.id,
+            "date": _today(),
+            "startTime": now,
+            "endTime": _end_time(now, UNSCHEDULED_CLASS_MINUTES),
             "classroomId": section.defaultRoomId,
             "facultyId": teacher.id,
             "status": "SCHEDULED",

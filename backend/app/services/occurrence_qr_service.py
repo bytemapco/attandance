@@ -42,7 +42,7 @@ async def mark_by_qr(
         return existing, occurrence, False
     marking.require_open_window(occurrence)
     config = await SystemConfigService().get_config(student.tenantId)
-    remarks = await marking.location_remarks(config, occurrence.courseSectionId, latitude, longitude, accuracy)
+    remarks = await marking.location_remarks(config, latitude, longitude, accuracy)
     data = {
         "status": "FLAGGED" if remarks else "PRESENT",
         "method": "QR_CODE",

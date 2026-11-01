@@ -10,8 +10,7 @@ from app.schemas.class_management import (
 )
 
 CLASS_INCLUDE = {
-    "group": {"include": {"department": True}},
-    "semester": {"include": {"academicYear": True}},
+    "department": True,
     "members": {"where": {"status": "ACTIVE"}, "include": {"student": True}},
     "courseSections": {
         "order_by": {"createdAt": "asc"},
@@ -22,8 +21,8 @@ CLASS_INCLUDE = {
             "enrollments": {"where": {"endedAt": None}},
             "timetableRules": {
                 "where": {"isActive": True},
-                "order_by": {"dayOfWeek": "asc"},
-                "include": {"timeSlot": True, "classroom": True},
+                "order_by": [{"dayOfWeek": "asc"}, {"startTime": "asc"}],
+                "include": {"classroom": True},
             },
         },
     },
@@ -40,13 +39,13 @@ def _full_name(person) -> str:
     return name or getattr(person, "enrollmentNumber", "")
 
 
-async def get_class_term(tenant_id: str, class_id: str):
-    term = await db.classterm.find_first(
+async def get_class_group(tenant_id: str, class_id: str):
+    group = await db.studentgroup.find_first(
         where={"id": class_id, "tenantId": tenant_id}, include=CLASS_INCLUDE
     )
-    if not term:
+    if not group:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Class not found.")
-    return term
+    return group
 
 
 async def require_students_in_tenant(tenant_id: str, student_ids: List[str]) -> list:
@@ -58,34 +57,27 @@ async def require_students_in_tenant(tenant_id: str, student_ids: List[str]) -> 
     return students
 
 
-def build_summary(term) -> ClassSummary:
-    group = term.group
+def build_summary(group) -> ClassSummary:
     return ClassSummary(
-        id=term.id,
+        id=group.id,
         code=class_code(group.department.code, group.batch),
-        group_id=group.id,
         department_id=group.departmentId,
         department_name=group.department.name,
         batch=group.batch,
-        semester_number=term.semester.number,
-        academic_year_id=term.semester.academicYearId,
-        academic_year_name=term.semester.academicYear.name,
-        member_count=len(term.members or []),
-        subject_count=len(getattr(term, "courseSections", None) or []),
+        semester_number=group.semester,
+        member_count=len(group.members or []),
+        subject_count=len(getattr(group, "courseSections", None) or []),
         status=group.status,
-        created_at=term.createdAt,
+        created_at=group.createdAt,
     )
 
 
 def _schedule_item(rule) -> ScheduleItem:
-    slot = rule.timeSlot
     return ScheduleItem(
         id=rule.id,
         day_of_week=rule.dayOfWeek,
-        time_slot_id=rule.timeSlotId,
-        slot_name=slot.name if slot else None,
-        start_time=slot.startTime if slot else None,
-        end_time=slot.endTime if slot else None,
+        start_time=rule.startTime,
+        end_time=rule.endTime,
         room_name=rule.classroom.name if rule.classroom else None,
     )
 
@@ -107,10 +99,10 @@ def _section_item(section) -> SectionItem:
     )
 
 
-def build_detail(term) -> ClassDetail:
-    members = sorted(term.members or [], key=lambda m: m.student.enrollmentNumber)
+def build_detail(group) -> ClassDetail:
+    members = sorted(group.members or [], key=lambda m: m.student.enrollmentNumber)
     return ClassDetail(
-        **build_summary(term).model_dump(),
+        **build_summary(group).model_dump(),
         members=[
             MemberItem(
                 student_id=m.studentId,
@@ -120,5 +112,5 @@ def build_detail(term) -> ClassDetail:
             )
             for m in members
         ],
-        sections=[_section_item(s) for s in term.courseSections or []],
+        sections=[_section_item(s) for s in group.courseSections or []],
     )

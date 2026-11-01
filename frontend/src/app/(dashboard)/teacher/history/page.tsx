@@ -106,7 +106,7 @@ export default function AttendanceHistoryPage(): React.ReactElement {
                       <span className="font-semibold text-foreground">{i.subject_name}</span>
                       <span className="block text-xs text-muted-foreground">{i.class_code}</span>
                     </td>
-                    <td className="px-4 py-3 whitespace-nowrap tabular-nums text-muted-foreground">{i.time_slot}</td>
+                    <td className="px-4 py-3 whitespace-nowrap tabular-nums text-muted-foreground">{i.time_range}</td>
                     <td className="px-4 py-3 text-right tabular-nums">{i.present} / {i.total}</td>
                     <td className="px-4 py-3">
                       {i.locked ? <GlassBadge variant="info">Closed</GlassBadge> : <GlassBadge variant="success">Live</GlassBadge>}

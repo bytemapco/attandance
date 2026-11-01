@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useCallback } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { 
   Users, GraduationCap, BookOpen, ShieldCheck, RefreshCw, Megaphone 
@@ -11,6 +12,7 @@ import { useAuthStore } from "@/store/authStore";
 import GlassStatCard from "@/components/ui/GlassStatCard";
 import GlassLoader from "@/components/ui/GlassLoader";
 import AdminQuickActions from "@/components/admin/AdminQuickActions";
+import SetupGate from "@/components/admin/onboarding/SetupGate";
 import type { AdminStatsResponse } from "@/types";
 
 export default function AdminDashboardPage(): React.ReactElement {
@@ -58,7 +60,7 @@ export default function AdminDashboardPage(): React.ReactElement {
       setStats(statsRes.data);
     } catch {
       toast.error("Failed to load dashboard metrics");
-      setStats({ studentCount: 0, teacherCount: 0, classCount: 0 });
+      setStats(null);
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -108,30 +110,42 @@ export default function AdminDashboardPage(): React.ReactElement {
         </div>
       </div>
 
+      <SetupGate />
+
       {/* KPI Metric Strip */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <GlassStatCard
-          icon={<GraduationCap size={20} />}
-          label="Students"
-          value={stats?.studentCount ?? 0}
-          accentColor="mineral"
-        />
-        <GlassStatCard
-          icon={<Users size={20} />}
-          label="Faculty"
-          value={stats?.teacherCount ?? 0}
-          accentColor="carbon"
-        />
-        <GlassStatCard
-          icon={<BookOpen size={20} />}
-          label="Classes"
-          value={stats?.classCount ?? 0}
-          accentColor="copper"
-        />
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <Link href="/admin/users/students" aria-label="View students" className="rounded-xl focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#526f78]">
+          <GlassStatCard
+            icon={<GraduationCap size={20} />}
+            label="Students"
+            value={stats?.studentCount ?? "—"}
+            subtext="View student records"
+            accentColor="mineral"
+          />
+        </Link>
+        <Link href="/admin/users/teachers" aria-label="View faculty" className="rounded-xl focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#526f78]">
+          <GlassStatCard
+            icon={<Users size={20} />}
+            label="Faculty"
+            value={stats?.teacherCount ?? "—"}
+            subtext="View faculty records"
+            accentColor="carbon"
+          />
+        </Link>
+        <Link href="/admin/classes" aria-label="View classes" className="rounded-xl focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#526f78]">
+          <GlassStatCard
+            icon={<BookOpen size={20} />}
+            label="Classes"
+            value={stats?.classCount ?? "—"}
+            subtext="View classes and schedules"
+            accentColor="copper"
+          />
+        </Link>
         <GlassStatCard
           icon={<ShieldCheck size={20} />}
           label="Attendance Rate"
-          value={stats?.biometricPassRate !== undefined && (stats.attendanceCount ?? 0) > 0 ? `${stats.biometricPassRate}%` : "0.0%"}
+          value={stats && (stats.attendanceCount ?? 0) > 0 ? `${stats.biometricPassRate ?? 0}%` : "—"}
+          subtext={stats && (stats.attendanceCount ?? 0) > 0 ? "Present, late or approved" : stats ? "No attendance recorded yet" : "Unavailable"}
           accentColor="emerald"
         />
       </div>
@@ -139,8 +153,8 @@ export default function AdminDashboardPage(): React.ReactElement {
       {/* Administration Controls Hub */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <h2 className="text-xs font-bold text-[#526f78] uppercase tracking-wider">
-            Quick Actions
+          <h2 className="text-base font-semibold text-[#202b30]">
+            Quick actions
           </h2>
         </div>
         <AdminQuickActions />

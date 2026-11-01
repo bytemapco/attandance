@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { 
   Pencil, Mail, Hash, User, Phone, GraduationCap, Building2, CalendarDays,
-  MapPin, Clock, Award, ShieldCheck, KeyRound, Layers
+  KeyRound, Layers, Copy, Check
 } from "lucide-react";
 import toast from "react-hot-toast";
 import api, { getApiErrorMessage } from "@/lib/api";
@@ -18,28 +18,50 @@ import type { StudentResponse } from "@/types";
 
 const GENDER_LABELS: Record<string, string> = { M: "Male", F: "Female", O: "Other" };
 
-const colorVariants: Record<string, string> = {
-  blue: "bg-[#eaf2f6] text-[#306b8a] border border-[#c5dce8]",
-  purple: "bg-[#eeece7] text-[#526f78] border border-[#e3e1dc]",
-  pink: "bg-[#f7efea] text-[#c98260] border border-[#f0ded4]",
-  amber: "bg-[#fbf1df] text-[#8a5b12] border border-[#f2deba]",
-  emerald: "bg-[#e8f3ed] text-[#247653] border border-[#c6e2d3]",
-  rose: "bg-[#f9eaea] text-[#b54242] border border-[#f0c9c9]",
-  cyan: "bg-[#eaf2f6] text-[#306b8a] border border-[#c5dce8]",
-  slate: "bg-[#eeece7] text-[#526f78] border border-[#e3e1dc]",
-};
+interface InfoRowProps {
+  icon: React.ElementType;
+  label: string;
+  value: React.ReactNode;
+  copyValue?: string;
+  copyKey?: string;
+  copiedKey?: string | null;
+  onCopy?: (text: string, key: string) => void;
+}
 
-const InfoItem = ({ icon: Icon, label, value, color }: { icon: React.ElementType, label: string, value: string, color: string }) => (
-  <div className="flex items-center justify-between p-3 rounded-lg border border-transparent">
-    <div className="flex items-center gap-3.5">
-      <div className={`p-2.5 rounded-xl ${colorVariants[color] || colorVariants.slate}`}>
-        <Icon size={18} />
+const InfoRow = ({
+  icon: Icon,
+  label,
+  value,
+  copyValue,
+  copyKey,
+  copiedKey,
+  onCopy,
+}: InfoRowProps) => (
+  <div className="group flex items-center justify-between p-3 rounded-lg border border-transparent hover:border-border/60 hover:bg-muted/40 transition-colors">
+    <div className="flex items-center gap-3.5 min-w-0">
+      <div className="w-9 h-9 rounded-lg bg-muted/60 border border-border/60 flex items-center justify-center text-[#526f78] shrink-0">
+        <Icon size={16} />
       </div>
-      <div>
+      <div className="min-w-0">
         <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">{label}</p>
-        <p className="text-sm font-semibold text-foreground">{value}</p>
+        <p className="text-sm font-semibold text-foreground truncate">{value}</p>
       </div>
     </div>
+    {copyValue && copyKey && onCopy && (
+      <button
+        type="button"
+        onClick={() => onCopy(copyValue, copyKey)}
+        className="opacity-0 group-hover:opacity-100 focus:opacity-100 p-1.5 rounded-md hover:bg-card text-muted-foreground hover:text-foreground transition-all cursor-pointer"
+        title={`Copy ${label}`}
+        aria-label={`Copy ${label}`}
+      >
+        {copiedKey === copyKey ? (
+          <Check size={14} className="text-[#247653]" />
+        ) : (
+          <Copy size={14} />
+        )}
+      </button>
+    )}
   </div>
 );
 
@@ -49,6 +71,7 @@ export default function StudentDetailPage(): React.ReactElement {
   const [student, setStudent] = useState<StudentResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [isResetDialogOpen, setIsResetDialogOpen] = useState(false);
+  const [copiedField, setCopiedField] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchStudent(): Promise<void> {
@@ -64,6 +87,17 @@ export default function StudentDetailPage(): React.ReactElement {
     }
     void fetchStudent();
   }, [id]);
+
+  const copyToClipboard = async (text: string, label: string): Promise<void> => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedField(label);
+      toast.success(`${label} copied to clipboard`);
+      setTimeout(() => setCopiedField(null), 2000);
+    } catch {
+      toast.error("Failed to copy to clipboard");
+    }
+  };
 
   const handleResetPassword = async (): Promise<void> => {
     if (!student) return;
@@ -86,96 +120,175 @@ export default function StudentDetailPage(): React.ReactElement {
   const initials = (student.first_name?.[0] || "") + (student.last_name?.[0] || "");
 
   return (
-    <div className="animate-fade-in-up space-y-8">
+    <div className="animate-fade-in-up space-y-6">
       <GlassBreadcrumb items={[
         { label: "Admin", href: "/admin/dashboard" },
         { label: "Students", href: "/admin/users/students" },
         { label: fullName !== "Not provided" ? fullName : student.email },
       ]} />
       
-      {/* Hero Banner */}
-      <div className="relative overflow-hidden rounded-2xl border border-border bg-card p-6 sm:p-8 shadow-xs">
-        <div className="relative flex flex-col sm:flex-row items-center sm:items-start gap-6">
-          <div className="flex-shrink-0 relative">
-            <div className="w-24 h-24 rounded-full bg-primary/10 border-2 border-primary/20 flex items-center justify-center text-primary font-bold text-3xl shadow-xs">
-              {initials || <User size={36} className="text-muted-foreground" />}
-            </div>
-            <div className="absolute -bottom-1 -right-1 bg-background border border-border text-emerald-600 p-1.5 rounded-full shadow-xs">
-              <ShieldCheck size={16} />
-            </div>
-          </div>
-          
-          <div className="flex-1 text-center sm:text-left space-y-3">
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight mb-1.5">
-                {fullName}
-              </h1>
-              <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2.5">
-                <GlassBadge variant="info">{student.enrollment_number}</GlassBadge>
-                {student.department_name && <GlassBadge variant="success">{student.department_name}</GlassBadge>}
-                <span className="text-xs text-muted-foreground flex items-center gap-1.5 bg-muted px-2.5 py-0.5 rounded-full border border-border">
-                  <Clock size={12} /> Enrolled
-                </span>
+      {/* Profile Overview Header */}
+      <div className="rounded-2xl border border-border bg-card p-6 sm:p-7 shadow-[0_2px_8px_rgba(40,54,59,0.04)]">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+          <div className="flex flex-col sm:flex-row items-center sm:items-center gap-5 text-center sm:text-left">
+            <div className="relative">
+              <div className="w-20 h-20 sm:w-22 sm:h-22 rounded-2xl bg-[#28363b]/5 border border-[#28363b]/10 flex items-center justify-center text-[#28363b] font-bold text-2xl sm:text-3xl shadow-xs select-none">
+                {initials || <User size={32} className="text-muted-foreground" />}
               </div>
             </div>
             
-            <p className="text-muted-foreground max-w-2xl text-sm leading-relaxed">
-              Student profile containing academic records, personal information, and system access details. Ensure all modifications align with institutional data policies.
-            </p>
-            
-            <div className="pt-2 flex flex-wrap gap-3 justify-center sm:justify-start">
-              <GlassButton variant="primary" icon={<Pencil size={16} />} onClick={() => router.push(`/admin/users/students/${id}/edit`)}>
-                Edit Profile
-              </GlassButton>
-              <GlassButton variant="ghost" className="text-amber-600 hover:text-amber-700 hover:bg-amber-50" icon={<KeyRound size={16} />} onClick={() => setIsResetDialogOpen(true)}>
-                Reset Password
-              </GlassButton>
+            <div className="space-y-1.5">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+                <h1 className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight">
+                  {fullName}
+                </h1>
+                <GlassBadge 
+                  variant={student.is_active === false ? "neutral" : "success"}
+                  icon={<span className={`w-1.5 h-1.5 rounded-full ${student.is_active === false ? "bg-muted-foreground" : "bg-[#247653]"}`} />}
+                >
+                  {student.is_active === false ? "Inactive" : "Enrolled"}
+                </GlassBadge>
+              </div>
+
+              <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 text-xs text-muted-foreground">
+                <button
+                  type="button"
+                  onClick={() => copyToClipboard(student.enrollment_number, "Enrollment Number")}
+                  className="inline-flex items-center gap-1.5 font-mono px-2.5 py-1 rounded-md bg-muted/60 hover:bg-muted text-foreground border border-border transition-colors cursor-pointer"
+                  title="Click to copy enrollment number"
+                >
+                  <Hash size={12} className="text-[#526f78]" />
+                  <span>{student.enrollment_number}</span>
+                  {copiedField === "Enrollment Number" ? (
+                    <Check size={12} className="text-[#247653]" />
+                  ) : (
+                    <Copy size={12} className="text-muted-foreground opacity-60" />
+                  )}
+                </button>
+
+                {student.department_name && (
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-muted/40 text-foreground border border-border/80">
+                    <Building2 size={12} className="text-[#526f78]" />
+                    {student.department_name}
+                  </span>
+                )}
+
+                {(student.semester || student.batch) && (
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-muted/40 text-foreground border border-border/80">
+                    <Layers size={12} className="text-[#526f78]" />
+                    {[
+                      student.semester ? `Semester ${student.semester}` : null,
+                      student.batch ? `Batch ${student.batch}` : null,
+                    ].filter(Boolean).join(" • ")}
+                  </span>
+                )}
+              </div>
             </div>
+          </div>
+
+          {/* Quick Actions */}
+          <div className="flex items-center justify-center sm:justify-end gap-3 pt-3 sm:pt-0 border-t sm:border-t-0 border-border">
+            <GlassButton 
+              variant="primary" 
+              size="md"
+              icon={<Pencil size={15} />} 
+              onClick={() => router.push(`/admin/users/students/${id}/edit`)}
+            >
+              Edit Profile
+            </GlassButton>
+            <GlassButton 
+              variant="secondary" 
+              size="md"
+              icon={<KeyRound size={15} className="text-[#526f78]" />} 
+              onClick={() => setIsResetDialogOpen(true)}
+            >
+              Reset Password
+            </GlassButton>
           </div>
         </div>
       </div>
       
+      {/* Detail Cards */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Academic Details */}
         <GlassCard className="!p-0 overflow-hidden">
-          <div className="p-5 border-b border-border bg-muted/40">
-            <h3 className="text-base font-semibold text-foreground flex items-center gap-2">
-              <User size={18} className="text-primary" />
-              Personal Information
-            </h3>
-            <p className="text-xs text-muted-foreground mt-0.5">Contact details and identity information.</p>
+          <div className="px-5 py-4 border-b border-border bg-muted/30 flex items-center justify-between">
+            <h2 className="text-sm font-semibold text-foreground flex items-center gap-2.5">
+              <GraduationCap size={17} className="text-[#526f78]" />
+              Academic Profile
+            </h2>
+            <span className="text-xs font-medium text-muted-foreground">
+              Institutional Records
+            </span>
           </div>
-          <div className="p-3 space-y-1">
-            <InfoItem icon={Mail} label="Email Address" value={student.email} color="blue" />
-            <InfoItem icon={Phone} label="Phone Number" value={student.phone || "Not provided"} color="purple" />
-            <InfoItem icon={User} label="Gender" value={(student.gender && GENDER_LABELS[student.gender]) || "Unspecified"} color="pink" />
-            <InfoItem 
-              icon={CalendarDays} 
-              label="Date of Birth" 
-              value={student.date_of_birth ? new Date(student.date_of_birth).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }) : "Not provided"} 
-              color="amber" 
+          <div className="p-4 space-y-1">
+            <InfoRow 
+              icon={Hash} 
+              label="Enrollment Number" 
+              value={student.enrollment_number} 
+              copyValue={student.enrollment_number}
+              copyKey="Enrollment Number"
+              copiedKey={copiedField}
+              onCopy={copyToClipboard}
+            />
+            <InfoRow 
+              icon={Building2} 
+              label="Department" 
+              value={student.department_name || "Not assigned"} 
+            />
+            <InfoRow 
+              icon={Layers} 
+              label="Current Semester" 
+              value={student.semester ? `Semester ${student.semester}` : "Not assigned"} 
+            />
+            <InfoRow 
+              icon={GraduationCap} 
+              label="Assigned Batch" 
+              value={student.batch ? `Batch ${student.batch}` : "Not assigned"} 
             />
           </div>
         </GlassCard>
 
+        {/* Personal Information */}
         <GlassCard className="!p-0 overflow-hidden">
-          <div className="p-5 border-b border-border bg-muted/40">
-            <h3 className="text-base font-semibold text-foreground flex items-center gap-2">
-              <GraduationCap size={18} className="text-primary" />
-              Academic Profile
-            </h3>
-            <p className="text-xs text-muted-foreground mt-0.5">Institutional enrollment and course tracking.</p>
+          <div className="px-5 py-4 border-b border-border bg-muted/30 flex items-center justify-between">
+            <h2 className="text-sm font-semibold text-foreground flex items-center gap-2.5">
+              <User size={17} className="text-[#526f78]" />
+              Personal Information
+            </h2>
+            <span className="text-xs font-medium text-muted-foreground">
+              Contact & Identity
+            </span>
           </div>
-          <div className="p-3 space-y-1">
-            <InfoItem icon={Hash} label="Enrollment Number" value={student.enrollment_number} color="emerald" />
-            <InfoItem icon={Building2} label="Department" value={student.department_name} color="rose" />
-            <InfoItem icon={Layers} label="Batch" value={student.batch || "Not assigned"} color="blue" />
-            <InfoItem 
-              icon={Award} 
-              label="Semester & Batch" 
-              value={`${student.semester ? `Semester ${student.semester}` : "Semester unassigned"} ${student.batch ? `• Batch ${student.batch}` : ""}`} 
-              color="cyan" 
+          <div className="p-4 space-y-1">
+            <InfoRow 
+              icon={Mail} 
+              label="Email Address" 
+              value={student.email} 
+              copyValue={student.email}
+              copyKey="Email"
+              copiedKey={copiedField}
+              onCopy={copyToClipboard}
             />
-            <InfoItem icon={MapPin} label="System Identifier" value={student.id} color="slate" />
+            <InfoRow 
+              icon={Phone} 
+              label="Phone Number" 
+              value={student.phone || "Not provided"} 
+              copyValue={student.phone || undefined}
+              copyKey="Phone"
+              copiedKey={copiedField}
+              onCopy={copyToClipboard}
+            />
+            <InfoRow 
+              icon={User} 
+              label="Gender" 
+              value={(student.gender && GENDER_LABELS[student.gender]) || "Not specified"} 
+            />
+            <InfoRow 
+              icon={CalendarDays} 
+              label="Date of Birth" 
+              value={student.date_of_birth ? new Date(student.date_of_birth).toLocaleDateString("en-US", { year: 'numeric', month: 'long', day: 'numeric' }) : "Not provided"} 
+            />
           </div>
         </GlassCard>
       </div>

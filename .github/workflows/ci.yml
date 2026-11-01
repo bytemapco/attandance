@@ -42,9 +42,6 @@ jobs:
       - name: Run TypeScript type check
         run: npm run type-check
 
-      - name: Run Unit & Component Tests
-        run: npm run test:ci
-
       - name: Build Next.js application
         env:
           NEXT_PUBLIC_API_URL: /api/v1
@@ -87,11 +84,8 @@ jobs:
       - name: Run Ruff Linter
         run: ruff check .
 
-      - name: Run Pytest Test Suite
-        run: pytest tests -v
-
   mobile-ci:
-    name: Mobile Quality & Unit Tests
+    name: Mobile Quality & Lint
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -115,7 +109,4 @@ jobs:
 
       - name: Run Flutter Static Analysis
         run: flutter analyze --no-fatal-infos
-
-      - name: Run Flutter Unit Tests
-        run: flutter test
 

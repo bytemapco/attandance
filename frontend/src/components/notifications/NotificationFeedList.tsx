@@ -5,6 +5,7 @@ import { Inbox, AlertCircle, RotateCw, Trash2, X } from "lucide-react";
 import { NotificationFeedItem } from "./NotificationFeedItem";
 import GlassConfirmDialog from "@/components/ui/GlassConfirmDialog";
 import type { NotificationItem } from "@/types/notification";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 interface NotificationFeedListProps {
   notifications: NotificationItem[];
@@ -43,13 +44,13 @@ export function NotificationFeedList({
 
   if (loading && notifications.length === 0) {
     return (
-      <div className="space-y-3">
+      <div className="space-y-3" role="status" aria-label="Loading notifications" aria-busy="true">
         {[1, 2, 3, 4].map((i) => (
-          <div key={i} className="p-4 rounded-xl bg-card border border-[#e3e1dc] animate-pulse flex items-start gap-3.5">
-            <div className="h-9 w-9 rounded-lg bg-[#eeece7] shrink-0" />
-            <div className="flex-1 space-y-2">
-              <div className="w-32 h-3.5 bg-[#eeece7] rounded" />
-              <div className="w-3/4 h-3 bg-[#eeece7] rounded" />
+          <div key={i} className="flex items-start gap-3.5 rounded-xl border border-border bg-card p-4">
+            <Skeleton className="size-9 shrink-0 rounded-lg" />
+            <div className="min-w-0 flex-1 space-y-2">
+              <Skeleton className="h-3.5 w-32" />
+              <Skeleton className="h-3 w-3/4" />
             </div>
           </div>
         ))}

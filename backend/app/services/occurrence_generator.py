@@ -1,62 +1,69 @@
 from datetime import date, datetime
 from typing import List
+from prisma.errors import UniqueViolationError
 from app.db.client import db
+from app.services.system_config_service import SystemConfigService
 
 
 def _to_dt(d: date) -> datetime:
     return datetime(d.year, d.month, d.day, 0, 0, 0)
 
 
+async def _find_existing(rule, target_dt: datetime):
+    return await db.classoccurrence.find_unique(
+        where={
+            "courseSectionId_date_startTime": {
+                "courseSectionId": rule.courseSectionId,
+                "date": target_dt,
+                "startTime": rule.startTime,
+            }
+        }
+    )
+
+
+async def _create_or_existing(rule, target_dt: datetime, data: dict):
+    """Several teachers can open the same day at once. The request that loses the race takes the row the winner made."""
+    try:
+        return await db.classoccurrence.create(data=data)
+    except UniqueViolationError:
+        existing = await _find_existing(rule, target_dt)
+        if existing is None:
+            raise
+        return existing
+
+
 class OccurrenceGenerator:
     @staticmethod
     async def generate_occurrences_for_date(tenant_id: str, target_date: date) -> List[dict]:
         target_dt = _to_dt(target_date)
-        events = await db.academiccalendarevent.find_many(
-            where={"tenantId": tenant_id, "date": target_dt}
-        )
-        is_holiday = any(e.eventType in ("HOLIDAY", "NON_INSTRUCTIONAL") for e in events)
-        if is_holiday:
-            return []
+        day_of_week = target_date.isoweekday()
 
-        override = next((e for e in events if e.eventType == "TIMETABLE_OVERRIDE" and e.substituteDayOfWeek), None)
-        effective_dow = override.substituteDayOfWeek if override and override.substituteDayOfWeek else target_date.isoweekday()
+        if day_of_week == 6:
+            config = await SystemConfigService().get_config(tenant_id=tenant_id)
+            if not config.saturdayEnabled:
+                return []
 
         rules = await db.timetablerule.find_many(
             where={
                 "tenantId": tenant_id,
-                "dayOfWeek": effective_dow,
+                "dayOfWeek": day_of_week,
                 "isActive": True,
                 "effectiveFrom": {"lte": target_dt},
-                "effectiveUntil": {"gte": target_dt},
+                "OR": [{"effectiveUntil": None}, {"effectiveUntil": {"gte": target_dt}}],
             },
             include={
                 "courseSection": {
                     "include": {
                         "faculties": {"where": {"isPrimary": True}},
                         "subject": True,
-                        "academicYear": True,
                     }
                 },
-                "timeSlot": True,
             },
         )
 
         created_occurrences = []
         for rule in rules:
-            # Respect Saturday toggle on the section's academic year
-            if effective_dow == 6 and rule.courseSection and rule.courseSection.academicYear:
-                if not getattr(rule.courseSection.academicYear, "saturdayEnabled", False):
-                    continue
-
-            existing = await db.classoccurrence.find_unique(
-                where={
-                    "courseSectionId_date_timeSlotId": {
-                        "courseSectionId": rule.courseSectionId,
-                        "date": target_dt,
-                        "timeSlotId": rule.timeSlotId,
-                    }
-                }
-            )
+            existing = await _find_existing(rule, target_dt)
             if existing:
                 created_occurrences.append(existing)
                 continue
@@ -70,17 +77,20 @@ class OccurrenceGenerator:
 
             room_id = rule.classroomId or (rule.courseSection.defaultRoomId if rule.courseSection else None)
 
-            occurrence = await db.classoccurrence.create(
-                data={
+            occurrence = await _create_or_existing(
+                rule,
+                target_dt,
+                {
                     "tenantId": tenant_id,
                     "courseSectionId": rule.courseSectionId,
                     "timetableRuleId": rule.id,
                     "date": target_dt,
-                    "timeSlotId": rule.timeSlotId,
+                    "startTime": rule.startTime,
+                    "endTime": rule.endTime,
                     "classroomId": room_id,
                     "facultyId": faculty_id,
                     "status": "SCHEDULED",
-                }
+                },
             )
             created_occurrences.append(occurrence)
 

@@ -7,18 +7,44 @@ from app.db.client import db
 logger = get_logger("app.services.admin.bulk_import")
 
 
-def _dispatch_invite(coro, email: str) -> None:
-    task = asyncio.create_task(coro)
+InviteJob = tuple[int, str, str, str, str, str, str, Optional[str]]
 
-    def _done_cb(t: asyncio.Task) -> None:
+
+async def _send_invitation(job: InviteJob, semaphore: asyncio.Semaphore) -> bool:
+    row_number, email, user_id, name, role, identifier_label, identifier, password = job
+    async with semaphore:
         try:
-            sent = t.result()
-            if not sent:
-                logger.warning("Bulk import invitation email was not sent for %s (check SMTP settings)", email)
-        except Exception as exc:
-            logger.error("Failed sending bulk import invitation email for %s: %s", email, exc)
+            from app.services.auth_service import AuthService
+            from app.services.email_service import email_service
 
-    task.add_done_callback(_done_cb)
+            token = await AuthService().create_invitation_token(user_id, email, role, name)
+            sent = await email_service.send_invitation_email(
+                to_email=email,
+                recipient_name=name,
+                role=role,
+                invite_token=token,
+                identifier_label=identifier_label,
+                identifier_value=identifier,
+                temp_password=password,
+            )
+            if not sent:
+                logger.warning("Bulk import invitation was not delivered for row %s", row_number)
+            return sent
+        except Exception:
+            logger.exception("Bulk import invitation failed for row %s", row_number)
+            return False
+
+
+async def _deliver_invites(jobs: list[InviteJob]) -> tuple[int, list[str]]:
+    semaphore = asyncio.Semaphore(5)
+    results = await asyncio.gather(*(_send_invitation(job, semaphore) for job in jobs))
+    sent_count = sum(results)
+    failures = [
+        f"Row {job[0]}: account created, but invitation email delivery failed. Check SMTP settings."
+        for job, sent in zip(jobs, results)
+        if not sent
+    ]
+    return sent_count, failures
 
 
 class BulkImportService:
@@ -46,6 +72,7 @@ class BulkImportService:
         failed_count = 0
         invitations_sent = 0
         errors = []
+        invite_jobs: list[InviteJob] = []
 
         for idx, item in enumerate(students):
             try:
@@ -132,30 +159,16 @@ class BulkImportService:
                 imported_count += 1
 
                 if send_invite:
-                    from app.services.auth_service import AuthService
-                    from app.services.email_service import email_service
-
                     name = f"{item.first_name or ''} {item.last_name or ''}".strip() or "Student"
-                    token = await AuthService().create_invitation_token(
-                        user_id=user.id, email=user.email, role="STUDENT", name=name
+                    invite_jobs.append(
+                        (idx + 1, user.email, user.id, name, "STUDENT", "Enrollment Number", item.enrollment_number, plain_password)
                     )
-                    _dispatch_invite(
-                        email_service.send_invitation_email(
-                            to_email=user.email,
-                            recipient_name=name,
-                            role="STUDENT",
-                            invite_token=token,
-                            identifier_label="Enrollment Number",
-                            identifier_value=item.enrollment_number,
-                            temp_password=plain_password,
-                        ),
-                        user.email,
-                    )
-                    invitations_sent += 1
             except Exception as e:
                 errors.append(f"Row {idx + 1} ({item.email}): {str(e)}")
                 failed_count += 1
 
+        invitations_sent, invite_errors = await _deliver_invites(invite_jobs)
+        errors.extend(invite_errors)
         return {
             "imported_count": imported_count,
             "failed_count": failed_count,
@@ -171,6 +184,7 @@ class BulkImportService:
         failed_count = 0
         invitations_sent = 0
         errors = []
+        invite_jobs: list[InviteJob] = []
 
         first_dept = await db.department.find_first(where={"tenantId": tenant_id} if tenant_id else {})
         default_dept_id = first_dept.id if first_dept else None
@@ -281,30 +295,16 @@ class BulkImportService:
                 imported_count += 1
 
                 if send_invite:
-                    from app.services.auth_service import AuthService
-                    from app.services.email_service import email_service
-
                     name = f"{item.first_name or ''} {item.last_name or ''}".strip() or "Faculty"
-                    token = await AuthService().create_invitation_token(
-                        user_id=user.id, email=user.email, role="TEACHER", name=name
+                    invite_jobs.append(
+                        (idx + 1, user.email, user.id, name, "TEACHER", "Employee ID", item.employee_id, plain_password)
                     )
-                    _dispatch_invite(
-                        email_service.send_invitation_email(
-                            to_email=user.email,
-                            recipient_name=name,
-                            role="TEACHER",
-                            invite_token=token,
-                            identifier_label="Employee ID",
-                            identifier_value=item.employee_id,
-                            temp_password=plain_password,
-                        ),
-                        user.email,
-                    )
-                    invitations_sent += 1
             except Exception as e:
                 errors.append(f"Row {idx + 1} ({item.email}): {str(e)}")
                 failed_count += 1
 
+        invitations_sent, invite_errors = await _deliver_invites(invite_jobs)
+        errors.extend(invite_errors)
         return {
             "imported_count": imported_count,
             "failed_count": failed_count,

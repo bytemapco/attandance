@@ -9,17 +9,15 @@ from app.schemas.class_management import (
     ClassMembersAdd,
     ClassSectionCreate,
     ClassSectionUpdate,
+    ClassUpdate,
     SectionScheduleCreate,
     ClassSummary,
-    PromoteRequest,
-    PromotionPreview,
 )
 from app.services.class_management import (
     class_member_service,
     class_schedule_service,
     class_section_service,
-    class_term_service,
-    promotion_service,
+    class_service,
 )
 
 router = APIRouter(prefix="/class-management", tags=["Class Management"])
@@ -29,23 +27,25 @@ router = APIRouter(prefix="/class-management", tags=["Class Management"])
 async def list_classes(
     department_id: Optional[str] = Query(None),
     semester_number: Optional[int] = Query(None, ge=1, le=12),
-    academic_year_id: Optional[str] = Query(None),
     search: Optional[str] = Query(None, max_length=50),
     tenant_id: str = Depends(get_tenant_context),
 ):
-    return await class_term_service.list_classes(
-        tenant_id, department_id, semester_number, academic_year_id, search
-    )
+    return await class_service.list_classes(tenant_id, department_id, semester_number, search)
 
 
 @router.post("/classes", response_model=ClassDetail, status_code=status.HTTP_201_CREATED)
 async def create_class(data: ClassCreate, tenant_id: str = Depends(get_tenant_context)):
-    return await class_term_service.create_class(tenant_id, data)
+    return await class_service.create_class(tenant_id, data)
 
 
 @router.get("/classes/{class_id}", response_model=ClassDetail)
 async def get_class(class_id: str, tenant_id: str = Depends(get_tenant_context)):
-    return await class_term_service.get_class(tenant_id, class_id)
+    return await class_service.get_class(tenant_id, class_id)
+
+
+@router.patch("/classes/{class_id}", response_model=ClassDetail)
+async def update_class(class_id: str, data: ClassUpdate, tenant_id: str = Depends(get_tenant_context)):
+    return await class_service.update_class(tenant_id, class_id, data)
 
 
 @router.post("/classes/{class_id}/members", response_model=ClassDetail)
@@ -98,8 +98,3 @@ async def remove_schedule_slot(
     class_id: str, section_id: str, rule_id: str, tenant_id: str = Depends(get_tenant_context)
 ):
     return await class_schedule_service.remove_slot(tenant_id, class_id, section_id, rule_id)
-
-
-@router.post("/classes/{class_id}/promote", response_model=PromotionPreview)
-async def promote_class(class_id: str, data: PromoteRequest, tenant_id: str = Depends(get_tenant_context)):
-    return await promotion_service.promote(tenant_id, class_id, data)

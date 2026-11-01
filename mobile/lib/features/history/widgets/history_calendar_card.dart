@@ -90,6 +90,7 @@ class _HistoryCalendarCardState extends State<HistoryCalendarCard> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               IconButton(
+                tooltip: 'Previous month',
                 onPressed: () {
                   setState(() {
                     _focusedMonth = DateTime(
@@ -115,6 +116,7 @@ class _HistoryCalendarCardState extends State<HistoryCalendarCard> {
                 ),
               ),
               IconButton(
+                tooltip: 'Next month',
                 onPressed: () {
                   setState(() {
                     _focusedMonth = DateTime(

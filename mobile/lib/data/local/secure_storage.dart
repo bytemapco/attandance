@@ -15,10 +15,6 @@ class SecureStorageService {
     iOptions: IOSOptions(accessibility: KeychainAccessibility.first_unlock),
   );
 
-
-
-
-
   Future<void> saveToken(String token) async {
     await _storage.write(key: kSecureKeyJwt, value: token);
   }

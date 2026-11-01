@@ -25,7 +25,7 @@ class HomeComplianceCard extends StatelessWidget {
       onTap: onTap,
       borderRadius: BorderRadius.circular(24),
       child: Container(
-        height: 194,
+        constraints: const BoxConstraints(minHeight: 194),
         width: double.infinity,
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
         decoration: BoxDecoration(

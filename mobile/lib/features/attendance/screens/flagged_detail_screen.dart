@@ -42,8 +42,9 @@ class _FlaggedDetailScreenState extends ConsumerState<FlaggedDetailScreen> {
   Future<void> _loadItem() async {
     setState(() => _isLoading = true);
     try {
-      final historyResponse =
-          await ref.read(attendanceRepositoryProvider).getHistory();
+      final historyResponse = await ref
+          .read(attendanceRepositoryProvider)
+          .getHistory();
       final found = historyResponse.history.firstWhere(
         (e) => e.attendanceId == widget.attendanceId,
       );
@@ -164,4 +165,3 @@ class _FlaggedDetailScreenState extends ConsumerState<FlaggedDetailScreen> {
     );
   }
 }
-

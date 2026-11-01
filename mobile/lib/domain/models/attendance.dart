@@ -1,7 +1,13 @@
+import 'package:smart_attendance_app/core/server_time.dart';
+
 class AttendanceAnalysisResult {
   final double faceScore;
-  final double livenessScore;
-  final double backgroundScore;
+
+  /// Null when the liveness check could not run.
+  final double? livenessScore;
+
+  /// Null when the background check is disabled or could not run.
+  final double? backgroundScore;
   final double finalAiScore;
   final String predictedStatus;
   final String reviewToken;
@@ -21,8 +27,8 @@ class AttendanceAnalysisResult {
   factory AttendanceAnalysisResult.fromJson(Map<String, dynamic> json) =>
       AttendanceAnalysisResult(
         faceScore: (json['face_score'] as num).toDouble(),
-        livenessScore: (json['liveness_score'] as num).toDouble(),
-        backgroundScore: (json['background_score'] as num).toDouble(),
+        livenessScore: (json['liveness_score'] as num?)?.toDouble(),
+        backgroundScore: (json['background_score'] as num?)?.toDouble(),
         finalAiScore: (json['final_ai_score'] as num).toDouble(),
         predictedStatus: json['predicted_status'] as String,
         reviewToken: json['review_token'] as String,
@@ -35,8 +41,10 @@ class AttendanceResult {
   final String sessionId;
   final String status;
   final double faceScore;
-  final double livenessScore;
-  final double backgroundScore;
+
+  /// Null when the check did not run (for example a QR mark, or a check the institution disabled).
+  final double? livenessScore;
+  final double? backgroundScore;
   final double finalAiScore;
   final double gpsLatitude;
   final double gpsLongitude;
@@ -66,12 +74,12 @@ class AttendanceResult {
         sessionId: json['session_id'] as String,
         status: json['status'] as String,
         faceScore: (json['face_score'] as num).toDouble(),
-        livenessScore: (json['liveness_score'] as num).toDouble(),
-        backgroundScore: (json['background_score'] as num).toDouble(),
+        livenessScore: (json['liveness_score'] as num?)?.toDouble(),
+        backgroundScore: (json['background_score'] as num?)?.toDouble(),
         finalAiScore: (json['final_ai_score'] as num).toDouble(),
         gpsLatitude: (json['gps_latitude'] as num).toDouble(),
         gpsLongitude: (json['gps_longitude'] as num).toDouble(),
-        createdAt: DateTime.parse(json['created_at'] as String),
+        createdAt: parseServerTime(json['created_at'] as String)!,
       );
 }
 
@@ -112,7 +120,7 @@ class AttendanceHistoryItem {
         subject: json['subject'] as String,
         sessionId: json['session_id'] as String,
         status: json['status'] as String,
-        markedAt: DateTime.parse(json['marked_at'] as String),
+        markedAt: parseServerTime(json['marked_at'] as String)!,
         faceScore: (json['face_score'] as num?)?.toDouble(),
         livenessScore: (json['liveness_score'] as num?)?.toDouble(),
         backgroundScore: (json['background_score'] as num?)?.toDouble(),
@@ -175,9 +183,7 @@ class StudentClass {
     subject: json['subject'] as String,
     teacherName: json['teacher_name'] as String,
     activeSessionId: json['active_session_id'] as String?,
-    sessionEndTime: json['session_end_time'] != null
-        ? DateTime.tryParse(json['session_end_time'] as String)
-        : null,
+    sessionEndTime: parseServerTime(json['session_end_time'] as String?),
     latitude: (json['latitude'] as num?)?.toDouble(),
     longitude: (json['longitude'] as num?)?.toDouble(),
     radiusMeters: (json['radius_meters'] as num?)?.toDouble(),

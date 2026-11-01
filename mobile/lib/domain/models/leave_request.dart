@@ -1,3 +1,5 @@
+import 'package:smart_attendance_app/core/server_time.dart';
+
 class LeaveRequest {
   final String id;
   final String studentId;
@@ -47,11 +49,9 @@ class LeaveRequest {
       approvedBy: json['approved_by'] as String?,
       approverNote: json['approver_note'] as String?,
       createdAt:
-          DateTime.tryParse(json['created_at'] as String? ?? '') ??
-          DateTime.now(),
+          parseServerTime(json['created_at'] as String?) ?? DateTime.now(),
       updatedAt:
-          DateTime.tryParse(json['updated_at'] as String? ?? '') ??
-          DateTime.now(),
+          parseServerTime(json['updated_at'] as String?) ?? DateTime.now(),
     );
   }
 

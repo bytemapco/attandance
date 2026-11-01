@@ -24,6 +24,17 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   late final Animation<Offset> _textSlide;
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // With "reduce motion" on, the loading dots stay still.
+    if (MediaQuery.disableAnimationsOf(context)) {
+      _dotsController.stop();
+    } else if (!_dotsController.isAnimating) {
+      _dotsController.repeat();
+    }
+  }
+
+  @override
   void initState() {
     super.initState();
 
@@ -38,7 +49,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     _dotsController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1200),
-    )..repeat();
+    );
 
     _logoScale = Tween<double>(begin: 0.6, end: 1.0).animate(
       CurvedAnimation(parent: _logoController, curve: Curves.elasticOut),
@@ -116,7 +127,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                       borderRadius: BorderRadius.circular(24),
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFFC98260).withValues(alpha: 0.35),
+                          color: const Color(
+                            0xFFC98260,
+                          ).withValues(alpha: 0.35),
                           blurRadius: 36,
                           offset: const Offset(0, 10),
                         ),
@@ -126,6 +139,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                       borderRadius: BorderRadius.circular(24),
                       child: Image.asset(
                         'assets/images/sahaj_app_icon.png',
+                        semanticLabel: 'SAHAJ',
                         width: 96,
                         height: 96,
                         fit: BoxFit.cover,

@@ -3,14 +3,16 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:go_router/go_router.dart';
-import 'package:smart_attendance_app/data/local/hive_service.dart';
 import 'package:smart_attendance_app/features/attendance/providers/attendance_provider.dart';
 import 'package:smart_attendance_app/features/attendance/providers/geofence_verification_provider.dart';
 import 'package:smart_attendance_app/features/attendance/screens/verification_camera_mixin.dart';
 import 'package:smart_attendance_app/features/attendance/screens/verification_screen.dart';
 import 'package:smart_attendance_app/features/home/providers/session_provider.dart';
 
-mixin VerificationFlowMixin on ConsumerState<VerificationScreen>, VerificationCameraMixin<VerificationScreen> {
+mixin VerificationFlowMixin
+    on
+        ConsumerState<VerificationScreen>,
+        VerificationCameraMixin<VerificationScreen> {
   int aiStepIndex = 0;
   Timer? aiStepTimer;
   Timer? transitionTimer;
@@ -68,38 +70,30 @@ mixin VerificationFlowMixin on ConsumerState<VerificationScreen>, VerificationCa
         .sessions
         .where((s) => s.sessionId == widget.sessionId)
         .firstOrNull;
-    if (session?.latitude != null && session?.longitude != null) {
-      ref
-          .read(geofenceVerificationProvider.notifier)
-          .verifyLocation(
-            classLat: session!.latitude!,
-            classLng: session.longitude!,
-            radius: session.radiusMeters ?? 100.0,
-          );
-    }
+    ref
+        .read(geofenceVerificationProvider.notifier)
+        .verifyLocation(
+          classLat: session?.latitude,
+          classLng: session?.longitude,
+          radius: session?.radiusMeters,
+        );
   }
 
-  void onGpsSuccess(GeofenceVerificationState next) {
+  /// Location is settled (checked, or not configured and flagged). Continue to the selfie.
+  void onLocationSettled(GeofenceVerificationState next) {
+    final position = next.position;
+    if (position == null) return;
     transitionTimer?.cancel();
     transitionTimer = Timer(const Duration(milliseconds: 1500), () {
       if (!mounted) return;
-      final config = ref.read(hiveServiceProvider).getSystemConfig();
       ref
           .read(attendanceVerificationProvider.notifier)
           .setGpsLocation(
-            next.position!.latitude,
-            next.position!.longitude,
-            next.position!.accuracy,
+            position.latitude,
+            position.longitude,
+            position.accuracy,
           );
-      if (config.isFaceRecognitionEnabled ||
-          config.isAiBackgroundValidationEnabled) {
-        initCamera();
-      } else {
-        ref
-            .read(attendanceVerificationProvider.notifier)
-            .setImagePath('skipped_camera.jpg');
-        analyzePhoto();
-      }
+      initCamera();
     });
   }
 

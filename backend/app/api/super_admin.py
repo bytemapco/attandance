@@ -36,9 +36,8 @@ async def list_tenants(
     page_size: int = Query(10, ge=1, le=100),
     q: Optional[str] = None,
     status: Optional[str] = None,
-    type: Optional[str] = None,
 ):
-    return await SuperAdminService.get_all_tenants(page=page, page_size=page_size, q=q, status=status, type=type)
+    return await SuperAdminService.get_all_tenants(page=page, page_size=page_size, q=q, status=status)
 
 
 @router.post("/tenants", response_model=TenantDetailResponse, status_code=status.HTTP_201_CREATED)

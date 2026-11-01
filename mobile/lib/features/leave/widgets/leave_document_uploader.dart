@@ -44,6 +44,7 @@ class LeaveDocumentUploader extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8),
                 child: Image.file(
                   selectedDocument!,
+                  semanticLabel: 'Selected document preview',
                   height: 120,
                   width: double.infinity,
                   fit: BoxFit.cover,

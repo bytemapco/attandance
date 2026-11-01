@@ -12,13 +12,13 @@
 **"You have need to act like Senior Software Engineer and add new feature in the project and on Admin panel I want 1 page for Classes Manage. I want from that page we can create classes for different department, Semester and batches and ensure other components and complete entity should be relatable with this. Perform Q&A with me to clarify my problem and give better implementation plan."**
 
 **Key Decisions from Q&A:**
-- ✅ College-only (no schools, no groups)
+- ✅ One College / University tenant type (no school, coaching-center, or group tenants)
 - ✅ Class code format: `CE-A-1` (Department-Division-Sequence)
-- ✅ New database tables for Semester and Batch (not just strings)
-- ✅ Persistent StudentGroup (survives across semesters)
-- ✅ Per-semester ClassTerm
-- ✅ Promotion with detained/backlog handling
+- ✅ New database table for Batch (not just strings)
+- ✅ StudentGroup is the class, with a plain semester number
 - ✅ Keep legacy `/admin/classes` untouched; build new model only
+
+> **Nov 1 update:** the academic year, semester, class-term, and promotion parts of this design were removed. A class now has a plain semester number that an admin edits. The sections below describe the current design.
 
 ### Round 2: First Implementation Refinement
 **"Remove Admission Year and make change word Division to batch. Make based on students which already added. When user selects everything, it should be auto-selected. Remove Maximum Strength. Make a plan and make full testing. I want it should be functional."**
@@ -112,16 +112,17 @@ A new Admin panel page (`/admin/class-management`) for managing classes across d
 ### Core Features Implemented
 
 #### 1. **Class Creation & Management**
-- **Create classes** by selecting department → academic year → semester → batch
+- **Create classes** by selecting department → semester → batch
 - **Auto-select students** based on their existing department, semester, and batch
 - **Class code** generation: automatic (e.g., `CSE-A-1` where CSE = department, A = batch, 1 = division suffix)
-- **List & filter** classes by department, semester, academic year, or search
+- **Change the semester** of a class from its detail page
+- **List & filter** classes by department, semester, or search
 
 #### 2. **Student Roster Management**
 - **Add students** to a class (enrolled in all its subjects)
 - **Move students** between classes (closes old enrollments, opens new ones)
-- **Remove students** from a class (marks TRANSFERRED/REMOVED, keeps history)
-- **Status tracking:** ACTIVE, DETAINED, TRANSFERRED, PROMOTED
+- **Remove students** from a class (marks TRANSFERRED, keeps history)
+- **Status tracking:** ACTIVE, TRANSFERRED
 - **One-ACTIVE-per-student** enforced by database unique constraint
 
 #### 3. **Subjects & Teachers** ⭐ (Latest Round)
@@ -137,24 +138,16 @@ A new Admin panel page (`/admin/class-management`) for managing classes across d
 
 ### New Database Tables (PostgreSQL + Prisma)
 ```
-Semester
-  ├─ academicYearId, number (1–8), startDate, endDate
-  └─ unique [tenantId, academicYearId, number]
-
-StudentGroup (persistent across semesters)
-  ├─ departmentId, batch, status (ACTIVE/GRADUATED/ARCHIVED)
+StudentGroup (the class)
+  ├─ departmentId, batch, semester (1–8, plain number), status (ACTIVE/ARCHIVED)
   └─ unique [tenantId, departmentId, batch]
 
-ClassTerm (group × semester)
-  ├─ groupId, semesterId, status
-  └─ unique [groupId, semesterId]
-
 ClassMember (roster + audit)
-  ├─ classTermId, studentId, status, joinedAt, leftAt, reason
-  └─ partial unique index: one ACTIVE per student per class
+  ├─ groupId, studentId, status (ACTIVE/TRANSFERRED), joinedAt, leftAt, reason
+  └─ partial unique index: one ACTIVE per student
 
 CourseSection
-  ├─ added classTermId (nullable; links sections to classes)
+  ├─ groupId (nullable; links sections to classes)
   └─ enrollments auto-sync when class roster changes
 
 CourseEnrollment
@@ -175,37 +168,36 @@ CourseEnrollment
 ```
 backend/app/
 ├─ api/admin/
-│  └─ class_management.py          # API routes (8 endpoints)
+│  └─ class_management.py          # API routes
 ├─ schemas/
 │  └─ class_management.py          # Request/response models
 └─ services/class_management/
    ├─ common.py                    # Shared utilities (includes, class_code, etc.)
-   ├─ class_term_service.py        # Create, list, get, promotion
+   ├─ class_service.py             # Create, list, get, change semester
    ├─ class_member_service.py      # Add, move, remove members
    ├─ class_section_service.py     # Add, update, remove sections
-   ├─ enrollment_sync.py           # Course enrollment synchronization
-   └─ promotion_service.py         # Dry-run & commit logic
+   ├─ class_schedule_service.py    # Weekly schedule slots
+   └─ enrollment_sync.py           # Course enrollment synchronization
 ```
 
 ### API Endpoints
 ```
-GET    /admin/class-management/classes?dept=...&sem=...&year=...
+GET    /admin/class-management/classes?department_id=...&semester_number=...
 POST   /admin/class-management/classes
 GET    /admin/class-management/classes/{id}
+PATCH  /admin/class-management/classes/{id}
 POST   /admin/class-management/classes/{id}/members
 POST   /admin/class-management/classes/{id}/members/{sid}/move
 POST   /admin/class-management/classes/{id}/members/{sid}/remove
 POST   /admin/class-management/classes/{id}/sections
 PUT    /admin/class-management/classes/{id}/sections/{sec_id}
 DELETE /admin/class-management/classes/{id}/sections/{sec_id}
-POST   /admin/class-management/classes/{id}/promote
 ```
 
 ### Key Service Patterns
 - **Atomic operations:** create_class rolls back on failure; no orphaned groups
 - **Enrolment sync:** when roster changes, CourseEnrollment rows updated (source=CLASS)
 - **Teacher propagation:** TimetableRule + upcoming ClassOccurrence move; past keep original
-- **Idempotent** promotion: re-running changes nothing; state-based not event-based
 
 ---
 
@@ -310,7 +302,7 @@ frontend/src/app/(dashboard)/admin/class-management/
 1. **No teacher removal:** subjects must keep a teacher (timetable constraint). Reassign instead.
 2. **Backlog enrollments:** backend API supports them (`POST /classes/{id}/backlog-enrollments`), but no UI control yet.
 3. **Move student UI:** no button in the Students tab; only accessible via POST endpoint directly.
-4. **FINAL_SEMESTER hard-coded:** promotion assumes semester 8 is the last (not data-driven).
+4. **Semester range:** classes accept semesters 1–8. There is no promotion; an admin edits the number.
 5. **Prisma client generation:** if dev server fails with field-not-found errors, re-run:
    ```bash
    env -i HOME=$HOME PATH=$PWD/.venv/bin:/usr/bin:/bin VIRTUAL_ENV=$PWD/.venv .venv/bin/prisma generate
@@ -342,7 +334,6 @@ redis-server
 1. Navigate to **Admin** → **Classes**
 2. **Create a class:**
    - Select a department (e.g., Computer Science)
-   - Select academic year (should default to ACTIVE)
    - Select semester (1–8)
    - Select batch (e.g., A-1; auto-populates with students in that batch)
    - Submit
@@ -359,9 +350,10 @@ redis-server
 ## Files Modified Summary
 
 ### Backend
-- `backend/prisma/schema.prisma` — new/modified models (Semester, StudentGroup, ClassTerm, ClassMember, CourseSection.classTermId, CourseEnrollment.source/endedAt)
-- `backend/prisma/migrations/20261031000000_class_management/migration.sql` — applied to dev DB
-- `backend/app/api/admin/class_management.py` — 8 endpoints
+- `backend/prisma/schema.prisma` — StudentGroup (with `semester`), ClassMember, CourseSection.groupId, CourseEnrollment.source/endedAt
+- `backend/prisma/migrations/20261031000000_class_management/migration.sql` — original class management tables
+- `backend/prisma/migrations/20261101290000_remove_academic_year_and_terms/migration.sql` — removes years, semesters, and class terms
+- `backend/app/api/admin/class_management.py` — class, member, subject, and schedule endpoints
 - `backend/app/schemas/class_management.py` — request/response schemas
 - `backend/app/services/class_management/` — 6 service modules
 - `backend/app/api/admin/__init__.py` — registered `/admin/class-management` router
@@ -374,18 +366,17 @@ redis-server
 - `frontend/src/app/(dashboard)/admin/class-management/` — routes & components (11 files)
 
 ### Database
-- Dev PostgreSQL: new tables (Semester, StudentGroup, ClassTerm, ClassMember), lab tables dropped, CourseSection/CourseEnrollment updated
+- Dev PostgreSQL: StudentGroup and ClassMember updated; Semester, ClassTerm, and AcademicYear tables dropped (Nov 1); lab tables dropped
 
 ---
 
 ## Next Steps (Optional)
 
 1. **Click-test in browser** (user): verify UI flows, error messages, responsive layout
-2. **Promotion feature:** can be re-enabled in UI later if needed (backend still available)
-3. **Backlog enrollments UI:** if needed, add controls in a separate form
-4. **Move student UI:** add a button in the Students tab (not critical; API works)
-5. **Legacy retirement:** plan `/admin/classes` sunset (separate task)
-6. **Commit & push:** when user is satisfied (conventional message format with attribution)
+2. **Backlog enrollments UI:** if needed, add controls in a separate form
+3. **Move student UI:** add a button in the Students tab (not critical; API works)
+4. **Legacy retirement:** plan `/admin/classes` sunset (separate task)
+5. **Commit & push:** when user is satisfied (conventional message format with attribution)
 
 ---
 
@@ -394,12 +385,13 @@ redis-server
 | Component | Status | Notes |
 |-----------|--------|-------|
 | **Schema** | ✅ Complete | New tables, indexes, constraints in place |
-| **Backend API** | ✅ Complete | 7 endpoints (promotion removed from UI; backend available) |
+| **Backend API** | ✅ Complete | Class, member, subject, and schedule endpoints (promotion removed) |
 | **Services** | ✅ Complete | Class create, member mgmt, section mgmt, enrolment sync |
 | **Frontend** | ✅ Complete | List, create, detail view with 2 tabs (students, subjects & teachers) |
 | **Tests** | ✅ Complete | 85 backend + 42 frontend; live 45/45 against running server |
 | **Lab Batches** | ❌ Removed | Replaced by subject-level enrollment (simpler, matches reality) |
-| **Promote Students** | ❌ Removed | UI button & dialog removed; backend endpoints still available |
+| **Promote Students** | ❌ Removed | UI, backend endpoint, service, and statuses removed (Nov 1) |
+| **Academic Year / Term** | ❌ Removed | Years, semesters, and class terms removed (Nov 1); class has a plain semester number |
 | **Backlog Enrolments** | 🟡 Backend-only | Backend ready; UI not implemented |
 | **Move Student UI** | 🟡 Backend-only | Button not added (API functional) |
 

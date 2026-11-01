@@ -75,7 +75,9 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
                   child: state.isVerifying
                       ? const ResetPasswordLoadingCard()
                       : (!state.isValid && !state.isSuccess)
-                      ? ResetPasswordInvalidCard(errorMessage: state.errorMessage)
+                      ? ResetPasswordInvalidCard(
+                          errorMessage: state.errorMessage,
+                        )
                       : _buildResetForm(state),
                 ),
               ),
@@ -87,7 +89,6 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
       ),
     );
   }
-
 
   Widget _buildResetForm(ResetPasswordState state) {
     return Column(
@@ -138,6 +139,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
                   prefixIcon: Icons.lock_outline,
                   obscureText: _obscurePass,
                   suffix: IconButton(
+                    tooltip: _obscurePass ? 'Show password' : 'Hide password',
                     icon: Icon(
                       _obscurePass ? Icons.visibility_off : Icons.visibility,
                     ),
@@ -162,6 +164,9 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
                   prefixIcon: Icons.lock_clock_outlined,
                   obscureText: _obscureConfirm,
                   suffix: IconButton(
+                    tooltip: _obscureConfirm
+                        ? 'Show password'
+                        : 'Hide password',
                     icon: Icon(
                       _obscureConfirm ? Icons.visibility_off : Icons.visibility,
                     ),

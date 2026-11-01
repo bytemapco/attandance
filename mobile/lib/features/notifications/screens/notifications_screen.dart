@@ -7,6 +7,7 @@ import 'package:smart_attendance_app/features/notifications/widgets/notification
 import 'package:smart_attendance_app/features/notifications/widgets/notifications_filter_chips.dart';
 import 'package:smart_attendance_app/shared/widgets/animated_background.dart';
 import 'package:smart_attendance_app/shared/widgets/glass_app_bar.dart';
+import 'package:smart_attendance_app/shared/widgets/shimmer_placeholder.dart';
 
 class NotificationsScreen extends ConsumerStatefulWidget {
   const NotificationsScreen({super.key});
@@ -41,6 +42,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
         actions: [
           if (notifications.isNotEmpty) ...[
             IconButton(
+              tooltip: 'Mark all as read',
               icon: const Icon(
                 Icons.done_all_rounded,
                 color: SasColors.textMuted,
@@ -48,16 +50,15 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
               ),
               onPressed: () =>
                   ref.read(notificationsProvider.notifier).markAllRead(),
-              tooltip: 'Mark All Read',
             ),
             IconButton(
+              tooltip: 'Clear all notifications',
               icon: const Icon(
                 Icons.clear_all_rounded,
                 color: SasColors.textMuted,
                 size: 20,
               ),
               onPressed: () => ref.read(notificationsProvider.notifier).clear(),
-              tooltip: 'Clear All',
             ),
             if (unread > 0)
               Container(
@@ -111,13 +112,9 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                         ),
                         children: [
                           if (isLoading && notifications.isEmpty)
-                            const Center(
-                              child: Padding(
-                                padding: EdgeInsets.all(32),
-                                child: CircularProgressIndicator(
-                                  color: SasColors.accentEmerald,
-                                ),
-                              ),
+                            const ShimmerPlaceholder(
+                              itemCount: 5,
+                              itemHeight: 76,
                             )
                           else if (filtered.isEmpty)
                             const NotificationsEmptyView()

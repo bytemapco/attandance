@@ -36,10 +36,7 @@ enum CourseEnrollmentStatus {
 }
 
 enum TenantType {
-  SCHOOL
   COLLEGE
-  COACHING_CENTER
-  UNIVERSITY
 }
 
 enum TenantStatus {
@@ -67,26 +64,12 @@ enum AttendanceMethod {
   SYSTEM_EXCUSED
 }
 
-enum AcademicPeriodStatus {
-  PLANNING
-  ACTIVE
-  LOCKED
-  ARCHIVED
-}
-
 
 enum OccurrenceStatus {
   SCHEDULED
   CONDUCTED
   CANCELLED
   RESCHEDULED
-}
-
-enum CalendarEventType {
-  HOLIDAY
-  EXAM_DAY
-  NON_INSTRUCTIONAL
-  TIMETABLE_OVERRIDE
 }
 
 enum LeaveStatus {
@@ -117,14 +100,13 @@ enum LicenseRequestStatus {
 // TENANTS & USERS
 // ==============================================================================
 
-/// An institution (school, college or university) using SAHAJ. Everything else belongs to one tenant.
+/// A college or university using SAHAJ. Everything else belongs to one tenant.
 model Tenant {
   id           String       @id @default(uuid())
   slug         String       @unique
   name         String
   type         TenantType   @default(COLLEGE)
   status       TenantStatus @default(ACTIVE)
-  domain       String?      @unique
   licenseCount Int          @default(0) @map("license_count")
   settings     Json?        @default("{}")
   config       Json?
@@ -139,22 +121,18 @@ model Tenant {
   classrooms      Classroom[]
   designations    Designation[]
   classes         AcademicClass[]
-  timeSlots       TimeSlot[]
   attendance      Attendance[]
   auditLogs       AuditLog[]
   licenseRequests LicenseRequest[]
   notifications   Notification[]
   systemConfig    SystemConfiguration?
 
-  academicYears     AcademicYear[]
-  calendarEvents    AcademicCalendarEvent[]
   courseSections    CourseSection[]
   classOccurrences  ClassOccurrence[]
   attendanceRecords AttendanceRecord[]
-  semesters         Semester[]
   studentGroups     StudentGroup[]
   batches           Batch[]
-  classTerms        ClassTerm[]
+  academicLevels    AcademicLevel[]
   classMembers      ClassMember[]
 
   leaveRequests        LeaveRequest[]
@@ -244,7 +222,7 @@ model StudentBiometric {
   embeddingVersion Int                        @default(1) @map("embedding_version")
   faceEmbedding    Unsupported("vector(128)") @map("face_embedding")
   isActive         Boolean                    @default(true) @map("is_active")
-  consentGiven     Boolean                    @default(true) @map("consent_given")
+  consentGiven     Boolean                    @default(false) @map("consent_given")
   createdAt        DateTime                   @default(now()) @map("created_at")
   updatedAt        DateTime                   @updatedAt @map("updated_at")
 
@@ -368,24 +346,6 @@ model Classroom {
   @@map("classrooms")
 }
 
-model TimeSlot {
-  id         String   @id @default(uuid())
-  tenantId   String?  @map("tenant_id")
-  slotNumber Int      @map("slot_number")
-  name       String
-  startTime  String   @map("start_time")
-  endTime    String   @map("end_time")
-  isBreak    Boolean  @default(false) @map("is_break")
-  isLabBlock Boolean  @default(false) @map("is_lab_block")
-
-  tenant           Tenant?           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  timetableRules   TimetableRule[]
-  classOccurrences ClassOccurrence[]
-
-  @@unique([tenantId, slotNumber])
-  @@map("time_slots")
-}
-
 // ==============================================================================
 // LEGACY ATTENDANCE MODEL (AcademicClass -> Session -> Attendance)
 // Being retired. New work uses CourseSection -> TimetableRule -> ClassOccurrence
@@ -400,7 +360,6 @@ model AcademicClass {
   subjectId   String   @map("subject_id")
   teacherId   String   @map("teacher_id")
   classroomId    String?  @map("classroom_id")
-  academicYearId String?  @map("academic_year_id")
   semester       Int?
   batch          String?
   createdAt      DateTime @default(now()) @map("created_at")
@@ -410,7 +369,6 @@ model AcademicClass {
   teacher      Teacher       @relation(fields: [teacherId], references: [id], onDelete: Restrict)
   subject      Subject       @relation(fields: [subjectId], references: [id], onDelete: Restrict)
   classroom    Classroom?    @relation(fields: [classroomId], references: [id], onDelete: SetNull)
-  academicYear AcademicYear? @relation(fields: [academicYearId], references: [id], onDelete: SetNull)
   geofence     Geofence?
   enrollments  Enrollment[]
   sessions     Session[]
@@ -418,7 +376,6 @@ model AcademicClass {
   @@index([tenantId, teacherId, semester])
   @@index([subjectId])
   @@index([classroomId])
-  @@index([academicYearId])
   @@map("classes")
 }
 
@@ -457,11 +414,10 @@ model Session {
   @@map("sessions")
 }
 
-/// The allowed area for marking attendance. Attached to a CourseSection (current) or an AcademicClass (legacy).
+/// LEGACY. Allowed marking area for an AcademicClass. The current institution-wide location lives on SystemConfiguration.
 model Geofence {
   id              String   @id @default(uuid())
   academicClassId String?  @unique @map("class_id")
-  courseSectionId String?  @unique @map("course_section_id")
   latitude        Float
   longitude       Float
   radiusMeters    Float    @map("radius_meters")
@@ -469,7 +425,6 @@ model Geofence {
   updatedAt       DateTime @updatedAt @map("updated_at")
 
   academicClass AcademicClass? @relation(fields: [academicClassId], references: [id], onDelete: Cascade)
-  courseSection CourseSection? @relation(fields: [courseSectionId], references: [id], onDelete: Cascade)
 
   @@map("geofences")
 }
@@ -596,7 +551,12 @@ model SystemConfiguration {
   isFaceRecognitionEnabled        Boolean  @default(true) @map("is_face_recognition_enabled")
   isGpsVerificationEnabled        Boolean  @default(true) @map("is_gps_verification_enabled")
   isAiBackgroundValidationEnabled Boolean  @default(true) @map("is_ai_background_validation_enabled")
+  campusLatitude                  Float?   @map("campus_latitude")
+  campusLongitude                 Float?   @map("campus_longitude")
   geofenceRadiusMeters            Int      @default(50) @map("geofence_radius_meters")
+  minAttendancePct                Float    @default(75.0) @map("min_attendance_pct")
+  verificationWindowMin           Int      @default(60) @map("verification_window_min")
+  saturdayEnabled                 Boolean  @default(false) @map("saturday_enabled")
   updatedAt                       DateTime @updatedAt @map("updated_at")
 
   tenant Tenant? @relation(fields: [tenantId], references: [id], onDelete: Cascade)
@@ -632,71 +592,21 @@ model Notification {
 // occurrence is one real, dated lesson. A record is one student's mark in it.
 // ==============================================================================
 
-/// An academic year, with the attendance minimum and window length that apply to it.
-model AcademicYear {
-  id                    String               @id @default(uuid())
-  tenantId              String               @map("tenant_id")
-  name                  String
-  startDate             DateTime             @map("start_date") @db.Date
-  endDate               DateTime             @map("end_date") @db.Date
-  attendanceStartDate   DateTime?            @map("attendance_start_date") @db.Date
-  attendanceEndDate     DateTime?            @map("attendance_end_date") @db.Date
-  minAttendancePct      Float                @default(75.0) @map("min_attendance_pct")
-  saturdayEnabled       Boolean              @default(false) @map("saturday_enabled")
-  verificationWindowMin Int                  @default(60) @map("verification_window_min")
-  status                AcademicPeriodStatus @default(PLANNING)
-  createdAt             DateTime             @default(now()) @map("created_at")
-  updatedAt             DateTime             @updatedAt @map("updated_at")
-
-  tenant         Tenant                  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  calendarEvents AcademicCalendarEvent[]
-  courseSections CourseSection[]
-  classes        AcademicClass[]
-  semesters      Semester[]
-
-  @@unique([tenantId, name])
-  @@index([tenantId, status])
-  @@map("academic_years")
-}
-
-/// A holiday, exam day or timetable override. Holidays are left out of attendance percentages.
-model AcademicCalendarEvent {
-  id                  String            @id @default(uuid())
-  tenantId            String            @map("tenant_id")
-  academicYearId      String            @map("academic_year_id")
-  title               String
-  date                DateTime          @db.Date
-  eventType           CalendarEventType @map("event_type")
-  affectsAllCourses   Boolean           @default(true) @map("affects_all_courses")
-  substituteDayOfWeek Int?              @map("substitute_day_of_week")
-  description         String?
-  createdAt           DateTime          @default(now()) @map("created_at")
-
-  tenant       Tenant       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  academicYear AcademicYear @relation(fields: [academicYearId], references: [id], onDelete: Cascade)
-
-  @@unique([tenantId, academicYearId, date, eventType])
-  @@index([tenantId, date])
-  @@map("academic_calendar_events")
-}
-
-/// One subject taught to one class in one academic year. This is what a teacher sees as "my class".
+/// One subject taught to one class. This is what a teacher sees as "my class".
 model CourseSection {
   id             String   @id @default(uuid())
   tenantId       String   @map("tenant_id")
-  academicYearId String   @map("academic_year_id")
   subjectId      String   @map("subject_id")
   departmentId   String?  @map("department_id")
   name           String
   batch          String?
   defaultRoomId  String?  @map("default_room_id")
-  classTermId    String?  @map("class_term_id")
+  groupId        String?  @map("group_id")
   createdAt      DateTime @default(now()) @map("created_at")
   updatedAt      DateTime @updatedAt @map("updated_at")
 
   tenant         Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  classTerm      ClassTerm?         @relation(fields: [classTermId], references: [id], onDelete: SetNull)
-  academicYear   AcademicYear       @relation(fields: [academicYearId], references: [id], onDelete: Cascade)
+  group          StudentGroup?      @relation(fields: [groupId], references: [id], onDelete: SetNull)
   subject        Subject            @relation(fields: [subjectId], references: [id], onDelete: Restrict)
   department     Department?        @relation(fields: [departmentId], references: [id], onDelete: SetNull)
   defaultRoom    Classroom?         @relation(fields: [defaultRoomId], references: [id], onDelete: SetNull)
@@ -704,11 +614,10 @@ model CourseSection {
   enrollments    CourseEnrollment[]
   timetableRules TimetableRule[]
   occurrences    ClassOccurrence[]
-  geofence       Geofence?
 
-  @@unique([academicYearId, subjectId, name, batch])
-  @@index([tenantId, academicYearId])
-  @@index([classTermId])
+  @@unique([tenantId, subjectId, name, batch])
+  @@index([tenantId])
+  @@index([groupId])
   @@map("course_sections")
 }
 
@@ -746,27 +655,29 @@ model CourseEnrollment {
   @@map("course_enrollments")
 }
 
-/// A weekly repeating slot for a CourseSection (for example, Mondays in period 2).
+/// A weekly repeating class for a CourseSection (for example, Mondays 09:00 to 10:00).
 model TimetableRule {
-  id              String   @id @default(uuid())
-  tenantId        String   @map("tenant_id")
-  courseSectionId String   @map("course_section_id")
-  timeSlotId      String   @map("time_slot_id")
-  classroomId     String?  @map("classroom_id")
-  teacherId       String?  @map("teacher_id")
-  dayOfWeek       Int      @map("day_of_week")
-  effectiveFrom   DateTime @map("effective_from") @db.Date
-  effectiveUntil  DateTime @map("effective_until") @db.Date
-  isActive        Boolean  @default(true) @map("is_active")
+  id              String    @id @default(uuid())
+  tenantId        String    @map("tenant_id")
+  courseSectionId String    @map("course_section_id")
+  classroomId     String?   @map("classroom_id")
+  teacherId       String?   @map("teacher_id")
+  dayOfWeek       Int       @map("day_of_week")
+  /// Clock times as "HH:MM", 24 hour.
+  startTime       String    @map("start_time")
+  endTime         String    @map("end_time")
+  effectiveFrom   DateTime  @map("effective_from") @db.Date
+  /// Null means the rule runs until it is removed.
+  effectiveUntil  DateTime? @map("effective_until") @db.Date
+  isActive        Boolean   @default(true) @map("is_active")
 
   courseSection CourseSection     @relation(fields: [courseSectionId], references: [id], onDelete: Cascade)
-  timeSlot      TimeSlot          @relation(fields: [timeSlotId], references: [id], onDelete: Restrict)
   classroom     Classroom?        @relation(fields: [classroomId], references: [id], onDelete: SetNull)
   teacher       Teacher?          @relation(fields: [teacherId], references: [id], onDelete: SetNull)
   occurrences   ClassOccurrence[]
 
-  @@unique([courseSectionId, timeSlotId, dayOfWeek])
-  @@index([tenantId, dayOfWeek, timeSlotId])
+  @@unique([courseSectionId, dayOfWeek, startTime])
+  @@index([tenantId, dayOfWeek, startTime])
   @@map("timetable_rules")
 }
 
@@ -778,7 +689,9 @@ model ClassOccurrence {
   courseSectionId     String           @map("course_section_id")
   timetableRuleId     String?          @map("timetable_rule_id")
   date                DateTime         @db.Date
-  timeSlotId          String           @map("time_slot_id")
+  /// Clock times as "HH:MM", 24 hour.
+  startTime           String           @map("start_time")
+  endTime             String           @map("end_time")
   classroomId         String?          @map("classroom_id")
   facultyId           String           @map("faculty_id")
   substituteFacultyId String?          @map("substitute_faculty_id")
@@ -795,13 +708,12 @@ model ClassOccurrence {
   tenant            Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   courseSection     CourseSection      @relation(fields: [courseSectionId], references: [id], onDelete: Cascade)
   timetableRule     TimetableRule?     @relation(fields: [timetableRuleId], references: [id], onDelete: SetNull)
-  timeSlot          TimeSlot           @relation(fields: [timeSlotId], references: [id], onDelete: Restrict)
   classroom         Classroom?         @relation(fields: [classroomId], references: [id], onDelete: SetNull)
   faculty           Teacher            @relation("FacultyOccurrences", fields: [facultyId], references: [id], onDelete: Restrict)
   substituteFaculty Teacher?           @relation("SubstituteOccurrences", fields: [substituteFacultyId], references: [id], onDelete: SetNull)
   attendanceRecords AttendanceRecord[]
 
-  @@unique([courseSectionId, date, timeSlotId])
+  @@unique([courseSectionId, date, startTime])
   @@index([tenantId, date])
   @@index([facultyId, date])
   @@index([tenantId, facultyId, date])
@@ -857,15 +769,12 @@ model AttendanceAuditLog {
 
 enum StudentGroupStatus {
   ACTIVE
-  GRADUATED
   ARCHIVED
 }
 
 enum ClassMemberStatus {
   ACTIVE
-  DETAINED
   TRANSFERRED
-  PROMOTED
 }
 
 enum EnrollmentSource {
@@ -875,44 +784,45 @@ enum EnrollmentSource {
 }
 
 // ==============================================================================
-// CLASSES (a department batch taking a semester)
-//   Batch -> StudentGroup -> ClassTerm (per semester) -> ClassMember (students)
+// CLASSES (a department batch and its students)
+//   Batch -> StudentGroup (the class, with a plain semester number) -> ClassMember (students)
 // ==============================================================================
 
-/// A semester within an academic year (for example, semester 3 of 2026-27).
-model Semester {
-  id             String   @id @default(uuid())
-  tenantId       String   @map("tenant_id")
-  academicYearId String   @map("academic_year_id")
-  number         Int
-  startDate      DateTime @map("start_date") @db.Date
-  endDate        DateTime @map("end_date") @db.Date
-  createdAt      DateTime @default(now()) @map("created_at")
-  updatedAt      DateTime @updatedAt @map("updated_at")
+/// The semesters an institution runs (master list, for example Semester 1 to 8). Student and class
+/// semester numbers must exist here. `isFinal` marks the last one.
+model AcademicLevel {
+  id        String   @id @default(uuid())
+  tenantId  String   @map("tenant_id")
+  number    Int
+  name      String
+  isFinal   Boolean  @default(false) @map("is_final")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-  tenant       Tenant       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  academicYear AcademicYear @relation(fields: [academicYearId], references: [id], onDelete: Cascade)
-  classTerms   ClassTerm[]
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
-  @@unique([tenantId, academicYearId, number])
-  @@map("semesters")
+  @@unique([tenantId, number])
+  @@index([tenantId])
+  @@map("academic_levels")
 }
 
-/// A class's permanent identity within a department, carried across semesters.
+/// A class: the students of one batch, and the subjects they take. The semester is a plain number an admin edits.
 model StudentGroup {
   id            String             @id @default(uuid())
   tenantId      String             @map("tenant_id")
   departmentId  String             @map("department_id")
   batch         String
   batchId       String?            @unique @map("batch_id")
+  semester      Int                @default(1)
   status        StudentGroupStatus @default(ACTIVE)
   createdAt     DateTime           @default(now()) @map("created_at")
   updatedAt     DateTime           @updatedAt @map("updated_at")
 
-  tenant     Tenant      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  department Department  @relation(fields: [departmentId], references: [id], onDelete: Restrict)
-  batchRef   Batch?      @relation(fields: [batchId], references: [id], onDelete: Restrict)
-  classTerms ClassTerm[]
+  tenant         Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  department     Department      @relation(fields: [departmentId], references: [id], onDelete: Restrict)
+  batchRef       Batch?          @relation(fields: [batchId], references: [id], onDelete: Restrict)
+  members        ClassMember[]
+  courseSections CourseSection[]
 
   @@unique([tenantId, departmentId, batch])
   @@index([tenantId, status])
@@ -947,43 +857,23 @@ model Batch {
   @@map("batches")
 }
 
-/// A StudentGroup in one Semester. Its subjects (CourseSections) and students (ClassMembers) hang off this.
-model ClassTerm {
-  id         String   @id @default(uuid())
-  tenantId   String   @map("tenant_id")
-  groupId    String   @map("group_id")
-  semesterId String   @map("semester_id")
-  createdAt  DateTime @default(now()) @map("created_at")
-  updatedAt  DateTime @updatedAt @map("updated_at")
-
-  tenant         Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  group          StudentGroup    @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  semester       Semester        @relation(fields: [semesterId], references: [id], onDelete: Restrict)
-  members        ClassMember[]
-  courseSections CourseSection[]
-
-  @@unique([groupId, semesterId])
-  @@index([tenantId, semesterId])
-  @@map("class_terms")
-}
-
-/// A student's place in a ClassTerm. Moves, detentions and promotions close the row instead of deleting it.
+/// A student's place in a class. Moving or removing a student closes the row instead of deleting it.
 model ClassMember {
-  id          String            @id @default(uuid())
-  tenantId    String            @map("tenant_id")
-  classTermId String            @map("class_term_id")
-  studentId   String            @map("student_id")
-  status      ClassMemberStatus @default(ACTIVE)
-  joinedAt    DateTime          @default(now()) @map("joined_at")
-  leftAt      DateTime?         @map("left_at")
-  reason      String?
-  createdAt   DateTime          @default(now()) @map("created_at")
+  id        String            @id @default(uuid())
+  tenantId  String            @map("tenant_id")
+  groupId   String            @map("group_id")
+  studentId String            @map("student_id")
+  status    ClassMemberStatus @default(ACTIVE)
+  joinedAt  DateTime          @default(now()) @map("joined_at")
+  leftAt    DateTime?         @map("left_at")
+  reason    String?
+  createdAt DateTime          @default(now()) @map("created_at")
 
-  tenant    Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  classTerm ClassTerm @relation(fields: [classTermId], references: [id], onDelete: Cascade)
-  student   Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  tenant  Tenant       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  group   StudentGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  student Student      @relation(fields: [studentId], references: [id], onDelete: Cascade)
 
-  @@unique([classTermId, studentId])
+  @@unique([groupId, studentId])
   @@index([tenantId, studentId, status])
   @@map("class_members")
 }

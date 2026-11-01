@@ -4,6 +4,7 @@ import React from "react";
 import { Check, X, Inbox } from "lucide-react";
 import GlassBadge from "@/components/ui/GlassBadge";
 import type { LicenseRequestItem, LicenseRequestStatus } from "@/types/tenant";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 interface LicenseRequestsTableProps {
   requests: LicenseRequestItem[];
@@ -46,9 +47,15 @@ export default function LicenseRequestsTable({
 }: LicenseRequestsTableProps): React.ReactElement {
   if (loading) {
     return (
-      <div className="bg-card border border-[#e3e1dc] rounded-2xl p-4 space-y-3">
+      <div className="space-y-4 rounded-xl border border-border bg-card p-4" role="status" aria-label="Loading license requests" aria-busy="true">
         {Array.from({ length: 5 }).map((_, i) => (
-          <div key={i} className="h-12 rounded-xl bg-[#eeece7]/50 animate-pulse" />
+          <div key={i} className="flex items-center gap-3 border-b border-border pb-3 last:border-0 last:pb-0">
+            <div className="min-w-0 flex-1 space-y-2">
+              <Skeleton className="h-3 w-1/3" />
+              <Skeleton className="h-3 w-2/3" />
+            </div>
+            <Skeleton className="h-7 w-20" />
+          </div>
         ))}
       </div>
     );

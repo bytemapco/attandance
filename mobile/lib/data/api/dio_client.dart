@@ -94,11 +94,10 @@ AppException mapDioError(DioException error) {
     case DioExceptionType.receiveTimeout:
       return const NetworkException('Connection timed out. Please try again.');
     case DioExceptionType.connectionError:
-      final detail = error.error?.toString() ?? error.message;
-      return NetworkException(
-        detail != null && detail.isNotEmpty
-            ? 'Connection failed: $detail'
-            : 'Unable to connect to the server. Check your internet connection.',
+      // The raw socket error (host, port, errno) is logged by the request interceptor.
+      // Students see a plain message.
+      return const NetworkException(
+        'Unable to reach the server. Check your internet connection and try again.',
       );
     case DioExceptionType.badResponse:
       final statusCode = error.response?.statusCode ?? 0;
@@ -114,11 +113,8 @@ AppException mapDioError(DioException error) {
       }
       return ServerException(detail, statusCode: statusCode);
     default:
-      final detail = error.error?.toString() ?? error.message;
-      return NetworkException(
-        detail != null && detail.isNotEmpty
-            ? detail
-            : 'An unexpected network error occurred.',
+      return const NetworkException(
+        'Something went wrong with the network. Please try again.',
       );
   }
 }

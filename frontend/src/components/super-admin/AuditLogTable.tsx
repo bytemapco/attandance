@@ -5,6 +5,7 @@ import { Eye, AlertTriangle, AlertCircle, Info, Building2 } from "lucide-react";
 import type { SuperAdminAuditLog } from "@/types/tenant";
 import GlassBadge from "@/components/ui/GlassBadge";
 import GlassEmptyState from "@/components/ui/GlassEmptyState";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 function formatEventType(type: string): string {
   return type
@@ -60,9 +61,16 @@ export default function AuditLogTable({
 }: AuditLogTableProps): React.ReactElement {
   if (loading) {
     return (
-      <div className="bg-card border border-border rounded-xl p-4 space-y-3">
+      <div className="space-y-4 rounded-xl border border-border bg-card p-4" role="status" aria-label="Loading audit log" aria-busy="true">
         {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="h-12 rounded-lg bg-muted/40 animate-pulse" />
+          <div key={i} className="flex items-center gap-3 border-b border-border pb-3 last:border-0 last:pb-0">
+            <Skeleton className="size-8 shrink-0 rounded-full" />
+            <div className="min-w-0 flex-1 space-y-2">
+              <Skeleton className="h-3 w-1/3" />
+              <Skeleton className="h-3 w-2/3" />
+            </div>
+            <Skeleton className="hidden h-7 w-20 sm:block" />
+          </div>
         ))}
       </div>
     );

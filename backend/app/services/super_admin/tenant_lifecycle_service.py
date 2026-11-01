@@ -30,22 +30,13 @@ class TenantLifecycleService:
             if existing_slug:
                 raise ValueError(f"Tenant slug '{data.slug}' is already in use by another institution.")
 
-        if data.domain and data.domain != t.domain:
-            existing_domain = await db.tenant.find_unique(where={"domain": data.domain})
-            if existing_domain:
-                raise ValueError(f"Domain '{data.domain}' is already mapped to another institution.")
-
         update_data: dict = {}
         if data.name:
             update_data["name"] = data.name
         if data.slug:
             update_data["slug"] = data.slug
-        if data.type:
-            update_data["type"] = data.type
         if data.status:
             update_data["status"] = data.status
-        if data.domain is not None:
-            update_data["domain"] = data.domain if data.domain else None
         if data.license_count is not None:
             update_data["licenseCount"] = data.license_count
         if data.config is not None:
@@ -61,27 +52,14 @@ class TenantLifecycleService:
             if data.status == "SUSPENDED":
                 await r.delete(f"tenant:resolved:{updated.id}")
                 await r.delete(f"tenant:resolved:{updated.slug}")
-                if t.domain:
-                    await r.delete(f"tenant:resolved:{t.domain.lower()}")
                 await r.setex(f"tenant:resolved:{updated.id}", 3600, f"SUSPENDED:{updated.id}")
                 await r.setex(f"tenant:resolved:{updated.slug}", 3600, f"SUSPENDED:{updated.id}")
-                domain_key = (updated.domain or t.domain or "").lower()
-                if domain_key:
-                    await r.setex(f"tenant:resolved:{domain_key}", 3600, f"SUSPENDED:{updated.id}")
             elif data.status == "ACTIVE":
                 await r.setex(f"tenant:resolved:{updated.id}", 3600, f"ACTIVE:{updated.id}")
                 await r.setex(f"tenant:resolved:{updated.slug}", 3600, f"ACTIVE:{updated.id}")
-                if updated.domain:
-                    await r.setex(f"tenant:resolved:{updated.domain.lower()}", 3600, f"ACTIVE:{updated.id}")
-                elif t.domain:
-                    await r.setex(f"tenant:resolved:{t.domain.lower()}", 3600, f"ACTIVE:{updated.id}")
             else:
                 await r.delete(f"tenant:resolved:{updated.id}")
                 await r.delete(f"tenant:resolved:{updated.slug}")
-                if t.domain:
-                    await r.delete(f"tenant:resolved:{t.domain.lower()}")
-                if updated.domain:
-                    await r.setex(f"tenant:resolved:{updated.domain.lower()}", 3600, f"ACTIVE:{updated.id}")
         except Exception as cache_err:
             logger.warning("Failed updating tenant Redis resolution keys for %s: %s", tenant_id, cache_err)
         if data.status == "SUSPENDED":
@@ -121,8 +99,6 @@ class TenantLifecycleService:
             r = get_redis()
             await r.delete(f"tenant:resolved:{t.id}")
             await r.delete(f"tenant:resolved:{t.slug}")
-            if t.domain:
-                await r.delete(f"tenant:resolved:{t.domain.lower()}")
         except Exception as cache_err:
             logger.warning("Failed deleting Redis keys for tenant %s: %s", tenant_id, cache_err)
 

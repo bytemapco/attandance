@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional, Any, Dict, List
+from typing import Optional, Any, Dict, List, Literal
 from pydantic import BaseModel, EmailStr, Field
 
 
@@ -14,10 +14,10 @@ class TenantAdminEmailUpdateRequest(BaseModel):
 
 
 class TenantProvisionRequest(BaseModel):
+    model_config = {"extra": "forbid"}
+
     name: str = Field(..., min_length=2, max_length=150)
     slug: str = Field(..., min_length=2, max_length=50, pattern=r"^[a-z0-9-]+$")
-    type: str = Field(default="COLLEGE", pattern=r"^(SCHOOL|COLLEGE|COACHING_CENTER)$")
-    domain: Optional[str] = None
     license_count: int = Field(default=0, ge=0)
     admin_email: Optional[EmailStr] = None
     admin_name: Optional[str] = Field(None, min_length=2, max_length=100)
@@ -27,11 +27,11 @@ class TenantProvisionRequest(BaseModel):
 
 
 class TenantUpdateRequest(BaseModel):
+    model_config = {"extra": "forbid"}
+
     name: Optional[str] = None
     slug: Optional[str] = Field(None, pattern=r"^[a-z0-9-]+$")
-    type: Optional[str] = Field(None, pattern=r"^(SCHOOL|COLLEGE|COACHING_CENTER)$")
     status: Optional[str] = Field(None, pattern=r"^(ACTIVE|SUSPENDED|TRIAL|EXPIRED)$")
-    domain: Optional[str] = None
     license_count: Optional[int] = Field(None, ge=0)
     config: Optional[Dict[str, Any]] = None
 
@@ -40,9 +40,8 @@ class TenantResponse(BaseModel):
     id: str
     slug: str
     name: str
-    type: str
+    type: Literal["COLLEGE"] = "COLLEGE"
     status: str
-    domain: Optional[str] = None
     license_count: int
     created_at: datetime
     student_count: Optional[int] = 0

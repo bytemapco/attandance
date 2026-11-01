@@ -1,35 +1,6 @@
-export interface AcademicYearItem {
-  id: string;
-  tenant_id: string;
-  name: string;
-  start_date: string;
-  end_date: string;
-  attendance_start_date?: string | null;
-  attendance_end_date?: string | null;
-  min_attendance_pct: number;
-  saturday_enabled: boolean;
-  verification_window_min: number;
-  status: "PLANNING" | "ACTIVE" | "LOCKED" | "ARCHIVED";
-  created_at: string;
-  updated_at: string;
-  sections_count?: number;
-}
-
-export interface TimeSlotItem {
-  id: string;
-  tenant_id?: string | null;
-  slot_number: number;
-  name: string;
-  start_time: string;
-  end_time: string;
-  is_break: boolean;
-  is_lab_block: boolean;
-}
-
 export interface CourseSectionItem {
   id: string;
   tenant_id: string;
-  academic_year_id: string;
   subject_id: string;
   department_id?: string | null;
   name: string;
@@ -47,29 +18,23 @@ export interface TimetableRuleItem {
   id: string;
   tenant_id: string;
   course_section_id: string;
-  time_slot_id: string;
   classroom_id?: string | null;
   teacher_id?: string | null;
   day_of_week: number;
+  start_time: string;
+  end_time: string;
   effective_from: string;
-  effective_until: string;
+  effective_until?: string | null;
   is_active: boolean;
-  time_slot_name?: string | null;
-  start_time?: string | null;
-  end_time?: string | null;
   teacher_name?: string | null;
   classroom_name?: string | null;
 }
 
+/** One dated class of the signed-in teacher, from GET /faculty/daily-schedule. */
 export interface DailyOccurrenceItem {
   id: string;
-  tenant_id: string;
   course_section_id: string;
   date: string;
-  time_slot_id: string;
-  classroom_id?: string | null;
-  faculty_id: string;
-  substitute_faculty_id?: string | null;
   status: "SCHEDULED" | "CONDUCTED" | "CANCELLED" | "RESCHEDULED";
   is_attendance_locked: boolean;
   verification_active: boolean;
@@ -79,7 +44,6 @@ export interface DailyOccurrenceItem {
   subject_code: string;
   section_name: string;
   classroom_name: string;
-  faculty_name: string;
   start_time: string;
   end_time: string;
   present_count: number;
@@ -105,7 +69,7 @@ export interface HistoryItem {
   date: string;
   class_code: string;
   subject_name: string;
-  time_slot: string;
+  time_range: string;
   locked: boolean;
   present: number;
   flagged: number;
@@ -120,7 +84,7 @@ export interface FlaggedRecord {
   class_code: string;
   subject_name: string;
   date: string;
-  time_slot: string;
+  time_range: string;
   method: string;
   remarks?: string | null;
   locked: boolean;
@@ -181,6 +145,6 @@ export interface OccurrenceRegisterData {
   classroom_name?: string | null;
   course_name: string;
   section_name: string;
-  time_slot: string;
+  time_range: string;
   students: RegisterStudentItem[];
 }

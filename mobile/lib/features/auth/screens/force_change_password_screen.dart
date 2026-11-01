@@ -85,6 +85,9 @@ class _ForceChangePasswordScreenState
                                 prefixIcon: Icons.lock_outline_rounded,
                                 obscureText: _obscureNew,
                                 suffix: IconButton(
+                                  tooltip: _obscureNew
+                                      ? 'Show password'
+                                      : 'Hide password',
                                   icon: Icon(
                                     _obscureNew
                                         ? Icons.visibility_off_rounded
@@ -114,6 +117,9 @@ class _ForceChangePasswordScreenState
                                 prefixIcon: Icons.check_circle_outline_rounded,
                                 obscureText: _obscureConfirm,
                                 suffix: IconButton(
+                                  tooltip: _obscureConfirm
+                                      ? 'Show password'
+                                      : 'Hide password',
                                   icon: Icon(
                                     _obscureConfirm
                                         ? Icons.visibility_off_rounded

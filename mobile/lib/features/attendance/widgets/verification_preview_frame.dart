@@ -57,7 +57,11 @@ class VerificationPreviewFrame extends StatelessWidget {
                 fit: StackFit.expand,
                 children: [
                   if (imagePath != null)
-                    Image.file(File(imagePath!), fit: BoxFit.cover),
+                    Image.file(
+                      File(imagePath!),
+                      fit: BoxFit.cover,
+                      semanticLabel: 'Selfie preview',
+                    ),
                   Center(
                     child: Container(
                       width: 210,
@@ -122,4 +126,3 @@ class VerificationPreviewFrame extends StatelessWidget {
     );
   }
 }
-

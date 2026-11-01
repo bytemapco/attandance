@@ -10,8 +10,6 @@ class ClassCreate(BaseModel):
     subject_id: Optional[str] = Field(None, max_length=64, description="UUID of the linked Subject")
     teacher_id: Optional[str] = Field(None, max_length=64, description="UUID of the associated Teacher profile")
     classroom_id: Optional[str] = Field(None, max_length=64, description="UUID of the assigned Classroom")
-    academic_year_id: Optional[str] = Field(None, max_length=64, description="UUID of the associated AcademicYear")
-    academic_term_id: Optional[str] = Field(None, max_length=64, description="Deprecated alias")
     semester: Optional[int] = Field(None, ge=1, le=8, description="Academic semester (1–8)")
     batch: Optional[str] = Field(None, max_length=50, description="Batch identifier e.g. CE-A-1")
 
@@ -28,8 +26,6 @@ class ClassUpdate(BaseModel):
     subject_id: Optional[str] = Field(None, min_length=1, max_length=64)
     teacher_id: Optional[str] = Field(None, min_length=1, max_length=64)
     classroom_id: Optional[str] = Field(None, max_length=64)
-    academic_year_id: Optional[str] = Field(None, max_length=64)
-    academic_term_id: Optional[str] = Field(None, max_length=64)
     semester: Optional[int] = Field(None, ge=1, le=8)
     batch: Optional[str] = Field(None, max_length=20)
 
@@ -68,10 +64,6 @@ class ClassResponse(BaseModel):
     subject_code: str = Field(..., description="Short code of the subject")
     teacher_id: str = Field(..., alias="teacherId", description="Assigned Teacher profile UUID")
     classroom_name: Optional[str] = Field(None, description="Resolved physical classroom name")
-    academic_year_id: Optional[str] = Field(None, alias="academicYearId", description="Associated Academic Year UUID")
-    year_name: Optional[str] = Field(None, description="Associated Academic Year Name")
-    academic_term_id: Optional[str] = Field(None, alias="academicTermId", description="Associated Academic Term UUID")
-    term_name: Optional[str] = Field(None, description="Associated Academic Term Name")
     semester: Optional[int] = Field(None, description="Current semester")
     batch: Optional[str] = Field(None, description="Batch year range")
     enrolled_count: int = Field(0, description="Total count of enrolled students")

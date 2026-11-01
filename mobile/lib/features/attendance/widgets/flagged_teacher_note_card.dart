@@ -97,6 +97,7 @@ class FlaggedTeacherNoteCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(10),
             child: Image.network(
               url,
+              semanticLabel: "Teacher's attached photo",
               width: 52,
               height: 52,
               fit: BoxFit.cover,

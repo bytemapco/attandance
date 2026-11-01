@@ -43,12 +43,23 @@ class GeofenceStatusCard extends StatelessWidget {
         statusTitle = 'Location Verified';
         statusDesc = 'You are inside the classroom boundary.';
         break;
+      case GeofenceStatus.notConfigured:
+        statusColor = const Color(0xFFF59E0B);
+        statusTitle = 'Campus Location Not Set';
+        statusDesc =
+            'Your institution has not set the campus location. '
+            'Your attendance will be flagged for teacher review.';
+        break;
       case GeofenceStatus.failed:
         statusColor = const Color(0xFFF0445E);
-        statusTitle = 'Outside Classroom Zone';
-        statusDesc = radius != null
-            ? 'Must be within ${GeofenceDistanceMetrics.formatDistance(radius)} of class to check in.'
-            : 'You are outside the classroom boundary.';
+        statusTitle = state.distanceMeters != null
+            ? 'Outside Campus Zone'
+            : 'Location Unavailable';
+        statusDesc =
+            state.errorMessage ??
+            (radius != null
+                ? 'Must be within ${GeofenceDistanceMetrics.formatDistance(radius)} of campus to check in.'
+                : kOutsideBoundaryMessage);
         break;
       default:
         statusColor = const Color(0xFF64748B);

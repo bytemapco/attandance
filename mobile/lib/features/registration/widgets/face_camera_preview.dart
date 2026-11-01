@@ -43,6 +43,7 @@ class FaceCameraPreview extends StatelessWidget {
         child: capturedPath != null
             ? Image.file(
                 File(capturedPath!),
+                semanticLabel: 'Captured face preview',
                 fit: BoxFit.cover,
                 width: double.infinity,
                 height: double.infinity,

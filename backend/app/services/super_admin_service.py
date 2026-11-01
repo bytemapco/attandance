@@ -33,11 +33,8 @@ class SuperAdminService:
         page_size: int = 10,
         q: Optional[str] = None,
         status: Optional[str] = None,
-        type: Optional[str] = None,
     ) -> dict:
-        return await TenantQueryService.get_all_tenants(
-            page=page, page_size=page_size, q=q, status=status, type=type
-        )
+        return await TenantQueryService.get_all_tenants(page=page, page_size=page_size, q=q, status=status)
 
     @staticmethod
     async def get_tenant_by_id(tenant_id: str) -> TenantDetailResponse:

@@ -6,8 +6,6 @@ import { ParsedBulkRecord, ImportStage, BatchProgressItem, BulkImportSummary, Bu
 import { buildBatches, buildBulkPayload } from "./bulkPayloadBuilder";
 import { humanizeImportError } from "./humanizeImportError";
 
-export { humanizeImportError };
-
 export function useBulkImportProcessor(entityType: BulkImportEntityType, onSuccess: () => void) {
   const [stage, setStage] = useState<ImportStage>("upload");
   const [records, setRecords] = useState<ParsedBulkRecord[]>([]);

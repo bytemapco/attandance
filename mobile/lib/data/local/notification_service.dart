@@ -5,7 +5,6 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:smart_attendance_app/core/constants.dart';
 import 'package:smart_attendance_app/domain/models/app_notification.dart';
 
-
 export 'package:smart_attendance_app/domain/models/app_notification.dart';
 export 'package:smart_attendance_app/features/notifications/providers/notifications_provider.dart';
 
@@ -69,4 +68,3 @@ class NotificationService {
 
   Future<void> clearAll() async => _box?.clear();
 }
-

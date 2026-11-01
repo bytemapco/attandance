@@ -1,7 +1,18 @@
 "use client";
 
 import React, { useCallback, useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
+import {
+  ArrowLeft,
+  Building2,
+  CalendarDays,
+  GraduationCap,
+  Layers,
+  Users,
+  BookOpen,
+  AlertCircle,
+  CheckCircle2,
+} from "lucide-react";
 import toast from "react-hot-toast";
 
 import api, { getApiErrorMessage } from "@/lib/api";
@@ -10,18 +21,18 @@ import GlassBreadcrumb from "@/components/ui/GlassBreadcrumb";
 import GlassPageHeader from "@/components/ui/GlassPageHeader";
 import GlassErrorState from "@/components/ui/GlassErrorState";
 import GlassLoader from "@/components/ui/GlassLoader";
+import GlassBadge from "@/components/ui/GlassBadge";
+import GlassButton from "@/components/ui/GlassButton";
+import ClassTimetable from "./ClassTimetable";
 import StudentsTab from "./StudentsTab";
-import SubjectsTab from "./SubjectsTab";
 import type { ClassDetail } from "@/types";
 
-type TabKey = "students" | "subjects";
+type TabKey = "students" | "timetable";
 
-const TABS: { key: TabKey; label: string }[] = [
-  { key: "students", label: "Students" },
-  { key: "subjects", label: "Subjects & teachers" },
-];
+const SEMESTER_NUMBERS = Array.from({ length: 8 }, (_, i) => i + 1);
 
 export default function ClassDetailPage(): React.ReactElement {
+  const router = useRouter();
   const { id } = useParams<{ id: string }>();
   const [cls, setCls] = useState<ClassDetail | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -43,40 +54,163 @@ export default function ClassDetailPage(): React.ReactElement {
     void load();
   }, [load]);
 
+  async function changeSemester(semesterNumber: number): Promise<void> {
+    try {
+      const { data } = await api.patch<ClassDetail>(`/admin/class-management/classes/${id}`, {
+        semester_number: semesterNumber,
+      });
+      setCls(data);
+      toast.success(`Semester changed to ${semesterNumber}`);
+    } catch (err: unknown) {
+      toast.error(getApiErrorMessage(err, "Could not change the semester"));
+    }
+  }
+
   if (error) return <GlassErrorState message={error} onRetry={() => void load()} />;
   if (!cls) return <GlassLoader />;
 
+  const incompleteSubjects = cls.sections.filter((s) => !s.teacher_id || s.schedule.length === 0).length;
+  const isNeedsSetup = (cls.subject_count || 0) === 0 || incompleteSubjects > 0;
+  const setupMessage =
+    cls.subject_count === 0
+      ? "This class has no subjects yet."
+      : `${incompleteSubjects} of ${cls.subject_count} subjects still need a teacher or class times. Teachers cannot see them in their timetable until then.`;
+
   return (
-    <div className="animate-fade-in-up space-y-4">
+    <div className="animate-fade-in-up space-y-5">
+      {/* Breadcrumb Navigation */}
       <GlassBreadcrumb
         items={[
           { label: "Admin", href: "/admin/dashboard" },
           { label: "Classes", href: "/admin/class-management" },
-          { label: cls.code },
+          { label: `${cls.code} (Sem ${cls.semester_number})` },
         ]}
       />
-      <GlassPageHeader
-        title={`${cls.code} · Semester ${cls.semester_number}`}
-        description={`${cls.department_name} · ${cls.academic_year_name} · ${cls.member_count} ${cls.member_count === 1 ? "student" : "students"} · ${cls.subject_count} ${cls.subject_count === 1 ? "subject" : "subjects"}`}
-      />
-      <div role="tablist" className="flex gap-1 border-b border-[#e3e1dc]">
-        {TABS.map((t) => (
-          <button
-            key={t.key}
-            role="tab"
-            aria-selected={tab === t.key}
-            onClick={() => setTab(t.key)}
-            className={cn(
-              "px-4 py-2 text-sm font-semibold transition-colors",
-              tab === t.key ? "border-b-2 border-[#28363b] text-[#202b30]" : "text-[#526f78] hover:text-[#202b30]"
-            )}
-          >
-            {t.label}
-          </button>
-        ))}
+
+      {/* Main Header with Context Badges */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-border/70">
+        <div>
+          <div className="flex items-center gap-3">
+            <GlassButton
+              variant="ghost"
+              size="sm"
+              icon={<ArrowLeft size={14} />}
+              onClick={() => router.push("/admin/class-management")}
+              className="text-xs -ml-2"
+            >
+              Classes
+            </GlassButton>
+            <span className="text-muted-foreground/50">|</span>
+            <h1 className="text-2xl font-bold tracking-tight text-foreground">
+              {cls.code}
+            </h1>
+            <label htmlFor="class-semester" className="sr-only">Semester</label>
+            <select
+              id="class-semester"
+              value={cls.semester_number}
+              onChange={(event) => void changeSemester(Number(event.target.value))}
+              className="cursor-pointer rounded-full border border-[#c5dce8] bg-[#eaf2f6] px-2 py-0.5 text-xs font-bold text-[#306b8a] focus-visible:outline-2 focus-visible:outline-[#526f78]"
+            >
+              {SEMESTER_NUMBERS.map((number) => (
+                <option key={number} value={number}>Semester {number}</option>
+              ))}
+            </select>
+            <GlassBadge variant={cls.status === "ACTIVE" ? "success" : "neutral"}>
+              {cls.status}
+            </GlassBadge>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3 mt-2 text-xs text-muted-foreground">
+            <span className="inline-flex items-center gap-1 font-medium text-foreground">
+              <Building2 size={13} className="text-[#526f78]" />
+              {cls.department_name}
+            </span>
+            <span>•</span>
+            <span className="inline-flex items-center gap-1">
+              <Layers size={13} className="text-muted-foreground/70" />
+              Batch: <strong className="text-foreground">{cls.batch}</strong>
+            </span>
+          </div>
+        </div>
+
+        {/* Quick Metrics */}
+        <div className="flex items-center gap-3 self-start sm:self-auto">
+          <div className="px-3.5 py-1.5 rounded-xl border border-border bg-card shadow-2xs text-center">
+            <div className="text-xs text-muted-foreground font-medium flex items-center gap-1 justify-center">
+              <Users size={12} className="text-[#306b8a]" /> Students
+            </div>
+            <div className="text-lg font-bold text-foreground font-mono">{cls.member_count}</div>
+          </div>
+          <div className="px-3.5 py-1.5 rounded-xl border border-border bg-card shadow-2xs text-center">
+            <div className="text-xs text-muted-foreground font-medium flex items-center gap-1 justify-center">
+              <BookOpen size={12} className="text-[#247653]" /> Subjects
+            </div>
+            <div className="text-lg font-bold text-foreground font-mono">{cls.subject_count}</div>
+          </div>
+        </div>
       </div>
+
+      {/* Helpful Setup Reminder Banner if 0 subjects */}
+      {isNeedsSetup && (
+        <div className="p-3.5 rounded-xl border border-[#f2deba] bg-[#fbf1df] text-xs text-[#8a5b12] flex items-center justify-between gap-3 shadow-2xs">
+          <div className="flex items-center gap-2">
+            <AlertCircle size={16} className="shrink-0 text-[#8a5b12]" />
+            <span>{setupMessage}</span>
+          </div>
+          <button
+            onClick={() => setTab("timetable")}
+            className="px-2.5 py-1 rounded-lg bg-[#8a5b12] text-white font-semibold text-xs shrink-0 hover:bg-[#734c0f] transition-colors"
+          >
+            Open timetable
+          </button>
+        </div>
+      )}
+
+      {/* Styled Tab Bar with Count Indicators */}
+      <div role="tablist" className="flex gap-2 border-b border-border/80 pb-0">
+        <button
+          role="tab"
+          aria-selected={tab === "students"}
+          onClick={() => setTab("students")}
+          className={cn(
+            "flex items-center gap-2 px-4 py-2.5 text-xs font-semibold rounded-t-lg transition-all border-b-2 -mb-[2px]",
+            tab === "students"
+              ? "border-[#28363b] text-[#202b30] bg-card/60"
+              : "border-transparent text-muted-foreground hover:text-foreground"
+          )}
+        >
+          <Users size={14} className={tab === "students" ? "text-[#306b8a]" : "text-muted-foreground"} />
+          <span>Students</span>
+          <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-secondary text-secondary-foreground font-mono">
+            {cls.member_count}
+          </span>
+        </button>
+
+        <button
+          role="tab"
+          aria-selected={tab === "timetable"}
+          onClick={() => setTab("timetable")}
+          className={cn(
+            "flex items-center gap-2 px-4 py-2.5 text-xs font-semibold rounded-t-lg transition-all border-b-2 -mb-[2px]",
+            tab === "timetable"
+              ? "border-[#28363b] text-[#202b30] bg-card/60"
+              : "border-transparent text-muted-foreground hover:text-foreground"
+          )}
+        >
+          <CalendarDays size={14} className={tab === "timetable" ? "text-[#8a4d30]" : "text-muted-foreground"} />
+          <span>Timetable</span>
+          <span className={cn(
+            "px-1.5 py-0.2 rounded-full text-[10px] font-mono",
+            isNeedsSetup ? "bg-[#8a5b12] text-white" : "bg-secondary text-secondary-foreground"
+          )}>
+            {cls.subject_count}
+          </span>
+        </button>
+      </div>
+
+      {/* Active Tab View */}
       {tab === "students" && <StudentsTab cls={cls} onUpdated={setCls} />}
-      {tab === "subjects" && <SubjectsTab cls={cls} onUpdated={setCls} />}
+      {tab === "timetable" && <ClassTimetable cls={cls} onUpdated={setCls} />}
     </div>
   );
 }

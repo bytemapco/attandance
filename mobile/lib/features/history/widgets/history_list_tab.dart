@@ -19,6 +19,10 @@ class HistoryListTab extends StatefulWidget {
 }
 
 class _HistoryListTabState extends State<HistoryListTab> {
+  // Built once: creating a DateFormat per row is needless work on long histories.
+  static final _monthFormat = DateFormat('MMM');
+  static final _timeFormat = DateFormat('h:mm a');
+
   HistoryStatusFilter _filter = HistoryStatusFilter.all;
 
   @override
@@ -135,11 +139,11 @@ class _HistoryListTabState extends State<HistoryListTab> {
     return filtered.map((item) {
       final code = _extractCode(item.className);
       return HistoryCardItem(
-        monthText: DateFormat('MMM').format(item.markedAt),
+        monthText: _monthFormat.format(item.markedAt),
         dayText: '${item.markedAt.day}',
         courseTitle: item.subject,
         subtitle: code.isNotEmpty ? '$code • Session Log' : 'Session Log',
-        timeText: DateFormat('h:mm a').format(item.markedAt),
+        timeText: _timeFormat.format(item.markedAt),
         status: item.status,
       );
     }).toList();

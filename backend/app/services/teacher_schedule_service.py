@@ -1,13 +1,13 @@
 from datetime import datetime, timezone, timedelta
-from typing import Optional
 from fastapi import HTTPException, status
 from app.core.datetime_utils import get_ist_today
 from app.db.client import db
+from app.services.system_config_service import SystemConfigService
 
 
 class TeacherScheduleService:
     @staticmethod
-    async def get_weekly_timetable(tenant_id: str, faculty_id: str, academic_year_id: Optional[str] = None):
+    async def get_weekly_timetable(tenant_id: str, faculty_id: str):
         where: dict = {
             "tenantId": tenant_id,
             "isActive": True,
@@ -16,41 +16,30 @@ class TeacherScheduleService:
                 {"courseSection": {"is": {"faculties": {"some": {"teacherId": faculty_id}}}}},
             ],
         }
-        if academic_year_id:
-            where["courseSection"] = {"is": {"academicYearId": academic_year_id}}
 
         rules = await db.timetablerule.find_many(
             where=where,
             include={
-                "timeSlot": True,
                 "classroom": True,
-                "courseSection": {
-                    "include": {
-                        "subject": True,
-                        "academicYear": True,
-                        "enrollments": True,
-                    }
-                },
+                "courseSection": {"include": {"subject": True, "enrollments": True}},
             },
             order={"dayOfWeek": "asc"},
         )
+        config = await SystemConfigService().get_config(tenant_id=tenant_id)
         return [
             {
                 "id": r.id,
                 "course_section_id": r.courseSectionId,
                 "day_of_week": r.dayOfWeek,
-                "time_slot_id": r.timeSlotId,
-                "slot_name": r.timeSlot.name if r.timeSlot else "",
-                "start_time": r.timeSlot.startTime if r.timeSlot else "",
-                "end_time": r.timeSlot.endTime if r.timeSlot else "",
+                "start_time": r.startTime,
+                "end_time": r.endTime,
                 "classroom_name": r.classroom.name if r.classroom else "TBA",
                 "classroom_id": r.classroomId,
                 "section_name": r.courseSection.name if r.courseSection else "",
                 "subject_name": r.courseSection.subject.name if r.courseSection and r.courseSection.subject else "",
                 "subject_code": r.courseSection.subject.code if r.courseSection and r.courseSection.subject else "",
                 "enrolled_count": len(r.courseSection.enrollments) if r.courseSection and r.courseSection.enrollments else 0,
-                "academic_year_name": r.courseSection.academicYear.name if r.courseSection and r.courseSection.academicYear else "",
-                "saturday_enabled": getattr(getattr(r.courseSection, "academicYear", None), "saturdayEnabled", False),
+                "saturday_enabled": config.saturdayEnabled,
             }
             for r in rules
         ]
@@ -59,7 +48,7 @@ class TeacherScheduleService:
     async def start_occurrence_attendance(tenant_id: str, faculty_id: str, occurrence_id: str):
         occurrence = await db.classoccurrence.find_first(
             where={"id": occurrence_id, "tenantId": tenant_id},
-            include={"courseSection": {"include": {"academicYear": True, "subject": True}}},
+            include={"courseSection": {"include": {"subject": True}}},
         )
         if not occurrence:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Class occurrence not found.")
@@ -72,9 +61,8 @@ class TeacherScheduleService:
         if occurrence.date.date() != get_ist_today():
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Attendance can only be started on the day of the class.")
 
-        window_min = 60
-        if occurrence.courseSection and occurrence.courseSection.academicYear:
-            window_min = occurrence.courseSection.academicYear.verificationWindowMin or 60
+        config = await SystemConfigService().get_config(tenant_id=tenant_id)
+        window_min = config.verificationWindowMin
 
         now = datetime.now(timezone.utc)
         expires = now + timedelta(minutes=window_min)

@@ -55,7 +55,7 @@ Multi-tenant attendance SaaS for Indian institutions. Backend: FastAPI + Prisma 
 - **Every attendance mutation is audited** (actor, from→to, reason, time). Edits after lock need a reason.
 - **Idempotent marking:** one record per `(occurrenceId, studentId)`; retries with the same key return the original result.
 - **Biometrics are opt-in:** consent defaults to `false`, is versioned and revocable, and a non-biometric path must always exist.
-- **One percentage function**, unit-tested with hand-computed fixtures; cancelled occurrences and holidays are excluded from the denominator.
+- **One percentage function**, unit-tested with hand-computed fixtures; cancelled occurrences are excluded from the denominator (a holiday calendar is not in v1).
 - **Thresholds and policy are per tenant**, not global.
 
 ## 4. Skills — when to use which
@@ -111,7 +111,7 @@ Bug fix → write a failing test first when practical. Attendance logic changes 
 
 ## 8. Class Management Feature (Implemented Oct 2026)
 
-Admin page for creating and managing classes across departments, semesters, and batches. See [SUMMARY.md](SUMMARY.md) for full feature overview.
+Admin page for creating and managing classes across departments and batches. A class is a `StudentGroup` (department + batch) with a plain `semester` number (1–8) that an admin edits. There is no academic year, semester table, class term, or promotion. See [SUMMARY.md](SUMMARY.md) for the feature overview.
 
 ### Key Implementation Patterns
 
@@ -121,7 +121,7 @@ Admin page for creating and managing classes across departments, semesters, and 
 
 **Atomicity in create:** If class creation fails (e.g., student already in another class), the StudentGroup is rolled back so no orphan exists. Validated in tests.
 
-**Promotion:** dry-run preview (show counts) then commit. Closes old rows (PROMOTED/DETAINED), creates new class in next semester, places students (or detains them). Re-run is idempotent.
+**Semester:** a number on the class, changed with `PATCH /admin/class-management/classes/{id}`. Students move to a new semester by editing the class, not by promotion. Timetable rules start the day they are created and run until removed (`effectiveUntil` is null).
 
 **Attendance protection:** Subject removal is blocked once AttendanceRecord exists for that section. History is preserved.
 
@@ -133,7 +133,7 @@ Admin page for creating and managing classes across departments, semesters, and 
 
 ### Tenant Isolation Checklist
 
-✅ Semester, StudentGroup, ClassTerm, ClassMember tables all have `tenantId NOT NULL`  
+✅ StudentGroup and ClassMember tables have `tenantId NOT NULL`  
 ✅ All service methods take `tenant_id` as first arg  
 ✅ All queries filter `tenantId` (use `get_tenant_context` for HTTP endpoints)  
 ✅ Foreign keys (department, student, teacher, subject) verified in tenant before operations  
@@ -141,15 +141,15 @@ Admin page for creating and managing classes across departments, semesters, and 
 
 ### Testing Approach
 
-- **Backend:** `tests/class_management/` with mocked Prisma client (like academic_year tests); 85 passing tests cover tenant isolation, capacity, duplicates, promotions, enrolment sync, attendance protection.
+- **Backend:** `tests/class_management/` with a mocked Prisma client; tests cover tenant isolation, duplicates, semester edits, enrolment sync, schedule conflicts, attendance protection.
 - **Frontend:** vitest for validation schemas; manual browser testing for UI flows (Reticle).
 - **Live:** 45-check Python script against running server + DB; covers all API flows including auth, edge cases, cleanup.
 
 ### Files to Know
 
-- `backend/prisma/schema.prisma` — Semester, StudentGroup, ClassTerm, ClassMember, CourseSection.classTermId, CourseEnrollment.source/endedAt
-- `backend/app/services/class_management/` — 6 modules (common, class_term, class_member, class_section, enrollment_sync, promotion)
-- `backend/app/api/admin/class_management.py` — 8 endpoints
+- `backend/prisma/schema.prisma` — StudentGroup (with `semester`), ClassMember, CourseSection.groupId, CourseEnrollment.source/endedAt
+- `backend/app/services/class_management/` — 6 modules (common, class, class_member, class_section, class_schedule, enrollment_sync)
+- `backend/app/api/admin/class_management.py` — class, member, subject, and schedule endpoints
 - `frontend/src/app/(dashboard)/admin/class-management/` — routes & components
 
 ### Known Limitations
@@ -157,7 +157,7 @@ Admin page for creating and managing classes across departments, semesters, and 
 1. **No teacher removal:** only reassign. (Timetable needs a teacher.)
 2. **Backlog enrollments:** backend supports them; no UI yet.
 3. **Move student:** no button in Students tab; POST endpoint works.
-4. **FINAL_SEMESTER:** hard-coded to 8 (could be data-driven if needed).
+4. **Semester range:** classes accept 1–8. The semester master (`AcademicLevel`) is not enforced when a class is created.
 5. **Dev DB schema:** modified manually via psql; migration SQL in `prisma/migrations/` for reference only (venv-scoped generation).
 
 ### What Was Removed
@@ -171,7 +171,20 @@ Admin page for creating and managing classes across departments, semesters, and 
 **Oct 31 Round 2 (Promotion):**
 - ❌ Promote button and dialog from class detail page
 - ❌ PromoteDialog.tsx component removed from UI
-- 🟡 Backend promotion endpoints still available (can be re-enabled if needed)
 - Class detail page now has 2 tabs instead of 3: Students, Subjects & teachers
+
+**Nov 1 (Academic year and term system):**
+- ❌ `AcademicYear`, `Semester`, `ClassTerm` tables and the `AcademicPeriodStatus` enum
+- ❌ Promotion service and endpoint, and the `PROMOTED`, `DETAINED`, `GRADUATED` statuses
+- ❌ Year activation, semesters per year, and the academic years admin pages
+- ✅ Attendance rules (minimum %, window, Saturday) live on `SystemConfiguration`, per institution
+- ✅ Migration: `prisma/migrations/20261101290000_remove_academic_year_and_terms/`
+
+**Nov 1 (Time slots and holidays):**
+- ❌ `TimeSlot` and `AcademicCalendarEvent` tables, the `CalendarEventType` enum, the Academic Calendar admin page, and the setup "class periods" check
+- ✅ `TimetableRule` and `ClassOccurrence` store their own `startTime` and `endTime` ("HH:MM"); rules conflict when their times overlap on the same day
+- ✅ A teacher can start a class that is not scheduled: it is recorded as a one-hour class starting now
+- ✅ A day off is a cancelled occurrence. Holiday calendar and a shared time slot list are post-v1 (PRD section 10)
+- ✅ Migration: `prisma/migrations/20261101300000_remove_time_slots_and_holidays/`
 
 ---

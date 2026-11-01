@@ -1,4 +1,3 @@
-import asyncio
 from typing import Any, Dict
 from app.core.logging_config import get_logger
 from app.db.client import db
@@ -43,28 +42,20 @@ class TenantAdminService:
                 role=user.role,
                 name=name,
             )
-            invite_task = asyncio.create_task(
-                email_service.send_invitation_email(
-                    to_email=user.email,
-                    recipient_name=name,
-                    role=user.role,
-                    invite_token=token,
-                    identifier_label="Tenant Slug",
-                    identifier_value=t.slug,
-                )
+            invitation_sent = await email_service.send_invitation_email(
+                to_email=user.email,
+                recipient_name=name,
+                role=user.role,
+                invite_token=token,
+                identifier_label="Institution ID",
+                identifier_value=t.slug,
+                temp_password=plain_pwd,
             )
-
-            def _admin_added_cb(t: asyncio.Task):
-                try:
-                    sent = t.result()
-                    if not sent:
-                        logger.warning("Admin invitation email was not sent for %s (check SMTP settings)", user.email)
-                except Exception as exc:
-                    logger.error("Failed sending admin invitation email for %s: %s", user.email, exc)
-
-            invite_task.add_done_callback(_admin_added_cb)
+            if not invitation_sent:
+                logger.warning("Admin invitation email was not sent for %s", user.email)
         except Exception as mail_err:
             logger.warning("Failed preparing admin invitation token for %s: %s", user.email, mail_err)
+            invitation_sent = False
 
         await db.auditlog.create(
             data={
@@ -73,11 +64,11 @@ class TenantAdminService:
                 "actor": actor,
                 "target": user.id,
                 "tenantId": tenant_id,
-                "description": f"Added administrator {email} ({role}) to tenant {t.name} and dispatched invitation email",
+                "description": f"Added administrator {email} ({role}) to tenant {t.name}; invitation_sent={invitation_sent}",
             }
         )
 
-        return {"id": user.id, "email": user.email, "role": user.role}
+        return {"id": user.id, "email": user.email, "role": user.role, "invitation_sent": invitation_sent}
 
     @staticmethod
     async def update_tenant_admin_email(

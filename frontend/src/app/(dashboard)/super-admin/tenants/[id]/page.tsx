@@ -8,6 +8,7 @@ import toast from "react-hot-toast";
 import { superAdminService } from "@/services/superAdminService";
 import { getApiErrorMessage } from "@/lib/api";
 import GlassBreadcrumb from "@/components/ui/GlassBreadcrumb";
+import { ContentSkeleton } from "@/components/ui/Skeleton";
 import TenantHeaderBanner from "@/components/super-admin/TenantHeaderBanner";
 import TenantOverviewTab from "@/components/super-admin/TenantOverviewTab";
 import TenantPoliciesTab from "@/components/super-admin/TenantPoliciesTab";
@@ -45,7 +46,6 @@ export default function TenantDetailPage(): React.ReactElement {
 
   const handleSaveSettings = async (payload: {
     name: string;
-    domain?: string;
     license_count: number;
     config?: Record<string, unknown>;
   }): Promise<void> => {
@@ -81,10 +81,8 @@ export default function TenantDetailPage(): React.ReactElement {
 
   if (loading || !tenant) {
     return (
-      <div className="space-y-4 max-w-6xl">
-        <div className="h-8 w-48 bg-muted rounded animate-pulse" />
-        <div className="h-32 bg-card border border-border rounded-xl animate-pulse" />
-        <div className="h-64 bg-card border border-border rounded-xl animate-pulse" />
+      <div className="max-w-6xl" role="status" aria-label="Loading institution details" aria-busy="true">
+        <ContentSkeleton />
       </div>
     );
   }

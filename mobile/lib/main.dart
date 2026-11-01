@@ -19,11 +19,13 @@ class AppHttpOverrides extends HttpOverrides {
     if (!kReleaseMode) {
       client.badCertificateCallback =
           (X509Certificate cert, String host, int port) {
-        if (host == 'localhost' || host == '10.0.2.2' || host == '127.0.0.1') {
-          return true;
-        }
-        return false;
-      };
+            if (host == 'localhost' ||
+                host == '10.0.2.2' ||
+                host == '127.0.0.1') {
+              return true;
+            }
+            return false;
+          };
     }
     return client;
   }
@@ -38,7 +40,9 @@ Future<void> main() async {
       try {
         await dotenv.load(fileName: ".env");
       } catch (_) {
-        AppLogger.info('No .env file found; using default system configuration.');
+        AppLogger.info(
+          'No .env file found; using default system configuration.',
+        );
       }
 
       FlutterError.onError = (FlutterErrorDetails details) {

@@ -6,6 +6,7 @@ import GlassEmptyState from "@/components/ui/GlassEmptyState";
 import Link from "next/link";
 import { Building2, Power, PowerOff, ExternalLink, Edit3, Trash2 } from "lucide-react";
 import type { Tenant, TenantStatus } from "@/types/tenant";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 interface TenantTableProps {
   tenants: Tenant[];
@@ -31,19 +32,6 @@ function statusToVariant(status: TenantStatus): "success" | "danger" | "warning"
   }
 }
 
-function typeLabel(type: string): string {
-  switch (type) {
-    case "SCHOOL":
-      return "K-12 School";
-    case "COLLEGE":
-      return "University / College";
-    case "COACHING_CENTER":
-      return "Coaching Center";
-    default:
-      return type;
-  }
-}
-
 export default function TenantTable({
   tenants,
   loading,
@@ -54,9 +42,16 @@ export default function TenantTable({
 }: TenantTableProps): React.ReactElement {
   if (loading) {
     return (
-      <div className="bg-card border border-[#e3e1dc] rounded-xl p-4 space-y-3">
+      <div className="space-y-4 rounded-xl border border-border bg-card p-4" role="status" aria-label="Loading institutions" aria-busy="true">
         {Array.from({ length: 5 }).map((_, i) => (
-          <div key={i} className="h-12 rounded-lg bg-secondary animate-pulse" />
+          <div key={i} className="flex items-center gap-3 border-b border-border pb-3 last:border-0 last:pb-0">
+            <Skeleton className="size-9 shrink-0 rounded-lg" />
+            <div className="min-w-0 flex-1 space-y-2">
+              <Skeleton className="h-3 w-1/3" />
+              <Skeleton className="h-3 w-2/3" />
+            </div>
+            <Skeleton className="hidden h-7 w-20 sm:block" />
+          </div>
         ))}
       </div>
     );
@@ -115,7 +110,7 @@ export default function TenantTable({
                   </td>
 
                   <td className="px-4 py-3.5">
-                    <span className="text-xs text-[#202b30] font-medium">{typeLabel(tenant.type)}</span>
+                    <span className="text-xs text-[#202b30] font-medium">College / University</span>
                   </td>
 
                   <td className="px-4 py-3.5">

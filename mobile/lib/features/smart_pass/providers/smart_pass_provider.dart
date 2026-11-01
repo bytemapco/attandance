@@ -63,40 +63,21 @@ class SmartPassNotifier extends StateNotifier<SmartPassState> {
     try {
       final deviceUuid = await _deviceService.getDeviceUUID();
 
-      double? lat;
-      double? lng;
-      double? acc;
-
+      // The server checks the campus fence with the fresh fix and its accuracy. Never send a stale
+      // or guessed position.
+      final Position position;
       try {
-        final pos = await _locationService.getHighlyAccuratePosition();
-        lat = pos.latitude;
-        lng = pos.longitude;
-        acc = pos.accuracy;
-      } catch (_) {
-        try {
-          final lastPos = await Geolocator.getLastKnownPosition();
-          if (lastPos != null) {
-            lat = lastPos.latitude;
-            lng = lastPos.longitude;
-            acc = lastPos.accuracy;
-          }
-        } catch (_) {}
-      }
-
-      if (lat == null || lng == null) {
-        state = state.copyWith(
-          isLoading: false,
-          errorMessage:
-              'Unable to acquire accurate GPS position. Please ensure location services are enabled and permissions are granted.',
-        );
+        position = await _locationService.getHighlyAccuratePosition();
+      } on LocationException catch (e) {
+        state = state.copyWith(isLoading: false, errorMessage: e.message);
         return;
       }
 
       final data = await _api.scanSmartPass(
         qrToken: trimmed,
-        latitude: lat,
-        longitude: lng,
-        accuracy: acc ?? 10.0,
+        latitude: position.latitude,
+        longitude: position.longitude,
+        accuracy: position.accuracy,
         deviceUuid: deviceUuid,
       );
 

@@ -132,8 +132,8 @@ class ResultMetricsCard extends StatelessWidget {
                     Icons.info_outline_rounded,
                     size: 14,
                     color: isDark
-                      ? const Color(0xFF38BDF8)
-                      : const Color(0xFF0284C7),
+                        ? const Color(0xFF38BDF8)
+                        : const Color(0xFF0284C7),
                   ),
                 ),
               ),
@@ -159,4 +159,3 @@ class ResultMetricsCard extends StatelessWidget {
     );
   }
 }
-

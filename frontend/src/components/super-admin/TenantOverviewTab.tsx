@@ -36,16 +36,14 @@ export default function TenantOverviewTab({ tenant }: TenantOverviewTabProps): R
 
       {/* Details & Administration Section */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Access & Domain Routing Card */}
+        {/* Tenant Access Card */}
         <GlassCard className="p-5 space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
               <Globe size={16} className="text-primary" />
-              <span>Portal Access</span>
+              <span>Tenant Login</span>
             </h3>
-            <GlassBadge variant={tenant.domain ? "success" : "neutral"}>
-              {tenant.domain ? "Custom Domain" : "Standard URL"}
-            </GlassBadge>
+            <GlassBadge variant="neutral">Slug-based</GlassBadge>
           </div>
 
           <div className="p-3.5 bg-muted/40 rounded-xl border border-border space-y-2.5">
@@ -53,12 +51,6 @@ export default function TenantOverviewTab({ tenant }: TenantOverviewTabProps): R
               <span className="text-muted-foreground font-medium">Login URL:</span>
               <span className="font-mono text-foreground font-semibold">
                 /login?tenant={tenant.slug}
-              </span>
-            </div>
-            <div className="flex items-center justify-between text-xs">
-              <span className="text-muted-foreground font-medium">Custom Domain:</span>
-              <span className="font-mono text-primary font-semibold">
-                {tenant.domain || "Not configured"}
               </span>
             </div>
             <div className="flex items-center justify-between text-xs">

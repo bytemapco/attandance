@@ -7,12 +7,14 @@ import Sidebar from "@/components/navigation/Sidebar";
 import Header from "@/components/navigation/Header";
 import GlassLoader from "@/components/ui/GlassLoader";
 import { usePlatformWebSocket } from "@/hooks/usePlatformWebSocket";
+import { cn } from "@/lib/utils";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }): React.ReactElement {
   const router = useRouter();
   const pathname = usePathname();
   const { isAuthenticated, isHydrated, user, isSuspended } = useAuthStore();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const isOnboarding = pathname === "/admin/onboarding";
 
   // Connect WebSocket — handles real-time tenant suspension push
   usePlatformWebSocket();
@@ -62,12 +64,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   }
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row bg-background text-foreground overflow-x-hidden">
+    <div className={cn("flex flex-col md:flex-row bg-background text-foreground overflow-x-hidden", isOnboarding ? "h-dvh min-h-0 overflow-hidden" : "min-h-screen")}>
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
-      <div className="flex-1 md:ml-[260px] min-w-0 flex flex-col transition-all duration-200 min-h-screen">
+      <div className={cn("flex-1 md:ml-[260px] min-w-0 flex flex-col transition-all duration-200", isOnboarding ? "h-full min-h-0 overflow-hidden" : "min-h-screen")}>
         <Header onMenuToggle={() => setSidebarOpen(!sidebarOpen)} />
-        <main className="flex-1 px-4 sm:px-6 lg:px-8 py-6 max-w-7xl w-full mx-auto min-w-0">
+        <main className={cn("flex-1 max-w-7xl w-full mx-auto min-w-0", isOnboarding ? "min-h-0 overflow-hidden px-3 py-3 sm:px-5" : "px-4 sm:px-6 lg:px-8 py-6")}>
           {children}
         </main>
       </div>

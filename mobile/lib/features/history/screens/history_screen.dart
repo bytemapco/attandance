@@ -34,6 +34,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
   @override
   Widget build(BuildContext context) {
     final hState = ref.watch(historyProvider);
+    final reduceMotion = MediaQuery.disableAnimationsOf(context);
     final pct = hState.data?.overallAttendancePercentage ?? 0;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final pctClean = (pct.isNaN || pct.isInfinite) ? 0.0 : pct;
@@ -88,7 +89,9 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                     const ShimmerCalendarPlaceholder()
                   else
                     AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 240),
+                      duration: reduceMotion
+                          ? Duration.zero
+                          : const Duration(milliseconds: 240),
                       switchInCurve: Curves.easeOutCubic,
                       switchOutCurve: Curves.easeInCubic,
                       transitionBuilder: (child, animation) {

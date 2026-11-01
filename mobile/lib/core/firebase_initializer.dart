@@ -6,7 +6,6 @@ import 'package:smart_attendance_app/core/firebase_options.dart';
 import 'package:smart_attendance_app/data/local/notification_service.dart';
 import 'package:smart_attendance_app/utils/logger.dart';
 
-
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   try {
@@ -59,9 +58,7 @@ class FirebaseInitializer {
         'Add google-services.json or FIREBASE_* in .env to activate.',
       );
     } catch (e) {
-      AppLogger.info(
-        'Push notifications (FCM) skipped: $e',
-      );
+      AppLogger.info('Push notifications (FCM) skipped: $e');
     }
   }
 }

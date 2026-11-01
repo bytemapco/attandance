@@ -65,13 +65,3 @@ export const studentUpdateSchema = z.object({
 });
 
 export type StudentUpdateFormData = z.infer<typeof studentUpdateSchema>;
-
-export const studentNoteSchema = z.object({
-  note: z
-    .string()
-    .trim()
-    .min(1, "Note cannot be empty")
-    .max(500, "Note cannot exceed 500 characters"),
-});
-
-export type StudentNoteFormData = z.infer<typeof studentNoteSchema>;

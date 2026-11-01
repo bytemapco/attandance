@@ -108,6 +108,7 @@ class SmartPassScannerView extends StatelessWidget {
                     builder: (context, state, child) {
                       final isTorchOn = state.torchState == TorchState.on;
                       return _buildIconButton(
+                        label: isTorchOn ? 'Turn torch off' : 'Turn torch on',
                         icon: isTorchOn
                             ? Icons.flash_on_rounded
                             : Icons.flash_off_rounded,
@@ -118,6 +119,7 @@ class SmartPassScannerView extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   _buildIconButton(
+                    label: 'Switch camera',
                     icon: Icons.flip_camera_ios_rounded,
                     isActive: false,
                     onPressed: () => controller.switchCamera(),
@@ -133,32 +135,37 @@ class SmartPassScannerView extends StatelessWidget {
   }
 
   Widget _buildIconButton({
+    required String label,
     required IconData icon,
     required bool isActive,
     required VoidCallback onPressed,
   }) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(12),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-        child: InkWell(
-          onTap: onPressed,
-          borderRadius: BorderRadius.circular(12),
-          child: Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: isActive
-                  ? const Color(0xFFF95721).withValues(alpha: 0.85)
-                  : Colors.black.withValues(alpha: 0.45),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
+    return Semantics(
+      button: true,
+      label: label,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+          child: InkWell(
+            onTap: onPressed,
+            borderRadius: BorderRadius.circular(12),
+            child: Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
                 color: isActive
-                    ? const Color(0xFFF95721)
-                    : Colors.white.withValues(alpha: 0.2),
+                    ? const Color(0xFFF95721).withValues(alpha: 0.85)
+                    : Colors.black.withValues(alpha: 0.45),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: isActive
+                      ? const Color(0xFFF95721)
+                      : Colors.white.withValues(alpha: 0.2),
+                ),
               ),
+              child: Icon(icon, color: Colors.white, size: 20),
             ),
-            child: Icon(icon, color: Colors.white, size: 20),
           ),
         ),
       ),

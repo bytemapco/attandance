@@ -80,7 +80,7 @@
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>in.bytemap.smartattendance</string>
+			<string>com.smartattendance.smart_attendance_app</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>smartattendance</string>

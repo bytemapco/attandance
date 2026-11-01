@@ -33,10 +33,7 @@ class LeaveNotesInput extends StatelessWidget {
             ),
             decoration: const InputDecoration(
               hintText: 'Provide additional context for your instructor...',
-              hintStyle: TextStyle(
-                color: SasColors.textMuted,
-                fontSize: 12,
-              ),
+              hintStyle: TextStyle(color: SasColors.textMuted, fontSize: 12),
               border: InputBorder.none,
               isDense: true,
               contentPadding: EdgeInsets.zero,

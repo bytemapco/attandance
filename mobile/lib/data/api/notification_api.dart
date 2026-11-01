@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_attendance_app/data/api/dio_client.dart';
+import 'package:smart_attendance_app/core/server_time.dart';
 
 final notificationApiProvider = Provider<NotificationApi>((ref) {
   return NotificationApi(ref.read(dioProvider));
@@ -42,9 +43,8 @@ class NotificationApiItem {
       category: json['category'] as String? ?? 'system',
       link: json['link'] as String?,
       isRead: json['is_read'] as bool? ?? false,
-      createdAt: json['created_at'] != null
-          ? DateTime.tryParse(json['created_at'] as String) ?? DateTime.now()
-          : DateTime.now(),
+      createdAt:
+          parseServerTime(json['created_at'] as String?) ?? DateTime.now(),
     );
   }
 }

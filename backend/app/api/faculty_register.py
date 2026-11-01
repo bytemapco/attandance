@@ -13,7 +13,8 @@ router = APIRouter(prefix="/faculty", tags=["Faculty Daily Schedule & Attendance
 
 @router.get("/daily-schedule")
 async def get_daily_schedule(
-    target_date: Optional[date] = Query(None, description="Target date (defaults to today in IST)"),
+    target_date: Optional[date] = Query(None, description="First date (defaults to today in IST)"),
+    end_date: Optional[date] = Query(None, description="Last date, inclusive (defaults to target_date)"),
     current_teacher: Teacher = Depends(get_current_teacher),
     tenant_id: str = Depends(get_tenant_context),
 ):
@@ -23,6 +24,7 @@ async def get_daily_schedule(
         tenant_id=resolved_tenant,
         faculty_id=current_teacher.id,
         target_date=query_date,
+        end_date=end_date,
     )
     return [
         {
@@ -30,7 +32,6 @@ async def get_daily_schedule(
             "tenant_id": o.tenantId,
             "course_section_id": o.courseSectionId,
             "date": o.date,
-            "time_slot_id": o.timeSlotId,
             "classroom_id": o.classroomId,
             "faculty_id": o.facultyId,
             "substitute_faculty_id": o.substituteFacultyId,
@@ -48,8 +49,8 @@ async def get_daily_schedule(
                 if (getattr(o.faculty, "firstName", None) or getattr(o.faculty, "lastName", None))
                 else (getattr(getattr(o.faculty, "user", None), "name", "") or "")
             ),
-            "start_time": o.timeSlot.startTime if o.timeSlot else "",
-            "end_time": o.timeSlot.endTime if o.timeSlot else "",
+            "start_time": o.startTime,
+            "end_time": o.endTime,
             "present_count": len([r for r in o.attendanceRecords if r.status == "PRESENT"]),
             "total_enrolled": len(o.courseSection.enrollments) if o.courseSection and o.courseSection.enrollments else 0,
         }
@@ -84,7 +85,6 @@ async def update_occurrence_register(
 
 @router.get("/weekly-timetable")
 async def get_weekly_timetable(
-    academic_year_id: Optional[str] = Query(None, description="Optional Academic Year / Semester ID filter"),
     current_teacher: Teacher = Depends(get_current_teacher),
     tenant_id: str = Depends(get_tenant_context),
 ):
@@ -93,7 +93,6 @@ async def get_weekly_timetable(
     return await TeacherScheduleService.get_weekly_timetable(
         tenant_id=resolved_tenant,
         faculty_id=current_teacher.id,
-        academic_year_id=academic_year_id,
     )
 
 

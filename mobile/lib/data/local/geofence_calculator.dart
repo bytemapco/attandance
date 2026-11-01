@@ -1,36 +1,34 @@
 import 'package:geolocator/geolocator.dart';
-import 'package:smart_attendance_app/core/constants.dart';
 
+/// Client copy of the server rule in backend/app/utils/geofencing.py.
+/// A student is inside when the distance is at most the campus radius plus the GPS accuracy.
 class GeofenceCalculator {
-  static bool isWithinGeofence(
-    Position student,
-    double classLat,
-    double classLng, {
-    double radiusMeters = 100.0,
+  GeofenceCalculator._();
+
+  static double distanceMeters({
+    required double fromLatitude,
+    required double fromLongitude,
+    required double toLatitude,
+    required double toLongitude,
   }) {
-    final distance = Geolocator.distanceBetween(
-      student.latitude,
-      student.longitude,
-      classLat,
-      classLng,
+    return Geolocator.distanceBetween(
+      fromLatitude,
+      fromLongitude,
+      toLatitude,
+      toLongitude,
     );
-    return distance <= radiusMeters + kGeofenceGraceMeters;
   }
 
-  static String describeDistance(
-    Position student,
-    double classLat,
-    double classLng,
-  ) {
-    final distance = Geolocator.distanceBetween(
-      student.latitude,
-      student.longitude,
-      classLat,
-      classLng,
-    );
-    if (distance < 1000) {
-      return '${distance.toStringAsFixed(0)}m';
-    }
-    return '${(distance / 1000).toStringAsFixed(1)}km';
+  static bool isWithinFence({
+    required double distance,
+    required double radiusMeters,
+    required double accuracy,
+  }) {
+    return distance <= radiusMeters + accuracy;
+  }
+
+  static String formatDistance(double meters) {
+    if (meters < 1000) return '${meters.toStringAsFixed(0)}m';
+    return '${(meters / 1000).toStringAsFixed(1)}km';
   }
 }

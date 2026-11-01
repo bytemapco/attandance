@@ -141,6 +141,12 @@ table, .tabular-nums, .font-mono, [data-tabular="true"] {
   color: #202b30;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .animate-pulse {
+    animation: none !important;
+  }
+}
+
 /* Enterprise Tables */
 .glass-table {
   width: 100%;
@@ -281,25 +287,6 @@ table, .tabular-nums, .font-mono, [data-tabular="true"] {
 .leaflet-control-zoom a:hover {
   background: #eeece7 !important;
   color: #28363b !important;
-}
-
-/* Recharts Tooltip */
-.recharts-default-tooltip {
-  background: #ffffff !important;
-  border: 1px solid #e3e1dc !important;
-  border-radius: 10px !important;
-  box-shadow: 0 4px 14px rgba(40, 54, 59, 0.09) !important;
-}
-
-.recharts-tooltip-label {
-  color: #202b30 !important;
-  font-weight: 600 !important;
-  font-size: 12px !important;
-}
-
-.recharts-tooltip-item {
-  color: #526f78 !important;
-  font-size: 12px !important;
 }
 
 /* Live attendance QR: bar drains over one rotation */

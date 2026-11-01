@@ -15,10 +15,9 @@ def _to_dt(d: date) -> datetime:
 class TimetableService:
     @staticmethod
     async def create_course_section(tenant_id: str, data: CourseSectionCreate):
-        year_id = data.resolve_year_id()
         existing = await db.coursesection.find_first(
             where={
-                "academicYearId": year_id,
+                "tenantId": tenant_id,
                 "subjectId": data.subject_id,
                 "name": data.name,
                 "batch": data.batch,
@@ -27,12 +26,11 @@ class TimetableService:
         if existing:
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
-                detail=f"Section '{data.name}' already exists for this subject in this academic year",
+                detail=f"Section '{data.name}' already exists for this subject",
             )
         section = await db.coursesection.create(
             data={
                 "tenantId": tenant_id,
-                "academicYearId": year_id,
                 "subjectId": data.subject_id,
                 "departmentId": data.department_id,
                 "name": data.name,
@@ -52,16 +50,8 @@ class TimetableService:
         return section
 
     @staticmethod
-    async def list_course_sections(
-        tenant_id: str,
-        year_id: Optional[str] = None,
-        term_id: Optional[str] = None,
-        subject_id: Optional[str] = None,
-    ):
+    async def list_course_sections(tenant_id: str, subject_id: Optional[str] = None):
         where = {"tenantId": tenant_id}
-        effective_year_id = year_id or term_id
-        if effective_year_id:
-            where["academicYearId"] = effective_year_id
         if subject_id:
             where["subjectId"] = subject_id
         return await db.coursesection.find_many(
@@ -84,7 +74,7 @@ class TimetableService:
                 "defaultRoom": True,
                 "faculties": {"include": {"teacher": {"include": {"user": True}}}},
                 "enrollments": {"include": {"student": {"include": {"user": True}}}},
-                "timetableRules": {"include": {"timeSlot": True, "classroom": True}},
+                "timetableRules": {"include": {"classroom": True}},
             },
         )
         if not section:
@@ -108,35 +98,36 @@ class TimetableService:
 
     @staticmethod
     async def create_timetable_rule(tenant_id: str, data: TimetableRuleCreate):
-        if data.effective_from >= data.effective_until:
+        if data.effective_until is not None and data.effective_from >= data.effective_until:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="effective_from must be before effective_until",
             )
         existing = await db.timetablerule.find_unique(
             where={
-                "courseSectionId_timeSlotId_dayOfWeek": {
+                "courseSectionId_dayOfWeek_startTime": {
                     "courseSectionId": data.course_section_id,
-                    "timeSlotId": data.time_slot_id,
                     "dayOfWeek": data.day_of_week,
+                    "startTime": data.start_time,
                 }
             }
         )
         if existing:
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
-                detail="Timetable slot collision: A rule already exists for this section, slot, and day",
+                detail="Timetable collision: A rule already exists for this section, day, and start time",
             )
         return await db.timetablerule.create(
             data={
                 "tenantId": tenant_id,
                 "courseSectionId": data.course_section_id,
-                "timeSlotId": data.time_slot_id,
                 "classroomId": data.classroom_id,
                 "teacherId": data.teacher_id,
                 "dayOfWeek": data.day_of_week,
+                "startTime": data.start_time,
+                "endTime": data.end_time,
                 "effectiveFrom": _to_dt(data.effective_from),
-                "effectiveUntil": _to_dt(data.effective_until),
+                "effectiveUntil": _to_dt(data.effective_until) if data.effective_until else None,
                 "isActive": data.is_active if data.is_active is not None else True,
             }
         )
@@ -148,7 +139,7 @@ class TimetableService:
             where["courseSectionId"] = section_id
         return await db.timetablerule.find_many(
             where=where,
-            include={"timeSlot": True, "classroom": True, "teacher": {"include": {"user": True}}},
+            include={"classroom": True, "teacher": {"include": {"user": True}}},
             order={"dayOfWeek": "asc"},
         )
 

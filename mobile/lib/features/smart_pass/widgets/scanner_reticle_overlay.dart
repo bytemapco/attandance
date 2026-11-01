@@ -24,12 +24,24 @@ class _ScannerReticleOverlayState extends State<ScannerReticleOverlay>
     _animController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 2200),
-    )..repeat(reverse: true);
+    );
 
     _laserAnimation = CurvedAnimation(
       parent: _animController,
       curve: Curves.easeInOutCubic,
     );
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // With "reduce motion" on, the laser stays at the centre instead of sweeping.
+    if (MediaQuery.disableAnimationsOf(context)) {
+      _animController.stop();
+      _animController.value = 0.5;
+    } else if (!_animController.isAnimating) {
+      _animController.repeat(reverse: true);
+    }
   }
 
   @override

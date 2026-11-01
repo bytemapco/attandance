@@ -1,13 +1,13 @@
 from datetime import date, datetime
 from typing import Literal, Optional, List
-from pydantic import BaseModel, Field, ConfigDict, field_validator
+from pydantic import BaseModel, Field, ConfigDict, field_validator, model_validator
+
+from app.schemas.clock_time import ClockTime, require_end_after_start
 
 
 class CourseSectionCreate(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    academic_year_id: Optional[str] = Field(None, description="Target Academic Year / Semester ID")
-    academic_term_id: Optional[str] = Field(None, description="Deprecated alias for academic_year_id")
     subject_id: str = Field(..., description="Subject ID")
     department_id: Optional[str] = None
     name: str = Field(..., min_length=1, max_length=50, description="e.g. Section A, Div 1")
@@ -20,20 +20,12 @@ class CourseSectionCreate(BaseModel):
     def strip_text(cls, v: Optional[str]) -> Optional[str]:
         return v.strip() if isinstance(v, str) else v
 
-    def resolve_year_id(self) -> str:
-        val = self.academic_year_id or self.academic_term_id
-        if not val:
-            raise ValueError("academic_year_id is required")
-        return val
-
 
 class CourseSectionResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: str
     tenant_id: str
-    academic_year_id: str
-    academic_term_id: Optional[str] = None
     subject_id: str
     department_id: Optional[str] = None
     name: str
@@ -58,13 +50,19 @@ class TimetableRuleCreate(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     course_section_id: str
-    time_slot_id: str
+    start_time: ClockTime
+    end_time: ClockTime
     classroom_id: Optional[str] = None
     teacher_id: Optional[str] = None
     day_of_week: int = Field(..., ge=1, le=7, description="1=Monday..7=Sunday")
     effective_from: date
-    effective_until: date
+    effective_until: Optional[date] = Field(None, description="Leave empty for a rule that runs until removed")
     is_active: Optional[bool] = True
+
+    @model_validator(mode="after")
+    def end_is_after_start(self) -> "TimetableRuleCreate":
+        require_end_after_start(self.start_time, self.end_time)
+        return self
 
 
 class TimetableRuleResponse(BaseModel):
@@ -73,16 +71,14 @@ class TimetableRuleResponse(BaseModel):
     id: str
     tenant_id: str
     course_section_id: str
-    time_slot_id: str
     classroom_id: Optional[str] = None
     teacher_id: Optional[str] = None
     day_of_week: int
+    start_time: str
+    end_time: str
     effective_from: date
-    effective_until: date
+    effective_until: Optional[date] = None
     is_active: bool
-    time_slot_name: Optional[str] = None
-    start_time: Optional[str] = None
-    end_time: Optional[str] = None
     teacher_name: Optional[str] = None
     classroom_name: Optional[str] = None
 

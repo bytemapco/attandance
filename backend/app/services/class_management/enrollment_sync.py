@@ -47,5 +47,5 @@ async def end_class_enrollments(section_ids: List[str], student_ids: List[str]) 
     )
 
 
-def all_section_ids(term) -> List[str]:
-    return [s.id for s in term.courseSections or []]
+def all_section_ids(group) -> List[str]:
+    return [s.id for s in group.courseSections or []]

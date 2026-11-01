@@ -56,6 +56,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final authState = ref.watch(authProvider);
     final isLoading = authState.status == AuthStatus.loading;
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final reduceMotion = MediaQuery.disableAnimationsOf(context);
 
     return PopScope(
       canPop: _step == _LoginStep.identifier,
@@ -72,7 +73,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           children: [
             SizedBox.expand(
               child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 320),
+                duration: reduceMotion
+                    ? Duration.zero
+                    : const Duration(milliseconds: 320),
                 switchInCurve: Curves.easeOutCubic,
                 switchOutCurve: Curves.easeInCubic,
                 transitionBuilder: (child, animation) {
@@ -101,6 +104,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   Widget _buildIdentifierScreen(bool isDark) {
     final isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
+    final reduceMotion = MediaQuery.disableAnimationsOf(context);
     return KeyedSubtree(
       key: const ValueKey('step_identifier'),
       child: Stack(
@@ -110,6 +114,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           Positioned.fill(
             child: Image.asset(
               'assets/images/auth_hero.png',
+              excludeFromSemantics: true,
               fit: BoxFit.cover,
               alignment: Alignment.topCenter,
             ),
@@ -127,7 +132,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             left: 0,
             right: 0,
             child: AnimatedOpacity(
-              duration: const Duration(milliseconds: 200),
+              duration: reduceMotion
+                  ? Duration.zero
+                  : const Duration(milliseconds: 200),
               opacity: isKeyboardOpen ? 0.0 : 1.0,
               child: IgnorePointer(
                 ignoring: isKeyboardOpen,

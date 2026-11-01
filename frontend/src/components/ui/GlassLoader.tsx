@@ -1,8 +1,6 @@
-"use client";
-
 import React from "react";
-import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ContentSkeleton } from "./Skeleton";
 
 export interface GlassLoaderProps {
   text?: string;
@@ -11,9 +9,9 @@ export interface GlassLoaderProps {
 
 export default function GlassLoader({ text = "Loading records...", className = "" }: GlassLoaderProps): React.ReactElement {
   return (
-    <div className={cn("flex flex-col items-center justify-center py-16 gap-3", className)}>
-      <Loader2 size={26} className="text-[#28363b] animate-spin" />
-      <p className="text-xs font-semibold text-[#526f78] tracking-wide">{text}</p>
+    <div className={cn("w-full py-3", className)} role="status" aria-live="polite" aria-busy="true">
+      <span className="sr-only">{text}</span>
+      <ContentSkeleton />
     </div>
   );
 }

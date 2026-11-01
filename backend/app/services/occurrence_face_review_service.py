@@ -28,12 +28,13 @@ def _redis():
 
 
 def _result(scores: dict, record_status: str) -> dict:
-    counted = [scores["face"], scores["liveness"]] + ([scores["background"]] if scores["background_counted"] else [])
+    checks = [scores["face"], scores["liveness"], scores["background"] if scores["background_counted"] else None]
+    ran = [value for value in checks if value is not None]
     return {
         "face_score": scores["face"],
         "liveness_score": scores["liveness"],
         "background_score": scores["background"],
-        "final_ai_score": round(sum(counted) / len(counted), 4),
+        "final_ai_score": round(sum(ran) / len(ran), 4) if ran else None,
         "predicted_status": "Flagged" if record_status == "FLAGGED" else "Present",
     }
 

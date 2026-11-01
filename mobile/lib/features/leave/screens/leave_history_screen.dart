@@ -8,6 +8,7 @@ import 'package:smart_attendance_app/features/leave/widgets/leave_history_tile.d
 import 'package:smart_attendance_app/shared/widgets/animated_background.dart';
 import 'package:smart_attendance_app/shared/widgets/glass_app_bar.dart';
 import 'package:smart_attendance_app/shared/widgets/glass_card.dart';
+import 'package:smart_attendance_app/shared/widgets/shimmer_placeholder.dart';
 
 final leaveHistoryProvider = FutureProvider.autoDispose<List<LeaveRequest>>((
   ref,
@@ -35,10 +36,9 @@ class LeaveHistoryScreen extends ConsumerWidget {
                 data: (leaves) => leaves.isEmpty
                     ? _buildEmpty(context)
                     : _buildList(context, leaves),
-                loading: () => const Center(
-                  child: CircularProgressIndicator(
-                    color: SasColors.accentEmerald,
-                  ),
+                loading: () => const SingleChildScrollView(
+                  padding: EdgeInsets.all(16),
+                  child: ShimmerPlaceholder(itemCount: 4, itemHeight: 88),
                 ),
                 error: (err, _) => _buildError(err.toString()),
               ),

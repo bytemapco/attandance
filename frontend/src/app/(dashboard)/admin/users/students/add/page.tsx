@@ -74,9 +74,11 @@ export default function AddStudentPage(): React.ReactElement {
       };
       const { data: created } = await api.post<StudentResponse>("/admin/users/student", payload);
       if (created.invitation_sent === false) {
-        toast("Student created, but the invitation email could not be sent. Share the credentials manually or retry later.", { icon: "⚠️", duration: 7000 });
-      } else {
+        toast.error("Student created, but the invitation email could not be sent. Check SMTP settings, then trigger a password reset.");
+      } else if (created.invitation_sent) {
         toast.success("Student created and temporary password sent via email");
+      } else {
+        toast.success("Student created.");
       }
       router.push("/admin/users/students");
     } catch (err: unknown) {

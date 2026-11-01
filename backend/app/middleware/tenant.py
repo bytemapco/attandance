@@ -77,7 +77,7 @@ class TenantResolutionMiddleware(BaseHTTPMiddleware):
             except Exception as decode_err:
                 logger.debug("Failed extracting JWT payload in tenant middleware: %s", decode_err)
 
-        # 3. Extract tenant identifier from explicit header, custom domain host, or subdomain
+        # 3. Extract tenant identifier from explicit header or platform subdomain
         explicit_header_tid = request.headers.get("X-Tenant-ID")
 
         # 4. Enforce strict cryptographic binding: Prevent Tenant Spoofing
@@ -106,8 +106,6 @@ class TenantResolutionMiddleware(BaseHTTPMiddleware):
                         header_tenant_id = parts[0]
                     elif len(parts) >= 4 and not _is_platform_subdomain(parts[1]):
                         header_tenant_id = parts[1]
-                elif len(parts) == 2 and not _is_platform_subdomain(parts[0]):
-                    header_tenant_id = host_header
 
         tenant_identifier = jwt_tenant_id or header_tenant_id
 
@@ -157,7 +155,6 @@ class TenantResolutionMiddleware(BaseHTTPMiddleware):
                         "OR": [
                             {"id": tenant_identifier},
                             {"slug": tenant_identifier},
-                            {"domain": tenant_identifier},
                         ]
                     }
                 )

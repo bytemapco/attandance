@@ -8,7 +8,9 @@ class SasColors {
 
   // Core Brand Palette — "Smart Attendance Brand Kit"
   static const Color brandOrange = Color(0xFFF95721); // Primary warm orange
-  static const Color brandOrangeAlt = Color(0xFFFF8A00); // Brand kit secondary orange
+  static const Color brandOrangeAlt = Color(
+    0xFFFF8A00,
+  ); // Brand kit secondary orange
   static const Color brilliance = Color(0xFFF8FAFC); // Clean white/slate-50
   static const Color polishWhite = Color(0xFFEFF3F7);
   static const Color sunsetInItaly = Color(0xFFEAC96A); // Champagne
@@ -51,18 +53,18 @@ class SasColors {
 
   static Color textPrimaryOf(BuildContext context) =>
       Theme.of(context).brightness == Brightness.dark
-          ? brilliance
-          : const Color(0xFF0F172A);
+      ? brilliance
+      : const Color(0xFF0F172A);
 
   static Color textSecondaryOf(BuildContext context) =>
       Theme.of(context).brightness == Brightness.dark
-          ? const Color(0xFFCBD5E1) // Slate-300
-          : const Color(0xFF334155); // Slate-700
+      ? const Color(0xFFCBD5E1) // Slate-300
+      : const Color(0xFF334155); // Slate-700
 
   static Color textMutedOf(BuildContext context) =>
       Theme.of(context).brightness == Brightness.dark
-          ? const Color(0xFF94A3B8) // Slate-400
-          : const Color(0xFF475569); // Slate-600
+      ? const Color(0xFF94A3B8) // Slate-400
+      : const Color(0xFF475569); // Slate-600
 
   static const Color accentEmerald = success;
   static const Color accentTeal = sunsetInItaly;

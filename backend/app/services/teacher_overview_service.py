@@ -2,6 +2,7 @@
 from collections import defaultdict
 from prisma.models import Teacher
 from app.db.client import db
+from app.services.system_config_service import SystemConfigService
 from app.services.attendance_percentage import ATTENDED_STATUSES, attendance_percentage
 
 HISTORY_LIMIT = 100
@@ -23,7 +24,6 @@ async def list_history(tenant_id: str, teacher: Teacher, section_id: str | None)
         where=where,
         include={
             "courseSection": {"include": {"subject": True, "enrollments": {"where": {"status": "ACTIVE", "endedAt": None}}}},
-            "timeSlot": True,
             "attendanceRecords": True,
         },
         order=[{"date": "desc"}, {"createdAt": "desc"}],
@@ -39,7 +39,7 @@ async def list_history(tenant_id: str, teacher: Teacher, section_id: str | None)
                 "date": o.date,
                 "class_code": o.courseSection.name,
                 "subject_name": o.courseSection.subject.name,
-                "time_slot": f"{o.timeSlot.startTime}–{o.timeSlot.endTime}",
+                "time_range": f"{o.startTime}–{o.endTime}",
                 "locked": o.isAttendanceLocked,
                 "present": sum(1 for s in statuses if s in ATTENDED_STATUSES),
                 "flagged": sum(1 for s in statuses if s == "FLAGGED"),
@@ -54,7 +54,7 @@ async def list_flagged(tenant_id: str, teacher: Teacher) -> list[dict]:
         where={"tenantId": tenant_id, "status": "FLAGGED", "occurrence": {"is": {"OR": _mine(teacher)}}},
         include={
             "student": True,
-            "occurrence": {"include": {"courseSection": {"include": {"subject": True}}, "timeSlot": True}},
+            "occurrence": {"include": {"courseSection": {"include": {"subject": True}}}},
         },
         order={"verifiedAt": "desc"},
     )
@@ -67,7 +67,7 @@ async def list_flagged(tenant_id: str, teacher: Teacher) -> list[dict]:
             "class_code": r.occurrence.courseSection.name,
             "subject_name": r.occurrence.courseSection.subject.name,
             "date": r.occurrence.date,
-            "time_slot": f"{r.occurrence.timeSlot.startTime}–{r.occurrence.timeSlot.endTime}",
+            "time_range": f"{r.occurrence.startTime}–{r.occurrence.endTime}",
             "method": str(r.method),
             "remarks": r.remarks,
             "locked": r.occurrence.isAttendanceLocked,
@@ -98,11 +98,11 @@ def _student_rows(enrollments, held, by_student, threshold: float) -> tuple[list
 
 
 async def class_analytics(tenant_id: str, teacher: Teacher) -> list[dict]:
+    config = await SystemConfigService().get_config(tenant_id=tenant_id)
     sections = await db.coursesection.find_many(
         where={"tenantId": tenant_id, "faculties": {"some": {"teacherId": teacher.id}}},
         include={
             "subject": True,
-            "academicYear": True,
             "enrollments": {"where": {"status": "ACTIVE", "endedAt": None}, "include": {"student": True}},
             "occurrences": {"where": {"status": "CONDUCTED", "isAttendanceLocked": True}, "include": {"attendanceRecords": True}},
         },
@@ -115,7 +115,7 @@ async def class_analytics(tenant_id: str, teacher: Teacher) -> list[dict]:
         for occurrence in held:
             for record in occurrence.attendanceRecords:
                 by_student[record.studentId][occurrence.id] = record.status
-        threshold = section.academicYear.minAttendancePct
+        threshold = config.minAttendancePct
         everyone, below = _student_rows(section.enrollments, held, by_student, threshold)
         scored = [r["percentage"] for r in everyone if r["percentage"] is not None]
         result.append(

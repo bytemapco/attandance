@@ -181,4 +181,3 @@ class _VerificationAiReviewCardState extends State<VerificationAiReviewCard>
     );
   }
 }
-

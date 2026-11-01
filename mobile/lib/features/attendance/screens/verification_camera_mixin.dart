@@ -58,7 +58,9 @@ mixin VerificationCameraMixin<T extends ConsumerStatefulWidget>
 
   Future<void> capturePhoto() async {
     final ctrl = camera;
-    if (ctrl == null || !ctrl.value.isInitialized || ctrl.value.isTakingPicture) {
+    if (ctrl == null ||
+        !ctrl.value.isInitialized ||
+        ctrl.value.isTakingPicture) {
       return;
     }
     try {
@@ -95,10 +97,22 @@ mixin VerificationCameraMixin<T extends ConsumerStatefulWidget>
     } else {
       isCameraReady = false;
     }
-    if (ctrl != null) {
-      try {
-        await ctrl.dispose();
-      } catch (_) {}
-    }
+    await _closeController(ctrl);
+  }
+
+  /// Releases the camera without touching widget state. Use this from dispose(), where
+  /// setState is not allowed.
+  Future<void> releaseCamera() async {
+    final ctrl = camera;
+    camera = null;
+    isCameraReady = false;
+    await _closeController(ctrl);
+  }
+
+  Future<void> _closeController(CameraController? ctrl) async {
+    if (ctrl == null) return;
+    try {
+      await ctrl.dispose();
+    } catch (_) {}
   }
 }

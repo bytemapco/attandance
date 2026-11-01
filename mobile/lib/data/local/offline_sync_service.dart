@@ -15,6 +15,18 @@ import 'package:smart_attendance_app/data/local/notification_service.dart';
 import 'package:smart_attendance_app/data/local/pending_count_provider.dart';
 import 'package:smart_attendance_app/utils/logger.dart';
 
+enum SyncOutcome { drop, retry }
+
+/// What to do with a queued mark once the server has answered (or not).
+/// A 4xx is the server's final decision (outside the window, not enrolled, already recorded), so
+/// the mark is dropped and the student is told why. A network failure, a server error or an expired
+/// login keeps the mark for the next sync.
+SyncOutcome syncOutcomeForStatus(int? statusCode) {
+  if (statusCode == null || statusCode == 401) return SyncOutcome.retry;
+  if (statusCode >= 400 && statusCode < 500) return SyncOutcome.drop;
+  return SyncOutcome.retry;
+}
+
 final offlineSyncServiceProvider = Provider<OfflineSyncService>((ref) {
   final service = OfflineSyncService(
     ref: ref,
@@ -149,18 +161,27 @@ class OfflineSyncService {
       );
       return true;
     } on DioException catch (e) {
-      final statusCode = e.response?.statusCode ?? 0;
-      if (statusCode >= 400 && statusCode < 500) {
-        await _removePayload(payload);
-        await _deleteImageFile(payload.imagePath);
+      final outcome = syncOutcomeForStatus(e.response?.statusCode);
+      if (outcome == SyncOutcome.retry) {
+        _handleSyncError(payload);
+        return false;
+      }
+      await _removePayload(payload);
+      await _deleteImageFile(payload.imagePath);
+      final reason = mapDioError(e).message;
+      if (e.response?.statusCode == 409) {
         await _notify(
-          'Submission Rejected',
-          'Attendance for ${_className(payload)} was rejected by the server ($statusCode).',
-          kSeverityDanger,
+          'Already Recorded',
+          'Attendance for ${_className(payload)} was already recorded.',
+          kSeverityInfo,
         );
         return false;
       }
-      _handleSyncError(payload);
+      await _notify(
+        'Attendance Not Recorded',
+        'Attendance for ${_className(payload)} was not recorded: $reason',
+        kSeverityDanger,
+      );
       return false;
     } catch (e) {
       AppLogger.error('Sync failed: $e');

@@ -37,11 +37,12 @@ List<RouteBase> buildAppRoutes({
     GoRoute(
       parentNavigatorKey: rootNavKey,
       path: '/reset-password',
-      pageBuilder: (_, state) => slideUpPage(
+      pageBuilder: (context, state) => slideUpPage(
         key: state.pageKey,
         child: ResetPasswordScreen(
           token: state.uri.queryParameters['token'] ?? '',
         ),
+        reduceMotion: MediaQuery.disableAnimationsOf(context),
       ),
     ),
     GoRoute(
@@ -92,20 +93,25 @@ List<RouteBase> buildAppRoutes({
         child: VerificationScreen(
           sessionId: state.pathParameters['sessionId']!,
         ),
+        reduceMotion: MediaQuery.disableAnimationsOf(context),
       ),
     ),
     GoRoute(
       parentNavigatorKey: rootNavKey,
       path: '/result',
-      pageBuilder: (_, state) =>
-          slideUpPage(key: state.pageKey, child: const ResultScreen()),
+      pageBuilder: (context, state) => slideUpPage(
+        key: state.pageKey,
+        child: const ResultScreen(),
+        reduceMotion: MediaQuery.disableAnimationsOf(context),
+      ),
     ),
     GoRoute(
       parentNavigatorKey: rootNavKey,
       path: '/notifications',
-      pageBuilder: (_, state) => slideRightPage(
+      pageBuilder: (context, state) => slideRightPage(
         key: state.pageKey,
         child: const NotificationsScreen(),
+        reduceMotion: MediaQuery.disableAnimationsOf(context),
       ),
     ),
     GoRoute(
@@ -117,68 +123,88 @@ List<RouteBase> buildAppRoutes({
           item: state.extra as AttendanceHistoryItem?,
           attendanceId: state.pathParameters['attendanceId']!,
         ),
+        reduceMotion: MediaQuery.disableAnimationsOf(context),
       ),
     ),
     GoRoute(
       parentNavigatorKey: rootNavKey,
       path: '/leaderboard',
-      pageBuilder: (_, state) => slideRightPage(
+      pageBuilder: (context, state) => slideRightPage(
         key: state.pageKey,
         child: const LeaderboardScreen(),
+        reduceMotion: MediaQuery.disableAnimationsOf(context),
       ),
     ),
     GoRoute(
       parentNavigatorKey: rootNavKey,
       path: '/subject/:classId',
-      pageBuilder: (_, state) => slideRightPage(
+      pageBuilder: (context, state) => slideRightPage(
         key: state.pageKey,
         child: SubjectDetailScreen(classId: state.pathParameters['classId']!),
+        reduceMotion: MediaQuery.disableAnimationsOf(context),
       ),
     ),
     GoRoute(
       parentNavigatorKey: rootNavKey,
       path: '/settings/goals',
-      pageBuilder: (_, state) =>
-          slideRightPage(key: state.pageKey, child: const GoalsScreen()),
+      pageBuilder: (context, state) => slideRightPage(
+        key: state.pageKey,
+        child: const GoalsScreen(),
+        reduceMotion: MediaQuery.disableAnimationsOf(context),
+      ),
     ),
     GoRoute(
       parentNavigatorKey: rootNavKey,
       path: '/settings/notifications',
-      pageBuilder: (_, state) => slideRightPage(
+      pageBuilder: (context, state) => slideRightPage(
         key: state.pageKey,
         child: const NotificationPrefsScreen(),
+        reduceMotion: MediaQuery.disableAnimationsOf(context),
       ),
     ),
     GoRoute(
       parentNavigatorKey: rootNavKey,
       path: '/settings/help',
-      pageBuilder: (_, state) =>
-          slideRightPage(key: state.pageKey, child: const HelpScreen()),
+      pageBuilder: (context, state) => slideRightPage(
+        key: state.pageKey,
+        child: const HelpScreen(),
+        reduceMotion: MediaQuery.disableAnimationsOf(context),
+      ),
     ),
     GoRoute(
       parentNavigatorKey: rootNavKey,
       path: '/settings/sync',
-      pageBuilder: (_, state) =>
-          slideRightPage(key: state.pageKey, child: const SyncStatusScreen()),
+      pageBuilder: (context, state) => slideRightPage(
+        key: state.pageKey,
+        child: const SyncStatusScreen(),
+        reduceMotion: MediaQuery.disableAnimationsOf(context),
+      ),
     ),
     GoRoute(
       parentNavigatorKey: rootNavKey,
       path: '/smart-pass',
-      pageBuilder: (_, state) =>
-          slideUpPage(key: state.pageKey, child: const SmartPassScreen()),
+      pageBuilder: (context, state) => slideUpPage(
+        key: state.pageKey,
+        child: const SmartPassScreen(),
+        reduceMotion: MediaQuery.disableAnimationsOf(context),
+      ),
     ),
     GoRoute(
       parentNavigatorKey: rootNavKey,
       path: '/leave/request',
-      pageBuilder: (_, state) =>
-          slideUpPage(key: state.pageKey, child: const LeaveRequestsScreen()),
+      pageBuilder: (context, state) => slideUpPage(
+        key: state.pageKey,
+        child: const LeaveRequestsScreen(),
+        reduceMotion: MediaQuery.disableAnimationsOf(context),
+      ),
     ),
     GoRoute(
       parentNavigatorKey: rootNavKey,
       path: '/leave/history',
-      pageBuilder: (_, state) => slideRightPage(
+      pageBuilder: (context, state) => slideRightPage(
         key: state.pageKey,
         child: const LeaveHistoryScreen(),
+        reduceMotion: MediaQuery.disableAnimationsOf(context),
       ),
     ),
   ];

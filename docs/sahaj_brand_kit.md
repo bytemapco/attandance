@@ -3,7 +3,6 @@
 **Version:** 1.0  
 **Status:** Selected visual direction — Carbon & Copper  
 **Brand name:** SAHAJ  
-**Hindi name:** सहज  
 **Primary tagline:** Campus, made effortless.  
 **Product category:** Campus technology / education SaaS  
 **Primary audiences:** Students, faculty, academic administrators and institutional decision-makers  
@@ -75,7 +74,6 @@ Examples:
 | Element | Standard |
 |---|---|
 | Brand name | SAHAJ |
-| Hindi signature | सहज |
 | Tagline | Campus, made effortless. |
 | Selected visual direction | Carbon & Copper |
 | Primary brand color | Carbon `#28363B` |
@@ -83,7 +81,6 @@ Examples:
 | Signature accent | Copper `#C98260` |
 | Main background | Warm Ivory `#F5F2ED` |
 | Primary font | Plus Jakarta Sans |
-| Hindi font | Noto Sans Devanagari |
 | Logo direction | Custom geometric symbol + wordmark; final artwork subject to design and trademark clearance |
 | Visual character | Calm, structured, modern, credible, human |
 
@@ -178,7 +175,6 @@ These ratios are token-level checks, not a substitute for testing every rendered
 ### 4.1 Typeface families
 
 - **English / Latin:** Plus Jakarta Sans.
-- **Hindi / Devanagari:** Noto Sans Devanagari.
 - Do not mix multiple Latin font families within the product UI.
 - Use system fallback fonts only when the required typeface cannot load.
 
@@ -216,9 +212,8 @@ The following values are design starting points in logical pixels. Adapt them fo
 ### 5.1 Recommended logo architecture
 
 1. **Primary lockup:** geometric symbol + SAHAJ wordmark.
-2. **Secondary lockup:** wordmark with the Hindi signature `सहज` where context benefits from it.
-3. **Symbol-only:** custom geometric mark for app icons, favicons and compact placements.
-4. **Monochrome:** single-color version for constrained applications and official documents.
+2. **Symbol-only:** custom geometric mark for app icons, favicons and compact placements.
+3. **Monochrome:** single-color version for constrained applications and official documents.
 
 The logo artwork has not yet been finalized. Do not treat a placeholder letter “S” or generated mockup mark as final approved artwork.
 
@@ -827,7 +822,7 @@ Before approving any new or redesigned screen, confirm:
 
 Use this prompt when asking an AI coding or design agent to create or redesign a SAHAJ screen:
 
-> Act as a senior product designer and frontend engineer working on SAHAJ, a global campus technology SaaS platform. Follow `sahaj_brand_kit.md` as the single source of truth. Use the Carbon & Copper identity: Carbon `#28363B`, Mineral `#526F78`, Copper `#C98260`, Warm Ivory `#F5F2ED`, White `#FFFFFF`, and Ink `#202B30`. Use Plus Jakarta Sans for Latin text and Noto Sans Devanagari for Hindi. Create a confident, clear, enterprise-quality interface that remains welcoming and easy to use. Use structured layouts, consistent spacing, restrained borders and shadows, accessible contrast, meaningful status colors and responsive behavior. Preserve the existing product features, API contracts, business logic and navigation. Do not invent features, data or actions. Do not make the design overly decorative, generic, excessively colorful or unnecessarily card-heavy. Inspect the current implementation first, identify UX issues, implement the redesign with reusable components and shared tokens, then test responsiveness, accessibility and the actual user workflows.
+> Act as a senior product designer and frontend engineer working on SAHAJ, a global campus technology SaaS platform. Follow `sahaj_brand_kit.md` as the single source of truth. Use the Carbon & Copper identity: Carbon `#28363B`, Mineral `#526F78`, Copper `#C98260`, Warm Ivory `#F5F2ED`, White `#FFFFFF`, and Ink `#202B30`. Use Plus Jakarta Sans for Latin text. Create a confident, clear, enterprise-quality interface that remains welcoming and easy to use. Use structured layouts, consistent spacing, restrained borders and shadows, accessible contrast, meaningful status colors and responsive behavior. Preserve the existing product features, API contracts, business logic and navigation. Do not invent features, data or actions. Do not make the design overly decorative, generic, excessively colorful or unnecessarily card-heavy. Inspect the current implementation first, identify UX issues, implement the redesign with reusable components and shared tokens, then test responsiveness, accessibility and the actual user workflows.
 
 ---
 

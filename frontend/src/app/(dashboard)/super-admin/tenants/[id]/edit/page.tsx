@@ -12,14 +12,8 @@ import GlassButton from "@/components/ui/GlassButton";
 import GlassLoader from "@/components/ui/GlassLoader";
 import { superAdminService } from "@/services/superAdminService";
 import { getApiErrorMessage } from "@/lib/api";
-import type { TenantDetail, TenantType, TenantStatus } from "@/types/tenant";
+import type { TenantDetail, TenantStatus } from "@/types/tenant";
 import toast from "react-hot-toast";
-
-const TYPE_OPTIONS = [
-  { value: "COLLEGE", label: "College / University" },
-  { value: "SCHOOL", label: "School (K-12)" },
-  { value: "COACHING_CENTER", label: "Coaching / Training Center" },
-];
 
 const STATUS_OPTIONS = [
   { value: "ACTIVE", label: "Active" },
@@ -37,9 +31,7 @@ export default function EditTenantPage(): React.ReactElement {
 
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
-  const [type, setType] = useState<TenantType>("COLLEGE");
   const [status, setStatus] = useState<TenantStatus>("ACTIVE");
-  const [domain, setDomain] = useState("");
   const [licenseCount, setLicenseCount] = useState<number>(100);
 
   useEffect(() => {
@@ -50,9 +42,7 @@ export default function EditTenantPage(): React.ReactElement {
         setTenant(data);
         setName(data.name || "");
         setSlug(data.slug || "");
-        setType(data.type || "COLLEGE");
         setStatus(data.status || "ACTIVE");
-        setDomain(data.domain || "");
         setLicenseCount(data.license_count ?? 100);
       } catch {
         toast.error("Failed to load institution details.");
@@ -76,9 +66,7 @@ export default function EditTenantPage(): React.ReactElement {
       const updated = await superAdminService.updateTenant(tenantId, {
         name: name.trim(),
         slug: slug.trim().toLowerCase(),
-        type,
         status,
-        domain: domain.trim() || undefined,
         license_count: Number(licenseCount),
       });
       toast.success(`"${updated.name}" updated successfully.`);
@@ -129,11 +117,10 @@ export default function EditTenantPage(): React.ReactElement {
               placeholder="e.g. stanford-academy"
               required
             />
-            <GlassSelect
+            <GlassInput
               label="Institution Type"
-              options={TYPE_OPTIONS}
-              value={type}
-              onChange={(val) => setType(val as TenantType)}
+              value="College / University"
+              readOnly
             />
             <GlassSelect
               label="Platform Status"
@@ -146,10 +133,10 @@ export default function EditTenantPage(): React.ReactElement {
 
         <GlassCard className="p-6 space-y-6">
           <div className="border-b border-border pb-3">
-            <h3 className="text-sm font-bold text-foreground">Licensing & Domain</h3>
+            <h3 className="text-sm font-bold text-foreground">Licensing</h3>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div className="max-w-sm">
             <GlassInput
               label="License Quota"
               type="number"
@@ -157,12 +144,6 @@ export default function EditTenantPage(): React.ReactElement {
               onChange={(e) => setLicenseCount(Number(e.target.value))}
               min={0}
               required
-            />
-            <GlassInput
-              label="Custom Domain (Optional)"
-              value={domain}
-              onChange={(e) => setDomain(e.target.value)}
-              placeholder="e.g. portal.school.edu"
             />
           </div>
         </GlassCard>

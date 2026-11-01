@@ -46,11 +46,15 @@ String getFaceHint(double s) => s >= 0.85
     ? 'Weak match'
     : 'Poor lighting';
 
-String getLivenessHint(double s) => s >= 0.8
-    ? 'Confirmed live'
-    : s >= 0.6
-    ? 'Likely live'
-    : 'Check lighting';
+String getLivenessHint(double? s) {
+  if (s == null) return 'Not checked';
+  if (s >= 0.8) return 'Confirmed live';
+  return s >= 0.6 ? 'Likely live' : 'Check lighting';
+}
 
-String getBackgroundHint(double s) =>
-    s >= kGoodScoreThreshold ? 'Classroom verified' : 'Unfamiliar background';
+String getBackgroundHint(double? s) {
+  if (s == null) return 'Not checked';
+  return s >= kGoodScoreThreshold
+      ? 'Classroom verified'
+      : 'Unfamiliar background';
+}

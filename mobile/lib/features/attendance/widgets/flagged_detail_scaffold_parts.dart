@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smart_attendance_app/app/theme.dart';
+import 'package:smart_attendance_app/shared/widgets/shimmer_placeholder.dart';
 
 PreferredSizeWidget buildFlaggedDetailAppBar({
   required BuildContext context,
@@ -12,6 +13,7 @@ PreferredSizeWidget buildFlaggedDetailAppBar({
     elevation: 0,
     centerTitle: true,
     leading: IconButton(
+      tooltip: 'Back',
       icon: Icon(
         Icons.arrow_back_ios_new_rounded,
         size: 18,
@@ -58,10 +60,22 @@ class FlaggedDetailEmptyScaffold extends StatelessWidget {
           isDark: isDark,
           onBack: onBack,
         ),
-        body: Center(
-          child: isLoading
-              ? const CircularProgressIndicator(color: Color(0xFFF95721))
-              : Text(
+        body: isLoading
+            ? SafeArea(
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 480),
+                    child: ListView(
+                      padding: const EdgeInsets.all(20),
+                      children: const [
+                        ShimmerPlaceholder(itemCount: 3, itemHeight: 112),
+                      ],
+                    ),
+                  ),
+                ),
+              )
+            : Center(
+                child: Text(
                   'Record not found',
                   style: GoogleFonts.plusJakartaSans(
                     color: isDark
@@ -69,7 +83,7 @@ class FlaggedDetailEmptyScaffold extends StatelessWidget {
                         : const Color(0xFF64748B),
                   ),
                 ),
-        ),
+              ),
       ),
     );
   }

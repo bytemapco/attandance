@@ -7,6 +7,7 @@ import { superAdminService } from "@/services/superAdminService";
 import { getApiErrorMessage } from "@/lib/api";
 import GlassBreadcrumb from "@/components/ui/GlassBreadcrumb";
 import GlassPageHeader from "@/components/ui/GlassPageHeader";
+import { Skeleton } from "@/components/ui/Skeleton";
 import GlassButton from "@/components/ui/GlassButton";
 import GlassCard from "@/components/ui/GlassCard";
 import GlassInput from "@/components/ui/GlassInput";
@@ -85,9 +86,13 @@ export default function TenantLicensesPage(): React.JSX.Element {
       />
 
       {loading && !usage ? (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3" role="status" aria-label="Loading license usage" aria-busy="true">
           {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="h-24 rounded-2xl bg-[#eeece7]/40 animate-pulse" />
+            <div key={i} className="space-y-3 rounded-xl border border-border bg-card p-5">
+              <Skeleton className="h-3 w-28" />
+              <Skeleton className="h-7 w-20" />
+              <Skeleton className="h-3 w-36 max-w-full" />
+            </div>
           ))}
         </div>
       ) : (

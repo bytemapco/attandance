@@ -55,7 +55,7 @@ export default function ReviewQueuePage(): React.ReactElement {
                   {item.student_name} <span className="font-mono text-xs font-normal text-muted-foreground">{item.enrollment_number}</span>
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  {item.subject_name} · {item.class_code} · {formatDate(item.date)}, {item.time_slot}
+                  {item.subject_name} · {item.class_code} · {formatDate(item.date)}, {item.time_range}
                 </p>
                 <p className="flex items-start gap-1.5 text-xs text-[#8a5b12]">
                   <AlertTriangle size={13} className="mt-px shrink-0" aria-hidden />

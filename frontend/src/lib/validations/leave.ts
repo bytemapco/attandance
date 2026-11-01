@@ -25,10 +25,3 @@ export const leaveRequestSchema = z
   );
 
 export type LeaveRequestFormData = z.infer<typeof leaveRequestSchema>;
-
-export const leaveApprovalSchema = z.object({
-  status: z.enum(["APPROVED", "REJECTED"]),
-  approver_note: z.string().trim().max(300, "Note cannot exceed 300 characters").optional(),
-});
-
-export type LeaveApprovalFormData = z.infer<typeof leaveApprovalSchema>;

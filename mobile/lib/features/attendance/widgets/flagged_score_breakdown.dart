@@ -92,7 +92,7 @@ class FlaggedScoreBreakdown extends StatelessWidget {
                 child: _buildTile(
                   icon: Icons.face_retouching_natural_rounded,
                   label: 'Face Match',
-                  score: item.faceScore ?? 0.0,
+                  score: item.faceScore,
                   isDark: isDark,
                 ),
               ),
@@ -101,7 +101,7 @@ class FlaggedScoreBreakdown extends StatelessWidget {
                 child: _buildTile(
                   icon: Icons.shield_outlined,
                   label: 'Liveness',
-                  score: item.livenessScore ?? 0.0,
+                  score: item.livenessScore,
                   isDark: isDark,
                 ),
               ),
@@ -110,7 +110,7 @@ class FlaggedScoreBreakdown extends StatelessWidget {
                 child: _buildTile(
                   icon: Icons.location_on_rounded,
                   label: 'Location',
-                  score: item.backgroundScore ?? 0.0,
+                  score: item.backgroundScore,
                   isDark: isDark,
                 ),
               ),
@@ -124,11 +124,12 @@ class FlaggedScoreBreakdown extends StatelessWidget {
   Widget _buildTile({
     required IconData icon,
     required String label,
-    required double score,
+    required double? score,
     required bool isDark,
   }) {
-    final col = scoreColor(score);
-    final pct = (score * 100).round();
+    final value = score;
+    final col = value == null ? const Color(0xFF94A3B8) : scoreColor(value);
+    final text = value == null ? '—' : '${(value * 100).round()}%';
 
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
@@ -144,7 +145,7 @@ class FlaggedScoreBreakdown extends StatelessWidget {
           Icon(icon, size: 20, color: col),
           const SizedBox(height: 6),
           Text(
-            '$pct%',
+            text,
             style: GoogleFonts.plusJakartaSans(
               color: col,
               fontWeight: FontWeight.w800,

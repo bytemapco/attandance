@@ -2,29 +2,20 @@
 
 import React from "react";
 import { Building } from "lucide-react";
-import { UseFormRegister, FieldErrors, Control, Controller } from "react-hook-form";
+import { UseFormRegister, FieldErrors } from "react-hook-form";
 import GlassCard from "@/components/ui/GlassCard";
 import GlassInput from "@/components/ui/GlassInput";
-import GlassSelect from "@/components/ui/GlassSelect";
 import type { TenantProvisionFormData } from "@/lib/validations/superAdmin";
 
 interface ProvisionBasicInfoCardProps {
   register: UseFormRegister<TenantProvisionFormData>;
   errors: FieldErrors<TenantProvisionFormData>;
-  control: Control<TenantProvisionFormData>;
   onNameChange: (val: string) => void;
 }
-
-const INSTITUTION_TYPES = [
-  { value: "COLLEGE", label: "College / University" },
-  { value: "SCHOOL", label: "School" },
-  { value: "COACHING_CENTER", label: "Coaching / Training Center" },
-];
 
 export default function ProvisionBasicInfoCard({
   register,
   errors,
-  control,
   onNameChange,
 }: ProvisionBasicInfoCardProps): React.ReactElement {
   return (
@@ -63,22 +54,14 @@ export default function ProvisionBasicInfoCard({
             </span>
           </div>
 
-          <Controller
-            control={control}
-            name="type"
-            render={({ field }) => (
-              <GlassSelect
-                label="Institution Type"
-                options={INSTITUTION_TYPES}
-                value={field.value}
-                onChange={field.onChange}
-                error={errors.type?.message}
-              />
-            )}
+          <GlassInput
+            label="Institution Type"
+            value="College / University"
+            readOnly
           />
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="max-w-sm">
           <GlassInput
             label="License Quota"
             type="number"
@@ -87,14 +70,6 @@ export default function ProvisionBasicInfoCard({
             error={errors.license_count?.message}
           />
 
-          <div>
-            <GlassInput
-              label="Custom Domain (Optional)"
-              placeholder="e.g. attendance.oxford.edu"
-              {...register("domain")}
-              error={errors.domain?.message}
-            />
-          </div>
         </div>
       </div>
     </GlassCard>

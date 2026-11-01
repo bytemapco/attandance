@@ -33,8 +33,6 @@ export default function ProvisionTenantPage(): React.ReactElement {
     defaultValues: {
       name: "",
       slug: "",
-      type: "COLLEGE",
-      domain: "",
       license_count: 0,
       admins: [
         {
@@ -65,8 +63,6 @@ export default function ProvisionTenantPage(): React.ReactElement {
       const newTenant = await superAdminService.provisionTenant({
         name: formData.name.trim(),
         slug: formData.slug.trim(),
-        type: formData.type,
-        domain: formData.domain ? formData.domain.trim() : undefined,
         license_count: formData.license_count,
         admins: formData.admins.map((admin) => ({
           name: admin.name.trim(),
@@ -75,9 +71,12 @@ export default function ProvisionTenantPage(): React.ReactElement {
         })),
       });
 
-      toast.success(
-        `Registered "${newTenant.name}" with ${formData.admins.length} administrator(s).`
-      );
+      const failedInvitations = newTenant.admin_users.filter((admin) => admin.invitation_sent === false);
+      if (failedInvitations.length > 0) {
+        toast.error(`Registered "${newTenant.name}", but ${failedInvitations.length} invitation(s) could not be sent. Check SMTP settings, then use Send Password Reset from the tenant administrator page.`);
+      } else {
+        toast.success(`Registered "${newTenant.name}" with ${formData.admins.length} administrator(s).`);
+      }
       router.push("/super-admin/tenants");
     } catch (err: unknown) {
       const handled = applyValidationErrorsToForm(err, setError);
@@ -99,14 +98,13 @@ export default function ProvisionTenantPage(): React.ReactElement {
 
       <GlassPageHeader
         title="Add Institution"
-        description="Register a school or college and configure initial administrator accounts."
+        description="Register a College / University and configure initial administrator accounts."
       />
 
       <form noValidate onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <ProvisionBasicInfoCard
           register={register}
           errors={errors}
-          control={control}
           onNameChange={handleNameChange}
         />
 

@@ -3,7 +3,6 @@ class ClassOccurrenceModel {
   final String tenantId;
   final String courseSectionId;
   final String date;
-  final String timeSlotId;
   final String courseName;
   final String subjectCode;
   final String sectionName;
@@ -21,7 +20,6 @@ class ClassOccurrenceModel {
     required this.tenantId,
     required this.courseSectionId,
     required this.date,
-    required this.timeSlotId,
     required this.courseName,
     required this.subjectCode,
     required this.sectionName,
@@ -45,7 +43,6 @@ class ClassOccurrenceModel {
         tenantId: json['tenant_id'] as String? ?? '',
         courseSectionId: json['course_section_id'] as String? ?? '',
         date: json['date'] as String? ?? '',
-        timeSlotId: json['time_slot_id'] as String? ?? '',
         courseName: json['course_name'] as String? ?? 'Class',
         subjectCode: json['subject_code'] as String? ?? '',
         sectionName: json['section_name'] as String? ?? '',
@@ -60,21 +57,20 @@ class ClassOccurrenceModel {
       );
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'tenant_id': tenantId,
-        'course_section_id': courseSectionId,
-        'date': date,
-        'time_slot_id': timeSlotId,
-        'course_name': courseName,
-        'subject_code': subjectCode,
-        'section_name': sectionName,
-        'classroom_name': classroomName,
-        'faculty_name': facultyName,
-        'start_time': startTime,
-        'end_time': endTime,
-        'status': status,
-        'is_attendance_locked': isAttendanceLocked,
-        'present_count': presentCount,
-        'total_enrolled': totalEnrolled,
-      };
+    'id': id,
+    'tenant_id': tenantId,
+    'course_section_id': courseSectionId,
+    'date': date,
+    'course_name': courseName,
+    'subject_code': subjectCode,
+    'section_name': sectionName,
+    'classroom_name': classroomName,
+    'faculty_name': facultyName,
+    'start_time': startTime,
+    'end_time': endTime,
+    'status': status,
+    'is_attendance_locked': isAttendanceLocked,
+    'present_count': presentCount,
+    'total_enrolled': totalEnrolled,
+  };
 }

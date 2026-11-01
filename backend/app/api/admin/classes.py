@@ -70,8 +70,6 @@ async def get_classes(
     sort_order: str = "asc",
     q: str | None = None,
     subject_id: str | None = None,
-    term_id: str | None = None,
-    active_only: bool = False,
     tenant_id: str = Depends(get_tenant_context),
     admin_service: AdminService = Depends(),
 ):
@@ -82,8 +80,6 @@ async def get_classes(
         sort_order=sort_order,
         q=q,
         subject_id=subject_id,
-        term_id=term_id,
-        active_only=active_only,
         tenant_id=tenant_id,
     )
 

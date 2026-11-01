@@ -2,11 +2,9 @@ import 'dart:async';
 import 'dart:math';
 import 'package:geolocator/geolocator.dart';
 import 'package:smart_attendance_app/core/constants.dart';
-import 'package:smart_attendance_app/data/local/geofence_calculator.dart';
 import 'package:smart_attendance_app/data/local/location_exceptions.dart';
 
 export 'package:smart_attendance_app/data/local/location_exceptions.dart';
-export 'package:smart_attendance_app/data/local/geofence_calculator.dart';
 
 class LocationService {
   Future<void> ensurePermissionsGranted() async {
@@ -173,23 +171,5 @@ class LocationService {
       altitudeAccuracy: best.altitudeAccuracy,
       headingAccuracy: best.headingAccuracy,
     );
-  }
-
-  bool isWithinGeofence(
-    Position student,
-    double classLat,
-    double classLng, {
-    double radiusMeters = 100.0,
-  }) {
-    return GeofenceCalculator.isWithinGeofence(
-      student,
-      classLat,
-      classLng,
-      radiusMeters: radiusMeters,
-    );
-  }
-
-  String describeDistance(Position student, double classLat, double classLng) {
-    return GeofenceCalculator.describeDistance(student, classLat, classLng);
   }
 }

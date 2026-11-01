@@ -4,7 +4,12 @@ import 'package:go_router/go_router.dart';
 import 'package:smart_attendance_app/app/theme.dart';
 
 /// Slide-up transition for modal-style screens (verification, leave request, smart pass).
-Page<void> slideUpPage({required LocalKey key, required Widget child}) {
+Page<void> slideUpPage({
+  required LocalKey key,
+  required Widget child,
+  required bool reduceMotion,
+}) {
+  if (reduceMotion) return NoTransitionPage<void>(key: key, child: child);
   if (defaultTargetPlatform == TargetPlatform.iOS) {
     return CupertinoPage<void>(key: key, child: child, fullscreenDialog: true);
   }
@@ -31,7 +36,12 @@ Page<void> slideUpPage({required LocalKey key, required Widget child}) {
 }
 
 /// Slide-right transition for detail/settings screens with iOS interactive back swipe.
-Page<void> slideRightPage({required LocalKey key, required Widget child}) {
+Page<void> slideRightPage({
+  required LocalKey key,
+  required Widget child,
+  required bool reduceMotion,
+}) {
+  if (reduceMotion) return NoTransitionPage<void>(key: key, child: child);
   if (defaultTargetPlatform == TargetPlatform.iOS) {
     return CupertinoPage<void>(key: key, child: child);
   }
