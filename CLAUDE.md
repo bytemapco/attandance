@@ -1,108 +1,177 @@
-# CLAUDE.md - Project Guidelines & Dual-Repository Setup
+# CLAUDE.md — SAHAJ (Smart Attendance System)
 
-## Repository Architecture
-This project follows a dual-repository model:
-1. **Root Monorepo (`bytemapco/attandance`)**: Contains the full stack (`backend/`, `frontend/`, `mobile/`, `docs/`, `scripts/`).
-2. **Dedicated Mobile Repository (`bytemapco/attandance_mobile`)**: Located at `./mobile` with its own Git tracking (`./mobile/.git`).
-
-### Dual-Repository Rule (Mandatory Two-Way Sync)
-- Any modification made to the Flutter mobile application in `./mobile` must be committed and pushed to **both**:
-  1. The root repository: `bytemapco/attandance`
-  2. The mobile repository: `bytemapco/attandance_mobile` (running `git` commands from within `./mobile`)
-- Never leave mobile updates isolated in one repository.
+Multi-tenant attendance SaaS for Indian institutions. Backend: FastAPI + Prisma + PostgreSQL/pgvector + Redis. Web: Next.js 16 / React 19. Mobile: Flutter (Riverpod).
+**Source of truth for product intent: [docs/PRD.md](docs/PRD.md).** UI and engineering rules: this document. Brand: `docs/sahaj_brand_kit.md`.
 
 ---
 
-## Engineering & Development Guidelines
+## 1. Responsive & Adaptive UI (Mandatory)
+- **Fluid Layouts**: Never hardcode rigid fixed heights on parent containers without `BoxConstraints` or `Flexible`/`Expanded` wrappers.
+- **Screen Size Adaptation**:
+  - Compact screens (height < 700dp): Scale headings (24–28dp), tighten spacing (8–16dp), ensure keyboard open views scroll without overflow (`SingleChildScrollView` + `ClampingScrollPhysics`).
+  - Standard/Large screens (height >= 700dp): Scale headings (28–34dp), use proportional pacing (24–36dp).
+  - Tablet/Foldable/Web (width >= 600dp): Wrap forms in `ConstrainedBox(constraints: BoxConstraints(maxWidth: 480))` centered on screen.
+- **Safe Area & System Insets**:
+  - Always account for bottom insets (`MediaQuery.of(context).viewInsets.bottom` or `SafeArea(bottom: true)`).
+  - Ensure floating buttons and bottom sheets have dynamic clearance above Android 3-button navigation bars and gesture pill bars.
+- **Scroll Safety**: All forms and input screens must be wrapped in scroll views so keyboard appearances never trigger `A RenderFlex overflowed by ... pixels`.
 
-### 1. Environment & Configuration Sync
-- **Root `.env.prod` is Source of Truth**: When configuration keys, third-party credentials, or environment variables are added/modified, update the root `.env.prod` and all sub-service `.env` files (`backend/.env`, `backend/.env.prod`, `backend/.env.example`, `backend/.env.prod.example`).
-- Ensure all environments remain synchronized and documented.
+## 2. Typography & Design System
+- **Font Family**: GoogleFonts.plusJakartaSans across the entire application.
+- **Weight Hierarchy**:
+  - Headlines: FontWeight.w600 (balanced, clean, modern).
+  - Form & Component Labels: FontWeight.w600.
+  - Buttons & Interactive Elements: FontWeight.w600 or w700.
+  - Body & Subtitles: FontWeight.w400 / w500.
+- **Palette**: Dark canvas `#0F172A`, primary warm orange `#F95721`, dark surfaces `#1E293B`, brilliance `#F8FAFC`.
 
-### 2. No Hardcoding
-- **Never Hardcode Secrets**: API keys, DSNs, database URLs, JWT secrets, and AWS credentials must always be loaded through environment variables.
-- Dynamic overrides must always be respected.
+## 3. How to work (read first)
 
-### 3. Senior Engineering Rigor & Zero-Bypass Standard
-- **Zero Workarounds**: Never use temporary monkey patches, suppressed type checks, disabled linters, or mock bypasses. Fix root causes.
-- **Strict Scope**: Do not perform speculative refactors or unsolicited changes without permission.
-- **Dead Code Cleanup**: When modifying or removing code, clean up orphaned helpers, unused imports, dead types, and unused test fixtures.
-- **Simplicity & Separation of Concerns**: Single-purpose functions, early returns, no nested ternaries or deeply nested conditionals.
+1. **PRD first.** Before any feature, schema, or attendance-logic change, check it against `docs/PRD.md` (data model §5, capture reliability §6, privacy §8, phasing §10). If code and PRD disagree, say so; don't silently pick one.
+2. **Ask, don't guess.** If a requirement, edge case, policy rule (e.g. attendance %, condonation, lock windows) or scope boundary is unclear, or the PRD has an open question (§13) that affects the task, **stop and ask the user** with a short question and a recommended default. Never invent business rules.
+3. **Smallest correct change.** Solve the stated problem with the least code. No new abstractions, config flags, layers, or dependencies unless the task needs them now. Three similar lines beat a premature helper. No speculative refactors, no "while I'm here" cleanups: mention unrelated issues instead.
+4. **Fix root causes.** No workarounds, no suppressed type errors or lint rules, no mocks to bypass real behavior.
+5. **Read before writing.** Look at neighbouring code and match its style, naming, and patterns. Reuse existing services and helpers.
+6. **Verify before claiming done.** Run the relevant checks (§5) and report real results. If something failed or was skipped, say so.
+7. **Plan only when it pays.** For multi-file or schema changes, give a 2–4 line plan with a verify step each. For trivial edits, just do it.
 
-### 4. File Structure & Quality
-- **File Length Limit**: Keep every file concise (under 200 lines). Break down into modular components or services when needed.
-- **Strict Typing**: No `any` in TypeScript. Comply with strict typing in Python (`ruff`/`flake8`) and Dart analysis options.
-- **No Residual Debug Code**: Remove `console.log`, `print()`, or debug markers before finishing tasks.
+## 2. Hard rules
 
-### 5. Branch Workflow
-- **Development**: Feature work, refactoring, and bug fixes are committed to `dev`.
-- **Production**: Stable, verified releases from `dev` merge into `main`.
+- **No secrets in code.** Keys, DSNs, JWT secrets, AWS creds come from env vars. `credentials.txt` is git-ignored; never read it into output or commit it.
+- **Env sync.** Root `.env.prod` is the source of truth. When adding or changing a key, update `backend/.env`, `backend/.env.prod`, `backend/.env.example`, `backend/.env.prod.example`.
+- **Prisma.** Never add `output = ...` to the `generator client` block in `backend/prisma/schema.prisma`.
+- **Files stay under 200 lines.** Split by responsibility, not arbitrarily.
+- **Strict typing.** No `any` in TypeScript. Typed Python (ruff clean). Dart analyzer clean.
+- **No debug leftovers.** No `console.log`, `print()`, commented-out code, or TODO litter.
+- **Clean your own orphans.** Remove imports, helpers, types, and fixtures that your change made unused. Leave pre-existing dead code alone and mention it.
+- **Style of code:** single-purpose functions, early returns, no nested ternaries, no deep nesting.
+- **Edit with the file tools** (Edit/Write), not `sed`, `echo >`, heredocs or scripts.
 
-### 6. Database & Prisma Schema Standards
-- **Never Add `output` in `schema.prisma`**: The `generator client` block in `backend/prisma/schema.prisma` must never contain hardcoded `output` directory paths (`output = ...`) to prevent breaking dynamic Docker and container builds.
+## 3. Domain invariants (from the PRD — do not violate)
 
-# CLAUDE.md
+- **Tenant isolation:** every tenant-scoped query filters by `tenantId`. New tenant tables get `tenantId` NOT NULL and a test.
+- **Single model:** new attendance work targets `CourseSection → TimetableRule → ClassOccurrence → AttendanceRecord` (+ `AttendanceAuditLog`). Do not extend the legacy `AcademicClass → Session → Attendance` flow beyond what migration needs.
+- **Never fabricate verification scores.** A disabled or unavailable signal is recorded as not-checked (null), never `1.0` or `0.0`. Fail closed: if AI/Redis is down, fall back to a non-biometric mode and flag.
+- **Every attendance mutation is audited** (actor, from→to, reason, time). Edits after lock need a reason.
+- **Idempotent marking:** one record per `(occurrenceId, studentId)`; retries with the same key return the original result.
+- **Biometrics are opt-in:** consent defaults to `false`, is versioned and revocable, and a non-biometric path must always exist.
+- **One percentage function**, unit-tested with hand-computed fixtures; cancelled occurrences and holidays are excluded from the denominator.
+- **Thresholds and policy are per tenant**, not global.
 
-Behavioral guidelines to reduce common LLM coding mistakes. Merge with project-specific instructions as needed.
+## 4. Skills — when to use which
 
-**Tradeoff:** These guidelines bias toward caution over speed. For trivial tasks, use judgment.
+Use a skill only when the task matches. Do not load skills "just in case".
 
-## 1. Think Before Coding
+| Task | Skill |
+|---|---|
+| Codebase / architecture question | `graphify` (query `graphify-out/` first; run `graphify update .` after code changes) |
+| Library / framework / SDK / CLI docs (Next, Prisma, FastAPI, Flutter packages…) | Context7 MCP (`context7-mcp`) |
+| Flutter UI: new screen / redesign | `flutter-design` (routes to the rest) |
+| Flutter UI: build approved design | `flutter-implementation` |
+| Flutter tokens, theme, dark mode | `flutter-design-system` |
+| Flutter animation | `flutter-motion` |
+| Flutter a11y, text scaling, RTL | `flutter-accessibility` |
+| Review Flutter UI (read-only) | `flutter-audit`, then `flutter-visual-qa` for rendered checks |
+| Web UI (Next.js dashboard) design or polish | `impeccable`; `shadcn` for shadcn/ui components |
+| HIG / mobile UX critique | `apple-design` |
+| New or changed REST endpoints | `api-design-reviewer`; `api-test-suite-builder` for tests |
+| Schema, migrations, ERD | `database-schema-designer` (must respect PRD §5) |
+| Face / liveness pipeline | `senior-computer-vision` (PRD §6: measure FAR/FRR, no fixed magic thresholds) |
+| Auth, threat model, secrets | `senior-security`, `env-secrets-manager` |
+| Dependency or CVE audit | `dependency-auditor` |
+| Slow endpoint / memory | `performance-profiler` (measure before and after) |
+| Logging, metrics, alerts | `observability-designer` |
+| Diff review | `code-review`; `simplify` for cleanup; `security-review` before merging auth/PII changes |
+| User-facing copy / docs prose | `no-ai-slop` |
 
-**Don't assume. Don't hide confusion. Surface tradeoffs.**
+Not used in this project unless the user asks: all `clerk*` skills (auth is custom JWT, not Clerk).
 
-Before implementing:
-- State your assumptions explicitly. If uncertain, ask.
-- If multiple interpretations exist, present them - don't pick silently.
-- If a simpler approach exists, say so. Push back when warranted.
-- If something is unclear, stop. Name what's confusing. Ask.
+## 5. Verify (match CI in `.github/workflows/ci.yml`)
 
-## 2. Simplicity First
+| Area | Commands |
+|---|---|
+| Backend (`backend/`) | `ruff check .` · `pytest tests -v` |
+| Web (`frontend/`) | `npm run lint` · `npm test` · `npm run build` for route/type changes |
+| Mobile (`mobile/`) | `flutter analyze --no-fatal-infos` · `flutter test` |
 
-**Minimum code that solves the problem. Nothing speculative.**
+Run the narrowest check that covers the change, then the area suite before finishing. For UI changes, look at the rendered result (Reticle for web, screenshots for Flutter) instead of assuming.
+Bug fix → write a failing test first when practical. Attendance logic changes need tests for the edge cases in PRD §6.4.
 
-- No features beyond what was asked.
-- No abstractions for single-use code.
-- No "flexibility" or "configurability" that wasn't requested.
-- No error handling for impossible scenarios.
-- If you write 200 lines and it could be 50, rewrite it.
+## 6. Git
 
-Ask yourself: "Would a senior engineer say this is overcomplicated?" If yes, simplify.
+- Work on `dev`; stable, verified releases merge into `main`. Don't commit or push unless asked.
+- **Dual repository for mobile.** Root repo is `bytemapco/attandance`; `./mobile` is its own repo, `bytemapco/attandance_mobile`. Any change under `./mobile` must be committed and pushed to **both** (run the mobile one from inside `./mobile`). Never leave them out of sync.
+- Commit messages: conventional style (`feat(scope):`, `fix(scope):`), one concern per commit.
 
-## 3. Surgical Changes
+## 7. Communication
 
-**Touch only what you must. Clean up only your own mess.**
+- Be brief and concrete. Lead with the result, then anything the user must decide.
+- State assumptions you made. Offer a recommendation, not a menu of options.
+- Push back if a request conflicts with the PRD, the invariants above, or looks over-engineered.
 
-When editing existing code:
-- Don't "improve" adjacent code, comments, or formatting.
-- Don't refactor things that aren't broken.
-- Match existing style, even if you'd do it differently.
-- If you notice unrelated dead code, mention it - don't delete it.
+## 8. Class Management Feature (Implemented Oct 2026)
 
-When your changes create orphans:
-- Remove imports/variables/functions that YOUR changes made unused.
-- Don't remove pre-existing dead code unless asked.
+Admin page for creating and managing classes across departments, semesters, and batches. See [SUMMARY.md](SUMMARY.md) for full feature overview.
 
-The test: Every changed line should trace directly to the user's request.
+### Key Implementation Patterns
 
-## 4. Goal-Driven Execution
+**Enrolment sync:** When class roster changes (add/move/remove), CourseEnrollment rows for that class's sections are auto-synced (source=CLASS). Backlog/manual enrollments are never touched. Students added to a class later enroll in all existing sections.
 
-**Define success criteria. Loop until verified.**
+**Teacher propagation:** TimetableRule.teacherId and future (SCHEDULED/unlocked) ClassOccurrence.facultyId are updated when a teacher is changed. Past (CONDUCTED) classes keep the original teacher.
 
-Transform tasks into verifiable goals:
-- "Add validation" → "Write tests for invalid inputs, then make them pass"
-- "Fix the bug" → "Write a test that reproduces it, then make it pass"
-- "Refactor X" → "Ensure tests pass before and after"
+**Atomicity in create:** If class creation fails (e.g., student already in another class), the StudentGroup is rolled back so no orphan exists. Validated in tests.
 
-For multi-step tasks, state a brief plan:
-```
-1. [Step] → verify: [check]
-2. [Step] → verify: [check]
-3. [Step] → verify: [check]
-```
+**Promotion:** dry-run preview (show counts) then commit. Closes old rows (PROMOTED/DETAINED), creates new class in next semester, places students (or detains them). Re-run is idempotent.
 
-Strong success criteria let you loop independently. Weak criteria ("make it work") require constant clarification.
+**Attendance protection:** Subject removal is blocked once AttendanceRecord exists for that section. History is preserved.
+
+### Prisma Quirks Encountered
+
+- **Nested include ordering:** use `order_by` inside includes, not top-level `order`. Example: `include={"courseSections": {"order_by": {"createdAt": "desc"}}}`.
+- **Composite unique constraint names:** generated as `<field1>_<field2>` by Prisma. Used in migrations and when referencing the index.
+- **Venv generation issue:** if running `prisma generate` outside venv, it writes to system Python site-packages. Always use: `env -i HOME=$HOME PATH=$PWD/.venv/bin:/usr/bin:/bin VIRTUAL_ENV=$PWD/.venv .venv/bin/prisma generate`.
+
+### Tenant Isolation Checklist
+
+✅ Semester, StudentGroup, ClassTerm, ClassMember tables all have `tenantId NOT NULL`  
+✅ All service methods take `tenant_id` as first arg  
+✅ All queries filter `tenantId` (use `get_tenant_context` for HTTP endpoints)  
+✅ Foreign keys (department, student, teacher, subject) verified in tenant before operations  
+✅ Partial unique index on ClassMember enforces one ACTIVE per student per class  
+
+### Testing Approach
+
+- **Backend:** `tests/class_management/` with mocked Prisma client (like academic_year tests); 85 passing tests cover tenant isolation, capacity, duplicates, promotions, enrolment sync, attendance protection.
+- **Frontend:** vitest for validation schemas; manual browser testing for UI flows (Reticle).
+- **Live:** 45-check Python script against running server + DB; covers all API flows including auth, edge cases, cleanup.
+
+### Files to Know
+
+- `backend/prisma/schema.prisma` — Semester, StudentGroup, ClassTerm, ClassMember, CourseSection.classTermId, CourseEnrollment.source/endedAt
+- `backend/app/services/class_management/` — 6 modules (common, class_term, class_member, class_section, enrollment_sync, promotion)
+- `backend/app/api/admin/class_management.py` — 8 endpoints
+- `frontend/src/app/(dashboard)/admin/class-management/` — routes & components
+
+### Known Limitations
+
+1. **No teacher removal:** only reassign. (Timetable needs a teacher.)
+2. **Backlog enrollments:** backend supports them; no UI yet.
+3. **Move student:** no button in Students tab; POST endpoint works.
+4. **FINAL_SEMESTER:** hard-coded to 8 (could be data-driven if needed).
+5. **Dev DB schema:** modified manually via psql; migration SQL in `prisma/migrations/` for reference only (venv-scoped generation).
+
+### What Was Removed
+
+**Oct 31 Round 1 (Lab batches):**
+- ❌ LabBatch and LabBatchMember tables (replaced by subject-level enrollment)
+- ❌ Lab batches UI tab, API endpoints, services
+- ❌ `course_sections.lab_batch_id` column
+- ✅ Subjects & Teachers tab now handles all enrollment
+
+**Oct 31 Round 2 (Promotion):**
+- ❌ Promote button and dialog from class detail page
+- ❌ PromoteDialog.tsx component removed from UI
+- 🟡 Backend promotion endpoints still available (can be re-enabled if needed)
+- Class detail page now has 2 tabs instead of 3: Students, Subjects & teachers
 
 ---
-
-**These guidelines are working if:** fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, and clarifying questions come before implementation rather than after mistakes.
