@@ -476,7 +476,7 @@ Mocked Prisma client in tests → isolation.
 ## 📞 Support
 
 - **PRD Questions** → `/docs/PRD.md`
-- **Architecture** → `/graphify-out/GRAPH_REPORT.md` or `graphify query "..."`
+- **Architecture** → `/docs/ARCHITECTURE.md`
 - **Code Patterns** → Look at existing code in neighboring modules
 - **Development Rules** → `/CLAUDE.md` (§1-§5)
 

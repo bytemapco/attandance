@@ -64,7 +64,6 @@ Use a skill only when the task matches. Do not load skills "just in case".
 
 | Task | Skill |
 |---|---|
-| Codebase / architecture question | `graphify` (query `graphify-out/` first; run `graphify update .` after code changes) |
 | Library / framework / SDK / CLI docs (Next, Prisma, FastAPI, Flutter packages…) | Context7 MCP (`context7-mcp`) |
 | Flutter UI: new screen / redesign | `flutter-design` (routes to the rest) |
 | Flutter UI: build approved design | `flutter-implementation` |

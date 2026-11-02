@@ -623,7 +623,6 @@ See `docs/deployment-guide.md` for details.
 1. Read service module docs in backend/README.md
 2. Check the code in `backend/app/services/`
 3. Look at tests in `backend/tests/`
-4. Use `graphify query "<topic>"` for code search
 
 ### For Questions
 - **Data model:** `backend/prisma/schema.prisma`

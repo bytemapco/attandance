@@ -43,16 +43,7 @@ npm run dev
 ## 🔍 Code Search
 
 ```bash
-# Search by keyword
-graphify query "attendance marking"
-
-# Find relationships
-graphify path "Student" "AttendanceRecord"
-
-# Explain concept
-graphify explain "tenant isolation"
-
-# Or use grep
+# Search using grep
 grep -r "function_name" backend/app/services/
 grep -r "ComponentName" frontend/src/components/
 ```
@@ -91,7 +82,7 @@ grep -r "ComponentName" frontend/src/components/
 ### Fixing a Bug
 
 1. **Understand issue** → Read error logs
-2. **Locate code** → Use `graphify query` or `grep`
+2. **Locate code** → Use `grep` or IDE search
 3. **Write failing test** → `backend/tests/test_[domain].py`
 4. **Fix code** → Make test pass
 5. **Verify fix** → Run full test suite
@@ -288,13 +279,10 @@ npm run test:frontend   # Frontend changes
 npm run type-check
 npm run lint
 
-# 3. Update graph if architecture changed
-graphify update .
-
-# 4. Verify no secrets in code
+# 3. Verify no secrets in code
 grep -r "password\|api_key\|secret" [files you changed]
 
-# 5. Commit with clear message
+# 4. Commit with clear message
 git commit -m "type(scope): description"
 ```
 
@@ -307,7 +295,7 @@ git commit -m "type(scope): description"
 3. **API endpoints?** → Visit http://localhost:8000/docs
 4. **Code patterns?** → Look at similar code in the repo
 5. **Requirements?** → Check docs/PRD.md (§13 has open questions)
-6. **Can't find code?** → `graphify query "<keyword>"`
+6. **Can't find code?** → Search with `grep -rn` or IDE
 
 ---
 

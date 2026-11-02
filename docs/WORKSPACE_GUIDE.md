@@ -103,11 +103,6 @@ SAHAJ/
 ├── 🎨 assets/                 → Brand assets
 │   └── brand/                 → Logos, colors, guidelines
 │
-├── 🏗️ graphify-out/           → Code structure analysis (AI-generated)
-│   ├── GRAPH_REPORT.md        → Architecture & dependency graphs
-│   ├── wiki/                  → Indexed knowledge base
-│   └── cache/                 → LLM analysis cache
-│
 ├── .github/                   → GitHub Actions CI/CD
 │   └── workflows/
 │       └── ci.yml             → Test & build pipeline
@@ -132,7 +127,7 @@ SAHAJ/
 
 ### Bug Investigation
 1. **Read error** → Check `docs/devops-ci-cd.md` for logging/monitoring
-2. **Locate source** → `graphify query "<error/keyword>"` for code search
+2. **Locate source** → Use `grep` or IDE search to locate relevant code
 3. **Write failing test** → Add to `backend/tests/` or `frontend/src/tests/`
 4. **Fix & verify** → Run `npm run test:backend` or `npm run test:frontend`
 
@@ -288,9 +283,6 @@ npm run type-check   # TypeScript & strict Python
 # Run tests for area you modified
 npm run test:backend    # If backend changed
 npm run test:frontend   # If frontend changed
-
-# Update code graph (if architecture changed)
-graphify update .
 ```
 
 ### Creating a Commit
@@ -336,10 +328,9 @@ git commit -m "type(scope): description"
 
 ### Getting Help
 - **PRD Questions** → `docs/PRD.md` (source of truth)
+- **Architecture** → `docs/ARCHITECTURE.md` (system design & dependency analysis)
 - **Dev Rules** → `CLAUDE.md` (checked in project)
 - **UI Rules** → `AGENTS.md` (responsive, typography, quality)
-- **Code Search** → `graphify query "<keyword>"` (AI-powered graph search)
-- **Architecture** → `graphify-out/GRAPH_REPORT.md` (dependency analysis)
 
 ### External Links
 - [FastAPI Docs](https://fastapi.tiangolo.com/)
