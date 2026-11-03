@@ -80,7 +80,7 @@ class BulkImportService:
                     errors.append(f"Row {idx + 1}: Email '{item.email}' already registered.")
                     failed_count += 1
                     continue
-                if await db.student.find_unique(where={"enrollmentNumber": item.enrollment_number}):
+                if await db.student.find_first(where={"tenantId": tenant_id, "enrollmentNumber": item.enrollment_number}):
                     errors.append(f"Row {idx + 1}: Enrollment '{item.enrollment_number}' already exists.")
                     failed_count += 1
                     continue
