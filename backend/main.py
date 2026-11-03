@@ -36,6 +36,7 @@ from app.api import (
     timetable,
     faculty_register,
     faculty_sessions,
+    reports,
 )
 from app.middleware.request_logging import RequestLoggingMiddleware
 from app.middleware.security_headers import SecurityHeadersMiddleware
@@ -116,6 +117,7 @@ app.include_router(scim.router, prefix=settings.API_V1_STR)
 app.include_router(timetable.router, prefix=settings.API_V1_STR)
 app.include_router(faculty_register.router, prefix=settings.API_V1_STR)
 app.include_router(faculty_sessions.router, prefix=settings.API_V1_STR)
+app.include_router(reports.router, prefix=settings.API_V1_STR)
 
 
 register_db_error_handlers(app)

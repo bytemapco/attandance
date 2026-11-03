@@ -28,6 +28,7 @@ export const adminLinks: NavItem[] = [
   { label: "Teachers", href: "/admin/users/teachers", icon: React.createElement(Users, { size: 17 }) },
   { label: "Classes", href: "/admin/class-management", icon: React.createElement(School, { size: 17 }) },
   { label: "Master Data", href: "/admin/master-data", icon: React.createElement(Database, { size: 17 }) },
+  { label: "Attendance Reports", href: "/admin/reports", icon: React.createElement(BarChart3, { size: 17 }) },
   { label: "Attendance Scanner", href: "/admin/scanner", icon: React.createElement(ScanSearch, { size: 17 }) },
   { label: "Licenses", href: "/admin/licenses", icon: React.createElement(KeyRound, { size: 17 }) },
   { label: "Notifications", href: "/admin/notifications", icon: React.createElement(Bell, { size: 17 }) },
