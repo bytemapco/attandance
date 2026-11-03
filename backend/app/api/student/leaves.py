@@ -68,7 +68,7 @@ async def create_leave_request(
         s_date = date.fromisoformat(start_date)
         e_date = date.fromisoformat(end_date)
     except ValueError:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid date format. Use YYYY-MM-DD.")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid date format. Use YYYY-MM-DD.") from None
     if e_date < s_date:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="End date must be after or equal to start date.")
     reason = reason.strip()
@@ -88,7 +88,7 @@ async def create_leave_request(
             document_url = s3_service.upload_bytes(contents, key, content_type=document.content_type or "application/octet-stream")
         except Exception as exc:
             logger.error("Could not upload leave document: %s", exc)
-            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Could not save document.")
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Could not save document.") from exc
 
     leave = await leave_repo.create({
         "tenantId": student.tenantId,

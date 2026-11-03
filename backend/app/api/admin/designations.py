@@ -85,9 +85,9 @@ async def delete_designation(
         await admin_service.delete_designation(id, actor=current_user.email, ip=get_client_ip(request))
         return MessageResponse(status="success", message="Designation deleted successfully")
     except ValueError as err:
-        raise HTTPException(status_code=400, detail=str(err))
+        raise HTTPException(status_code=400, detail=str(err)) from err
     except PrismaError:
         raise
     except Exception as exc:
         logger.error("Failed to delete designation %s: %s", id, exc, exc_info=True)
-        raise HTTPException(status_code=500, detail="Internal server error")
+        raise HTTPException(status_code=500, detail="Internal server error") from exc

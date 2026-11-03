@@ -73,7 +73,7 @@ async def register_face(
         raise
     except ValueError as err:
         s3_service.delete_file(image_url)
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(err))
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(err)) from err
     except Exception:
         s3_service.delete_file(image_url)
         raise

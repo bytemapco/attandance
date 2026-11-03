@@ -61,7 +61,7 @@ async def _find_tenant(identifier: str):
         return await db.tenant.find_first(where={"OR": [{"id": identifier}, {"slug": identifier}]})
     except Exception as exc:
         logger.error("Error resolving tenant: %s", exc)
-        raise TenantResolutionError(status.HTTP_500_INTERNAL_SERVER_ERROR, "Unable to verify tenant state.")
+        raise TenantResolutionError(status.HTTP_500_INTERNAL_SERVER_ERROR, "Unable to verify tenant state.") from exc
 
 
 async def resolve_tenant_id(identifier: str) -> str:

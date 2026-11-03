@@ -12,7 +12,7 @@ async def get_sso_config(tenant_slug: str) -> Dict[str, Any]:
     try:
         return await SSOService.get_tenant_sso_config(tenant_slug)
     except ValueError as err:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(err))
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(err)) from err
 
 
 @router.post("/saml/acs", status_code=status.HTTP_501_NOT_IMPLEMENTED)

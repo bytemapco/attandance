@@ -21,12 +21,12 @@ def handle_generic_err(func):
             raise
         except ValueError as err:
             code = status.HTTP_404_NOT_FOUND if "not found" in str(err).lower() else status.HTTP_400_BAD_REQUEST
-            raise HTTPException(status_code=code, detail=str(err))
+            raise HTTPException(status_code=code, detail=str(err)) from err
         except PrismaError:
             raise
         except Exception as err:
             logger.error("Admin generic operation error: %s", err, exc_info=True)
-            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal server error")
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal server error") from err
 
     return wrapper
 

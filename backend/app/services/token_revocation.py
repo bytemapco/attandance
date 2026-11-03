@@ -49,7 +49,7 @@ async def ensure_not_revoked(token: str, messages: RevocationMessages) -> None:
     except Exception as exc:
         logger.critical("Security alert: could not check the token deny-list in Redis: %s", exc)
         if settings.TOKEN_REVOCATION_FAIL_CLOSED:
-            raise _unavailable(messages)
+            raise _unavailable(messages) from exc
         return
     if revoked:
         raise HTTPException(

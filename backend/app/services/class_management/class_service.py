@@ -24,7 +24,7 @@ async def _resolve_class_batch(tenant_id: str, data: ClassCreate):
         return await resolve_assignable_batch(tenant_id, data.batch_id, data.department_id)
     except ValueError as err:
         code = status.HTTP_404_NOT_FOUND if "not found" in str(err).lower() else status.HTTP_400_BAD_REQUEST
-        raise HTTPException(status_code=code, detail=str(err))
+        raise HTTPException(status_code=code, detail=str(err)) from err
 
 
 async def _require_placeable(tenant_id: str, student_ids: List[str]) -> None:

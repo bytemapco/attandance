@@ -145,6 +145,6 @@ async def trigger_user_password_reset(
             message="Password reset instructions dispatched to the user's registered email address.",
         )
     except ValueError as err:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(err))
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(err)) from err
     except Exception as err:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(err))
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(err)) from err

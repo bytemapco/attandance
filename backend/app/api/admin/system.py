@@ -110,7 +110,7 @@ async def scan_absentee_anomalies(
     except Exception as err:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Outlier pattern extraction failed: {str(err)}"
-        )
+        ) from err
 
 
 @router.get("/config", response_model=SystemConfigResponse, response_model_by_alias=True)

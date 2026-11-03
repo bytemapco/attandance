@@ -16,7 +16,7 @@ async def get_license_usage(
     try:
         return await SuperAdminService.get_tenant_license_usage(tenant_id=tenant_id)
     except ValueError as e:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e)) from e
 
 
 @router.post("/licenses/request", status_code=status.HTTP_201_CREATED)
@@ -32,7 +32,7 @@ async def create_license_request(
             requested_count=data.requested_count,
         )
     except ValueError as e:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e)) from e
 
 
 @router.get("/licenses/requests")
