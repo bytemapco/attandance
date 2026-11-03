@@ -65,7 +65,6 @@ backend/
 ├── prisma/                  # ✅ Database Schema & Migrations
 │   ├── schema.prisma        → Data model (SOURCE OF TRUTH)
 │   ├── migrations/          → Versioned SQL migrations
-│   ├── seed.py              → Fixture data (dev/test)
 │   └── .env                 → Database connection
 │
 ├── tests/                   # ✅ Pytest Test Suite (73 tests)
@@ -86,9 +85,9 @@ backend/
 │   └── background_validator/ → MobileNetV1 weights
 │
 ├── scripts/                 # ✅ Utilities & Data Tools
-│   ├── check_db.py          → Verify connection
-│   ├── seed_dev.py          → Load dev fixtures
-│   └── migrate_legacy.py    → One-off data migrations
+│   ├── reset_database.py    → Database wipe and super admin setup
+│   ├── check_services.py    → Verify external service health
+│   └── check_ai_device.py   → Detect CUDA/MPS/CPU
 │
 ├── .env                     # Environment vars (local)
 ├── .env.prod                # Environment vars (production)
@@ -122,7 +121,6 @@ pip install -r requirements.txt
 # 3. Setup database
 prisma generate
 prisma migrate deploy
-python scripts/seed_dev.py
 
 # 4. Start development server
 python main.py
@@ -439,8 +437,7 @@ python scripts/check_db.py             # Test DB connection
 # Database
 prisma migrate dev --name <desc>       # Create & apply migration
 prisma migrate deploy                  # Apply pending migrations
-python scripts/seed_dev.py             # Load dev fixtures
-prisma db seed                         # Run seed.py
+python scripts/reset_database.py --force-destructive-wipe --confirm-target-db=<dbname>  # Reset DB
 
 # Testing
 pytest tests/ -v                       # Run all tests
