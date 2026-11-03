@@ -2,10 +2,8 @@ from typing import Optional, Dict, Any
 
 from fastapi import HTTPException, status
 from prisma.models import User
-from redis.asyncio import Redis
 
 from app.core.logging_config import get_logger
-from app.core.redis_scripts import atomic_incr_expire
 from app.core.security import (
     create_access_token,
     create_refresh_token,
@@ -19,48 +17,11 @@ from app.repositories.user_repository import UserRepository
 from app.repositories.student_repository import StudentRepository
 from app.schemas.auth import Token, UserLogin
 from app.services.auth_token_service import AuthTokenService
+from app.services.login_lockout import FAILED_LOGIN_PREFIX, clear_failures, count_failure, reject_if_locked
 from app.services.login_identity import find_candidate_users, pick_user_by_password
 from app.services.token_revocation import REFRESH_TOKEN, REFRESH_TOKEN_TTL_SECONDS, ensure_not_revoked, revoke
 
 logger = get_logger("app.services.auth")
-
-
-FAILED_LOGIN_PREFIX = "failed_login:"
-MAX_FAILED_LOGINS = 5
-FAILED_LOGIN_WINDOW_SECONDS = 900
-
-
-async def _reject_if_locked(redis: Optional[Redis], login_key: str) -> None:
-    if not redis:
-        return
-    try:
-        failed_attempts = await redis.get(login_key)
-    except Exception as exc:
-        logger.warning("Redis failed login check error: %s", exc)
-        return
-    if failed_attempts and int(failed_attempts) >= MAX_FAILED_LOGINS:
-        raise HTTPException(
-            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
-            detail="Account is temporarily locked due to multiple failed login attempts. Please try again after 15 minutes.",
-        )
-
-
-async def _count_failure(redis: Optional[Redis], login_key: str) -> None:
-    if not redis:
-        return
-    try:
-        await atomic_incr_expire(redis, login_key, FAILED_LOGIN_WINDOW_SECONDS)
-    except Exception as exc:
-        logger.warning("Redis increment failed login error: %s", exc)
-
-
-async def _clear_failures(redis: Optional[Redis], login_key: str) -> None:
-    if not redis:
-        return
-    try:
-        await redis.delete(login_key)
-    except Exception as exc:
-        logger.warning("Redis could not clear the failed login count: %s", exc)
 
 
 async def _tenant_labels(tenant_id: Optional[str], inactive_hint: str) -> tuple[Optional[str], Optional[str]]:
@@ -108,13 +69,13 @@ class AuthService:
         login_key = f"{FAILED_LOGIN_PREFIX}{login_data.tenant_slug or ''}:{identifier.lower()}"
         redis = safe_redis()
 
-        await _reject_if_locked(redis, login_key)
+        await reject_if_locked(redis, login_key)
         candidates = await find_candidate_users(identifier, login_data.tenant_slug)
         user = pick_user_by_password(candidates, login_data.password)
         if not user:
-            await _count_failure(redis, login_key)
+            await count_failure(redis, login_key)
             return None
-        await _clear_failures(redis, login_key)
+        await clear_failures(redis, login_key)
 
         if not user.isActive:
             raise HTTPException(

@@ -1,4 +1,5 @@
 from typing import Optional
+from app.core.tenancy import is_real_tenant
 from app.db.client import db
 from app.services.admin.bulk_import_service import BulkImportService
 from app.services.admin.infrastructure_bulk_service import InfrastructureBulkImportService
@@ -50,6 +51,6 @@ class AdminBulkService:
     @staticmethod
     async def _log(event_type: str, actor: str, desc: str, ip: Optional[str], tenant_id: Optional[str]) -> None:
         log_data = {"eventType": event_type, "severity": "INFO", "actor": actor, "target": "SYSTEM", "description": desc, "ipAddress": ip}
-        if tenant_id and tenant_id != "default-institution":
+        if is_real_tenant(tenant_id):
             log_data["tenantId"] = tenant_id
         await db.auditlog.create(data=log_data)

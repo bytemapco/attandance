@@ -1,6 +1,7 @@
 from typing import Optional, Dict, Any
 from datetime import datetime, timezone
 
+from app.core.tenancy import is_real_tenant
 from app.core.logging_config import get_logger
 from app.core.security import hash_password, generate_temporary_password
 from app.db.client import db
@@ -65,7 +66,7 @@ class SCIMService:
         count: int = 20,
     ) -> Dict[str, Any]:
         where: Dict[str, Any] = {}
-        if tenant_id and tenant_id != "default-institution":
+        if is_real_tenant(tenant_id):
             where["tenantId"] = tenant_id
 
         total_results = await db.user.count(where=where)
@@ -86,7 +87,7 @@ class SCIMService:
         user = await db.user.find_unique(where={"id": user_id})
         if not user:
             return None
-        if tenant_id and tenant_id != "default-institution" and getattr(user, "tenantId", None) != tenant_id:
+        if is_real_tenant(tenant_id) and getattr(user, "tenantId", None) != tenant_id:
             return None
         return SCIMService.format_scim_user(user)
 
@@ -125,7 +126,7 @@ class SCIMService:
             "isActive": scim_payload.get("active", True),
             "mustChangePassword": True,
         }
-        if tenant_id and tenant_id != "default-institution":
+        if is_real_tenant(tenant_id):
             user_data["tenantId"] = tenant_id
 
         user = await db.user.create(data=user_data)
@@ -137,7 +138,7 @@ class SCIMService:
         user = await db.user.find_unique(where={"id": user_id})
         if not user:
             return False
-        if tenant_id and tenant_id != "default-institution" and getattr(user, "tenantId", None) != tenant_id:
+        if is_real_tenant(tenant_id) and getattr(user, "tenantId", None) != tenant_id:
             return False
         await db.user.delete(where={"id": user_id})
         logger.info("SCIM 2.0 deprovisioned user: %s", user_id)

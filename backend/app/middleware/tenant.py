@@ -10,6 +10,7 @@ from app.core.client_ip import get_client_ip
 from app.core.config import settings
 from app.core.logging_config import get_logger
 from app.core.security import decode_session_token
+from app.core.tenancy import DEFAULT_TENANT_IDENTIFIER
 from app.services.tenant_resolver import TenantResolutionError, resolve_tenant_id
 
 logger = get_logger("app.middleware.tenant")
@@ -17,7 +18,6 @@ logger = get_logger("app.middleware.tenant")
 # Async-safe context variable holding the active tenant ID for the request
 current_tenant_id: contextvars.ContextVar[Optional[str]] = contextvars.ContextVar("current_tenant_id", default=None)
 
-DEFAULT_TENANT_IDENTIFIER = "default-institution"
 STRICT_TENANT_HEADER = "X-Strict-Tenant-Check"
 LOCAL_HOSTS = ("localhost", "127.0.0.1", "0.0.0.0", "testserver")
 LOCAL_ENVIRONMENTS = ("development", "test")

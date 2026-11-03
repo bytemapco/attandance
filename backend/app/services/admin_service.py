@@ -1,5 +1,6 @@
 from typing import List, Optional
 from prisma.models import Department, Subject, Classroom, Designation
+from app.core.tenancy import is_real_tenant
 from app.db.client import db
 from app.schemas.student import StudentCreate, StudentResponse
 from app.schemas.teacher import TeacherCreate, TeacherResponse
@@ -18,7 +19,7 @@ class AdminService:
     @staticmethod
     async def _log_action(event_type: str, severity: str, actor: str, target: str, description: str, ip: Optional[str] = None, tenant_id: Optional[str] = None) -> None:
         log_data = {"eventType": event_type, "severity": severity, "actor": actor, "target": target, "description": description, "ipAddress": ip}
-        if tenant_id and tenant_id != "default-institution":
+        if is_real_tenant(tenant_id):
             log_data["tenantId"] = tenant_id
         await db.auditlog.create(data=log_data)
 

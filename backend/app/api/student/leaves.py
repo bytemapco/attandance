@@ -14,7 +14,7 @@ from app.api.student.helpers import (
 from app.db.client import db
 from app.repositories.leave_repository import LeaveRepository
 from app.schemas.leave import LeaveRequestListResponse, LeaveRequestResponse
-from app.services.notification_service import notify_teacher_leave_submitted
+from app.services.teacher_notifications import notify_teacher_leave_submitted
 from app.services.s3_service import s3_service
 
 router = APIRouter()
