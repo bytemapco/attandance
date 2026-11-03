@@ -44,13 +44,15 @@ class AuthRepository {
   Future<({UserProfile profile, AuthStatus status})> login(
     String email,
     String password,
-    String deviceUuid,
-  ) async {
+    String deviceUuid, {
+    String? tenantSlug,
+  }) async {
     try {
       final tokenResponse = await _authApi.login(
         email,
         password,
         deviceUuid: deviceUuid,
+        tenantSlug: tenantSlug,
       );
 
       if (tokenResponse.role != 'STUDENT') {

@@ -15,10 +15,14 @@ class AuthStateData {
   final UserProfile? user;
   final String? errorMessage;
 
+  /// The server could not tell which college this student ID belongs to.
+  final bool needsInstitutionCode;
+
   const AuthStateData({
     this.status = AuthStatus.loading,
     this.user,
     this.errorMessage,
+    this.needsInstitutionCode = false,
   });
 
   AuthStateData copyWith({
@@ -31,6 +35,7 @@ class AuthStateData {
       status: status ?? this.status,
       user: user ?? this.user,
       errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
+      needsInstitutionCode: needsInstitutionCode,
     );
   }
 }
@@ -73,17 +78,27 @@ class AuthNotifier extends StateNotifier<AuthStateData> {
     }
   }
 
-  Future<void> login(String email, String password) async {
+  Future<void> login(
+    String email,
+    String password, {
+    String? tenantSlug,
+  }) async {
     state = state.copyWith(status: AuthStatus.loading, clearError: true);
     try {
       final deviceUuid = await _deviceService.getDeviceUUID();
-      final result = await _repo.login(email, password, deviceUuid);
+      final result = await _repo.login(
+        email,
+        password,
+        deviceUuid,
+        tenantSlug: tenantSlug,
+      );
       state = AuthStateData(status: result.status, user: result.profile);
     } on AppException catch (e) {
       AppLogger.error('Login failed: $e');
       state = AuthStateData(
         status: AuthStatus.unauthenticated,
         errorMessage: e.message,
+        needsInstitutionCode: e.statusCode == 409,
       );
     } on DioException catch (e) {
       AppLogger.error('Login failed: $e');

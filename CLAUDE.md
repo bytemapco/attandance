@@ -186,4 +186,15 @@ Admin page for creating and managing classes across departments and batches. A c
 - ✅ A day off is a cancelled occurrence. Holiday calendar and a shared time slot list are post-v1 (PRD section 10)
 - ✅ Migration: `prisma/migrations/20261101300000_remove_time_slots_and_holidays/`
 
+**Nov 2 (v1 hardening):**
+- ❌ Legacy `AcademicClass`, `Enrollment`, `Session`, `Geofence`, `Attendance`, `StudentBiometric` tables, the `/admin/classes` API and web pages, and the old async-mark pipeline. Everything runs on `CourseSection → ClassOccurrence → AttendanceRecord`.
+- ✅ `enrollmentNumber` and `employeeId` are unique **per tenant**. Login by such an ID can match several institutions: `services/login_identity.py` picks the account whose password matches, else answers 409 asking for `tenant_slug` (mobile shows an "Institution code" field).
+- ✅ `tenant_id` is NOT NULL on tenant tables (only a `SUPER_ADMIN` user has none, enforced by a CHECK). A DB trigger (`enforce_same_tenant`) refuses rows that link records of two tenants. These triggers and CHECKs live in SQL only, not in `schema.prisma`; `prisma migrate dev` would drop them.
+- ✅ Attendance history cannot be deleted by deleting a student, lesson or institution (`NO ACTION` foreign keys). Deactivate users instead; deleting an institution with attendance is refused (409).
+- ✅ Biometric consent is the `biometric_consents` table (one active grant per student, revoking deletes the face template). It was only in Redis before.
+- ✅ A closed register can be corrected **with a reason** (audited). Closing (by teacher or by the scheduler when the window ends) records absent/excused for everyone without a mark and refreshes streaks. Streaks and stats count only closed classes (`services/student_class_ledger.py`).
+- Migrations: `20261102000000_schema_hardening/`, `20261102010000_retire_legacy_attendance/`. Both are applied by hand to the dev DB, like the earlier ones.
+- Demo data: `backend/scripts/seed_iit_bombay.py --force-destructive-wipe --confirm-target-db=<db>` wipes the local DB and seeds IIT Bombay (5 departments, 17 teachers, 4 classes of 12 students, 6 weeks of attendance). Same local-only safety checks as `reset_database.py`. Accounts use short `@yopmail.com` emails and one shared password, both in `scripts/seed_iitb/data.py`.
+- Not built (needs a policy decision, PRD §13): per-programme thresholds, condonation workflow, guardians.
+
 ---
