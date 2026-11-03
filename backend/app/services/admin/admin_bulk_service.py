@@ -7,14 +7,14 @@ from app.services.admin.infrastructure_bulk_service import InfrastructureBulkImp
 class AdminBulkService:
     @staticmethod
     async def bulk_create_students(students: list, send_invite: bool = True, actor: str = "system", ip: Optional[str] = None, tenant_id: Optional[str] = None) -> dict:
-        res = await BulkImportService.bulk_create_students(students, send_invite=send_invite, tenant_id=tenant_id)
+        res = await BulkImportService.bulk_create_students(students, tenant_id=tenant_id, send_invite=send_invite)
         if res["imported_count"] > 0:
             await AdminBulkService._log("BULK_IMPORT_STUDENTS", actor, f"Bulk imported {res['imported_count']} students", ip, tenant_id)
         return res
 
     @staticmethod
     async def bulk_create_teachers(teachers: list, send_invite: bool = True, actor: str = "system", ip: Optional[str] = None, tenant_id: Optional[str] = None) -> dict:
-        res = await BulkImportService.bulk_create_teachers(teachers, send_invite=send_invite, tenant_id=tenant_id)
+        res = await BulkImportService.bulk_create_teachers(teachers, tenant_id=tenant_id, send_invite=send_invite)
         if res["imported_count"] > 0:
             await AdminBulkService._log("BULK_IMPORT_TEACHERS", actor, f"Bulk imported {res['imported_count']} faculty", ip, tenant_id)
         return res

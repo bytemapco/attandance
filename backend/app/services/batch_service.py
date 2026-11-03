@@ -125,11 +125,10 @@ async def delete_batch(tenant_id: str, batch_id: str) -> None:
     await db.batch.delete(where={"id": batch_id})
 
 
-async def resolve_assignable_batch(tenant_id: str, batch_id: Optional[str], department_id: str, client=None):
+async def resolve_assignable_batch(tenant_id: str, batch_id: Optional[str], department_id: str):
     if not batch_id:
         return None
-    database = client or db
-    batch = await database.batch.find_first(where={"id": batch_id, "tenantId": tenant_id})
+    batch = await db.batch.find_first(where={"id": batch_id, "tenantId": tenant_id})
     if not batch:
         raise ValueError("Batch not found.")
     if batch.departmentId != department_id:

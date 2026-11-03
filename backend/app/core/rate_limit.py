@@ -1,17 +1,11 @@
 from typing import Callable
 from fastapi import HTTPException, Request, status
+from app.core.client_ip import get_client_ip
 from app.db.redis import safe_redis
 from app.core.redis_scripts import atomic_sliding_window
 from app.core.logging_config import get_logger
 
 logger = get_logger("app.rate_limit")
-
-
-def get_client_ip(request: Request) -> str:
-    """Safely extract client IP address without trusting unvalidated proxy headers."""
-    if request.client and request.client.host:
-        return request.client.host
-    return "unknown"
 
 
 def rate_limiter(requests_limit: int = 60, window_seconds: int = 60) -> Callable:

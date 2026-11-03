@@ -6,6 +6,7 @@ from fastapi import Request, status
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import JSONResponse
 
+from app.core.client_ip import get_client_ip
 from app.core.config import settings
 from app.core.logging_config import get_logger
 from app.core.security import decode_session_token
@@ -75,11 +76,6 @@ def _forbidden(detail: str) -> JSONResponse:
     return JSONResponse(status_code=status.HTTP_403_FORBIDDEN, content={"detail": detail})
 
 
-def _client_ip(request: Request) -> str:
-    forwarded = request.headers.get("X-Forwarded-For", "").split(",")[0].strip()
-    return forwarded or (request.client.host if request.client else "unknown")
-
-
 def _missing_tenant_identifier(request: Request) -> Optional[str]:
     """Local development and tests fall back to a default institution; anywhere else the tenant must be named."""
     if settings.ENVIRONMENT in LOCAL_ENVIRONMENTS and not request.headers.get(STRICT_TENANT_HEADER):
@@ -101,7 +97,7 @@ class TenantResolutionMiddleware(BaseHTTPMiddleware):
         if claims.tenant_id and header_tenant and claims.tenant_id != header_tenant:
             logger.warning(
                 "Security Alert: Tenant mismatch. Token tid=%s vs Header tid=%s from IP=%s",
-                claims.tenant_id, header_tenant, _client_ip(request),
+                claims.tenant_id, header_tenant, get_client_ip(request),
             )
             return _forbidden("Access forbidden: Cross-tenant context manipulation detected.")
 

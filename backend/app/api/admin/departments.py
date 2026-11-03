@@ -2,7 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException, Request, status
 from prisma.errors import PrismaError
 from prisma.models import User
 
-from app.api.admin.helpers import get_client_ip, handle_generic_err, logger, require_department_in_tenant
+from app.core.client_ip import get_client_ip
+from app.api.admin.helpers import handle_generic_err, logger, require_department_in_tenant
 from app.api.dependencies import get_current_user, get_tenant_context
 from app.schemas.admin import BulkImportResponse, DepartmentBulkCreateRequest, DepartmentCreate, DepartmentResponse, DepartmentUpdate
 from app.schemas.common import MessageResponse

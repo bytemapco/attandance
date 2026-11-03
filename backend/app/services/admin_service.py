@@ -23,7 +23,7 @@ class AdminService:
 
     # Students
     async def create_student(self, data: StudentCreate, actor: str = "system", ip: Optional[str] = None, tenant_id: Optional[str] = None) -> StudentResponse:
-        res = await StudentAdminService.create_student(data, tenant_id=tenant_id, db_client=db)
+        res = await StudentAdminService.create_student(data, tenant_id=tenant_id)
         await self._log_action("CREATE_STUDENT", "INFO", actor, res.id, f"Created student {data.email}", ip, tenant_id=tenant_id)
         return res
 
@@ -40,7 +40,7 @@ class AdminService:
 
     # Teachers
     async def create_teacher(self, data: TeacherCreate, actor: str = "system", ip: Optional[str] = None, tenant_id: Optional[str] = None) -> TeacherResponse:
-        res = await TeacherAdminService.create_teacher(data, tenant_id=tenant_id, db_client=db)
+        res = await TeacherAdminService.create_teacher(data, tenant_id=tenant_id)
         await self._log_action("CREATE_TEACHER", "INFO", actor, res.id, f"Created teacher {data.email}", ip, tenant_id=tenant_id)
         return res
 
