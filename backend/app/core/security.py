@@ -57,6 +57,14 @@ def decode_access_token(token: str) -> dict[str, Any] | None:
         return None
 
 
+def decode_session_token(token: str) -> dict[str, Any] | None:
+    """Decodes a login token. Tokens minted for another purpose (refresh, QR, review) carry a `type` claim and are refused."""
+    payload = decode_access_token(token)
+    if payload is None or "type" in payload:
+        return None
+    return payload
+
+
 def generate_temporary_password(length: int = 8) -> str:
     import secrets
 
