@@ -10,6 +10,7 @@ from app.schemas.auth import DeviceChangeRequestCreate
 from app.schemas.teacher import DeviceChangeResponse
 from app.services.email_service import email_service
 from app.services.login_identity import find_candidate_users, pick_user_by_password
+from app.services.device_change_review_service import DeviceChangeReviewService
 
 logger = get_logger("app.services.device_change")
 
@@ -95,9 +96,7 @@ class DeviceChangeService:
             logger.warning("Failed to dispatch device change requested email: %s", e)
 
     async def get_pending_requests(self, teacher: Teacher) -> List[DeviceChangeResponse]:
-        from app.services.device_change_review_service import DeviceChangeReviewService
         return await DeviceChangeReviewService.get_pending_requests(teacher)
 
     async def approve_request(self, request_id: str, teacher: Teacher, new_status: str) -> bool:
-        from app.services.device_change_review_service import DeviceChangeReviewService
         return await DeviceChangeReviewService.approve_request(request_id, teacher, new_status)

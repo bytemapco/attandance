@@ -1,3 +1,4 @@
+import secrets
 from datetime import datetime, timedelta, timezone
 from typing import Any
 
@@ -66,8 +67,6 @@ def decode_session_token(token: str) -> dict[str, Any] | None:
 
 
 def generate_temporary_password(length: int = 8) -> str:
-    import secrets
-
     # Unambiguous uppercase, lowercase, and digits (no confusing chars like 0, O, 1, l, I)
     upper = "ABCDEFGHJKLMNPQRSTUVWXYZ"
     lower = "abcdefghijkmnpqrstuvwxyz"

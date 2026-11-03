@@ -10,6 +10,7 @@ from app.schemas.system_config import SystemConfigResponse, SystemConfigUpdate
 from app.services.absentee_scanner import run_absentee_scan
 from app.services.admin_service import AdminService
 from app.services.system_config_service import SystemConfigService
+from app.services.biometric_consent_service import BiometricConsentService
 
 router = APIRouter()
 
@@ -150,8 +151,6 @@ async def purge_biometric_photos(
     current_user: User = Depends(get_current_user),
     admin_service: AdminService = Depends(),
 ):
-    from app.services.biometric_consent_service import BiometricConsentService
-
     service = BiometricConsentService()
     result = await service.purge_attendance_photos(tenant_id=tenant_id, retention_days=retention_days)
     await admin_service._log_action(

@@ -11,6 +11,7 @@ from app.services.admin.subject_service import SubjectService
 from app.services.admin.classroom_service import ClassroomService
 from app.services.admin.designation_service import DesignationService
 from app.services.admin.audit_export_service import AuditExportService
+from app.services.auth_service import AuthService
 
 
 class AdminService:
@@ -134,8 +135,6 @@ class AdminService:
         user = await db.user.find_unique(where={"id": user_id})
         if not user:
             raise ValueError("User not found.")
-        from app.services.auth_service import AuthService
-
         await AuthService().request_password_reset(user.email, frontend_url=frontend_url)
         await self._log_action("TRIGGER_PASSWORD_RESET", "INFO", actor, user_id, f"Dispatched password reset email for {user.email}", ip, tenant_id=user.tenantId)
 

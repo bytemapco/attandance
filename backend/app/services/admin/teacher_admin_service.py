@@ -10,7 +10,7 @@ from app.services.admin.account_setup import (
     require_record,
     user_record,
 )
-from app.services.admin.invitations import send_invitation
+from app.services.invitations import send_invitation
 from app.services.admin.listing import ordering, selected, text_search, with_account_status
 
 SEARCH_COLUMNS = ("firstName", "lastName", "employeeId", "nameInitials")

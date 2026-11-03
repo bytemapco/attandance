@@ -19,6 +19,7 @@ from app.schemas.super_admin import (
     PaginatedLicenseRequests,
 )
 from app.services.super_admin_service import SuperAdminService
+from app.core.url_resolver import resolve_frontend_url
 
 super_admin_protection = Depends(RoleChecker(allowed_roles=["SUPER_ADMIN"]))
 router = APIRouter(
@@ -159,8 +160,6 @@ async def reset_user_password(
     request: Request,
     current_user: User = Depends(get_current_user),
 ):
-    from app.core.url_resolver import resolve_frontend_url
-
     frontend_url = resolve_frontend_url(request)
     return await SuperAdminService.trigger_password_reset(
         user_id, actor=current_user.email, frontend_url=frontend_url

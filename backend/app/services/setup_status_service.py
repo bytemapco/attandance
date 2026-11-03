@@ -13,6 +13,7 @@ from prisma import Json
 
 from app.db.client import db
 from app.schemas.setup_status import SetupCheck, SetupIncompleteDetail, SetupStatusResponse
+from app.services.super_admin_service import SuperAdminService
 
 MASTER_DATA = "/admin/master-data"
 
@@ -84,8 +85,6 @@ def build_checks(counts: dict[str, int], campus_set: bool) -> list[SetupCheck]:
 
 async def _license_remaining(tenant_id: str) -> Optional[int]:
     try:
-        from app.services.super_admin_service import SuperAdminService
-
         usage = await SuperAdminService.get_tenant_license_usage(tenant_id=tenant_id)
         return usage.get("remaining")
     except Exception:

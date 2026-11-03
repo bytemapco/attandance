@@ -5,7 +5,7 @@ from typing import Any, Awaitable, Callable, Optional
 
 from app.db.client import db
 from app.services.admin.account_setup import SEAT_ROLES
-from app.services.admin.invitations import send_invitation
+from app.services.invitations import send_invitation
 
 INVITE_CONCURRENCY = 5
 

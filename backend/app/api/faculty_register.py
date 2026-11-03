@@ -7,6 +7,7 @@ from app.api.dependencies import RoleChecker, get_current_teacher, get_current_u
 from app.core.datetime_utils import get_ist_today
 from app.schemas.timetable import AttendanceRegisterBulkUpdate
 from app.services.occurrence_register_service import OccurrenceRegisterService
+from app.services.teacher_schedule_service import TeacherScheduleService
 
 router = APIRouter(prefix="/faculty", tags=["Faculty Daily Schedule & Attendance Register"])
 
@@ -88,7 +89,6 @@ async def get_weekly_timetable(
     current_teacher: Teacher = Depends(get_current_teacher),
     tenant_id: str = Depends(get_tenant_context),
 ):
-    from app.services.teacher_schedule_service import TeacherScheduleService
     resolved_tenant = tenant_id or current_teacher.tenantId
     return await TeacherScheduleService.get_weekly_timetable(
         tenant_id=resolved_tenant,
@@ -102,7 +102,6 @@ async def start_occurrence_attendance(
     current_teacher: Teacher = Depends(get_current_teacher),
     tenant_id: str = Depends(get_tenant_context),
 ):
-    from app.services.teacher_schedule_service import TeacherScheduleService
     resolved_tenant = tenant_id or current_teacher.tenantId
     return await TeacherScheduleService.start_occurrence_attendance(
         tenant_id=resolved_tenant,
@@ -118,7 +117,6 @@ async def stop_occurrence_attendance(
     current_user: User = Depends(get_current_user),
     tenant_id: str = Depends(get_tenant_context),
 ):
-    from app.services.teacher_schedule_service import TeacherScheduleService
     resolved_tenant = tenant_id or current_teacher.tenantId
     return await TeacherScheduleService.stop_occurrence_attendance(
         tenant_id=resolved_tenant,

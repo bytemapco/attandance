@@ -11,6 +11,7 @@ from app.repositories.user_repository import UserRepository
 from app.repositories.student_repository import StudentRepository
 from app.repositories.teacher_repository import TeacherRepository
 from app.services.token_revocation import ACCESS_TOKEN, ensure_not_revoked
+from app.middleware.tenant import get_current_tenant_id
 
 logger = get_logger("app.auth")
 
@@ -113,8 +114,6 @@ async def get_tenant_context(current_user: User = Depends(get_current_user)) -> 
                 detail="User has no tenant association. Contact your platform administrator.",
             )
         return current_user.tenantId
-
-    from app.middleware.tenant import get_current_tenant_id
 
     tid = get_current_tenant_id()
     if not tid:

@@ -5,7 +5,7 @@ from app.core.logging_config import get_logger
 from app.services.auth_service import AuthService
 from app.services.email_service import email_service
 
-logger = get_logger("app.services.admin.invitations")
+logger = get_logger("app.services.invitations")
 
 
 async def send_invitation(
