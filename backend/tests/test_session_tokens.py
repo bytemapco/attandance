@@ -23,7 +23,7 @@ def test_tokens_made_for_another_purpose_are_not_login_tokens(token):
 
 
 async def test_a_refresh_token_cannot_authenticate_a_request(monkeypatch):
-    monkeypatch.setattr(dependencies, "_check_token_revoked", lambda token: _done())
+    monkeypatch.setattr(dependencies, "ensure_not_revoked", lambda token, messages: _done())
     with pytest.raises(HTTPException) as caught:
         await dependencies._validate_token_payload(create_refresh_token(subject="user-1", role="TEACHER"))
     assert caught.value.status_code == 401

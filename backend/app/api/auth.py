@@ -6,13 +6,8 @@ from prisma.models import User
 
 from app.api.dependencies import get_current_user, reusable_oauth2, auth_rate_limit
 from app.core.logging_config import get_logger
-from app.core.security import decode_access_token, create_access_token, create_refresh_token
-from app.core.config import settings
+from app.core.security import decode_access_token
 from app.core.url_resolver import resolve_frontend_url
-from app.db.client import db
-from app.db.redis import safe_redis
-from app.repositories.student_repository import StudentRepository
-from app.repositories.user_repository import UserRepository
 from app.schemas.auth import (
     Token,
     RefreshTokenRequest,
@@ -24,14 +19,14 @@ from app.schemas.auth import (
     CompleteOnboardingRequest,
     VerifyTokenResponse,
     ChangePasswordRequest,
-    StudentProfileBrief,
-    TeacherProfileBrief,
 )
 from app.schemas.common import MessageResponse
 from app.schemas.system_config import SystemConfigResponse
 from app.services.auth_service import AuthService
 from app.services.device_change_service import DeviceChangeService
+from app.services.profile_service import build_profile
 from app.services.system_config_service import SystemConfigService
+from app.services.token_revocation import revoke
 
 logger = get_logger("app.api.auth")
 
@@ -49,150 +44,13 @@ async def login(login_data: UserLogin, request: Request, auth_service: AuthServi
 
 
 @router.post("/refresh", response_model=Token)
-async def refresh_token_endpoint(payload: RefreshTokenRequest) -> Token:
-    decoded = decode_access_token(payload.refresh_token)
-    if not decoded or decoded.get("type") != "refresh":
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid or expired refresh token",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-
-    r = safe_redis()
-    if r:
-        try:
-            if await r.get(f"denylist:{payload.refresh_token}"):
-                raise HTTPException(
-                    status_code=status.HTTP_401_UNAUTHORIZED,
-                    detail="Refresh token has been revoked",
-                    headers={"WWW-Authenticate": "Bearer"},
-                )
-        except HTTPException:
-            raise
-        except Exception as cache_err:
-            logger.warning("Could not check refresh token revocation in Redis: %s", cache_err)
-            if getattr(settings, "TOKEN_REVOCATION_FAIL_CLOSED", False):
-                raise HTTPException(
-                    status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-                    detail="Authentication service temporarily unavailable.",
-                    headers={"WWW-Authenticate": "Bearer"},
-                )
-    elif getattr(settings, "TOKEN_REVOCATION_FAIL_CLOSED", False):
-        raise HTTPException(
-            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail="Authentication service temporarily unavailable.",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-
-    user_id = decoded.get("sub")
-    user = await UserRepository().get_by_id(user_id)
-    if not user or not user.isActive:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="User account is inactive or not found",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-
-    tid = getattr(user, "tenantId", None)
-    tenant_slug, tenant_name = None, None
-    if tid:
-        t = await db.tenant.find_unique(where={"id": tid})
-        if t:
-            if t.status != "ACTIVE":
-                raise HTTPException(
-                    status_code=status.HTTP_403_FORBIDDEN,
-                    detail=f"Institution account '{t.name}' is currently {t.status.lower()}.",
-                )
-            tenant_slug, tenant_name = t.slug, t.name
-
-    new_access_token = create_access_token(
-        subject=user.id,
-        role=user.role,
-        extra_data={"tid": tid, "tenant_id": tid} if tid else None,
-    )
-    new_refresh_token = create_refresh_token(subject=user.id, role=user.role)
-
-    # Invalidate previous refresh token
-    await r.setex(f"denylist:{payload.refresh_token}", 7 * 86400, "1")
-
-    return Token(
-        access_token=new_access_token,
-        refresh_token=new_refresh_token,
-        token_type="bearer",
-        role=user.role,
-        must_change_password=getattr(user, "mustChangePassword", False),
-        tenant_id=tid,
-        tenant_slug=tenant_slug,
-        tenant_name=tenant_name,
-    )
+async def refresh_token_endpoint(payload: RefreshTokenRequest, auth_service: AuthService = Depends()) -> Token:
+    return await auth_service.refresh(payload.refresh_token)
 
 
 @router.get("/me", response_model=UserProfileResponse)
 async def get_me(current_user: User = Depends(get_current_user)) -> UserProfileResponse:
-    student_profile = None
-    teacher_profile = None
-
-    if current_user.role == "STUDENT":
-        student = await db.student.find_unique(
-            where={"userId": current_user.id},
-            include={"department": True},
-        )
-        if student:
-            embedding = await StudentRepository().get_face_embedding(student.id)
-            student_profile = StudentProfileBrief(
-                id=student.id,
-                enrollment_number=student.enrollmentNumber,
-                first_name=student.firstName,
-                last_name=student.lastName,
-                phone=student.phone,
-                gender=student.gender,
-                semester=student.semester,
-                batch=student.batch,
-                batch_id=student.batchId,
-                department_id=student.departmentId,
-                department_name=student.department.name if student.department else None,
-                face_registered=embedding is not None and len(embedding) > 0,
-            )
-    elif current_user.role == "TEACHER":
-        teacher = await db.teacher.find_unique(
-            where={"userId": current_user.id}, include={"department": True, "designation": True}
-        )
-        if teacher:
-            teacher_profile = TeacherProfileBrief(
-                id=teacher.id,
-                department=teacher.department.name if teacher.department else "",
-                designation=teacher.designation.name if teacher.designation else "",
-                employee_id=teacher.employeeId,
-                first_name=teacher.firstName,
-                last_name=teacher.lastName,
-                department_id=teacher.departmentId,
-                designation_id=teacher.designationId,
-            )
-
-    tid = getattr(current_user, "tenantId", None)
-    tenant_slug, tenant_name = None, None
-    if tid:
-        t = await db.tenant.find_unique(where={"id": tid})
-        if t:
-            if current_user.role != "SUPER_ADMIN" and t.status != "ACTIVE":
-                raise HTTPException(
-                    status_code=status.HTTP_403_FORBIDDEN,
-                    detail=f"Tenant account for '{t.name}' is currently {t.status.lower()}.",
-                )
-            tenant_slug, tenant_name = t.slug, t.name
-
-    return UserProfileResponse(
-        id=current_user.id,
-        email=current_user.email,
-        role=current_user.role,
-        is_active=current_user.isActive,
-        must_change_password=getattr(current_user, "mustChangePassword", False),
-        tenant_id=tid,
-        tenant_slug=tenant_slug,
-        tenant_name=tenant_name,
-        student_profile=student_profile,
-        teacher_profile=teacher_profile,
-    )
+    return await build_profile(current_user)
 
 
 @router.post("/change-password", response_model=MessageResponse, status_code=status.HTTP_200_OK)
@@ -212,18 +70,10 @@ async def change_password(
 @router.post("/logout", response_model=MessageResponse, status_code=status.HTTP_200_OK)
 async def logout(token: str = Depends(reusable_oauth2)) -> MessageResponse:
     payload = decode_access_token(token)
-    if payload:
-        exp = payload.get("exp")
-        if exp:
-            ttl = exp - int(datetime.now(timezone.utc).timestamp())
-            if ttl > 0:
-                r = safe_redis()
-                if r:
-                    try:
-                        await r.setex(f"denylist:{token}", ttl, "revoked")
-                        logger.info("Token revoked: user=%s", payload.get("sub"))
-                    except Exception as cache_err:
-                        logger.warning("Failed to add token to Redis denylist: %s", cache_err)
+    remaining = payload.get("exp", 0) - int(datetime.now(timezone.utc).timestamp()) if payload else 0
+    if remaining > 0:
+        await revoke(token, remaining)
+        logger.info("Token revoked: user=%s", payload.get("sub"))
     return MessageResponse(status="success", message="Successfully logged out.")
 
 
