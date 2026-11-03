@@ -58,8 +58,8 @@ def teachers(ctx: Ctx) -> None:
     api = ctx.api
     section("Teacher app")
     for token in ctx.teacher_tokens.values():
-        for path in ("/faculty/classes", "/faculty/weekly-timetable", "/faculty/history", "/faculty/flagged",
-                     "/faculty/analytics", "/teacher/leaves/pending", "/teacher/device-changes/pending"):
+        for path in ("/faculty/classes", "/faculty/weekly-timetable", "/faculty/history", "/faculty/flagged", "/reports/filters",
+                     "/teacher/leaves/pending", "/teacher/device-changes/pending"):
             api.read(path, token)
 
 
