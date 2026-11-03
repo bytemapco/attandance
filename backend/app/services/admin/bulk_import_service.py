@@ -197,7 +197,7 @@ class BulkImportService:
                     errors.append(f"Row {idx + 1}: Email '{item.email}' already registered.")
                     failed_count += 1
                     continue
-                if await db.teacher.find_unique(where={"employeeId": item.employee_id}):
+                if await db.teacher.find_first(where={"tenantId": tenant_id, "employeeId": item.employee_id}):
                     errors.append(f"Row {idx + 1}: Employee ID '{item.employee_id}' already exists.")
                     failed_count += 1
                     continue
@@ -311,65 +311,3 @@ class BulkImportService:
             "invitations_sent": invitations_sent,
             "errors": errors,
         }
-
-    @staticmethod
-    async def bulk_create_classes(classes: list, tenant_id: Optional[str] = None) -> dict:
-        imported_count = 0
-        failed_count = 0
-        errors = []
-        for idx, item in enumerate(classes):
-            try:
-                sub_where = {
-                    "OR": [
-                        {"code": {"equals": item.subject_code, "mode": "insensitive"}},
-                        {"name": {"equals": item.subject_code, "mode": "insensitive"}},
-                    ]
-                }
-                if tenant_id:
-                    sub_where["tenantId"] = tenant_id
-                subject = await db.subject.find_first(where=sub_where)
-                if not subject:
-                    errors.append(f"Row {idx + 1} ({item.name}): Subject '{item.subject_code}' not found.")
-                    failed_count += 1
-                    continue
-
-                teacher_where = {
-                    "user": {
-                        "is": {
-                            "email": {"equals": item.teacher_email, "mode": "insensitive"},
-                        }
-                    }
-                }
-                if tenant_id:
-                    teacher_where["user"]["is"]["tenantId"] = tenant_id
-                teacher = await db.teacher.find_first(where=teacher_where, include={"user": True})
-                if not teacher:
-                    errors.append(f"Row {idx + 1} ({item.name}): Teacher with email '{item.teacher_email}' not found.")
-                    failed_count += 1
-                    continue
-
-                classroom_id = None
-                if item.classroom_name:
-                    cr_where = {"name": {"equals": item.classroom_name, "mode": "insensitive"}}
-                    if tenant_id:
-                        cr_where["tenantId"] = tenant_id
-                    classroom = await db.classroom.find_first(where=cr_where)
-                    if classroom:
-                        classroom_id = classroom.id
-
-                class_data = {
-                    "name": item.name,
-                    "subjectId": subject.id,
-                    "teacherId": teacher.id,
-                    "classroomId": classroom_id,
-                    "semester": item.semester,
-                    "batch": item.batch,
-                }
-                if tenant_id:
-                    class_data["tenantId"] = tenant_id
-                await db.academicclass.create(data=class_data)
-                imported_count += 1
-            except Exception as e:
-                errors.append(f"Row {idx + 1} ({item.name}): {str(e)}")
-                failed_count += 1
-        return {"imported_count": imported_count, "failed_count": failed_count, "invitations_sent": 0, "errors": errors}

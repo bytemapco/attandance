@@ -8,17 +8,10 @@ from app.api.student.helpers import (
     validate_image,
 )
 from app.db.client import db
-from app.schemas.attendance import (
-    AttendanceAnalyzeResponse,
-    AttendanceAsyncEnqueueResponse,
-    AttendanceJobStatusResponse,
-    AttendanceMarkResponse,
-)
+from app.schemas.attendance import AttendanceAnalyzeResponse, AttendanceMarkResponse
 from app.schemas.common import MessageResponse
 from app.schemas.student import StudentAttendanceHistoryResponse, StudentAttendanceNoteRequest
-from app.services.attendance.attendance_queue_service import AttendanceQueueService
 from app.services import occurrence_face_review_service as face_review
-from app.services.attendance_service import AttendanceSubmission
 from app.services.s3_service import s3_service
 from app.services.student_service import StudentService
 
@@ -92,48 +85,6 @@ async def confirm_attendance(
     return await _confirm(student, review_token)
 
 
-@router.post("/attendance/async-mark", response_model=AttendanceAsyncEnqueueResponse, status_code=status.HTTP_202_ACCEPTED)
-async def async_mark_attendance(
-    session_id: str = Form(...),
-    latitude: float = Form(...),
-    longitude: float = Form(...),
-    accuracy: float = Form(...),
-    image: UploadFile | None = File(None),
-    student: Student = Depends(get_current_student),
-    queue_service: AttendanceQueueService = Depends(),
-) -> AttendanceAsyncEnqueueResponse:
-    await rate_limit_student(student.id, max_requests=15, window_seconds=60)
-    image_url = None
-    if image:
-        validate_image(image)
-        image_url, _ = await save_uploaded_image(image, "attendance")
-
-    submission = AttendanceSubmission(
-        student_id=student.id,
-        session_id=session_id,
-        latitude=latitude,
-        longitude=longitude,
-        accuracy=accuracy,
-        image_path=image_url,
-    )
-    job_id = await queue_service.enqueue_submission(submission)
-    return AttendanceAsyncEnqueueResponse(job_id=job_id)
-
-
-@router.get("/attendance/jobs/{job_id}", response_model=AttendanceJobStatusResponse)
-async def get_attendance_job_status(
-    job_id: str,
-    student: Student = Depends(get_current_student),
-    queue_service: AttendanceQueueService = Depends(),
-) -> AttendanceJobStatusResponse:
-    job = await queue_service.get_job_status(job_id)
-    if not job:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Attendance job not found")
-    if job.get("student_id") != student.id:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Access denied to this job")
-    return AttendanceJobStatusResponse(**job)
-
-
 @router.get("/my-attendance", response_model=StudentAttendanceHistoryResponse)
 async def get_my_attendance(
     student: Student = Depends(get_current_student),
@@ -148,10 +99,12 @@ async def submit_flagged_note(
     data: StudentAttendanceNoteRequest,
     student: Student = Depends(get_current_student),
 ) -> MessageResponse:
-    record = await db.attendance.find_unique(where={"id": attendance_id})
-    if not record or record.studentId != student.id:
+    record = await db.attendancerecord.find_first(
+        where={"id": attendance_id, "studentId": student.id, "tenantId": student.tenantId}
+    )
+    if not record:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Attendance record not found.")
-    if record.status != "Flagged":
+    if record.status != "FLAGGED":
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Notes can only be added to flagged records.")
-    await db.attendance.update(where={"id": attendance_id}, data={"studentNote": data.note})
+    await db.attendancerecord.update(where={"id": attendance_id}, data={"studentNote": data.note})
     return MessageResponse(status="success", message="Note submitted successfully.")

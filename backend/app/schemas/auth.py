@@ -15,6 +15,9 @@ class UserLogin(BaseModel):
     device_uuid: Optional[str] = Field(
         None, max_length=128, description="Hardware device UUID for student device binding"
     )
+    tenant_slug: Optional[str] = Field(
+        None, max_length=64, description="Institution code. Only needed when an enrollment number or employee ID is shared by several institutions"
+    )
 
     @field_validator("email", mode="before")
     @classmethod
@@ -127,6 +130,9 @@ class DeviceChangeRequestCreate(BaseModel):
         description="Unique email address or institutional Student ID / Enrollment Number",
     )
     password: str = Field(..., min_length=8, max_length=128, description="Plaintext password")
+    tenant_slug: Optional[str] = Field(
+        None, max_length=64, description="Institution code. Only needed when an enrollment number is shared by several institutions"
+    )
     new_device_uuid: str = Field(..., min_length=1, max_length=128, description="The new hardware device UUID")
     reason: Optional[str] = Field(None, max_length=500, description="Optional reason for changing the device")
 

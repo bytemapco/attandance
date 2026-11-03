@@ -73,7 +73,7 @@ class SubjectService:
         sub = await db.subject.find_first(where=where)
         if not sub:
             raise ValueError("Subject not found.")
-        class_count = await db.academicclass.count(where={"subjectId": id})
-        if class_count > 0:
+        section_count = await db.coursesection.count(where={"subjectId": id})
+        if section_count > 0:
             raise ValueError("Cannot delete subject because it is currently assigned.")
         await db.subject.delete(where={"id": id})

@@ -1,4 +1,5 @@
 from typing import Any, Dict
+from fastapi import HTTPException, status
 from prisma import Json
 from app.core.logging_config import get_logger
 from app.db.client import db
@@ -79,6 +80,12 @@ class TenantLifecycleService:
         t = await db.tenant.find_unique(where={"id": tenant_id})
         if not t:
             raise ValueError(f"Tenant with id '{tenant_id}' not found.")
+
+        if await db.attendancerecord.count(where={"tenantId": tenant_id}) > 0:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail=f"'{t.name}' has attendance records and cannot be deleted. Suspend the institution instead.",
+            )
 
         try:
             from app.api.websocket import manager as ws_manager

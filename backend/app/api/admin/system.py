@@ -3,7 +3,7 @@ from prisma.models import User
 
 from app.api.dependencies import get_current_user, get_tenant_context
 from app.core.rate_limit import rate_limiter
-from app.repositories.attendance_repository import AttendanceRepository
+from app.db.client import db
 from app.schemas.admin import AbsenteeAnomalyItem, AdminStatsResponse, AuditLogResponse
 from app.schemas.pagination import PaginatedResponse
 from app.schemas.system_config import SystemConfigResponse, SystemConfigUpdate
@@ -69,9 +69,11 @@ async def get_admin_stats(
 async def scan_absentee_anomalies(
     contamination: float = 0.10,
     tenant_id: str = Depends(get_tenant_context),
-    attendance_repo: AttendanceRepository = Depends(),
 ) -> list[AbsenteeAnomalyItem]:
-    records = await attendance_repo.get_all_absences(tenant_id=tenant_id)
+    records = await db.attendancerecord.find_many(
+        where={"tenantId": tenant_id, "status": "ABSENT"},
+        include={"student": True, "occurrence": True},
+    )
     if not records or len(records) < 5:
         return []
 
@@ -89,19 +91,11 @@ async def scan_absentee_anomalies(
 
     rows = []
     for r in records:
-        session = getattr(r, "session", None)
-        created_at = getattr(r, "createdAt", None)
-        if session and getattr(session, "sessionDate", None):
-            day_str = session.sessionDate.strftime("%A")
-        elif created_at:
-            day_str = created_at.strftime("%A")
-        else:
-            day_str = "Monday"
         rows.append(
             {
-                "student_id": getattr(r, "studentId", ""),
-                "status": getattr(r, "status", "Absent"),
-                "day_of_week": day_str,
+                "student_id": r.studentId,
+                "status": r.status,
+                "day_of_week": r.occurrence.date.strftime("%A"),
             }
         )
 
@@ -159,7 +153,7 @@ async def purge_biometric_photos(
     from app.services.biometric_consent_service import BiometricConsentService
 
     service = BiometricConsentService()
-    result = await service.purge_attendance_photos(retention_days=retention_days, tenant_id=tenant_id)
+    result = await service.purge_attendance_photos(tenant_id=tenant_id, retention_days=retention_days)
     await admin_service._log_action(
         "PURGE_BIOMETRICS",
         "WARN",

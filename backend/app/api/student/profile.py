@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile, status
+from fastapi import APIRouter, Depends, File, Form, HTTPException, Request, UploadFile, status
 from prisma.models import Student
 
 from app.api.dependencies import get_current_student
@@ -6,7 +6,7 @@ from app.api.student.helpers import rate_limit_student, save_uploaded_image, val
 from app.db.client import db
 from app.schemas.common import MessageResponse
 from app.schemas.student import FcmTokenRequest, StudentClassResponse
-from app.services.attendance_service import AttendanceService
+from app.services.attendance.face_registration_service import FaceRegistrationService
 from app.services import student_subjects_service
 from app.services.biometric_consent_service import BiometricConsentService
 from app.services.s3_service import s3_service
@@ -16,12 +16,28 @@ router = APIRouter()
 
 @router.post("/biometric/consent", response_model=MessageResponse)
 async def submit_biometric_consent(
-    policy_version: str = Form("2026.1-BIPA"),
+    request: Request,
+    policy_version: str = Form(BiometricConsentService.DEFAULT_POLICY_VERSION),
     student: Student = Depends(get_current_student),
 ) -> MessageResponse:
     service = BiometricConsentService()
-    await service.record_consent(student.id, policy_version=policy_version)
+    await service.record_consent(
+        student,
+        policy_version=policy_version,
+        ip_address=request.client.host if request.client else None,
+        user_agent=request.headers.get("user-agent"),
+        recorded_by_id=student.userId,
+    )
     return MessageResponse(status="success", message="Biometric consent successfully recorded.")
+
+
+@router.delete("/biometric/consent", response_model=MessageResponse)
+async def revoke_biometric_consent(student: Student = Depends(get_current_student)) -> MessageResponse:
+    await BiometricConsentService().revoke_consent(student.id)
+    return MessageResponse(
+        status="success",
+        message="Biometric consent withdrawn and your face data deleted. You can still mark attendance by scanning the class QR code.",
+    )
 
 
 @router.get("/biometric/consent-status")
@@ -36,7 +52,6 @@ async def get_biometric_consent_status(
 async def register_face(
     image: UploadFile = File(...),
     student: Student = Depends(get_current_student),
-    attendance_service: AttendanceService = Depends(),
 ) -> MessageResponse:
     await rate_limit_student(student.id, max_requests=5, window_seconds=60)
     validate_image(image)
@@ -49,7 +64,7 @@ async def register_face(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Biometric consent is required prior to registering facial biometrics.",
             )
-        success = await attendance_service.register_face(student.id, image_bytes)
+        success = await FaceRegistrationService().register_face(student.id, image_bytes)
         if not success:
             s3_service.delete_file(image_url)
             raise ValueError("Could not extract a valid face from the image.")

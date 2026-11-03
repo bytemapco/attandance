@@ -4,6 +4,19 @@ from prisma.models import Student
 from app.db.client import db
 
 
+def taught_by(teacher_id: str) -> dict:
+    """A Student filter: enrolled in a subject this teacher is assigned to."""
+    return {
+        "courseEnrollments": {
+            "some": {
+                "status": "ACTIVE",
+                "endedAt": None,
+                "courseSection": {"is": {"faculties": {"some": {"teacherId": teacher_id}}}},
+            }
+        }
+    }
+
+
 class StudentRepository:
     async def get_by_id(self, student_id: str) -> Student | None:
         return await db.student.find_unique(where={"id": student_id}, include={"user": True})
@@ -11,15 +24,12 @@ class StudentRepository:
     async def get_by_user_id(self, user_id: str) -> Student | None:
         return await db.student.find_unique(where={"userId": user_id}, include={"user": True})
 
-    async def get_by_enrollment(self, enrollment: str) -> Student | None:
-        return await db.student.find_unique(where={"enrollmentNumber": enrollment}, include={"user": True})
-
-    async def create(self, user_id: str, enrollment: str) -> Student:
-        return await db.student.create(data={"userId": user_id, "enrollmentNumber": enrollment})
-
     async def update_face_embedding(self, student_id: str, embedding: List[float]) -> bool:
         await db.execute_raw("UPDATE students SET face_embedding = $1::vector WHERE id = $2", embedding, student_id)
         return True
+
+    async def clear_face_embedding(self, student_id: str) -> None:
+        await db.execute_raw("UPDATE students SET face_embedding = NULL WHERE id = $1", student_id)
 
     async def get_face_embedding(self, student_id: str) -> List[float] | None:
         records = await db.query_raw("SELECT face_embedding::text FROM students WHERE id = $1", student_id)

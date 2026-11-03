@@ -97,4 +97,4 @@ class AttendanceRegisterBulkUpdate(BaseModel):
 
     occurrence_id: str
     updates: List[AttendanceRegisterItem]
-    reason: Optional[str] = Field("Manual faculty register submission", max_length=255)
+    reason: Optional[str] = Field(None, max_length=500, description="Required to change a register that is already closed")

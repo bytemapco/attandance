@@ -20,13 +20,6 @@ class AdminBulkService:
         return res
 
     @staticmethod
-    async def bulk_create_classes(classes: list, actor: str = "system", ip: Optional[str] = None, tenant_id: Optional[str] = None) -> dict:
-        res = await BulkImportService.bulk_create_classes(classes, tenant_id=tenant_id)
-        if res["imported_count"] > 0:
-            await AdminBulkService._log("BULK_IMPORT_CLASSES", actor, f"Bulk imported {res['imported_count']} classes", ip, tenant_id)
-        return res
-
-    @staticmethod
     async def bulk_create_departments(departments: list, actor: str = "system", ip: Optional[str] = None, tenant_id: Optional[str] = None) -> dict:
         res = await InfrastructureBulkImportService.bulk_create_departments(departments, tenant_id=tenant_id)
         if res["imported_count"] > 0:

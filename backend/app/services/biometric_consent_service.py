@@ -1,196 +1,111 @@
-import json
-import re
 from datetime import datetime, timezone, timedelta
-from typing import Optional, Dict, Any, List
+from typing import Optional, Dict, Any
 
+from prisma.errors import UniqueViolationError
+from prisma.models import Student
 
 from app.core.logging_config import get_logger
-from app.db.redis import get_redis, safe_redis
 from app.db.client import db
+from app.repositories.student_repository import StudentRepository
 from app.services.s3_service import S3Service
 
 logger = get_logger("app.biometric.consent")
 
 
 class BiometricConsentService:
-    CONSENT_PREFIX = "biometric:consent:"
-    CONSENT_TTL_SECONDS = 365 * 24 * 3600  # 1 year consent validity
+    DEFAULT_POLICY_VERSION = "2026.1"
 
     def __init__(self, s3_service: Optional[S3Service] = None) -> None:
         self.s3_service = s3_service or S3Service()
 
+    async def _active_consent(self, student_id: str):
+        return await db.biometricconsent.find_first(where={"studentId": student_id, "revokedAt": None})
+
     async def record_consent(
         self,
-        student_id: str,
-        policy_version: str = "2026.1-BIPA",
+        student: Student,
+        policy_version: str = DEFAULT_POLICY_VERSION,
         ip_address: Optional[str] = None,
         user_agent: Optional[str] = None,
-    ) -> Dict[str, Any]:
-        consent_record = {
-            "student_id": student_id,
-            "consented": True,
-            "consented_at": datetime.now(timezone.utc).isoformat(),
-            "policy_version": policy_version,
-            "ip_address": ip_address,
-            "user_agent": user_agent,
-            "retention_schedule_days": 365,
-        }
-
-        r = safe_redis()
-        if r:
-            try:
-                await r.setex(
-                    f"{self.CONSENT_PREFIX}{student_id}",
-                    self.CONSENT_TTL_SECONDS,
-                    json.dumps(consent_record),
-                )
-            except Exception as redis_err:
-                logger.warning("Redis consent cache write error: %s", redis_err)
-
+        recorded_by_id: Optional[str] = None,
+    ):
+        """Stores the grant in the database. A second grant while one is active returns the first."""
+        existing = await self._active_consent(student.id)
+        if existing:
+            return existing
         try:
-            await db.studentbiometric.update_many(
-                where={"studentId": student_id},
-                data={"consentGiven": True},
+            consent = await db.biometricconsent.create(
+                data={
+                    "tenantId": student.tenantId,
+                    "studentId": student.id,
+                    "policyVersion": policy_version,
+                    "ipAddress": ip_address,
+                    "userAgent": user_agent,
+                    "recordedById": recorded_by_id,
+                }
             )
-        except Exception as db_err:
-            logger.warning("DB consent persistence error for student %s: %s", student_id, db_err)
-
-        logger.info("Biometric consent recorded for student %s under policy %s", student_id, policy_version)
-        return consent_record
+        except UniqueViolationError:
+            return await self._active_consent(student.id)
+        logger.info("Biometric consent recorded for student %s under policy %s", student.id, policy_version)
+        return consent
 
     async def revoke_consent(self, student_id: str) -> bool:
-        r = safe_redis()
-        if r:
-            try:
-                await r.delete(f"{self.CONSENT_PREFIX}{student_id}")
-            except Exception as redis_err:
-                logger.warning("Redis consent cache delete error: %s", redis_err)
-
-        try:
-            await db.studentbiometric.update_many(
-                where={"studentId": student_id},
-                data={"consentGiven": False},
-            )
-            return True
-        except Exception as db_err:
-            logger.warning("DB consent revocation error for student %s: %s", student_id, db_err)
-            return False
+        """Ends the active consent and deletes the stored face template. Returns False if none was active."""
+        revoked = await db.biometricconsent.update_many(
+            where={"studentId": student_id, "revokedAt": None},
+            data={"revokedAt": datetime.now(timezone.utc)},
+        )
+        await StudentRepository().clear_face_embedding(student_id)
+        logger.info("Biometric consent revoked and face template deleted for student %s", student_id)
+        return revoked > 0
 
     async def has_consent(self, student_id: str) -> bool:
-        r = safe_redis()
-        if r:
-            try:
-                raw = await r.get(f"{self.CONSENT_PREFIX}{student_id}")
-                if raw:
-                    data = json.loads(raw)
-                    return bool(data.get("consented", False))
-            except Exception as redis_err:
-                logger.warning("Redis consent read error: %s", redis_err)
-
-        try:
-            biometric = await db.studentbiometric.find_first(
-                where={"studentId": student_id, "isActive": True, "consentGiven": True}
-            )
-            return biometric is not None
-        except Exception as db_err:
-            logger.error("DB consent fallback read error: %s", db_err)
-            return False
+        return await self._active_consent(student_id) is not None
 
     async def get_consent_status(self, student_id: str) -> Dict[str, Any]:
-        has_consented = await self.has_consent(student_id)
-        consented_at = None
-        policy_ver = "2026.1-BIPA"
-        try:
-            r = await get_redis()
-            raw = await r.get(f"{self.CONSENT_PREFIX}{student_id}")
-            if raw:
-                data = json.loads(raw)
-                consented_at = data.get("consented_at")
-                policy_ver = data.get("policy_version", policy_ver)
-        except Exception:
-            pass
-
-        if not has_consented:
+        consent = await self._active_consent(student_id)
+        if not consent:
             return {
                 "student_id": student_id,
                 "has_consent": False,
                 "consent_required": True,
-                "policy_version": policy_ver,
+                "policy_version": self.DEFAULT_POLICY_VERSION,
                 "message": "Explicit biometric consent required prior to facial verification.",
             }
         return {
             "student_id": student_id,
             "has_consent": True,
             "consent_required": False,
-            "consented_at": consented_at,
-            "policy_version": policy_ver,
+            "consented_at": consent.grantedAt.isoformat(),
+            "policy_version": consent.policyVersion,
         }
 
-    async def purge_attendance_photos(
-        self, retention_days: int = 30, tenant_id: Optional[str] = None
-    ) -> Dict[str, Any]:
+    async def purge_attendance_photos(self, tenant_id: str, retention_days: int = 30) -> Dict[str, Any]:
+        """Deletes flagged-mark selfies older than the retention period. The attendance record itself stays."""
         cutoff_date = datetime.now(timezone.utc) - timedelta(days=retention_days)
-        where_cond: dict = {
-            "createdAt": {"lt": cutoff_date},
-        }
-        if tenant_id:
-            where_cond["student"] = {"is": {"user": {"is": {"tenantId": tenant_id}}}}
-        records = await db.attendance.find_many(
-            where=where_cond,
+        records = await db.attendancerecord.find_many(
+            where={"tenantId": tenant_id, "verifiedAt": {"lt": cutoff_date}, "evidencePhotoUrl": {"not": None}},
             take=500,
         )
 
-        purged_count = 0
         s3_deleted_count = 0
         for rec in records:
-            remarks = rec.remarks or ""
-            note = rec.studentNote or ""
-            if "photo_purged" in remarks and not rec.evidencePhotoUrl:
+            try:
+                if self.s3_service.delete_file(rec.evidencePhotoUrl):
+                    s3_deleted_count += 1
+            except Exception as exc:
+                logger.warning("Failed to purge evidence photo %s from S3: %s", rec.evidencePhotoUrl, exc)
                 continue
-
-            found_refs: List[str] = []
-            if rec.evidencePhotoUrl:
-                found_refs.append(rec.evidencePhotoUrl)
-
-            combined_text = f"{remarks} {note}"
-            photo_bracket_matches = re.findall(r"\[photo:(.*?)\]", combined_text)
-            url_matches = re.findall(r"(https?://[^\s\]]+)", combined_text)
-            key_matches = re.findall(
-                r"((?:tenants/|attendance/)[^\s\]]+\.(?:jpg|jpeg|png|webp))", combined_text, re.IGNORECASE
-            )
-
-            for ref in photo_bracket_matches + url_matches + key_matches:
-                ref_clean = ref.strip()
-                if ref_clean and ref_clean not in found_refs:
-                    found_refs.append(ref_clean)
-
-            for ref in found_refs:
-                try:
-                    if self.s3_service.delete_file(ref):
-                        s3_deleted_count += 1
-                except Exception as exc:
-                    logger.warning("Failed to purge biometric photo %s from S3: %s", ref, exc)
-
-            purged_count += 1
-            cleaned_remarks = re.sub(r"\[photo:.*?\]", "", remarks).strip()
-            new_remarks = f"{cleaned_remarks} [photo_purged_for_data_minimization]".strip()
-            update_data: Dict[str, Any] = {"remarks": new_remarks}
-            if rec.evidencePhotoUrl:
-                update_data["evidencePhotoUrl"] = None
-
-            await db.attendance.update(
-                where={"id": rec.id},
-                data=update_data,
-            )
+            await db.attendancerecord.update(where={"id": rec.id}, data={"evidencePhotoUrl": None})
 
         logger.info(
-            "Purged raw biometric verification artifacts for %d records older than %d days (%d files deleted from S3)",
-            purged_count,
+            "Purged evidence photos for %d records older than %d days (%d files deleted from S3)",
+            len(records),
             retention_days,
             s3_deleted_count,
         )
         return {
-            "purged_count": purged_count,
+            "purged_count": len(records),
             "s3_deleted_count": s3_deleted_count,
             "retention_days": retention_days,
             "cutoff_date": cutoff_date.isoformat(),

@@ -48,3 +48,4 @@ class ClassAnalyticsResponse(BaseModel):
     average_percentage: Optional[float] = None
     threshold: float
     below_threshold: list[StudentAttendanceRow]
+    students: list[StudentAttendanceRow]

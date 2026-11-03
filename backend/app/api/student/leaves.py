@@ -91,6 +91,7 @@ async def create_leave_request(
             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Could not save document.")
 
     leave = await leave_repo.create({
+        "tenantId": student.tenantId,
         "studentId": student.id,
         "startDate": datetime.combine(s_date, datetime.min.time()).replace(tzinfo=timezone.utc),
         "endDate": datetime.combine(e_date, datetime.max.time()).replace(tzinfo=timezone.utc),
@@ -100,22 +101,26 @@ async def create_leave_request(
     })
 
     try:
-        enrollments = await db.enrollment.find_many(where={"studentId": student.id}, include={"academicClass": {"include": {"teacher": True}}})
+        enrollments = await db.courseenrollment.find_many(
+            where={"studentId": student.id, "status": "ACTIVE", "endedAt": None},
+            include={"courseSection": {"include": {"faculties": {"include": {"teacher": True}}}}},
+        )
         notified_teachers = set()
         for enr in enrollments:
-            if enr.academicClass and enr.academicClass.teacher and enr.academicClass.teacher.userId:
-                t_user_id = enr.academicClass.teacher.userId
-                if t_user_id not in notified_teachers:
-                    notified_teachers.add(t_user_id)
-                    await notify_teacher_leave_submitted(
-                        teacher_user_id=t_user_id,
-                        student_name=resolve_student_name(student),
-                        class_name=enr.academicClass.name if enr.academicClass else None,
-                        leave_id=leave.id,
-                        start_date=start_date,
-                        end_date=end_date,
-                        reason=reason,
-                    )
+            for faculty in enr.courseSection.faculties or []:
+                t_user_id = faculty.teacher.userId
+                if t_user_id in notified_teachers:
+                    continue
+                notified_teachers.add(t_user_id)
+                await notify_teacher_leave_submitted(
+                    teacher_user_id=t_user_id,
+                    student_name=resolve_student_name(student),
+                    class_name=enr.courseSection.name,
+                    leave_id=leave.id,
+                    start_date=start_date,
+                    end_date=end_date,
+                    reason=reason,
+                )
     except Exception as exc:
         logger.warning("Failed to notify teachers of leave: %s", exc)
 

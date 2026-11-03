@@ -128,6 +128,7 @@ async def class_analytics(tenant_id: str, teacher: Teacher) -> list[dict]:
                 "average_percentage": round(sum(scored) / len(scored), 2) if scored else None,
                 "threshold": threshold,
                 "below_threshold": below,
+                "students": sorted(everyone, key=lambda r: (r["percentage"] is None, r["percentage"] or 0, r["student_name"])),
             }
         )
     return result

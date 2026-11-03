@@ -84,6 +84,9 @@ jobs:
       - name: Run Ruff Linter
         run: ruff check .
 
+      - name: Run backend tests
+        run: pytest tests -v
+
   mobile-ci:
     name: Mobile Quality & Lint
     runs-on: ubuntu-latest

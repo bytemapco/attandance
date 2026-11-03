@@ -9,8 +9,8 @@ from app.db.client import db
 from app.db.redis import safe_redis
 from app.repositories.user_repository import UserRepository
 from app.repositories.student_repository import StudentRepository
-from app.repositories.teacher_repository import TeacherRepository
 from app.schemas.auth import Token, UserLogin
+from app.services.login_identity import find_candidate_users, pick_user_by_password
 
 logger = get_logger("app.services.auth")
 
@@ -19,26 +19,10 @@ class AuthService:
     def __init__(self) -> None:
         self.user_repo = UserRepository()
         self.student_repo = StudentRepository()
-        self.teacher_repo = TeacherRepository()
 
     async def authenticate(self, login_data: UserLogin) -> Optional[Token]:
         identifier = login_data.email.strip()
-        user = None
-        if "@" in identifier:
-            user = await self.user_repo.get_by_email(identifier.lower())
-        else:
-            student = await self.student_repo.get_by_enrollment(identifier)
-            if student and student.user:
-                user = student.user
-            else:
-                teacher = await self.teacher_repo.get_by_employee_id(identifier)
-                user = (
-                    teacher.user
-                    if (teacher and teacher.user)
-                    else await self.user_repo.get_by_email(identifier.lower())
-                )
-
-        login_key = f"failed_login:{identifier.lower()}"
+        login_key = f"failed_login:{login_data.tenant_slug or ''}:{identifier.lower()}"
         redis = safe_redis()
 
         if redis:
@@ -54,7 +38,9 @@ class AuthService:
             except Exception as exc:
                 logger.warning("Redis failed login check error: %s", exc)
 
-        if not user or not verify_password(login_data.password, user.hashedPassword):
+        candidates = await find_candidate_users(identifier, login_data.tenant_slug)
+        user = pick_user_by_password(candidates, login_data.password)
+        if not user:
             if redis:
                 try:
                     await atomic_incr_expire(redis, login_key, 900)

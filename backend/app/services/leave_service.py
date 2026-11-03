@@ -1,13 +1,12 @@
 from typing import Optional
 
-from prisma.models import LeaveRequest
+from prisma.models import LeaveRequest, Teacher
 
 from app.core.logging_config import get_logger
 from app.db.client import db
 from app.repositories.leave_repository import LeaveRepository
-from app.repositories.attendance_repository import AttendanceRepository
-from app.repositories.enrollment_repository import EnrollmentRepository
-from app.repositories.session_repository import SessionRepository
+from app.repositories.student_repository import taught_by
+from app.services.occurrence_closer import refresh_streaks
 
 logger = get_logger("app.leave_service")
 
@@ -15,69 +14,69 @@ logger = get_logger("app.leave_service")
 class LeaveService:
     def __init__(self):
         self.leave_repo = LeaveRepository()
-        self.attendance_repo = AttendanceRepository()
-        self.enrollment_repo = EnrollmentRepository()
-        self.session_repo = SessionRepository()
 
     async def approve_leave(
-        self, leave_id: str, teacher_id: str, status: str, approver_note: Optional[str] = None
+        self, leave_id: str, teacher: Teacher, status: str, approver_note: Optional[str] = None
     ) -> Optional[LeaveRequest]:
-        leave = await self.leave_repo.get_by_id(leave_id)
+        leave = await self.leave_repo.get_by_id(leave_id, teacher.tenantId)
         if not leave:
             return None
 
-        # Verify teacher authorization for this student
-        teacher_classes = await db.academicclass.find_many(where={"teacherId": teacher_id})
-        teacher_class_ids = {c.id for c in teacher_classes}
-        if not teacher_class_ids:
-            logger.warning("Teacher %s has no classes and cannot approve leaves", teacher_id)
-            return None
-
-        enrollment = await db.enrollment.find_first(
-            where={"studentId": leave.studentId, "academicClassId": {"in": list(teacher_class_ids)}}
+        teaches = await db.student.find_first(
+            where={"id": leave.studentId, "tenantId": teacher.tenantId, **taught_by(teacher.id)}
         )
-        if not enrollment:
-            logger.warning(
-                "Teacher %s unauthorized to approve leave for un-enrolled student %s", teacher_id, leave.studentId
-            )
+        if not teaches:
+            logger.warning("Teacher %s is not assigned to student %s and cannot decide this leave", teacher.id, leave.studentId)
             return None
 
         updated_leave = await self.leave_repo.update_status(
-            leave_id=leave_id, status=status, approved_by=teacher_id, approver_note=approver_note
+            leave_id=leave_id, status=status, approved_by=teacher.id, approver_note=approver_note
         )
-
         if status == "APPROVED":
-            await self._mark_excused_attendance(leave)
+            await self._excuse_closed_classes(leave, teacher)
             logger.info("Leave approved: student=%s dates=%s to %s", leave.studentId, leave.startDate, leave.endDate)
-
         return updated_leave
 
-    async def _mark_excused_attendance(self, leave: LeaveRequest):
-        sessions = await self.session_repo.get_sessions_in_date_range(
-            start_date=leave.startDate, end_date=leave.endDate
+    async def _excuse_closed_classes(self, leave: LeaveRequest, teacher: Teacher) -> None:
+        """Classes already closed during the leave turn from absent to excused. Open classes are handled when they close."""
+        enrollments = await db.courseenrollment.find_many(
+            where={"studentId": leave.studentId, "status": "ACTIVE", "endedAt": None}
         )
-        enrollments = await self.enrollment_repo.get_by_student_id(leave.studentId)
-        enrolled_class_ids = {e.academicClassId for e in enrollments}
-        relevant_sessions = [s for s in sessions if s.academicClassId in enrolled_class_ids]
-
-        for session in relevant_sessions:
-            existing = await self.attendance_repo.get_by_student_and_session(
-                student_id=leave.studentId, session_id=session.id
+        occurrences = await db.classoccurrence.find_many(
+            where={
+                "tenantId": leave.tenantId,
+                "courseSectionId": {"in": [e.courseSectionId for e in enrollments]},
+                "status": "CONDUCTED",
+                "isAttendanceLocked": True,
+                "date": {"gte": leave.startDate, "lte": leave.endDate},
+            },
+            include={"attendanceRecords": {"where": {"studentId": leave.studentId}}},
+        )
+        reason = f"Approved leave: {leave.reason}"
+        changed = 0
+        for occurrence in occurrences:
+            existing = occurrence.attendanceRecords[0] if occurrence.attendanceRecords else None
+            if existing and existing.status != "ABSENT":
+                continue
+            record = await self._set_excused(leave, occurrence, existing, reason)
+            await db.attendanceauditlog.create(
+                data={
+                    "attendanceRecordId": record.id,
+                    "previousStatus": existing.status if existing else "ABSENT",
+                    "newStatus": "EXCUSED",
+                    "changedById": teacher.userId,
+                    "reason": reason,
+                }
             )
-            data = {"status": "Excused", "remarks": f"Approved leave: {leave.reason}"}
-            if existing:
-                await self.attendance_repo.update(attendance_id=existing.id, data=data)
-            else:
-                await self.attendance_repo.create(
-                    {
-                        "studentId": leave.studentId,
-                        "sessionId": session.id,
-                        "faceScore": 0.0,
-                        "livenessScore": 0.0,
-                        "backgroundScore": 0.0,
-                        "finalAiScore": 0.0,
-                        "gpsLatitude": 0.0,
-                        "gpsLongitude": 0.0,
-                        **data,
-                    }
-                )
+            changed += 1
+        if changed:
+            await refresh_streaks([leave.studentId])
+
+    @staticmethod
+    async def _set_excused(leave: LeaveRequest, occurrence, existing, reason: str):
+        fields = {"status": "EXCUSED", "method": "SYSTEM_EXCUSED", "remarks": reason}
+        if existing:
+            return await db.attendancerecord.update(where={"id": existing.id}, data=fields)
+        return await db.attendancerecord.create(
+            data={**fields, "tenantId": leave.tenantId, "occurrenceId": occurrence.id, "studentId": leave.studentId}
+        )

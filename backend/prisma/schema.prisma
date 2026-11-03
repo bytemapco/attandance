@@ -120,8 +120,6 @@ model Tenant {
   subjects        Subject[]
   classrooms      Classroom[]
   designations    Designation[]
-  classes         AcademicClass[]
-  attendance      Attendance[]
   auditLogs       AuditLog[]
   licenseRequests LicenseRequest[]
   notifications   Notification[]
@@ -137,8 +135,7 @@ model Tenant {
 
   leaveRequests        LeaveRequest[]
   deviceChangeRequests DeviceChangeRequest[]
-  studentBiometrics    StudentBiometric[]
-  sessions             Session[]
+  biometricConsents    BiometricConsent[]
 
   @@index([status])
   @@map("tenants")
@@ -164,6 +161,8 @@ model User {
   licenseRequestsAsRequester LicenseRequest[] @relation("LicenseRequester")
   licenseRequestsAsProcessor LicenseRequest[] @relation("LicenseProcessor")
   attendanceAudits           AttendanceAuditLog[]
+  lockedOccurrences          ClassOccurrence[] @relation("OccurrenceLockedBy")
+  recordedConsents           BiometricConsent[]
 
   @@index([tenantId, role])
   @@index([tenantId, isActive])
@@ -172,7 +171,7 @@ model User {
 
 model Student {
   id               String    @id @default(uuid())
-  tenantId         String?   @map("tenant_id")
+  tenantId         String    @map("tenant_id")
   userId           String    @unique @map("user_id")
   departmentId     String    @map("department_id")
   enrollmentNumber String    @map("enrollment_number")
@@ -192,20 +191,18 @@ model Student {
   createdAt        DateTime  @default(now()) @map("created_at")
   updatedAt        DateTime  @updatedAt @map("updated_at")
 
-  tenant               Tenant?               @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenant               Tenant                @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   user                 User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
   department           Department            @relation(fields: [departmentId], references: [id], onDelete: Restrict)
   batchRef             Batch?                @relation(fields: [batchId], references: [id], onDelete: Restrict)
-  biometrics           StudentBiometric[]
-  enrollments          Enrollment[]
-  attendanceRecords    Attendance[]
+  biometricConsents    BiometricConsent[]
   leaveRequests        LeaveRequest[]
   deviceChangeRequests DeviceChangeRequest[]
   courseEnrollments    CourseEnrollment[]
-  newAttendanceRecords AttendanceRecord[]
+  attendanceRecords    AttendanceRecord[]
   classMemberships     ClassMember[]
 
-  @@unique([enrollmentNumber])
+  @@unique([tenantId, enrollmentNumber])
   @@index([tenantId, departmentId])
   @@index([tenantId, createdAt])
   @@index([semester, batch])
@@ -213,34 +210,13 @@ model Student {
   @@map("students")
 }
 
-/// A student's stored face template, with the consent flag recorded alongside it.
-model StudentBiometric {
-  id               String                     @id @default(uuid())
-  tenantId         String?                    @map("tenant_id")
-  studentId        String                     @map("student_id")
-  algorithm        String                     @default("facenet_128")
-  embeddingVersion Int                        @default(1) @map("embedding_version")
-  faceEmbedding    Unsupported("vector(128)") @map("face_embedding")
-  isActive         Boolean                    @default(true) @map("is_active")
-  consentGiven     Boolean                    @default(false) @map("consent_given")
-  createdAt        DateTime                   @default(now()) @map("created_at")
-  updatedAt        DateTime                   @updatedAt @map("updated_at")
-
-  tenant  Tenant? @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
-
-  @@index([studentId, isActive])
-  @@index([tenantId])
-  @@map("student_biometrics")
-}
-
 model Teacher {
   id              String    @id @default(uuid())
-  tenantId        String?   @map("tenant_id")
+  tenantId        String    @map("tenant_id")
   userId          String    @unique @map("user_id")
   departmentId    String    @map("department_id")
   designationId   String    @map("designation_id")
-  employeeId      String    @unique @map("employee_id")
+  employeeId      String    @map("employee_id")
   firstName       String    @map("first_name")
   lastName        String    @map("last_name")
   nameInitials    String?   @map("name_initials")
@@ -248,16 +224,16 @@ model Teacher {
   createdAt       DateTime  @default(now()) @map("created_at")
   updatedAt       DateTime  @updatedAt @map("updated_at")
 
-  tenant                Tenant?               @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenant                Tenant                @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   user                  User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
   department            Department            @relation(fields: [departmentId], references: [id], onDelete: Restrict)
   designation           Designation           @relation(fields: [designationId], references: [id], onDelete: Restrict)
-  classes               AcademicClass[]
   facultyOccurrences    ClassOccurrence[]     @relation("FacultyOccurrences")
   substituteOccurrences ClassOccurrence[]     @relation("SubstituteOccurrences")
   courseFaculties       CourseFaculty[]
   timetableRules        TimetableRule[]
 
+  @@unique([tenantId, employeeId])
   @@index([tenantId, departmentId])
   @@map("teachers")
 }
@@ -268,7 +244,7 @@ model Teacher {
 
 model Department {
   id          String   @id @default(uuid())
-  tenantId    String?  @map("tenant_id")
+  tenantId    String   @map("tenant_id")
   code        String
   name        String
   head        String?
@@ -276,7 +252,7 @@ model Department {
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
-  tenant   Tenant?          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenant   Tenant           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   teachers Teacher[]
   students Student[]
   subjects Subject[]
@@ -291,14 +267,14 @@ model Department {
 
 model Designation {
   id          String   @id @default(uuid())
-  tenantId    String?  @map("tenant_id")
+  tenantId    String   @map("tenant_id")
   code        String
   name        String
   description String?
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
-  tenant   Tenant?   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenant   Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   teachers Teacher[]
 
   @@unique([tenantId, code])
@@ -308,7 +284,7 @@ model Designation {
 
 model Subject {
   id           String   @id @default(uuid())
-  tenantId     String?  @map("tenant_id")
+  tenantId     String   @map("tenant_id")
   departmentId String?  @map("department_id")
   code         String
   name         String
@@ -316,9 +292,8 @@ model Subject {
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")
 
-  tenant          Tenant?          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenant          Tenant           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   department      Department?      @relation(fields: [departmentId], references: [id], onDelete: SetNull)
-  classes         AcademicClass[]
   courseSections  CourseSection[]
 
   @@unique([tenantId, code])
@@ -329,15 +304,14 @@ model Subject {
 
 model Classroom {
   id        String   @id @default(uuid())
-  tenantId  String?  @map("tenant_id")
+  tenantId  String   @map("tenant_id")
   name      String
   building  String?
   capacity  Int?
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  tenant           Tenant?          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  classes          AcademicClass[]
+  tenant           Tenant           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   courseSections   CourseSection[]
   occurrences      ClassOccurrence[]
   timetableRules   TimetableRule[]
@@ -347,127 +321,12 @@ model Classroom {
 }
 
 // ==============================================================================
-// LEGACY ATTENDANCE MODEL (AcademicClass -> Session -> Attendance)
-// Being retired. New work uses CourseSection -> TimetableRule -> ClassOccurrence
-// -> AttendanceRecord, further down in this file.
-// ==============================================================================
-
-/// LEGACY. A subject taught by one teacher. Replaced by CourseSection.
-model AcademicClass {
-  id          String   @id @default(uuid())
-  tenantId    String?  @map("tenant_id")
-  name        String
-  subjectId   String   @map("subject_id")
-  teacherId   String   @map("teacher_id")
-  classroomId    String?  @map("classroom_id")
-  semester       Int?
-  batch          String?
-  createdAt      DateTime @default(now()) @map("created_at")
-  updatedAt      DateTime @updatedAt @map("updated_at")
-
-  tenant       Tenant?       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  teacher      Teacher       @relation(fields: [teacherId], references: [id], onDelete: Restrict)
-  subject      Subject       @relation(fields: [subjectId], references: [id], onDelete: Restrict)
-  classroom    Classroom?    @relation(fields: [classroomId], references: [id], onDelete: SetNull)
-  geofence     Geofence?
-  enrollments  Enrollment[]
-  sessions     Session[]
-
-  @@index([tenantId, teacherId, semester])
-  @@index([subjectId])
-  @@index([classroomId])
-  @@map("classes")
-}
-
-/// LEGACY. A student's place in an AcademicClass. Replaced by CourseEnrollment.
-model Enrollment {
-  id              String   @id @default(uuid())
-  studentId       String   @map("student_id")
-  academicClassId String   @map("academic_class_id")
-  enrolledAt      DateTime @default(now()) @map("enrolled_at")
-
-  student       Student       @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  academicClass AcademicClass @relation(fields: [academicClassId], references: [id], onDelete: Cascade)
-
-  @@unique([studentId, academicClassId])
-  @@index([academicClassId])
-  @@map("enrollments")
-}
-
-/// LEGACY. One attendance window opened by a teacher. Replaced by ClassOccurrence.
-model Session {
-  id              String   @id @default(uuid())
-  tenantId        String?  @map("tenant_id")
-  academicClassId String   @map("class_id")
-  startTime       DateTime @map("start_time")
-  endTime         DateTime @map("end_time")
-  isActive        Boolean  @default(true) @map("is_active")
-  createdAt       DateTime @default(now()) @map("created_at")
-  updatedAt       DateTime @updatedAt @map("updated_at")
-
-  tenant        Tenant?       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  academicClass AcademicClass @relation(fields: [academicClassId], references: [id], onDelete: Cascade)
-  attendance    Attendance[]
-
-  @@index([academicClassId, isActive])
-  @@index([tenantId, startTime])
-  @@map("sessions")
-}
-
-/// LEGACY. Allowed marking area for an AcademicClass. The current institution-wide location lives on SystemConfiguration.
-model Geofence {
-  id              String   @id @default(uuid())
-  academicClassId String?  @unique @map("class_id")
-  latitude        Float
-  longitude       Float
-  radiusMeters    Float    @map("radius_meters")
-  createdAt       DateTime @default(now()) @map("created_at")
-  updatedAt       DateTime @updatedAt @map("updated_at")
-
-  academicClass AcademicClass? @relation(fields: [academicClassId], references: [id], onDelete: Cascade)
-
-  @@map("geofences")
-}
-
-/// LEGACY. One student's mark in a Session, with free-text status. Replaced by AttendanceRecord.
-model Attendance {
-  id                 String    @id @default(uuid())
-  tenantId           String?   @map("tenant_id")
-  sessionId          String    @map("session_id")
-  studentId          String    @map("student_id")
-  status             String
-  faceScore          Float     @map("face_score")
-  livenessScore      Float     @map("liveness_score")
-  backgroundScore    Float     @map("background_score")
-  finalAiScore       Float     @map("final_ai_score")
-  gpsLatitude        Float     @map("gps_latitude")
-  gpsLongitude       Float     @map("gps_longitude")
-  evidencePhotoUrl   String?   @map("evidence_photo_url")
-  remarks            String?
-  studentNote        String?   @map("student_note")
-  reviewedBy         String?   @map("reviewed_by")
-  reviewedAt         DateTime? @map("reviewed_at")
-  createdAt          DateTime  @default(now()) @map("created_at")
-  updatedAt          DateTime  @updatedAt @map("updated_at")
-
-  tenant  Tenant? @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  session Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
-  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
-
-  @@unique([studentId, sessionId])
-  @@index([tenantId, createdAt])
-  @@index([studentId, createdAt])
-  @@index([sessionId, status])
-  @@map("attendance")
-}
-
-// ==============================================================================
 // LEAVES, DEVICES, LICENSES, AUDIT & NOTIFICATIONS
 // ==============================================================================
 
 model LeaveRequest {
   id           String      @id @default(uuid())
-  tenantId     String?     @map("tenant_id")
+  tenantId     String      @map("tenant_id")
   studentId    String      @map("student_id")
   startDate    DateTime    @map("start_date")
   endDate      DateTime    @map("end_date")
@@ -479,7 +338,7 @@ model LeaveRequest {
   createdAt    DateTime    @default(now()) @map("created_at")
   updatedAt    DateTime    @updatedAt @map("updated_at")
 
-  tenant  Tenant? @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenant  Tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
 
   @@index([studentId, status, startDate, endDate])
@@ -489,7 +348,7 @@ model LeaveRequest {
 
 model DeviceChangeRequest {
   id            String             @id @default(uuid())
-  tenantId      String?            @map("tenant_id")
+  tenantId      String             @map("tenant_id")
   studentId     String             @map("student_id")
   newDeviceUuid String             @map("new_device_uuid")
   reason        String?
@@ -498,7 +357,7 @@ model DeviceChangeRequest {
   createdAt     DateTime           @default(now()) @map("created_at")
   updatedAt     DateTime           @updatedAt @map("updated_at")
 
-  tenant  Tenant? @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenant  Tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
 
   @@index([studentId, status])
@@ -508,7 +367,7 @@ model DeviceChangeRequest {
 
 model LicenseRequest {
   id             String               @id @default(uuid())
-  tenantId       String?              @map("tenant_id")
+  tenantId       String               @map("tenant_id")
   requestedById  String               @map("requested_by_id")
   requestedCount Int                  @map("requested_count")
   status         LicenseRequestStatus @default(PENDING)
@@ -517,7 +376,7 @@ model LicenseRequest {
   createdAt      DateTime             @default(now()) @map("created_at")
   updatedAt      DateTime             @updatedAt @map("updated_at")
 
-  tenant      Tenant? @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenant      Tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   requestedBy User    @relation("LicenseRequester", fields: [requestedById], references: [id], onDelete: Cascade)
   processedBy User?   @relation("LicenseProcessor", fields: [processedById], references: [id], onDelete: SetNull)
 
@@ -699,6 +558,8 @@ model ClassOccurrence {
   cancellationReason  String?          @map("cancellation_reason")
   topicCovered        String?          @map("topic_covered")
   isAttendanceLocked  Boolean          @default(false) @map("is_attendance_locked")
+  lockedAt            DateTime?        @map("locked_at")
+  lockedById          String?          @map("locked_by_id")
   verificationActive  Boolean          @default(false) @map("verification_active")
   verificationExpires DateTime?        @map("verification_expires")
   conductedAt         DateTime?        @map("conducted_at")
@@ -711,6 +572,7 @@ model ClassOccurrence {
   classroom         Classroom?         @relation(fields: [classroomId], references: [id], onDelete: SetNull)
   faculty           Teacher            @relation("FacultyOccurrences", fields: [facultyId], references: [id], onDelete: Restrict)
   substituteFaculty Teacher?           @relation("SubstituteOccurrences", fields: [substituteFacultyId], references: [id], onDelete: SetNull)
+  lockedBy          User?              @relation("OccurrenceLockedBy", fields: [lockedById], references: [id], onDelete: SetNull)
   attendanceRecords AttendanceRecord[]
 
   @@unique([courseSectionId, date, startTime])
@@ -735,18 +597,43 @@ model AttendanceRecord {
   gpsLongitude     Float?           @map("gps_longitude")
   evidencePhotoUrl String?          @map("evidence_photo_url")
   remarks          String?
+  /// Why the student says a flagged mark is genuine. The teacher sees it when reviewing.
+  studentNote      String?          @map("student_note")
   verifiedAt       DateTime         @default(now()) @map("verified_at")
   updatedAt        DateTime         @updatedAt @map("updated_at")
 
   tenant     Tenant               @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  occurrence ClassOccurrence      @relation(fields: [occurrenceId], references: [id], onDelete: Cascade)
-  student    Student              @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  occurrence ClassOccurrence      @relation(fields: [occurrenceId], references: [id], onDelete: NoAction)
+  student    Student              @relation(fields: [studentId], references: [id], onDelete: NoAction)
   auditLogs  AttendanceAuditLog[]
 
   @@unique([occurrenceId, studentId])
   @@index([tenantId, verifiedAt])
   @@index([studentId, status])
   @@map("attendance_records")
+}
+
+/// A student's consent to face recognition. One row per grant; revoking sets revokedAt and the
+/// row stays as evidence. A student has at most one row with revokedAt null (partial unique index).
+/// Consent is stored here, never only in a cache.
+model BiometricConsent {
+  id            String    @id @default(uuid())
+  tenantId      String    @map("tenant_id")
+  studentId     String    @map("student_id")
+  policyVersion String    @map("policy_version")
+  recordedById  String?   @map("recorded_by_id")
+  ipAddress     String?   @map("ip_address")
+  userAgent     String?   @map("user_agent")
+  grantedAt     DateTime  @default(now()) @map("granted_at")
+  revokedAt     DateTime? @map("revoked_at")
+
+  tenant     Tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  student    Student @relation(fields: [studentId], references: [id], onDelete: NoAction)
+  recordedBy User?   @relation(fields: [recordedById], references: [id], onDelete: SetNull)
+
+  @@index([tenantId])
+  @@index([studentId, grantedAt])
+  @@map("biometric_consents")
 }
 
 /// Every change to an AttendanceRecord: who changed it, from what, to what, and why.
@@ -760,7 +647,7 @@ model AttendanceAuditLog {
   ipAddress          String?          @map("ip_address")
   timestamp          DateTime         @default(now())
 
-  attendanceRecord AttendanceRecord @relation(fields: [attendanceRecordId], references: [id], onDelete: Cascade)
+  attendanceRecord AttendanceRecord @relation(fields: [attendanceRecordId], references: [id], onDelete: NoAction)
   changedBy        User             @relation(fields: [changedById], references: [id], onDelete: Restrict)
 
   @@index([attendanceRecordId])

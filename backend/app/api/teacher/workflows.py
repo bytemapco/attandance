@@ -38,7 +38,8 @@ async def get_pending_leaves(
     teacher: Teacher = Depends(get_current_teacher),
     leave_repo: LeaveRepository = Depends(),
 ) -> list[LeaveRequestResponse]:
-    return [_make_leave_response(leave) for leave in await leave_repo.get_pending_for_teacher(teacher.id)]
+    pending = await leave_repo.get_pending_for_teacher(teacher.tenantId, teacher.id)
+    return [_make_leave_response(leave) for leave in pending]
 
 
 @router.put("/leaves/{leave_id}/approve", response_model=MessageResponse, status_code=status.HTTP_200_OK)
@@ -49,7 +50,7 @@ async def approve_leave(
     leave_service: LeaveService = Depends(),
 ) -> MessageResponse:
     result = await leave_service.approve_leave(
-        leave_id=leave_id, teacher_id=teacher.id, status=data.status, approver_note=data.approver_note
+        leave_id=leave_id, teacher=teacher, status=data.status, approver_note=data.approver_note
     )
     if not result:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Leave request not found.")
@@ -61,7 +62,7 @@ async def get_pending_device_changes(
     teacher: Teacher = Depends(get_current_teacher),
     device_change_service: DeviceChangeService = Depends(),
 ) -> list[DeviceChangeResponse]:
-    return await device_change_service.get_pending_requests(teacher_id=teacher.id)
+    return await device_change_service.get_pending_requests(teacher=teacher)
 
 
 @router.put("/device-changes/{request_id}/approve", response_model=MessageResponse, status_code=status.HTTP_200_OK)
@@ -72,7 +73,7 @@ async def approve_device_change(
     device_change_service: DeviceChangeService = Depends(),
 ) -> MessageResponse:
     result = await device_change_service.approve_request(
-        request_id=request_id, teacher_id=teacher.id, new_status=data.status
+        request_id=request_id, teacher=teacher, new_status=data.status
     )
     if not result:
         raise HTTPException(

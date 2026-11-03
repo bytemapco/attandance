@@ -73,14 +73,6 @@ async def require_teacher_in_tenant(teacher_id: str, tenant_id: str) -> None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Teacher not found.")
 
 
-async def require_class_in_tenant(class_id: str, tenant_id: str) -> None:
-    if not db.is_connected():
-        return
-    record = await db.academicclass.find_first(where={"id": class_id, "tenantId": tenant_id})
-    if not record:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Class not found.")
-
-
 async def require_department_in_tenant(department_id: str, tenant_id: str) -> None:
     if not db.is_connected():
         return
