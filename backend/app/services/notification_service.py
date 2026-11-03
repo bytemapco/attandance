@@ -2,6 +2,7 @@ from typing import Any, Dict, List, Optional
 
 from app.core.logging_config import get_logger
 from app.db.client import db
+from app.services.connection_manager import manager
 
 logger = get_logger("app.notification")
 
@@ -34,8 +35,6 @@ async def create_in_app_notification(
 
         # Broadcast real-time event via WebSocket
         try:
-            from app.api.websocket import manager
-
             payload = {
                 "event": "NOTIFICATION_RECEIVED",
                 "data": {

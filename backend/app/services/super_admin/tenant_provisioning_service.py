@@ -2,6 +2,7 @@ import asyncio
 from prisma import Json
 from app.core.logging_config import get_logger
 from app.db.client import db
+from app.services.tenant_resolver import remember_tenant
 from app.core.security import hash_password, generate_temporary_password
 from app.schemas.super_admin import (
     TenantProvisionRequest,
@@ -95,10 +96,7 @@ class TenantProvisioningService:
         )
 
         try:
-            from app.db.redis import get_redis
-
-            r = get_redis()
-            await r.setex(f"tenant:resolved:{tenant.slug}", 3600, f"ACTIVE:{tenant.id}")
+            await remember_tenant(tenant.id, (tenant.slug,))
         except Exception as cache_err:
             logger.warning("Failed to cache tenant resolution in Redis for %s: %s", tenant.slug, cache_err)
 

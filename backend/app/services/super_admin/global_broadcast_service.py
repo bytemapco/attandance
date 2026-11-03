@@ -4,6 +4,7 @@ from typing import Any, Dict
 from prisma import Json
 from app.core.logging_config import get_logger
 from app.db.client import db
+from app.services.connection_manager import manager as ws_manager
 
 logger = get_logger("app.super_admin.broadcast")
 
@@ -60,8 +61,6 @@ class GlobalBroadcastService:
         )
 
         try:
-            from app.api.websocket import manager as ws_manager
-
             payload = {
                 "type": "notification",
                 "event": "NOTIFICATION_RECEIVED",

@@ -35,9 +35,23 @@ async def _cached_tenant_id(identifier: str) -> Optional[str]:
     return cached.removeprefix(ACTIVE_PREFIX)
 
 
+async def remember_tenant(tenant_id: str, identifiers: tuple[str, ...], state_prefix: str = ACTIVE_PREFIX) -> None:
+    """Caches the tenant's state under each identifier (id and slug). Raises when Redis is unavailable."""
+    redis = get_redis()
+    for identifier in identifiers:
+        await redis.setex(f"{CACHE_KEY_PREFIX}{identifier}", CACHE_TTL_SECONDS, f"{state_prefix}{tenant_id}")
+
+
+async def forget_tenant(*identifiers: str) -> None:
+    """Drops cached tenant state so the next request reads the database. Raises when Redis is unavailable."""
+    redis = get_redis()
+    for identifier in identifiers:
+        await redis.delete(f"{CACHE_KEY_PREFIX}{identifier}")
+
+
 async def _cache_tenant_id(identifier: str, tenant_id: str) -> None:
     try:
-        await get_redis().setex(f"{CACHE_KEY_PREFIX}{identifier}", CACHE_TTL_SECONDS, f"{ACTIVE_PREFIX}{tenant_id}")
+        await remember_tenant(tenant_id, (identifier,))
     except Exception as exc:
         logger.debug("Could not set tenant resolution cache: %s", exc)
 

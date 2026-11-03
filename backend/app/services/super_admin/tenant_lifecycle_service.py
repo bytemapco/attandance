@@ -3,6 +3,8 @@ from fastapi import HTTPException, status
 from prisma import Json
 from app.core.logging_config import get_logger
 from app.db.client import db
+from app.services.connection_manager import manager as ws_manager
+from app.services.tenant_resolver import SUSPENDED_PREFIX, forget_tenant, remember_tenant
 from app.schemas.super_admin import TenantDetailResponse, TenantUpdateRequest
 
 logger = get_logger("app.super_admin.lifecycle")
@@ -45,27 +47,17 @@ class TenantLifecycleService:
 
         updated = await db.tenant.update(where={"id": tenant_id}, data=update_data)
         try:
-            from app.db.redis import get_redis
-
-            r = get_redis()
             if t.slug != updated.slug:
-                await r.delete(f"tenant:resolved:{t.slug}")
+                await forget_tenant(t.slug)
             if data.status == "SUSPENDED":
-                await r.delete(f"tenant:resolved:{updated.id}")
-                await r.delete(f"tenant:resolved:{updated.slug}")
-                await r.setex(f"tenant:resolved:{updated.id}", 3600, f"SUSPENDED:{updated.id}")
-                await r.setex(f"tenant:resolved:{updated.slug}", 3600, f"SUSPENDED:{updated.id}")
+                await remember_tenant(updated.id, (updated.id, updated.slug), SUSPENDED_PREFIX)
             elif data.status == "ACTIVE":
-                await r.setex(f"tenant:resolved:{updated.id}", 3600, f"ACTIVE:{updated.id}")
-                await r.setex(f"tenant:resolved:{updated.slug}", 3600, f"ACTIVE:{updated.id}")
+                await remember_tenant(updated.id, (updated.id, updated.slug))
             else:
-                await r.delete(f"tenant:resolved:{updated.id}")
-                await r.delete(f"tenant:resolved:{updated.slug}")
+                await forget_tenant(updated.id, updated.slug)
         except Exception as cache_err:
             logger.warning("Failed updating tenant Redis resolution keys for %s: %s", tenant_id, cache_err)
         if data.status == "SUSPENDED":
-            from app.api.websocket import manager as ws_manager
-
             await ws_manager.force_close_tenant(
                 tenant_id, f"Institution '{updated.name}' has been suspended. Please contact your administrator."
             )
@@ -88,8 +80,6 @@ class TenantLifecycleService:
             )
 
         try:
-            from app.api.websocket import manager as ws_manager
-
             await ws_manager.force_close_tenant(
                 tenant_id, f"Institution '{t.name}' has been deleted by platform super admin."
             )
@@ -101,11 +91,7 @@ class TenantLifecycleService:
             logger.warning("Failed force closing websockets for deleted tenant %s: %s", tenant_id, ws_err)
 
         try:
-            from app.db.redis import get_redis
-
-            r = get_redis()
-            await r.delete(f"tenant:resolved:{t.id}")
-            await r.delete(f"tenant:resolved:{t.slug}")
+            await forget_tenant(t.id, t.slug)
         except Exception as cache_err:
             logger.warning("Failed deleting Redis keys for tenant %s: %s", tenant_id, cache_err)
 

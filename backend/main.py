@@ -20,6 +20,7 @@ hardware_manager.initialize(
 from app.db.client import connect_db, disconnect_db
 from app.db.redis import connect_redis, disconnect_redis
 from app.services.s3_service import s3_service
+from app.services.connection_manager import manager as connection_manager
 from app.services.scheduler import session_scheduler
 from app.api import (
     auth,
@@ -62,13 +63,13 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     await connect_db()
     await connect_redis()
     s3_service.ensure_bucket_exists()
-    websocket_router.manager.start_heartbeat()
+    connection_manager.start_heartbeat()
     session_scheduler.start()
     logger.info("Server ready")
     yield
     logger.info("Shutting down...")
     session_scheduler.stop()
-    websocket_router.manager.stop_heartbeat()
+    connection_manager.stop_heartbeat()
     await disconnect_db()
     await disconnect_redis()
     logger.info("Shutdown complete")
