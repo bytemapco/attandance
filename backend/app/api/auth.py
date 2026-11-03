@@ -307,38 +307,3 @@ async def get_public_system_config(
 ):
     tid = tenant_id or request.headers.get("X-Tenant-ID")
     return await config_service.get_config(tenant_id=tid)
-
-
-@router.get("/sso/config")
-async def get_sso_config(tenant_slug: str):
-    from app.services.sso_service import SSOService
-
-    try:
-        return await SSOService.get_tenant_sso_config(tenant_slug)
-    except ValueError as err:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(err))
-
-
-@router.post("/sso/saml/acs")
-async def saml_assertion_consumer(
-    request: Request,
-    tenant_id: Optional[str] = None,
-):
-    from app.services.sso_service import SSOService
-
-    form_data = await request.form()
-    saml_response = form_data.get("SAMLResponse")
-    if not saml_response:
-        try:
-            body = await request.json()
-            saml_response = body.get("SAMLResponse")
-        except Exception:
-            saml_response = None
-
-    if not saml_response:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Missing 'SAMLResponse' in payload.")
-
-    try:
-        return await SSOService.process_saml_assertion(str(saml_response), tenant_id=tenant_id)
-    except ValueError as err:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=str(err))

@@ -37,6 +37,7 @@ from app.api import (
     faculty_register,
     faculty_sessions,
     reports,
+    sso,
 )
 from app.middleware.request_logging import RequestLoggingMiddleware
 from app.middleware.security_headers import SecurityHeadersMiddleware
@@ -105,6 +106,7 @@ app.add_middleware(
 app.include_router(health.router)
 app.include_router(health.router, prefix=settings.API_V1_STR)
 app.include_router(auth.router, prefix=settings.API_V1_STR)
+app.include_router(sso.router, prefix=settings.API_V1_STR)
 app.include_router(super_admin.router, prefix=settings.API_V1_STR)
 app.include_router(student.router, prefix=settings.API_V1_STR)
 app.include_router(teacher.router, prefix=settings.API_V1_STR)
