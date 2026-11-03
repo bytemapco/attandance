@@ -27,7 +27,7 @@ export default function ReviewQueuePage(): React.ReactElement {
       setItems(data);
       setError(null);
     } catch (err: unknown) {
-      setError(getApiErrorMessage(err, "Could not load flagged records"));
+      setError(getApiErrorMessage(err, "Could not load marks to verify"));
     }
   }, []);
 
@@ -41,11 +41,11 @@ export default function ReviewQueuePage(): React.ReactElement {
   return (
     <div className="space-y-5">
       <GlassPageHeader
-        title="Pending reviews"
+        title="Verify attendance"
         description="Students whose attendance needs your decision. Open the register to mark them present or absent."
       />
       {items.length === 0 ? (
-        <GlassEmptyState title="No records need review" message="Flagged attendance will appear here. Nothing needs your action right now." />
+        <GlassEmptyState title="Nothing to verify" message="Marks that need your check will appear here. Nothing needs your action right now." />
       ) : (
         <ul className="divide-y divide-border overflow-hidden rounded-[14px] border border-border bg-card">
           {items.map((item) => (
@@ -62,7 +62,7 @@ export default function ReviewQueuePage(): React.ReactElement {
                   {item.remarks ?? "Needs your review"}
                 </p>
               </div>
-              <GlassBadge variant="warning">Flagged · {METHOD[item.method] ?? item.method}</GlassBadge>
+              <GlassBadge variant="warning">To verify · {METHOD[item.method] ?? item.method}</GlassBadge>
               <Link
                 href={`/teacher/attendance/${item.occurrence_id}`}
                 className="inline-flex h-9 items-center gap-2 rounded-[10px] border border-border bg-card px-4 text-xs font-semibold text-foreground outline-none hover:bg-secondary focus-visible:ring-2 focus-visible:ring-[#526f78]"

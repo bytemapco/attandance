@@ -64,6 +64,8 @@ export default function ClassManagementPage(): React.ReactElement {
     void fetchClasses();
   }, [fetchClasses]);
 
+  const hasFilters = search.trim() !== "" || departmentId !== "all" || semester !== "all";
+
   const handleResetAll = (): void => {
     setSearch("");
     setDepartmentId("all");
@@ -197,7 +199,11 @@ export default function ClassManagementPage(): React.ReactElement {
           loading={loading}
           error={error}
           onRetry={() => void fetchClasses()}
-          emptyMessage="No classes found matching your criteria."
+          emptyMessage={
+            hasFilters
+              ? "No classes match these filters."
+              : "No classes yet. Create a class, then add its students, subjects and weekly schedule."
+          }
           onRowClick={(row) => router.push(`/admin/class-management/${row.id}`)}
           rowKey={(row) => row.id}
         />

@@ -20,7 +20,7 @@ const BADGE: Record<DisplayStatus, { variant: BadgeVariant; label: string; icon:
   PRESENT: { variant: "success", label: "Present", icon: <Check size={11} /> },
   ABSENT: { variant: "danger", label: "Absent", icon: <X size={11} /> },
   WAITING: { variant: "neutral", label: "Waiting", icon: <Clock size={11} /> },
-  FLAGGED: { variant: "warning", label: "Flagged", icon: <AlertTriangle size={11} /> },
+  FLAGGED: { variant: "warning", label: "To verify", icon: <AlertTriangle size={11} /> },
   EXCUSED: { variant: "info", label: "On leave", icon: <Plane size={11} /> },
 };
 

@@ -53,6 +53,8 @@ export default function TeachersPage(): React.ReactElement {
     extraParams,
   });
 
+  const hasFilters = searchQuery.trim() !== "" || department !== "all" || designation !== "all" || status !== "all";
+
   useEffect(() => {
     async function loadMetadata(): Promise<void> {
       try {
@@ -154,7 +156,11 @@ export default function TeachersPage(): React.ReactElement {
           sortBy={sortBy}
           sortOrder={sortOrder}
           onSortChange={handleSort}
-          emptyMessage="No teachers found"
+          emptyMessage={
+            hasFilters
+              ? "No teachers match these filters."
+              : "No teachers yet. Add one, or import a CSV to add many at once."
+          }
         />
         <EnterprisePagination
           totalItems={totalItems}

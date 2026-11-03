@@ -44,7 +44,7 @@ export default function MyClasses({ refreshKey }: MyClassesProps): React.ReactEl
       const { data } = await api.post<ClassSessionStartResult>(`/faculty/classes/${item.course_section_id}/start`);
       router.push(`/teacher/attendance/${data.occurrence_id}`);
     } catch (err: unknown) {
-      toast.error(getApiErrorMessage(err, "Could not start the session"));
+      toast.error(getApiErrorMessage(err, "Could not start attendance for this lecture"));
       setStartingId(null);
     }
   }

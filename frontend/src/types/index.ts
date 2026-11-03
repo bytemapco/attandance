@@ -31,7 +31,7 @@ export interface AdminStatsResponse {
   teacherCount: number;
   classCount: number;
   attendanceCount?: number;
-  biometricPassRate?: number;
+  attendanceRate?: number;
 }
 
 export interface GeofenceResponse {

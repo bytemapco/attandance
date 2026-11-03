@@ -108,6 +108,7 @@ export interface ClassAnalytics {
   average_percentage?: number | null;
   threshold: number;
   below_threshold: StudentAttendanceRow[];
+  students: StudentAttendanceRow[];
 }
 
 export interface ClassSessionStartResult {

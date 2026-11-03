@@ -94,29 +94,13 @@ export function buildBulkPayload(
     };
   }
 
-  if (entityType === "designations") {
-    return {
-      endpoint: "/admin/designations/bulk",
-      payload: {
-        designations: slice.map((d) => ({
-          name: d.first_name,
-          code: d.identifier,
-          description: d.email || null,
-        })),
-      },
-    };
-  }
-
   return {
-    endpoint: "/admin/classes/bulk",
+    endpoint: "/admin/designations/bulk",
     payload: {
-      classes: slice.map((c) => ({
-        name: c.first_name,
-        subject_code: c.identifier,
-        teacher_email: c.email,
-        classroom_name: c.last_name || undefined,
-        semester: c.semester,
-        batch: c.batch,
+      designations: slice.map((d) => ({
+        name: d.first_name,
+        code: d.identifier,
+        description: d.email || null,
       })),
     },
   };

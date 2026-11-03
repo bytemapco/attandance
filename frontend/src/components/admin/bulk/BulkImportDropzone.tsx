@@ -82,15 +82,6 @@ export default function BulkImportDropzone({
         </>
       );
     }
-    if (entityType === "classes") {
-      return (
-        <>
-          Required columns: <code className="font-mono bg-secondary px-1.5 py-0.5 rounded text-[11px]">class_name</code>,{" "}
-          <code className="font-mono bg-secondary px-1.5 py-0.5 rounded text-[11px]">subject_code</code>,{" "}
-          <code className="font-mono bg-secondary px-1.5 py-0.5 rounded text-[11px]">teacher_email</code>
-        </>
-      );
-    }
     return (
       <>
         Required columns: <code className="font-mono bg-secondary px-1.5 py-0.5 rounded text-[11px]">email</code>,{" "}

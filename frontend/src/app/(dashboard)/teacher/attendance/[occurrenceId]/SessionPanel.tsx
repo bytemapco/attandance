@@ -57,7 +57,7 @@ function Stats({ counts }: { counts: Counts }): React.ReactElement {
   return (
     <div className="grid grid-cols-3 gap-2">
       <Stat icon={<Clock size={12} />} label="Waiting" value={counts.WAITING} />
-      <Stat icon={<AlertTriangle size={12} />} label="Flagged" value={counts.FLAGGED} />
+      <Stat icon={<AlertTriangle size={12} />} label="To verify" value={counts.FLAGGED} />
       <Stat icon={<X size={12} />} label="Absent" value={counts.ABSENT} />
     </div>
   );
@@ -120,7 +120,7 @@ export default function SessionPanel({
       <Progress counts={counts} />
       <Stats counts={counts} />
       {live && closes && <p className="text-xs text-muted-foreground">Students can mark until {closes}.</p>}
-      {state === "COMPLETED" && <p className="text-xs text-muted-foreground">Attendance is closed and locked.</p>}
+      {state === "COMPLETED" && <p className="text-xs text-muted-foreground">Attendance is submitted and locked.</p>}
       {live && <ShortcutHints />}
     </aside>
   );

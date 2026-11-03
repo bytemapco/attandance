@@ -97,34 +97,6 @@ export function parseBulkCsvContent(
         isValid,
         validationError,
       });
-    } else if (entityType === "classes") {
-      const name = parts[0] || "";
-      const subjectCode = parts[1] || "";
-      const teacherEmail = parts[2] || "";
-      const classroomName = parts[3] || "";
-      const semester = parts[4] ? parseInt(parts[4], 10) : undefined;
-      const batch = parts[5] || undefined;
-      const isValidEmail = emailRegex.test(teacherEmail);
-      const hasName = name.length >= 2;
-      const hasSubject = subjectCode.length >= 1;
-      const isValid = isValidEmail && hasName && hasSubject;
-
-      let validationError: string | undefined;
-      if (!hasName) validationError = "Class name is required (min 2 characters)";
-      else if (!hasSubject) validationError = "Subject code is required";
-      else if (!isValidEmail) validationError = "A valid teacher email address is required";
-
-      records.push({
-        id: `row-${i}-${Date.now()}`,
-        email: teacherEmail,
-        identifier: subjectCode,
-        first_name: name,
-        last_name: classroomName,
-        semester,
-        batch,
-        isValid,
-        validationError,
-      });
     } else {
       if (parts.length < 4) continue;
       const email = parts[0] || "";

@@ -59,7 +59,7 @@ export default function ClassCard({ item, starting, onStart, onOpen }: ClassCard
         disabled={!liveId && item.student_count === 0}
         onClick={liveId ? () => onOpen(liveId) : onStart}
       >
-        {liveId ? "Open live session" : "Start session"}
+        {liveId ? "Continue attendance" : "Take attendance"}
       </GlassButton>
       {!liveId && item.closed_occurrence_id && (
         <GlassButton

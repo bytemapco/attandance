@@ -7,6 +7,7 @@ import api, { getApiErrorMessage } from "@/lib/api";
 import GlassConfirmDialog from "@/components/ui/GlassConfirmDialog";
 import GlassErrorState from "@/components/ui/GlassErrorState";
 import GlassLoader from "@/components/ui/GlassLoader";
+import ReasonDialog from "@/components/ui/ReasonDialog";
 import type { OccurrenceRegisterData } from "@/types";
 import { occurrenceState } from "../occurrenceState";
 import RegisterGrid from "./RegisterGrid";
@@ -26,6 +27,8 @@ export default function OccurrenceAttendancePage(): React.ReactElement {
   const [failed, setFailed] = useState(false);
   const [busy, setBusy] = useState<Busy>(null);
   const [confirmStop, setConfirmStop] = useState(false);
+  const [correcting, setCorrecting] = useState(false);
+  const [askReason, setAskReason] = useState(false);
   const [fullscreen, setFullscreen] = useState(false);
   const base = `/faculty/occurrences/${occurrenceId}`;
 
@@ -48,6 +51,7 @@ export default function OccurrenceAttendancePage(): React.ReactElement {
   const state = register ? occurrenceState(register) : "NOT_STARTED";
   const locked = state === "COMPLETED" || state === "CANCELLED";
   const live = state === "LIVE";
+  const editable = live || correcting;
 
   useEffect(() => {
     if (!live) return;
@@ -71,20 +75,23 @@ export default function OccurrenceAttendancePage(): React.ReactElement {
     return () => window.removeEventListener("beforeunload", warn);
   }, [changed.length]);
 
-  const saveChanges = (): Promise<unknown> =>
+  const saveChanges = (reason?: string): Promise<unknown> =>
     api.put(`${base}/register`, {
       occurrence_id: occurrenceId,
       updates: changed.map((s) => ({ student_id: s.student_id, status: edits[s.student_id] })),
+      reason,
     });
 
-  async function run(kind: Exclude<Busy, null>, action: () => Promise<unknown>, done: string): Promise<void> {
+  async function run(kind: Exclude<Busy, null>, action: () => Promise<unknown>, done: string): Promise<boolean> {
     setBusy(kind);
     try {
       await action();
       toast.success(done);
       await load();
+      return true;
     } catch (err: unknown) {
       toast.error(getApiErrorMessage(err, "Action failed"));
+      return false;
     } finally {
       setBusy(null);
       setConfirmStop(false);
@@ -92,8 +99,24 @@ export default function OccurrenceAttendancePage(): React.ReactElement {
   }
 
   const save = (): void => {
-    if (!live || changed.length === 0 || busy) return;
-    void run("save", saveChanges, `Saved ${changed.length} change${changed.length === 1 ? "" : "s"}`);
+    if (!editable || changed.length === 0 || busy) return;
+    if (correcting) {
+      setAskReason(true);
+      return;
+    }
+    void run("save", () => saveChanges(), `Saved ${changed.length} change${changed.length === 1 ? "" : "s"}`);
+  };
+
+  async function saveCorrection(reason: string): Promise<void> {
+    const saved = await run("save", () => saveChanges(reason), "Correction saved and kept in the class history");
+    if (!saved) return;
+    setAskReason(false);
+    setCorrecting(false);
+  }
+
+  const cancelCorrection = (): void => {
+    setCorrecting(false);
+    setEdits({});
   };
 
   const stop = (): void =>
@@ -103,7 +126,7 @@ export default function OccurrenceAttendancePage(): React.ReactElement {
         if (changed.length > 0) await saveChanges();
         await api.post(`${base}/stop`);
       },
-      "Attendance closed and locked"
+      "Attendance submitted and locked"
     );
 
   const markRemainingPresent = (): void => {
@@ -140,9 +163,12 @@ export default function OccurrenceAttendancePage(): React.ReactElement {
         changedCount={changed.length}
         waitingCount={counts.WAITING}
         saving={busy === "save"}
+        correcting={correcting}
         onMarkRemaining={markRemainingPresent}
         onSave={save}
         onStop={() => setConfirmStop(true)}
+        onCorrect={() => setCorrecting(true)}
+        onCancelCorrection={cancelCorrection}
       />
       <div className="grid gap-5 lg:min-h-0 lg:flex-1 lg:grid-cols-[300px_minmax(0,1fr)]">
         <SessionPanel
@@ -160,6 +186,7 @@ export default function OccurrenceAttendancePage(): React.ReactElement {
           edits={edits}
           counts={counts}
           locked={locked || state === "NOT_STARTED"}
+          editable={editable}
           shortcutsEnabled={!confirmStop && !fullscreen}
           onMark={markStudent}
         />
@@ -173,6 +200,15 @@ export default function OccurrenceAttendancePage(): React.ReactElement {
         onConfirm={stop}
         onCancel={() => setConfirmStop(false)}
       />
+      {askReason && (
+        <ReasonDialog
+          title="Why are you correcting this register?"
+          confirmLabel="Save correction"
+          loading={busy === "save"}
+          onConfirm={(reason) => void saveCorrection(reason)}
+          onCancel={() => setAskReason(false)}
+        />
+      )}
     </div>
   );
 }

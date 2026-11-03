@@ -27,8 +27,6 @@ export default function BulkImportResults({
       header = "email,enrollment_number,first_name,last_name,error_reason\n";
     } else if (entityType === "teachers") {
       header = "email,employee_id,first_name,last_name,error_reason\n";
-    } else if (entityType === "classes") {
-      header = "class_name,subject_code,teacher_email,classroom_name,error_reason\n";
     } else if (entityType === "departments") {
       header = "name,code,head,description,error_reason\n";
     } else if (entityType === "subjects" || entityType === "designations") {
@@ -40,9 +38,6 @@ export default function BulkImportResults({
     const rows = summary.failedRecords
       .map((r) => {
         const err = `"${r.validationError || "Import error"}"`;
-        if (entityType === "classes") {
-          return `${r.first_name},${r.identifier},${r.email},${r.last_name},${err}`;
-        }
         if (entityType === "departments") {
           return `${r.first_name},${r.identifier},${r.last_name},${r.email},${err}`;
         }
