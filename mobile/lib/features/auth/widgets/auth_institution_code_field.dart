@@ -16,14 +16,14 @@ class AuthInstitutionCodeField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textColor = isDark ? SasColors.brilliance : const Color(0xFF0F172A);
-    final hintColor = isDark ? SasColors.maidenMist : const Color(0xFF475569);
-    final fill = isDark ? SasColors.darkElevated : const Color(0xFFF8FAFC);
+    final textColor = isDark ? SasColors.ivory : SasColors.ink;
+    final hintColor = isDark ? SasColors.mutedOnDark : SasColors.textMuted;
+    final fill = isDark ? SasColors.darkElevated : SasColors.ivory;
     final borderColor = isDark
-        ? const Color(0x2EFFFFFF)
-        : const Color(0xFFE2E8F0);
+        ? SasColors.darkBorder
+        : SasColors.textOnDark;
     final border = OutlineInputBorder(
-      borderRadius: BorderRadius.circular(14),
+      borderRadius: BorderRadius.circular(12),
       borderSide: BorderSide(color: borderColor),
     );
     return Column(

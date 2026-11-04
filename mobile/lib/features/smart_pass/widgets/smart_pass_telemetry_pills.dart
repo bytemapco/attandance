@@ -15,14 +15,14 @@ class SmartPassTelemetryPills extends StatelessWidget {
           context: context,
           icon: Icons.my_location_rounded,
           label: 'GPS Active',
-          color: SasColors.accentEmerald,
+          color: SasColors.success,
         ),
         const SizedBox(width: 8),
         _telemetryBadge(
           context: context,
           icon: Icons.phonelink_lock_rounded,
           label: 'Device Verified',
-          color: SasColors.accentEmerald,
+          color: SasColors.success,
         ),
       ],
     );
@@ -39,7 +39,7 @@ class SmartPassTelemetryPills extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
         color: color.withValues(alpha: isDark ? 0.15 : 0.08),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(color: color.withValues(alpha: 0.25)),
       ),
       child: Row(

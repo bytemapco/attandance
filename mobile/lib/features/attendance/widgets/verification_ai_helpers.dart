@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:smart_attendance_app/app/typography.dart';
 import 'package:smart_attendance_app/core/attendance_constants.dart';
+import 'package:smart_attendance_app/app/theme.dart';
 
 class VerificationFlaggedNotice extends StatelessWidget {
   const VerificationFlaggedNotice({super.key});
@@ -10,15 +11,15 @@ class VerificationFlaggedNotice extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: const Color(0xFFFFFBEB),
+        color: SasColors.warningSoft,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFFDE68A)),
+        border: Border.all(color: SasColors.warningBorder),
       ),
       child: Row(
         children: [
           const Icon(
             Icons.info_outline_rounded,
-            color: Color(0xFFD97706),
+            color: SasColors.warning,
             size: 16,
           ),
           const SizedBox(width: 8),
@@ -26,7 +27,7 @@ class VerificationFlaggedNotice extends StatelessWidget {
             child: Text(
               'Submitting will mark this session as Flagged for teacher review.',
               style: SasTypography.style(
-                color: const Color(0xFF92400E),
+                color: SasColors.warning,
                 fontSize: 11.5,
                 fontWeight: FontWeight.w600,
               ),

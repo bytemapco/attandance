@@ -49,8 +49,8 @@ class _HistoryListTabState extends State<HistoryListTab> {
                 label: 'Present',
                 value: HistoryStatusFilter.present,
                 current: _filter,
-                unselectedBgColor: const Color(0xFFE8F8F0),
-                unselectedTextColor: const Color(0xFF10B981),
+                unselectedBgColor: SasColors.successSoft,
+                unselectedTextColor: SasColors.success,
                 onTap: () =>
                     setState(() => _filter = HistoryStatusFilter.present),
               ),
@@ -59,8 +59,8 @@ class _HistoryListTabState extends State<HistoryListTab> {
                 label: 'Absent',
                 value: HistoryStatusFilter.absent,
                 current: _filter,
-                unselectedBgColor: const Color(0xFFFEE8E8),
-                unselectedTextColor: const Color(0xFFEF4444),
+                unselectedBgColor: SasColors.dangerSoft,
+                unselectedTextColor: SasColors.danger,
                 onTap: () =>
                     setState(() => _filter = HistoryStatusFilter.absent),
               ),
@@ -69,8 +69,8 @@ class _HistoryListTabState extends State<HistoryListTab> {
                 label: 'Excused',
                 value: HistoryStatusFilter.excused,
                 current: _filter,
-                unselectedBgColor: const Color(0xFFFEF3C7),
-                unselectedTextColor: const Color(0xFFF59E0B),
+                unselectedBgColor: SasColors.warningSoft,
+                unselectedTextColor: SasColors.warning,
                 onTap: () =>
                     setState(() => _filter = HistoryStatusFilter.excused),
               ),

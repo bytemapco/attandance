@@ -9,9 +9,9 @@ import 'package:smart_attendance_app/features/leave/widgets/leave_category_selec
 import 'package:smart_attendance_app/features/leave/widgets/leave_document_uploader.dart';
 import 'package:smart_attendance_app/features/leave/widgets/leave_notes_input.dart';
 import 'package:smart_attendance_app/features/leave/widgets/leave_period_picker.dart';
-import 'package:smart_attendance_app/shared/widgets/animated_background.dart';
-import 'package:smart_attendance_app/shared/widgets/glass_app_bar.dart';
-import 'package:smart_attendance_app/shared/widgets/glass_button.dart';
+import 'package:smart_attendance_app/shared/widgets/screen_background.dart';
+import 'package:smart_attendance_app/shared/widgets/app_top_bar.dart';
+import 'package:smart_attendance_app/shared/widgets/app_button.dart';
 import 'package:smart_attendance_app/utils/logger.dart';
 
 class LeaveRequestsScreen extends ConsumerStatefulWidget {
@@ -104,7 +104,7 @@ class _LeaveRequestsScreenState extends ConsumerState<LeaveRequestsScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Leave request submitted successfully'),
-            backgroundColor: SasColors.accentEmerald,
+            backgroundColor: SasColors.success,
           ),
         );
         context.pop(true);
@@ -127,8 +127,8 @@ class _LeaveRequestsScreenState extends ConsumerState<LeaveRequestsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const GlassAppBar(title: 'Request Leave'),
-      body: AnimatedBackground(
+      appBar: const AppTopBar(title: 'Request Leave'),
+      body: ScreenBackground(
         child: SafeArea(
           child: Center(
             child: ConstrainedBox(
@@ -156,7 +156,7 @@ class _LeaveRequestsScreenState extends ConsumerState<LeaveRequestsScreen> {
                   const SizedBox(height: 16),
                   LeaveNotesInput(controller: _notesController),
                   const SizedBox(height: 20),
-                  GlassButton(
+                  AppButton(
                     label: 'Submit Leave Request',
                     isExpanded: true,
                     isLoading: _isSubmitting,

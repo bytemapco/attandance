@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:smart_attendance_app/app/theme.dart';
 
 class VerificationQualityBar extends StatelessWidget {
   final String label;
@@ -19,7 +20,7 @@ class VerificationQualityBar extends StatelessWidget {
     final percent = (clamped * 100).round();
     final isGood = clamped >= goodThreshold;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final color = isGood ? const Color(0xFF08A875) : const Color(0xFFF59E0B);
+    final color = isGood ? SasColors.success : SasColors.warning;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -32,7 +33,7 @@ class VerificationQualityBar extends StatelessWidget {
               style: GoogleFonts.plusJakartaSans(
                 fontSize: 12.5,
                 fontWeight: FontWeight.w600,
-                color: isDark ? Colors.white : const Color(0xFF0F172A),
+                color: isDark ? Colors.white : SasColors.ink,
               ),
             ),
             Container(
@@ -45,7 +46,7 @@ class VerificationQualityBar extends StatelessWidget {
                 '$percent% · ${isGood ? "Good" : "Low"}',
                 style: GoogleFonts.plusJakartaSans(
                   fontSize: 11.5,
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w600,
                   color: color,
                 ),
               ),
@@ -58,8 +59,8 @@ class VerificationQualityBar extends StatelessWidget {
           child: LinearProgressIndicator(
             value: clamped,
             backgroundColor: isDark
-                ? const Color(0xFF334155)
-                : const Color(0xFFE2E8F0),
+                ? SasColors.textSecondary
+                : SasColors.textOnDark,
             valueColor: AlwaysStoppedAnimation<Color>(color),
             minHeight: 5,
           ),

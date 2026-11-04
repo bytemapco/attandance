@@ -20,17 +20,16 @@ class AuthPasswordHeading extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Welcome Back!',
+            'Enter your password',
             style: SasTypography.style(
               fontSize: 28,
               fontWeight: FontWeight.w600,
-              letterSpacing: -0.6,
               color: primaryTextColor,
             ),
           ),
           const SizedBox(height: 6),
           Text(
-            'Enter your password to access your account',
+            'Sign in to your SAHAJ account',
             style: SasTypography.style(
               fontSize: 13.5,
               fontWeight: FontWeight.w400,

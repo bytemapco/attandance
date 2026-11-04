@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smart_attendance_app/app/typography.dart';
+import 'package:smart_attendance_app/app/theme.dart';
 
 class HomeSessionHeaderRow extends StatelessWidget {
   final String courseCode;
@@ -19,15 +20,15 @@ class HomeSessionHeaderRow extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
           decoration: BoxDecoration(
-            color: const Color(0xFFFFEDD5),
+            color: SasColors.copperSoft,
             borderRadius: BorderRadius.circular(12),
           ),
           child: Text(
             courseCode,
             style: SasTypography.style(
               fontSize: 12.5,
-              fontWeight: FontWeight.w700,
-              color: const Color(0xFFEA580C),
+              fontWeight: FontWeight.w600,
+              color: SasColors.copperStrong,
             ),
           ),
         ),
@@ -35,7 +36,7 @@ class HomeSessionHeaderRow extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
-              color: const Color(0xFFDCFCE7),
+              color: SasColors.successSoft,
               borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
@@ -45,7 +46,7 @@ class HomeSessionHeaderRow extends StatelessWidget {
                   width: 6,
                   height: 6,
                   decoration: const BoxDecoration(
-                    color: Color(0xFF16A34A),
+                    color: SasColors.success,
                     shape: BoxShape.circle,
                   ),
                 ),
@@ -54,8 +55,8 @@ class HomeSessionHeaderRow extends StatelessWidget {
                   'LIVE',
                   style: SasTypography.style(
                     fontSize: 11,
-                    fontWeight: FontWeight.w800,
-                    color: const Color(0xFF16A34A),
+                    fontWeight: FontWeight.w600,
+                    color: SasColors.success,
                     letterSpacing: 0.3,
                   ),
                 ),

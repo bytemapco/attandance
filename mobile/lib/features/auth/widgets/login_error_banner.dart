@@ -78,9 +78,9 @@ class LoginErrorBanner extends StatelessWidget {
               icon: const Icon(Icons.smartphone_rounded, size: 16),
               label: const Text('Request Device Change'),
               style: OutlinedButton.styleFrom(
-                foregroundColor: SasColors.osageOrange,
+                foregroundColor: SasColors.copper,
                 side: BorderSide(
-                  color: SasColors.osageOrange.withValues(alpha: 0.5),
+                  color: SasColors.copper.withValues(alpha: 0.5),
                 ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),

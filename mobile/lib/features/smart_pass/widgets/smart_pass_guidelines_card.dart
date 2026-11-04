@@ -11,21 +11,14 @@ class SmartPassGuidelinesCard extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardBg = isDark ? SasColors.darkSurface : Colors.white;
     final borderColor = isDark
-        ? const Color(0x1EFFFFFF)
-        : const Color(0x140F172A);
+        ? SasColors.darkBorder
+        : SasColors.border;
 
     return Container(
       decoration: BoxDecoration(
         color: cardBg,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(color: borderColor),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.04),
-            blurRadius: 16,
-            offset: const Offset(0, 4),
-          ),
-        ],
       ),
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -36,13 +29,13 @@ class SmartPassGuidelinesCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(6),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF95721).withValues(alpha: 0.12),
+                  color: SasColors.copper.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: const Icon(
                   Icons.verified_user_rounded,
                   size: 16,
-                  color: Color(0xFFF95721),
+                  color: SasColors.copper,
                 ),
               ),
               const SizedBox(width: 10),
@@ -50,7 +43,7 @@ class SmartPassGuidelinesCard extends StatelessWidget {
                 'Verification Protocol',
                 style: GoogleFonts.plusJakartaSans(
                   fontSize: 13,
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w600,
                   color: SasColors.textPrimaryOf(context),
                 ),
               ),
@@ -97,19 +90,19 @@ class SmartPassGuidelinesCard extends StatelessWidget {
           width: 26,
           height: 26,
           decoration: BoxDecoration(
-            color: const Color(0xFFF95721).withValues(alpha: 0.1),
+            color: SasColors.copper.withValues(alpha: 0.1),
             shape: BoxShape.circle,
             border: Border.all(
-              color: const Color(0xFFF95721).withValues(alpha: 0.25),
+              color: SasColors.copper.withValues(alpha: 0.25),
             ),
           ),
           alignment: Alignment.center,
           child: Text(
             number,
             style: GoogleFonts.plusJakartaSans(
-              fontSize: 10,
-              fontWeight: FontWeight.w800,
-              color: const Color(0xFFF95721),
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+              color: SasColors.copper,
             ),
           ),
         ),
@@ -122,7 +115,7 @@ class SmartPassGuidelinesCard extends StatelessWidget {
                 title,
                 style: GoogleFonts.plusJakartaSans(
                   fontSize: 12,
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w600,
                   color: SasColors.textPrimaryOf(context),
                 ),
               ),

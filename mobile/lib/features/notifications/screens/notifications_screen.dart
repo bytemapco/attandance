@@ -5,8 +5,8 @@ import 'package:smart_attendance_app/data/local/notification_service.dart';
 import 'package:smart_attendance_app/features/notifications/widgets/notification_tile.dart';
 import 'package:smart_attendance_app/features/notifications/widgets/notifications_empty_view.dart';
 import 'package:smart_attendance_app/features/notifications/widgets/notifications_filter_chips.dart';
-import 'package:smart_attendance_app/shared/widgets/animated_background.dart';
-import 'package:smart_attendance_app/shared/widgets/glass_app_bar.dart';
+import 'package:smart_attendance_app/shared/widgets/screen_background.dart';
+import 'package:smart_attendance_app/shared/widgets/app_top_bar.dart';
 import 'package:smart_attendance_app/shared/widgets/shimmer_placeholder.dart';
 
 class NotificationsScreen extends ConsumerStatefulWidget {
@@ -37,7 +37,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
     }).toList();
 
     return Scaffold(
-      appBar: GlassAppBar(
+      appBar: AppTopBar(
         title: 'Notifications',
         actions: [
           if (notifications.isNotEmpty) ...[
@@ -65,25 +65,25 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                 margin: const EdgeInsets.only(right: 12),
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
-                  color: SasColors.accentEmerald.withValues(alpha: 0.1),
+                  color: SasColors.success.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: SasColors.accentEmerald.withValues(alpha: 0.3),
+                    color: SasColors.success.withValues(alpha: 0.3),
                   ),
                 ),
                 child: Text(
                   '$unread',
                   style: const TextStyle(
-                    color: SasColors.accentEmerald,
+                    color: SasColors.success,
                     fontSize: 11,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ),
           ],
         ],
       ),
-      body: AnimatedBackground(
+      body: ScreenBackground(
         child: SafeArea(
           child: Center(
             child: ConstrainedBox(
@@ -98,7 +98,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                   ),
                   Expanded(
                     child: RefreshIndicator(
-                      color: SasColors.accentEmerald,
+                      color: SasColors.success,
                       backgroundColor:
                           Theme.of(context).brightness == Brightness.dark
                           ? SasColors.darkSurface

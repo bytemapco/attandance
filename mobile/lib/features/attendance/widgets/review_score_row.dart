@@ -23,7 +23,7 @@ class ReviewScoreRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final value = score;
-    final color = value == null ? const Color(0xFF94A3B8) : scoreColor(value);
+    final color = value == null ? SasColors.mutedOnDark : scoreColor(value);
     return Row(
       children: [
         Container(
@@ -53,7 +53,7 @@ class ReviewScoreRow extends StatelessWidget {
               Text(
                 hint,
                 style: TextStyle(
-                  fontSize: 10,
+                  fontSize: 11,
                   color: color,
                   fontWeight: FontWeight.w600,
                 ),
@@ -70,7 +70,7 @@ class ReviewScoreRow extends StatelessWidget {
               borderRadius: BorderRadius.circular(4),
               child: LinearProgressIndicator(
                 value: ((value ?? 0) * animation.value).clamp(0.0, 1.0),
-                backgroundColor: SasColors.glassBorder,
+                backgroundColor: SasColors.border,
                 valueColor: AlwaysStoppedAnimation<Color>(color),
                 minHeight: 6,
               ),
@@ -86,7 +86,7 @@ class ReviewScoreRow extends StatelessWidget {
                 : '${(value * 100 * animation.value).toStringAsFixed(0)}%',
             style: TextStyle(
               color: color,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w600,
               fontSize: 13,
             ),
           ),

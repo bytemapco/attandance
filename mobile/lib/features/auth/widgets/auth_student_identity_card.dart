@@ -17,28 +17,21 @@ class AuthStudentIdentityCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final cardBg = isDark ? const Color(0xFF1E2838) : const Color(0xFFFFF7ED);
+    final cardBg = isDark ? SasColors.darkSurface : SasColors.copperSoft;
     final cardBorder = isDark
-        ? const Color(0xFF334155)
-        : const Color(0xFFFFEDD5);
-    final idTextColor = isDark ? SasColors.brilliance : const Color(0xFF0F172A);
+        ? SasColors.textSecondary
+        : SasColors.copperSoft;
+    final idTextColor = isDark ? SasColors.ivory : SasColors.ink;
     final subtitleColor = isDark
-        ? SasColors.maidenMist
-        : const Color(0xFF64748B);
+        ? SasColors.mutedOnDark
+        : SasColors.textMuted;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
         color: cardBg,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(color: cardBorder, width: 1.2),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.20 : 0.04),
-            blurRadius: 10,
-            offset: const Offset(0, 3),
-          ),
-        ],
       ),
       child: Row(
         children: [
@@ -47,12 +40,12 @@ class AuthStudentIdentityCard extends StatelessWidget {
             width: 46,
             height: 46,
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF1E3A5F) : const Color(0xFFE0F2FE),
+              color: isDark ? SasColors.info : SasColors.infoSoft,
               shape: BoxShape.circle,
               border: Border.all(
                 color: isDark
-                    ? const Color(0xFF38BDF8)
-                    : const Color(0xFFBAE6FD),
+                    ? SasColors.info
+                    : SasColors.infoBorder,
                 width: 1.0,
               ),
             ),
@@ -60,8 +53,8 @@ class AuthStudentIdentityCard extends StatelessWidget {
               child: Icon(
                 Icons.school_rounded,
                 color: isDark
-                    ? const Color(0xFF38BDF8)
-                    : const Color(0xFF0284C7),
+                    ? SasColors.info
+                    : SasColors.info,
                 size: 24,
               ),
             ),
@@ -83,7 +76,6 @@ class AuthStudentIdentityCard extends StatelessWidget {
                           fontSize: 15,
                           fontWeight: FontWeight.w600,
                           color: idTextColor,
-                          letterSpacing: -0.2,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,

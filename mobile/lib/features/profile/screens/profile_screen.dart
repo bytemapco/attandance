@@ -10,7 +10,7 @@ import 'package:smart_attendance_app/features/profile/widgets/profile_header_car
 import 'package:smart_attendance_app/features/profile/widgets/profile_quick_actions.dart';
 import 'package:smart_attendance_app/features/profile/widgets/profile_settings_list.dart';
 import 'package:smart_attendance_app/features/profile/widgets/profile_sign_out_dialog.dart';
-import 'package:smart_attendance_app/shared/widgets/animated_background.dart';
+import 'package:smart_attendance_app/shared/widgets/screen_background.dart';
 import 'package:smart_attendance_app/shared/widgets/smart_pull_to_refresh.dart';
 
 class ProfileScreen extends ConsumerWidget {
@@ -28,10 +28,10 @@ class ProfileScreen extends ConsumerWidget {
     );
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark
-        ? SasColors.brilliance
-        : const Color(0xFF0F172A);
+        ? SasColors.ivory
+        : SasColors.ink;
 
-    return AnimatedBackground(
+    return ScreenBackground(
       child: SafeArea(
         child: Center(
           child: ConstrainedBox(
@@ -59,37 +59,27 @@ class ProfileScreen extends ConsumerWidget {
                         'Profile',
                         style: SasTypography.style(
                           fontSize: 24,
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: -0.6,
+                          fontWeight: FontWeight.w600,
                           color: primaryTextColor,
                         ),
                       ),
                       InkWell(
                         onTap: () => context.push('/settings/goals'),
-                        borderRadius: BorderRadius.circular(14),
+                        borderRadius: BorderRadius.circular(12),
                         child: Container(
                           width: 42,
                           height: 42,
                           decoration: BoxDecoration(
                             color: isDark
-                                ? const Color(0xFF1E2838)
+                                ? SasColors.darkSurface
                                 : Colors.white,
-                            borderRadius: BorderRadius.circular(14),
+                            borderRadius: BorderRadius.circular(12),
                             border: Border.all(
                               color: isDark
-                                  ? const Color(0x1FFFFFFF)
-                                  : const Color(0xFFE2E8F0),
+                                  ? SasColors.darkBorder
+                                  : SasColors.textOnDark,
                               width: 1.0,
                             ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(
-                                  alpha: isDark ? 0.20 : 0.04,
-                                ),
-                                blurRadius: 8,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
                           ),
                           child: Icon(
                             Icons.settings_outlined,
@@ -120,18 +110,18 @@ class ProfileScreen extends ConsumerWidget {
                       context,
                       onConfirm: () => ref.read(authProvider.notifier).logout(),
                     ),
-                    borderRadius: BorderRadius.circular(18),
+                    borderRadius: BorderRadius.circular(12),
                     child: Container(
                       height: 48,
                       decoration: BoxDecoration(
                         color: isDark
-                            ? const Color(0xFF3F1D24)
-                            : const Color(0xFFFFF1F2),
-                        borderRadius: BorderRadius.circular(18),
+                            ? SasColors.darkDangerSoft
+                            : SasColors.dangerSoft,
+                        borderRadius: BorderRadius.circular(12),
                         border: Border.all(
                           color: isDark
-                              ? const Color(0xFF7F1D1D)
-                              : const Color(0xFFFECDD3),
+                              ? SasColors.danger
+                              : SasColors.dangerBorder,
                           width: 1.0,
                         ),
                       ),
@@ -140,16 +130,16 @@ class ProfileScreen extends ConsumerWidget {
                         children: [
                           const Icon(
                             Icons.logout_rounded,
-                            color: Color(0xFFEF4444),
+                            color: SasColors.danger,
                             size: 18,
                           ),
                           const SizedBox(width: 8),
                           Text(
                             'Sign Out',
                             style: SasTypography.style(
-                              color: const Color(0xFFEF4444),
+                              color: SasColors.danger,
                               fontSize: 14,
-                              fontWeight: FontWeight.w700,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                         ],

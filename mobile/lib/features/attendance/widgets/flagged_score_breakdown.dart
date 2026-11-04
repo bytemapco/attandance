@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smart_attendance_app/core/attendance_utils.dart';
 import 'package:smart_attendance_app/domain/models/attendance.dart';
+import 'package:smart_attendance_app/app/theme.dart';
 
 class FlaggedScoreBreakdown extends StatelessWidget {
   final AttendanceHistoryItem item;
@@ -20,18 +21,11 @@ class FlaggedScoreBreakdown extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E293B) : Colors.white,
-        borderRadius: BorderRadius.circular(22),
+        color: isDark ? SasColors.darkSurface : Colors.white,
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isDark ? const Color(0xFF334155) : const Color(0xFFF1F5F9),
+          color: isDark ? SasColors.textSecondary : SasColors.ivory,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.03),
-            blurRadius: 14,
-            offset: const Offset(0, 4),
-          ),
-        ],
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -43,8 +37,8 @@ class FlaggedScoreBreakdown extends StatelessWidget {
                 'Verification score',
                 style: GoogleFonts.plusJakartaSans(
                   fontSize: 15.5,
-                  fontWeight: FontWeight.w700,
-                  color: isDark ? Colors.white : const Color(0xFF0F172A),
+                  fontWeight: FontWeight.w600,
+                  color: isDark ? Colors.white : SasColors.ink,
                 ),
               ),
               Container(
@@ -54,20 +48,20 @@ class FlaggedScoreBreakdown extends StatelessWidget {
                 ),
                 decoration: BoxDecoration(
                   color: isPass
-                      ? const Color(0xFFECFDF5)
+                      ? SasColors.successSoft
                       : (isDark
-                            ? const Color(0xFF3B1E24)
-                            : const Color(0xFFFFEEEE)),
+                            ? SasColors.darkDangerSoft
+                            : SasColors.dangerSoft),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
                   '$overallPct% · ${isPass ? "Passed" : "Needs review"}',
                   style: GoogleFonts.plusJakartaSans(
                     color: isPass
-                        ? const Color(0xFF08A875)
-                        : const Color(0xFFF0445E),
+                        ? SasColors.success
+                        : SasColors.danger,
                     fontSize: 12,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ),
@@ -79,8 +73,8 @@ class FlaggedScoreBreakdown extends StatelessWidget {
             child: LinearProgressIndicator(
               value: overall.clamp(0.0, 1.0),
               backgroundColor: isDark
-                  ? const Color(0xFF334155)
-                  : const Color(0xFFE9EEF5),
+                  ? SasColors.textSecondary
+                  : SasColors.lightElevated,
               valueColor: AlwaysStoppedAnimation<Color>(overallCol),
               minHeight: 7,
             ),
@@ -128,16 +122,16 @@ class FlaggedScoreBreakdown extends StatelessWidget {
     required bool isDark,
   }) {
     final value = score;
-    final col = value == null ? const Color(0xFF94A3B8) : scoreColor(value);
+    final col = value == null ? SasColors.mutedOnDark : scoreColor(value);
     final text = value == null ? '—' : '${(value * 100).round()}%';
 
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
-        borderRadius: BorderRadius.circular(16),
+        color: isDark ? SasColors.ink : SasColors.ivory,
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isDark ? const Color(0xFF334155) : const Color(0xFFF1F5F9),
+          color: isDark ? SasColors.textSecondary : SasColors.ivory,
         ),
       ),
       child: Column(
@@ -148,7 +142,7 @@ class FlaggedScoreBreakdown extends StatelessWidget {
             text,
             style: GoogleFonts.plusJakartaSans(
               color: col,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w600,
               fontSize: 16.5,
             ),
           ),
@@ -156,7 +150,7 @@ class FlaggedScoreBreakdown extends StatelessWidget {
           Text(
             label,
             style: GoogleFonts.plusJakartaSans(
-              color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
+              color: isDark ? SasColors.mutedOnDark : SasColors.textMuted,
               fontSize: 12,
               fontWeight: FontWeight.w500,
             ),

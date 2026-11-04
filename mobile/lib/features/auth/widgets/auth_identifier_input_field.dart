@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smart_attendance_app/app/typography.dart';
+import 'package:smart_attendance_app/app/theme.dart';
 
 class AuthIdentifierInputField extends StatelessWidget {
   final TextEditingController controller;
@@ -55,16 +56,16 @@ class AuthIdentifierInputField extends StatelessWidget {
           vertical: 10,
         ),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: inputBorder),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: inputBorder),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: Color(0xFFF95721), width: 1.5),
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: SasColors.copper, width: 1.5),
         ),
       ),
       validator: (value) {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smart_attendance_app/app/typography.dart';
+import 'package:smart_attendance_app/app/theme.dart';
 
 class DeviceChangeHeader extends StatelessWidget {
   final bool isDark;
@@ -24,14 +25,14 @@ class DeviceChangeHeader extends StatelessWidget {
             ).withValues(alpha: isDark ? 0.20 : 0.10),
             shape: BoxShape.circle,
             border: Border.all(
-              color: const Color(0xFFF95721).withValues(alpha: 0.25),
+              color: SasColors.copper.withValues(alpha: 0.25),
               width: 1,
             ),
           ),
           child: const Center(
             child: Icon(
               Icons.phonelink_lock_rounded,
-              color: Color(0xFFF95721),
+              color: SasColors.copper,
               size: 22,
             ),
           ),
@@ -45,9 +46,8 @@ class DeviceChangeHeader extends StatelessWidget {
                 'Device Authorization',
                 style: SasTypography.style(
                   fontSize: 17,
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w600,
                   color: primaryText,
-                  letterSpacing: -0.2,
                 ),
               ),
               const SizedBox(height: 2),
@@ -56,7 +56,7 @@ class DeviceChangeHeader extends StatelessWidget {
                 style: SasTypography.style(
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
-                  color: const Color(0xFFF95721),
+                  color: SasColors.copper,
                 ),
               ),
             ],
@@ -130,7 +130,7 @@ class DeviceChangeReasonInput extends StatelessWidget {
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: const BorderSide(
-                color: Color(0xFFF95721),
+                color: SasColors.copper,
                 width: 1.5,
               ),
             ),

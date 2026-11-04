@@ -22,8 +22,8 @@ class LeaveDocumentUploader extends StatelessWidget {
     final textMuted = SasColors.textMutedOf(context);
     final cardBg = isDark ? SasColors.darkSurface : SasColors.bgSecondary;
     final cardBorder = isDark
-        ? const Color(0x2AFFFFFF)
-        : const Color(0xFFE2E8F0);
+        ? SasColors.darkBorder
+        : SasColors.textOnDark;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -31,7 +31,7 @@ class LeaveDocumentUploader extends StatelessWidget {
         Text(
           'Supporting Documentation (Optional)',
           style: TextStyle(
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w600,
             fontSize: 13,
             color: textSecondary,
           ),

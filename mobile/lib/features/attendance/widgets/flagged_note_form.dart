@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:smart_attendance_app/app/theme.dart';
 
 class FlaggedNoteForm extends StatelessWidget {
   final TextEditingController controller;
@@ -26,40 +27,33 @@ class FlaggedNoteForm extends StatelessWidget {
           'Provide explanation to instructor',
           style: GoogleFonts.plusJakartaSans(
             fontSize: 13,
-            fontWeight: FontWeight.w700,
-            color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
+            fontWeight: FontWeight.w600,
+            color: isDark ? SasColors.mutedOnDark : SasColors.textMuted,
           ),
         ),
         const SizedBox(height: 8),
         Container(
           padding: const EdgeInsets.all(18),
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF1E293B) : Colors.white,
-            borderRadius: BorderRadius.circular(22),
+            color: isDark ? SasColors.darkSurface : Colors.white,
+            borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: isDark ? const Color(0xFF334155) : const Color(0xFFF1F5F9),
+              color: isDark ? SasColors.textSecondary : SasColors.ivory,
             ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.03),
-                blurRadius: 14,
-                offset: const Offset(0, 4),
-              ),
-            ],
           ),
           child: noteSubmitted
               ? Container(
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFECFDF5),
-                    borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: const Color(0xFFBBF7D0)),
+                    color: SasColors.successSoft,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: SasColors.successBorder),
                   ),
                   child: Row(
                     children: [
                       const Icon(
                         Icons.check_circle_rounded,
-                        color: Color(0xFF08A875),
+                        color: SasColors.success,
                         size: 20,
                       ),
                       const SizedBox(width: 10),
@@ -67,7 +61,7 @@ class FlaggedNoteForm extends StatelessWidget {
                         child: Text(
                           'Note submitted. Your instructor will review it.',
                           style: GoogleFonts.plusJakartaSans(
-                            color: const Color(0xFF08A875),
+                            color: SasColors.success,
                             fontSize: 13,
                             fontWeight: FontWeight.w600,
                           ),
@@ -84,41 +78,41 @@ class FlaggedNoteForm extends StatelessWidget {
                       maxLines: 3,
                       maxLength: 300,
                       style: GoogleFonts.plusJakartaSans(
-                        color: isDark ? Colors.white : const Color(0xFF0F172A),
+                        color: isDark ? Colors.white : SasColors.ink,
                         fontSize: 13.5,
                       ),
                       decoration: InputDecoration(
                         hintText: 'e.g. Back row seating with dim lighting...',
                         hintStyle: GoogleFonts.plusJakartaSans(
                           color: isDark
-                              ? const Color(0xFF64748B)
-                              : const Color(0xFF94A3B8),
+                              ? SasColors.textMuted
+                              : SasColors.mutedOnDark,
                           fontSize: 13,
                         ),
                         filled: true,
                         fillColor: isDark
-                            ? const Color(0xFF0F172A)
-                            : const Color(0xFFF8FAFC),
+                            ? SasColors.ink
+                            : SasColors.ivory,
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(14),
+                          borderRadius: BorderRadius.circular(12),
                           borderSide: BorderSide(
                             color: isDark
-                                ? const Color(0xFF334155)
-                                : const Color(0xFFF1F5F9),
+                                ? SasColors.textSecondary
+                                : SasColors.ivory,
                           ),
                         ),
                         enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(14),
+                          borderRadius: BorderRadius.circular(12),
                           borderSide: BorderSide(
                             color: isDark
-                                ? const Color(0xFF334155)
-                                : const Color(0xFFF1F5F9),
+                                ? SasColors.textSecondary
+                                : SasColors.ivory,
                           ),
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(14),
+                          borderRadius: BorderRadius.circular(12),
                           borderSide: const BorderSide(
-                            color: Color(0xFFF95721),
+                            color: SasColors.copper,
                             width: 1.5,
                           ),
                         ),
@@ -151,14 +145,14 @@ class FlaggedNoteForm extends StatelessWidget {
                               : 'Submit note to instructor',
                           style: GoogleFonts.plusJakartaSans(
                             fontSize: 14.5,
-                            fontWeight: FontWeight.w700,
+                            fontWeight: FontWeight.w600,
                             color: Colors.white,
                           ),
                         ),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFF95721),
+                          backgroundColor: SasColors.copper,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
+                            borderRadius: BorderRadius.circular(12),
                           ),
                           elevation: 0,
                         ),

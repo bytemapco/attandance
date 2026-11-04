@@ -13,16 +13,16 @@ class ForceChangePasswordHeader extends StatelessWidget {
           width: 54,
           height: 54,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            color: SasColors.osageOrange.withValues(alpha: 0.12),
+            borderRadius: BorderRadius.circular(12),
+            color: SasColors.copper.withValues(alpha: 0.12),
             border: Border.all(
-              color: SasColors.osageOrange.withValues(alpha: 0.35),
+              color: SasColors.copper.withValues(alpha: 0.35),
               width: 1.2,
             ),
           ),
           child: const Icon(
             Icons.shield_outlined,
-            color: SasColors.osageOrange,
+            color: SasColors.copper,
             size: 26,
           ),
         ),
@@ -31,7 +31,7 @@ class ForceChangePasswordHeader extends StatelessWidget {
           'Set Permanent Password',
           style: Theme.of(
             context,
-          ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w800),
+          ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w600),
         ),
         const SizedBox(height: 6),
         const Text(

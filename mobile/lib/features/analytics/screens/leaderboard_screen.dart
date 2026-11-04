@@ -5,9 +5,9 @@ import 'package:smart_attendance_app/domain/models/leaderboard.dart';
 import 'package:smart_attendance_app/features/analytics/providers/leaderboard_provider.dart';
 import 'package:smart_attendance_app/features/analytics/widgets/leaderboard_item_card.dart';
 import 'package:smart_attendance_app/features/auth/providers/auth_provider.dart';
-import 'package:smart_attendance_app/shared/widgets/animated_background.dart';
-import 'package:smart_attendance_app/shared/widgets/glass_app_bar.dart';
-import 'package:smart_attendance_app/shared/widgets/glass_card.dart';
+import 'package:smart_attendance_app/shared/widgets/screen_background.dart';
+import 'package:smart_attendance_app/shared/widgets/app_top_bar.dart';
+import 'package:smart_attendance_app/shared/widgets/surface_card.dart';
 import 'package:smart_attendance_app/shared/widgets/shimmer_placeholder.dart';
 
 class LeaderboardScreen extends ConsumerWidget {
@@ -19,13 +19,13 @@ class LeaderboardScreen extends ConsumerWidget {
     final currentStudentId = ref.watch(authProvider).user?.studentProfile?.id;
 
     return Scaffold(
-      appBar: const GlassAppBar(
+      appBar: const AppTopBar(
         title: 'Department Leaderboard',
         showBack: true,
       ),
-      body: AnimatedBackground(
+      body: ScreenBackground(
         child: RefreshIndicator(
-          color: SasColors.accentEmerald,
+          color: SasColors.success,
           backgroundColor: SasColors.bgSurface,
           onRefresh: () => ref.read(leaderboardProvider.notifier).fetch(),
           child: _buildBody(context, state, currentStudentId),
@@ -98,7 +98,7 @@ class LeaderboardScreen extends ConsumerWidget {
               style: TextStyle(
                 color: textMuted,
                 fontSize: 11,
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.w600,
                 letterSpacing: 1.0,
               ),
             ),
@@ -132,8 +132,8 @@ class LeaderboardScreen extends ConsumerWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textMuted = SasColors.textMutedOf(context);
 
-    return GlassCard(
-      borderColor: SasColors.accentAmber.withValues(alpha: 0.3),
+    return SurfaceCard(
+      borderColor: SasColors.copper.withValues(alpha: 0.3),
       padding: const EdgeInsets.all(16),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -143,8 +143,8 @@ class LeaderboardScreen extends ConsumerWidget {
               Text(
                 'YOUR RANK',
                 style: TextStyle(
-                  fontSize: 10,
-                  fontWeight: FontWeight.w700,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
                   color: textMuted,
                   letterSpacing: 0.8,
                 ),
@@ -154,8 +154,8 @@ class LeaderboardScreen extends ConsumerWidget {
                 rankText,
                 style: const TextStyle(
                   fontSize: 22,
-                  fontWeight: FontWeight.w800,
-                  color: SasColors.accentAmber,
+                  fontWeight: FontWeight.w600,
+                  color: SasColors.copper,
                 ),
               ),
             ],
@@ -163,15 +163,15 @@ class LeaderboardScreen extends ConsumerWidget {
           Container(
             height: 36,
             width: 1,
-            color: isDark ? const Color(0x2AFFFFFF) : const Color(0xFFE2E8F0),
+            color: isDark ? SasColors.darkBorder : SasColors.textOnDark,
           ),
           Column(
             children: [
               Text(
                 'TOTAL POINTS',
                 style: TextStyle(
-                  fontSize: 10,
-                  fontWeight: FontWeight.w700,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
                   color: textMuted,
                   letterSpacing: 0.8,
                 ),
@@ -181,7 +181,7 @@ class LeaderboardScreen extends ConsumerWidget {
                 '${response.userPoints}',
                 style: TextStyle(
                   fontSize: 22,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w600,
                   color: SasColors.textPrimaryOf(context),
                 ),
               ),

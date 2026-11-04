@@ -7,9 +7,9 @@ import 'package:smart_attendance_app/features/history/widgets/history_course_car
 import 'package:smart_attendance_app/features/history/widgets/history_header.dart';
 import 'package:smart_attendance_app/features/history/widgets/history_list_tab.dart';
 import 'package:smart_attendance_app/features/history/widgets/history_segmented_tabs.dart';
-import 'package:smart_attendance_app/shared/widgets/animated_background.dart';
-import 'package:smart_attendance_app/shared/widgets/glass_button.dart';
-import 'package:smart_attendance_app/shared/widgets/glass_card.dart';
+import 'package:smart_attendance_app/shared/widgets/screen_background.dart';
+import 'package:smart_attendance_app/shared/widgets/app_button.dart';
+import 'package:smart_attendance_app/shared/widgets/surface_card.dart';
 import 'package:smart_attendance_app/shared/widgets/shimmer_placeholder.dart';
 import 'package:smart_attendance_app/shared/widgets/smart_pull_to_refresh.dart';
 
@@ -47,7 +47,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
         : (firstItem?.className ?? 'Overall');
     final courseSubtitle = '$classCode • Attendance Log';
 
-    return AnimatedBackground(
+    return ScreenBackground(
       child: SafeArea(
         child: Center(
           child: ConstrainedBox(
@@ -131,7 +131,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
   }
 
   Widget _buildErrorCard(String error, bool isDark) {
-    return GlassCard(
+    return SurfaceCard(
       borderColor: SasColors.danger.withValues(alpha: 0.30),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8),
@@ -147,12 +147,12 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
               error,
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: isDark ? SasColors.maidenMist : SasColors.textSecondary,
+                color: isDark ? SasColors.mutedOnDark : SasColors.textSecondary,
                 fontSize: 13,
               ),
             ),
             const SizedBox(height: 14),
-            GlassButton(
+            AppButton(
               label: 'Retry',
               icon: Icons.refresh_rounded,
               onPressed: () => ref.read(historyProvider.notifier).fetch(),

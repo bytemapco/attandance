@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
@@ -27,21 +26,14 @@ class SmartPassScannerView extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardBg = isDark ? SasColors.darkSurface : Colors.white;
     final borderColor = isDark
-        ? const Color(0x1EFFFFFF)
-        : const Color(0x140F172A);
+        ? SasColors.darkBorder
+        : SasColors.border;
 
     return Container(
       decoration: BoxDecoration(
         color: cardBg,
-        borderRadius: BorderRadius.circular(22),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(color: borderColor),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.05),
-            blurRadius: 18,
-            offset: const Offset(0, 6),
-          ),
-        ],
       ),
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -54,7 +46,7 @@ class SmartPassScannerView extends StatelessWidget {
             textAlign: TextAlign.center,
             style: GoogleFonts.plusJakartaSans(
               fontSize: 16,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w600,
               color: SasColors.textPrimaryOf(context),
             ),
           ),
@@ -77,13 +69,13 @@ class SmartPassScannerView extends StatelessWidget {
 
   Widget _buildCameraViewport(BuildContext context) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(18),
+      borderRadius: BorderRadius.circular(12),
       child: Container(
         height: 310,
         width: double.infinity,
         decoration: BoxDecoration(
           color: Colors.black,
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(12),
         ),
         child: Stack(
           fit: StackFit.expand,
@@ -96,7 +88,7 @@ class SmartPassScannerView extends StatelessWidget {
                 onRetry: () => controller.start(),
               ),
             ),
-            const ScannerReticleOverlay(guideColor: Color(0xFFF95721)),
+            const ScannerReticleOverlay(guideColor: SasColors.copper),
             Positioned(
               top: 12,
               right: 12,
@@ -145,27 +137,24 @@ class SmartPassScannerView extends StatelessWidget {
       label: label,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(12),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-          child: InkWell(
-            onTap: onPressed,
-            borderRadius: BorderRadius.circular(12),
-            child: Container(
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
+        child: InkWell(
+          onTap: onPressed,
+          borderRadius: BorderRadius.circular(12),
+          child: Container(
+            width: 48,
+            height: 48,
+            decoration: BoxDecoration(
+              color: isActive
+                  ? SasColors.copper
+                  : Colors.black.withValues(alpha: 0.55),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
                 color: isActive
-                    ? const Color(0xFFF95721).withValues(alpha: 0.85)
-                    : Colors.black.withValues(alpha: 0.45),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: isActive
-                      ? const Color(0xFFF95721)
-                      : Colors.white.withValues(alpha: 0.2),
-                ),
+                    ? SasColors.copper
+                    : Colors.white.withValues(alpha: 0.2),
               ),
-              child: Icon(icon, color: Colors.white, size: 20),
             ),
+            child: Icon(icon, color: Colors.white, size: 20),
           ),
         ),
       ),
@@ -184,7 +173,7 @@ class SmartPassScannerView extends StatelessWidget {
               height: 36,
               child: CircularProgressIndicator(
                 strokeWidth: 3,
-                color: Color(0xFFF95721),
+                color: SasColors.copper,
               ),
             ),
             const SizedBox(height: 12),
@@ -193,7 +182,7 @@ class SmartPassScannerView extends StatelessWidget {
               style: GoogleFonts.plusJakartaSans(
                 color: Colors.white,
                 fontSize: 14,
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ],

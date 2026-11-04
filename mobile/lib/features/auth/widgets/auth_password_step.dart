@@ -44,19 +44,19 @@ class AuthPasswordStep extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark
-        ? SasColors.brilliance
-        : const Color(0xFF0F172A);
+        ? SasColors.ivory
+        : SasColors.ink;
     final subtitleColor = isDark
-        ? SasColors.maidenMist
-        : const Color(0xFF475569);
-    final inputBg = isDark ? SasColors.darkElevated : const Color(0xFFF8FAFC);
+        ? SasColors.mutedOnDark
+        : SasColors.textMuted;
+    final inputBg = isDark ? SasColors.darkElevated : SasColors.ivory;
     final inputBorder = isDark
-        ? const Color(0x2EFFFFFF)
-        : const Color(0xFFE2E8F0);
+        ? SasColors.darkBorder
+        : SasColors.textOnDark;
 
     return SizedBox.expand(
       child: ColoredBox(
-        color: isDark ? SasColors.darkCanvas : const Color(0xFFFFFDF9),
+        color: isDark ? SasColors.darkCanvas : SasColors.copperSoft,
         child: Stack(
           fit: StackFit.expand,
           children: [

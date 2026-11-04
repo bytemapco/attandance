@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:smart_attendance_app/app/theme.dart';
 import 'package:smart_attendance_app/core/attendance_constants.dart';
 import 'package:smart_attendance_app/domain/models/leave_request.dart';
-import 'package:smart_attendance_app/shared/widgets/glass_card.dart';
+import 'package:smart_attendance_app/shared/widgets/surface_card.dart';
 
 class LeaveHistoryTile extends StatelessWidget {
   final LeaveRequest leave;
@@ -12,7 +12,7 @@ class LeaveHistoryTile extends StatelessWidget {
 
   Color _statusColor(String status) {
     if (status == kStatusApprovedUpper || status == 'APPROVED') {
-      return SasColors.accentEmerald;
+      return SasColors.success;
     }
     if (status == kStatusRejected || status == 'REJECTED') {
       return SasColors.danger;
@@ -30,7 +30,7 @@ class LeaveHistoryTile extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
-      child: GlassCard(
+      child: SurfaceCard(
         padding: const EdgeInsets.all(14),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -41,7 +41,7 @@ class LeaveHistoryTile extends StatelessWidget {
                   child: Text(
                     leave.reason,
                     style: TextStyle(
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w600,
                       fontSize: 14,
                       color: SasColors.textPrimaryOf(context),
                     ),
@@ -62,7 +62,7 @@ class LeaveHistoryTile extends StatelessWidget {
                     style: TextStyle(
                       color: statusCol,
                       fontSize: 11,
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
@@ -99,8 +99,8 @@ class LeaveHistoryTile extends StatelessWidget {
                   borderRadius: BorderRadius.circular(6),
                   border: Border.all(
                     color: isDark
-                        ? const Color(0x2AFFFFFF)
-                        : const Color(0xFFE2E8F0),
+                        ? SasColors.darkBorder
+                        : SasColors.textOnDark,
                   ),
                 ),
                 child: Text(

@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:smart_attendance_app/app/theme.dart';
 import 'package:smart_attendance_app/core/attendance_utils.dart';
 import 'package:smart_attendance_app/domain/models/attendance.dart';
-import 'package:smart_attendance_app/shared/widgets/glass_card.dart';
+import 'package:smart_attendance_app/shared/widgets/surface_card.dart';
 
 class SubjectSessionRow extends StatelessWidget {
   final AttendanceHistoryItem item;
@@ -20,7 +20,7 @@ class SubjectSessionRow extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
-      child: GlassCard(
+      child: SurfaceCard(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         onTap: item.status == 'Flagged'
             ? () => context.push('/flagged/${item.attendanceId}', extra: item)
@@ -61,8 +61,8 @@ class SubjectSessionRow extends StatelessWidget {
                   borderRadius: BorderRadius.circular(6),
                   border: Border.all(
                     color: isDark
-                        ? const Color(0x2AFFFFFF)
-                        : const Color(0xFFE2E8F0),
+                        ? SasColors.darkBorder
+                        : SasColors.textOnDark,
                   ),
                 ),
                 child: Text(
@@ -86,7 +86,7 @@ class SubjectSessionRow extends StatelessWidget {
                 style: TextStyle(
                   color: color,
                   fontSize: 11,
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ),

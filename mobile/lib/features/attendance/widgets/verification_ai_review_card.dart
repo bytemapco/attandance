@@ -56,25 +56,18 @@ class _VerificationAiReviewCardState extends State<VerificationAiReviewCard>
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardBg = isDark ? SasColors.darkSurface : Colors.white;
     final borderCol = isDark
-        ? const Color(0x1FFFFFFF)
-        : const Color(0xFFE3E9F1);
+        ? SasColors.darkBorder
+        : SasColors.border;
     final primaryTextColor = isDark
-        ? SasColors.brilliance
-        : const Color(0xFF0F172A);
+        ? SasColors.ivory
+        : SasColors.ink;
 
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         color: cardBg,
-        borderRadius: BorderRadius.circular(22),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(color: borderCol),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.20 : 0.04),
-            blurRadius: 14,
-            offset: const Offset(0, 4),
-          ),
-        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -104,7 +97,7 @@ class _VerificationAiReviewCardState extends State<VerificationAiReviewCard>
                     Text(
                       'AI Identity & Liveness',
                       style: SasTypography.style(
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w600,
                         fontSize: 15,
                         color: primaryTextColor,
                       ),
@@ -138,7 +131,7 @@ class _VerificationAiReviewCardState extends State<VerificationAiReviewCard>
                     '${(a.finalAiScore * 100 * _progressAnim.value).toStringAsFixed(0)}%',
                     style: SasTypography.style(
                       fontSize: 16,
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.w600,
                       color: overallColor,
                     ),
                   ),

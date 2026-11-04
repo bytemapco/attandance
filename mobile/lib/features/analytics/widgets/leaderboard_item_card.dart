@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:smart_attendance_app/app/theme.dart';
 import 'package:smart_attendance_app/domain/models/leaderboard.dart';
-import 'package:smart_attendance_app/shared/widgets/glass_card.dart';
+import 'package:smart_attendance_app/shared/widgets/surface_card.dart';
 
 class LeaderboardItemCard extends StatelessWidget {
   final int rank;
@@ -17,14 +17,14 @@ class LeaderboardItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color itemBorderColor = SasColors.glassBorder;
+    Color itemBorderColor = SasColors.border;
     if (isCurrentUser) {
-      itemBorderColor = SasColors.accentEmerald.withValues(alpha: 0.4);
+      itemBorderColor = SasColors.success.withValues(alpha: 0.4);
     } else if (rank == 1) {
-      itemBorderColor = SasColors.accentAmber.withValues(alpha: 0.3);
+      itemBorderColor = SasColors.copper.withValues(alpha: 0.3);
     }
 
-    return GlassCard(
+    return SurfaceCard(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       borderColor: itemBorderColor,
       child: Row(
@@ -42,7 +42,7 @@ class LeaderboardItemCard extends StatelessWidget {
                         entry.name,
                         style: TextStyle(
                           fontWeight: isCurrentUser
-                              ? FontWeight.w700
+                              ? FontWeight.w600
                               : FontWeight.w600,
                           fontSize: 13,
                           color: isCurrentUser
@@ -66,8 +66,8 @@ class LeaderboardItemCard extends StatelessWidget {
                         child: const Text(
                           'YOU',
                           style: TextStyle(
-                            fontSize: 9,
-                            fontWeight: FontWeight.w700,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
                             color: SasColors.success,
                           ),
                         ),
@@ -102,10 +102,10 @@ class LeaderboardItemCard extends StatelessWidget {
           Text(
             '${entry.points} pts',
             style: TextStyle(
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w600,
               fontSize: 13,
               color: rank == 1
-                  ? SasColors.accentAmber
+                  ? SasColors.copper
                   : SasColors.textSecondaryOf(context),
             ),
           ),
@@ -118,19 +118,19 @@ class LeaderboardItemCard extends StatelessWidget {
     if (rank == 1) {
       return const Icon(
         Icons.emoji_events_rounded,
-        color: SasColors.accentAmber,
+        color: SasColors.copper,
         size: 20,
       );
     } else if (rank == 2) {
       return const Icon(
         Icons.emoji_events_rounded,
-        color: Color(0xFF94A3B8),
+        color: SasColors.mutedOnDark,
         size: 18,
       );
     } else if (rank == 3) {
       return const Icon(
         Icons.emoji_events_rounded,
-        color: Color(0xFFD97706),
+        color: SasColors.warning,
         size: 18,
       );
     }
@@ -138,7 +138,7 @@ class LeaderboardItemCard extends StatelessWidget {
     return Text(
       '#$rank',
       style: TextStyle(
-        fontWeight: FontWeight.w700,
+        fontWeight: FontWeight.w600,
         fontSize: 12,
         color: SasColors.textMutedOf(context),
       ),

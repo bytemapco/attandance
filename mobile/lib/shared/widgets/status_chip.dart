@@ -32,12 +32,12 @@ class StatusChip extends StatelessWidget {
         ? color.withValues(
             alpha: variant == StatusChipVariant.filled ? 0.1 : 0.15,
           )
-        : SasColors.glassBg;
+        : SasColors.lightSurface;
     final borderColor = isActive
         ? color.withValues(
             alpha: variant == StatusChipVariant.filled ? 0.3 : 0.5,
           )
-        : SasColors.glassBorder;
+        : SasColors.border;
     final textColor = isActive ? color : SasColors.textMuted;
     final reduceMotion = MediaQuery.disableAnimationsOf(context);
 
@@ -57,7 +57,7 @@ class StatusChip extends StatelessWidget {
         style: TextStyle(
           color: textColor,
           fontSize: 11,
-          fontWeight: isActive ? FontWeight.w700 : FontWeight.w600,
+          fontWeight: isActive ? FontWeight.w600 : FontWeight.w600,
         ),
       ),
     );

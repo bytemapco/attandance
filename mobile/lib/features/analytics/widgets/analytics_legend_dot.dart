@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smart_attendance_app/app/typography.dart';
+import 'package:smart_attendance_app/app/theme.dart';
 
 class AnalyticsLegendDot extends StatelessWidget {
   final Color color;
@@ -15,8 +16,8 @@ class AnalyticsLegendDot extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor = isDark
-        ? const Color(0xFF94A3B8)
-        : const Color(0xFF64748B);
+        ? SasColors.mutedOnDark
+        : SasColors.textMuted;
 
     return Row(
       mainAxisSize: MainAxisSize.min,

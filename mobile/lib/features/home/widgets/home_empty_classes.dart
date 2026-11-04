@@ -1,26 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:smart_attendance_app/app/theme.dart';
-import 'package:smart_attendance_app/shared/widgets/glass_card.dart';
+import 'package:smart_attendance_app/shared/widgets/surface_card.dart';
 
 class HomeEmptyClasses extends StatelessWidget {
   const HomeEmptyClasses({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return GlassCard(
+    return SurfaceCard(
       padding: const EdgeInsets.symmetric(vertical: 36, horizontal: 20),
       child: Column(
         children: [
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: SasColors.osageOrange.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(14),
+              color: SasColors.copper.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(12),
             ),
             child: const Icon(
               Icons.event_available_rounded,
               size: 26,
-              color: SasColors.osageOrange,
+              color: SasColors.copper,
             ),
           ),
           const SizedBox(height: 12),
@@ -29,8 +29,7 @@ class HomeEmptyClasses extends StatelessWidget {
             style: TextStyle(
               color: SasColors.textPrimaryOf(context),
               fontSize: 15,
-              fontWeight: FontWeight.w700,
-              letterSpacing: -0.2,
+              fontWeight: FontWeight.w600,
             ),
           ),
           const SizedBox(height: 4),

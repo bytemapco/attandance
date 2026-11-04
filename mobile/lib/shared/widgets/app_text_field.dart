@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:smart_attendance_app/app/theme.dart';
 import 'package:smart_attendance_app/app/typography.dart';
 
-class GlassInput extends StatelessWidget {
+class AppTextField extends StatelessWidget {
   final TextEditingController? controller;
   final String? label;
   final String? hint;
@@ -17,7 +17,7 @@ class GlassInput extends StatelessWidget {
   final TextInputAction? textInputAction;
   final ValueChanged<String>? onFieldSubmitted;
 
-  const GlassInput({
+  const AppTextField({
     super.key,
     this.controller,
     this.label,
@@ -38,18 +38,18 @@ class GlassInput extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark
-        ? SasColors.brilliance
-        : SasColors.indianInk;
+        ? SasColors.ivory
+        : SasColors.ink;
     final labelTextColor = isDark
-        ? SasColors.maidenMist
-        : const Color(0xFF474A59);
+        ? SasColors.mutedOnDark
+        : SasColors.textSecondary;
     final hintTextColor = isDark
-        ? const Color(0x99BAC0BE)
-        : const Color(0xFF858997);
-    final inputBg = isDark ? SasColors.darkCanvas : SasColors.polishWhite;
+        ? SasColors.borderStrong
+        : SasColors.mutedOnDark;
+    final inputBg = isDark ? SasColors.darkCanvas : SasColors.lightElevated;
     final inputBorderColor = isDark
-        ? SasColors.indianInk
-        : const Color(0xFFD5D8D7);
+        ? SasColors.ink
+        : SasColors.textOnDark;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -116,7 +116,7 @@ class GlassInput extends StatelessWidget {
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: const BorderSide(
-                color: SasColors.osageOrange,
+                color: SasColors.copper,
                 width: 1.5,
               ),
             ),

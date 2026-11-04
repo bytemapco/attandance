@@ -14,8 +14,8 @@ class VerificationAppBar extends StatelessWidget
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark
-        ? SasColors.brilliance
-        : const Color(0xFF0F172A);
+        ? SasColors.ivory
+        : SasColors.ink;
 
     return AppBar(
       backgroundColor: Colors.transparent,
@@ -35,7 +35,7 @@ class VerificationAppBar extends StatelessWidget
         'Face Attendance',
         style: SasTypography.style(
           fontSize: 18,
-          fontWeight: FontWeight.w700,
+          fontWeight: FontWeight.w600,
           color: primaryTextColor,
         ),
       ),

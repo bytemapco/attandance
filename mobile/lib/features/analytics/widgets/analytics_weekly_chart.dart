@@ -15,13 +15,13 @@ class AnalyticsWeeklyChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final cardBg = isDark ? const Color(0xFF1E2838) : Colors.white;
+    final cardBg = isDark ? SasColors.darkSurface : Colors.white;
     final primaryTextColor = isDark
-        ? SasColors.brilliance
-        : const Color(0xFF0F172A);
+        ? SasColors.ivory
+        : SasColors.ink;
     final subtitleColor = isDark
-        ? const Color(0xFF94A3B8)
-        : const Color(0xFF64748B);
+        ? SasColors.mutedOnDark
+        : SasColors.textMuted;
 
     final chartData = WeeklyChartData.fromHistory(data);
     final weeks = chartData.weeks;
@@ -32,18 +32,11 @@ class AnalyticsWeeklyChart extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: cardBg,
-        borderRadius: BorderRadius.circular(22),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isDark ? const Color(0x1FFFFFFF) : const Color(0xFFE2E8F0),
+          color: isDark ? SasColors.darkBorder : SasColors.textOnDark,
           width: 1.0,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.20 : 0.04),
-            blurRadius: 12,
-            offset: const Offset(0, 3),
-          ),
-        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -53,7 +46,7 @@ class AnalyticsWeeklyChart extends StatelessWidget {
             children: [
               const Icon(
                 Icons.bar_chart_rounded,
-                color: Color(0xFFF95721),
+                color: SasColors.copper,
                 size: 20,
               ),
               const SizedBox(width: 8),
@@ -62,20 +55,20 @@ class AnalyticsWeeklyChart extends StatelessWidget {
                   'Weekly attendance',
                   style: SasTypography.style(
                     fontSize: 15,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
                     color: primaryTextColor,
                   ),
                 ),
               ),
               AnalyticsLegendDot(
-                color: const Color(0xFF10B981),
+                color: SasColors.success,
                 label: 'Present',
               ),
               const SizedBox(width: 12),
               AnalyticsLegendDot(
                 color: isDark
-                    ? const Color(0xFF64748B)
-                    : const Color(0xFFCBD5E1),
+                    ? SasColors.textMuted
+                    : SasColors.textOnDark,
                 label: 'Scheduled',
               ),
             ],
@@ -103,7 +96,7 @@ class AnalyticsWeeklyChart extends StatelessWidget {
                       getTitlesWidget: (v, _) => Text(
                         v.toInt().toString(),
                         style: SasTypography.style(
-                          fontSize: 10.5,
+                          fontSize: 11,
                           fontWeight: FontWeight.w500,
                           color: subtitleColor,
                         ),
@@ -123,7 +116,7 @@ class AnalyticsWeeklyChart extends StatelessWidget {
                           child: Text(
                             weeks[idx],
                             style: SasTypography.style(
-                              fontSize: 10.5,
+                              fontSize: 11,
                               fontWeight: FontWeight.w500,
                               color: subtitleColor,
                             ),
@@ -139,8 +132,8 @@ class AnalyticsWeeklyChart extends StatelessWidget {
                   horizontalInterval: 2,
                   getDrawingHorizontalLine: (_) => FlLine(
                     color: isDark
-                        ? const Color(0x1FFFFFFF)
-                        : const Color(0xFFE2E8F0),
+                        ? SasColors.darkBorder
+                        : SasColors.textOnDark,
                     strokeWidth: 1,
                     dashArray: [4, 4],
                   ),
@@ -152,7 +145,7 @@ class AnalyticsWeeklyChart extends StatelessWidget {
                     barRods: [
                       BarChartRodData(
                         toY: presentCounts[i],
-                        color: const Color(0xFF10B981),
+                        color: SasColors.success,
                         width: 12,
                         borderRadius: const BorderRadius.vertical(
                           top: Radius.circular(3),
@@ -161,8 +154,8 @@ class AnalyticsWeeklyChart extends StatelessWidget {
                       BarChartRodData(
                         toY: scheduledCounts[i],
                         color: isDark
-                            ? const Color(0xFF475569)
-                            : const Color(0xFFCBD5E1),
+                            ? SasColors.textMuted
+                            : SasColors.textOnDark,
                         width: 14,
                         borderRadius: const BorderRadius.vertical(
                           top: Radius.circular(3),

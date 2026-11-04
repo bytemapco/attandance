@@ -19,13 +19,13 @@ class AnalyticsCourseProgressCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final cardBg = isDark ? const Color(0xFF1E2838) : Colors.white;
+    final cardBg = isDark ? SasColors.darkSurface : Colors.white;
     final primaryTextColor = isDark
-        ? SasColors.brilliance
-        : const Color(0xFF0F172A);
+        ? SasColors.ivory
+        : SasColors.ink;
     final subtitleColor = isDark
-        ? const Color(0xFF94A3B8)
-        : const Color(0xFF64748B);
+        ? SasColors.mutedOnDark
+        : SasColors.textMuted;
 
     final history = data.history;
     final total = history.isEmpty ? 5 : history.length;
@@ -48,18 +48,11 @@ class AnalyticsCourseProgressCard extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: cardBg,
-        borderRadius: BorderRadius.circular(22),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isDark ? const Color(0x1FFFFFFF) : const Color(0xFFE2E8F0),
+          color: isDark ? SasColors.darkBorder : SasColors.textOnDark,
           width: 1.0,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.20 : 0.04),
-            blurRadius: 12,
-            offset: const Offset(0, 3),
-          ),
-        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -69,7 +62,7 @@ class AnalyticsCourseProgressCard extends StatelessWidget {
             children: [
               const Icon(
                 Icons.menu_book_rounded,
-                color: Color(0xFFF95721),
+                color: SasColors.copper,
                 size: 20,
               ),
               const SizedBox(width: 8),
@@ -77,7 +70,7 @@ class AnalyticsCourseProgressCard extends StatelessWidget {
                 'Course progress',
                 style: SasTypography.style(
                   fontSize: 15,
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w600,
                   color: primaryTextColor,
                 ),
               ),
@@ -103,7 +96,7 @@ class AnalyticsCourseProgressCard extends StatelessWidget {
             height: 9,
             width: double.infinity,
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF334155) : const Color(0xFFF1F5F9),
+              color: isDark ? SasColors.textSecondary : SasColors.ivory,
               borderRadius: BorderRadius.circular(6),
             ),
             child: FractionallySizedBox(
@@ -111,11 +104,7 @@ class AnalyticsCourseProgressCard extends StatelessWidget {
               widthFactor: (pct / 100.0).clamp(0.02, 1.0),
               child: Container(
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFFF95721), Color(0xFFFF7A18)],
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
-                  ),
+                  color: SasColors.copper,
                   borderRadius: BorderRadius.circular(6),
                 ),
               ),
@@ -130,13 +119,13 @@ class AnalyticsCourseProgressCard extends StatelessWidget {
               Text(
                 needs.needToAttend > 0
                     ? 'Need ${needs.needToAttend} more for ${target.toStringAsFixed(0)}%'
-                    : 'Target met ✓',
+                    : 'Target met',
                 style: SasTypography.style(
                   fontSize: 11.5,
                   fontWeight: FontWeight.w600,
                   color: needs.needToAttend > 0
-                      ? const Color(0xFFEA580C)
-                      : const Color(0xFF16A34A),
+                      ? SasColors.copperStrong
+                      : SasColors.success,
                 ),
               ),
               Text(

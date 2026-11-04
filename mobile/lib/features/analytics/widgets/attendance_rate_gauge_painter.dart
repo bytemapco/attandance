@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:smart_attendance_app/app/theme.dart';
 
 class AttendanceRateGaugePainter extends CustomPainter {
   final double progress;
@@ -17,7 +18,7 @@ class AttendanceRateGaugePainter extends CustomPainter {
 
     // Outer track
     final trackPaint = Paint()
-      ..color = isDark ? const Color(0xFF334155) : const Color(0xFFF1F5F9)
+      ..color = isDark ? SasColors.textSecondary : SasColors.ivory
       ..style = PaintingStyle.stroke
       ..strokeWidth = 7.0
       ..strokeCap = StrokeCap.round;
@@ -25,7 +26,7 @@ class AttendanceRateGaugePainter extends CustomPainter {
 
     // Active arc
     final arcPaint = Paint()
-      ..color = const Color(0xFFF95721)
+      ..color = SasColors.copper
       ..style = PaintingStyle.stroke
       ..strokeWidth = 7.0
       ..strokeCap = StrokeCap.round;
@@ -33,7 +34,7 @@ class AttendanceRateGaugePainter extends CustomPainter {
     if (progress <= 0.005) {
       // Prominent top pip when zero
       final pipPaint = Paint()
-        ..color = const Color(0xFFF95721)
+        ..color = SasColors.copper
         ..style = PaintingStyle.fill;
       canvas.drawCircle(Offset(center.dx, center.dy - radius), 4.0, pipPaint);
     } else {

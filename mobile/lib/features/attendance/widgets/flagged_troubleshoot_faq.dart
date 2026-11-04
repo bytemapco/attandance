@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:smart_attendance_app/app/theme.dart';
 
 class FlaggedTroubleshootFaq extends StatefulWidget {
   const FlaggedTroubleshootFaq({super.key});
@@ -17,18 +18,11 @@ class _FlaggedTroubleshootFaqState extends State<FlaggedTroubleshootFaq> {
 
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E293B) : Colors.white,
-        borderRadius: BorderRadius.circular(22),
+        color: isDark ? SasColors.darkSurface : Colors.white,
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isDark ? const Color(0xFF334155) : const Color(0xFFF1F5F9),
+          color: isDark ? SasColors.textSecondary : SasColors.ivory,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.03),
-            blurRadius: 14,
-            offset: const Offset(0, 4),
-          ),
-        ],
       ),
       child: Theme(
         data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
@@ -38,16 +32,16 @@ class _FlaggedTroubleshootFaqState extends State<FlaggedTroubleshootFaq> {
           title: Text(
             'Troubleshooting & tips',
             style: GoogleFonts.plusJakartaSans(
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w600,
               fontSize: 14,
-              color: isDark ? Colors.white : const Color(0xFF0F172A),
+              color: isDark ? Colors.white : SasColors.ink,
             ),
           ),
           trailing: Icon(
             _expanded
                 ? Icons.keyboard_arrow_up_rounded
                 : Icons.keyboard_arrow_down_rounded,
-            color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
+            color: isDark ? SasColors.mutedOnDark : SasColors.textMuted,
           ),
           onExpansionChanged: (v) => setState(() => _expanded = v),
           children: const [
@@ -93,10 +87,10 @@ class _TipItem extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(6),
           decoration: BoxDecoration(
-            color: const Color(0xFFF95721).withValues(alpha: 0.1),
+            color: SasColors.copper.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
           ),
-          child: Icon(icon, size: 16, color: const Color(0xFFF95721)),
+          child: Icon(icon, size: 16, color: SasColors.copper),
         ),
         const SizedBox(width: 10),
         Expanded(
@@ -108,7 +102,7 @@ class _TipItem extends StatelessWidget {
                 style: GoogleFonts.plusJakartaSans(
                   fontWeight: FontWeight.w600,
                   fontSize: 12,
-                  color: isDark ? Colors.white : const Color(0xFF0F172A),
+                  color: isDark ? Colors.white : SasColors.ink,
                 ),
               ),
               const SizedBox(height: 2),
@@ -116,8 +110,8 @@ class _TipItem extends StatelessWidget {
                 desc,
                 style: GoogleFonts.plusJakartaSans(
                   color: isDark
-                      ? const Color(0xFF94A3B8)
-                      : const Color(0xFF64748B),
+                      ? SasColors.mutedOnDark
+                      : SasColors.textMuted,
                   fontSize: 11,
                   height: 1.35,
                 ),

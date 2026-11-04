@@ -24,7 +24,7 @@ class AuthButton extends StatelessWidget {
       height: 48,
       width: double.infinity,
       child: Material(
-        color: enabled ? SasColors.carbon : SasColors.glassBorderHover,
+        color: enabled ? SasColors.carbon : SasColors.borderStrong,
         borderRadius: radius,
         child: InkWell(
           onTap: isLoading ? null : onPressed,

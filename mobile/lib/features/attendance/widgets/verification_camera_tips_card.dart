@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:smart_attendance_app/app/theme.dart';
 import 'package:smart_attendance_app/app/typography.dart';
-import 'package:smart_attendance_app/shared/widgets/glass_button.dart';
+import 'package:smart_attendance_app/shared/widgets/app_button.dart';
 
 class VerificationCameraTipsCard extends StatelessWidget {
   final VoidCallback onDismissTips;
@@ -13,28 +13,21 @@ class VerificationCameraTipsCard extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardBg = isDark ? SasColors.darkSurface : Colors.white;
     final borderCol = isDark
-        ? const Color(0x1FFFFFFF)
-        : const Color(0xFFE3E9F1);
+        ? SasColors.darkBorder
+        : SasColors.border;
     final primaryTextColor = isDark
-        ? SasColors.brilliance
-        : const Color(0xFF0F172A);
+        ? SasColors.ivory
+        : SasColors.ink;
     final subtitleColor = isDark
-        ? const Color(0xFF94A3B8)
-        : const Color(0xFF64748B);
+        ? SasColors.mutedOnDark
+        : SasColors.textMuted;
 
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: cardBg,
-        borderRadius: BorderRadius.circular(22),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(color: borderCol),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.20 : 0.04),
-            blurRadius: 14,
-            offset: const Offset(0, 4),
-          ),
-        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -45,13 +38,13 @@ class VerificationCameraTipsCard extends StatelessWidget {
                 width: 36,
                 height: 36,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFFEDD5),
+                  color: SasColors.copperSoft,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: const Center(
                   child: Icon(
                     Icons.tips_and_updates_rounded,
-                    color: Color(0xFFEA580C),
+                    color: SasColors.copperStrong,
                     size: 20,
                   ),
                 ),
@@ -60,7 +53,7 @@ class VerificationCameraTipsCard extends StatelessWidget {
               Text(
                 'Tips for best verification',
                 style: SasTypography.style(
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w600,
                   fontSize: 15,
                   color: primaryTextColor,
                 ),
@@ -83,9 +76,9 @@ class VerificationCameraTipsCard extends StatelessWidget {
           const SizedBox(height: 16),
           SizedBox(
             width: double.infinity,
-            child: GlassButton(
+            child: AppButton(
               label: 'Got it, Open Camera',
-              variant: GlassButtonVariant.primary,
+              variant: AppButtonVariant.primary,
               onPressed: onDismissTips,
             ),
           ),

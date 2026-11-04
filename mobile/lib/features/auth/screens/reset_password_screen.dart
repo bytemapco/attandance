@@ -4,10 +4,10 @@ import 'package:go_router/go_router.dart';
 import 'package:smart_attendance_app/app/theme.dart';
 import 'package:smart_attendance_app/features/auth/providers/reset_password_provider.dart';
 import 'package:smart_attendance_app/features/auth/widgets/reset_password_status_cards.dart';
-import 'package:smart_attendance_app/shared/widgets/animated_background.dart';
-import 'package:smart_attendance_app/shared/widgets/glass_button.dart';
-import 'package:smart_attendance_app/shared/widgets/glass_card.dart';
-import 'package:smart_attendance_app/shared/widgets/glass_input.dart';
+import 'package:smart_attendance_app/shared/widgets/screen_background.dart';
+import 'package:smart_attendance_app/shared/widgets/app_button.dart';
+import 'package:smart_attendance_app/shared/widgets/surface_card.dart';
+import 'package:smart_attendance_app/shared/widgets/app_text_field.dart';
 import 'package:smart_attendance_app/shared/widgets/loading_overlay.dart';
 
 class ResetPasswordScreen extends ConsumerStatefulWidget {
@@ -64,7 +64,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          AnimatedBackground(
+          ScreenBackground(
             child: SafeArea(
               child: Center(
                 child: SingleChildScrollView(
@@ -98,16 +98,16 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
           width: 54,
           height: 54,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            color: SasColors.osageOrange.withValues(alpha: 0.12),
+            borderRadius: BorderRadius.circular(12),
+            color: SasColors.copper.withValues(alpha: 0.12),
             border: Border.all(
-              color: SasColors.osageOrange.withValues(alpha: 0.35),
+              color: SasColors.copper.withValues(alpha: 0.35),
               width: 1.2,
             ),
           ),
           child: const Icon(
             Icons.lock_reset_rounded,
-            color: SasColors.osageOrange,
+            color: SasColors.copper,
             size: 26,
           ),
         ),
@@ -116,7 +116,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
           'Reset Password',
           style: Theme.of(
             context,
-          ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w700),
+          ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w600),
         ),
         const SizedBox(height: 6),
         Text(
@@ -125,14 +125,14 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
           style: const TextStyle(color: SasColors.textMuted, fontSize: 13),
         ),
         const SizedBox(height: 24),
-        GlassCard(
+        SurfaceCard(
           padding: const EdgeInsets.all(24),
           child: Form(
             key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                GlassInput(
+                AppTextField(
                   controller: _passCtrl,
                   label: 'New Password',
                   hint: 'Min 8 chars, letters & digits',
@@ -157,7 +157,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
                   },
                 ),
                 const SizedBox(height: 16),
-                GlassInput(
+                AppTextField(
                   controller: _confirmCtrl,
                   label: 'Confirm New Password',
                   hint: 'Re-enter your password',
@@ -177,7 +177,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
                       v != _passCtrl.text ? 'Passwords do not match' : null,
                 ),
                 const SizedBox(height: 24),
-                GlassButton(
+                AppButton(
                   label: 'Update Password',
                   isExpanded: true,
                   onPressed: _submit,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:smart_attendance_app/app/theme.dart';
 
 class VerificationStatusOverlay extends StatelessWidget {
   final String title;
@@ -20,28 +21,21 @@ class VerificationStatusOverlay extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final totalSteps = stepLabels?.length ?? 4;
     final currentIndex = (activeStepIndex ?? 0).clamp(0, totalSteps - 1);
-    final cardBg = isDark ? const Color(0xFF1E293B) : Colors.white;
+    final cardBg = isDark ? SasColors.darkSurface : Colors.white;
     final borderCol = isDark
-        ? const Color(0xFF334155)
-        : const Color(0xFFE2E8F0);
-    final primaryTextColor = isDark ? Colors.white : const Color(0xFF0F172A);
+        ? SasColors.textSecondary
+        : SasColors.textOnDark;
+    final primaryTextColor = isDark ? Colors.white : SasColors.ink;
     final mutedTextCol = isDark
-        ? const Color(0xFF94A3B8)
-        : const Color(0xFF64748B);
+        ? SasColors.mutedOnDark
+        : SasColors.textMuted;
 
     return Container(
       padding: const EdgeInsets.all(22),
       decoration: BoxDecoration(
         color: cardBg,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(color: borderCol),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.04),
-            blurRadius: 14,
-            offset: const Offset(0, 4),
-          ),
-        ],
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -54,15 +48,15 @@ class VerificationStatusOverlay extends StatelessWidget {
                 height: 40,
                 decoration: BoxDecoration(
                   color: isDark
-                      ? const Color(0xFF0F172A)
-                      : const Color(0xFFF1F5F9),
+                      ? SasColors.ink
+                      : SasColors.ivory,
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(color: borderCol),
                 ),
                 child: Center(
                   child: Icon(
                     Icons.verified_user_outlined,
-                    color: isDark ? Colors.white : const Color(0xFF0F172A),
+                    color: isDark ? Colors.white : SasColors.ink,
                     size: 20,
                   ),
                 ),
@@ -76,7 +70,7 @@ class VerificationStatusOverlay extends StatelessWidget {
                       'Verifying Attendance',
                       style: GoogleFonts.plusJakartaSans(
                         fontSize: 16,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w600,
                         color: primaryTextColor,
                       ),
                     ),
@@ -100,10 +94,10 @@ class VerificationStatusOverlay extends StatelessWidget {
             child: LinearProgressIndicator(
               value: (currentIndex + 1) / totalSteps,
               backgroundColor: isDark
-                  ? const Color(0xFF334155)
-                  : const Color(0xFFE2E8F0),
+                  ? SasColors.textSecondary
+                  : SasColors.textOnDark,
               valueColor: const AlwaysStoppedAnimation<Color>(
-                Color(0xFFF95721),
+                SasColors.copper,
               ),
               minHeight: 5,
             ),
@@ -122,24 +116,24 @@ class VerificationStatusOverlay extends StatelessWidget {
 
                 if (isDone) {
                   textColor = isDark
-                      ? const Color(0xFFCBD5E1)
-                      : const Color(0xFF334155);
+                      ? SasColors.textOnDark
+                      : SasColors.textSecondary;
                   fontWeight = FontWeight.w500;
                   leadingIcon = const Icon(
                     Icons.check_circle_rounded,
-                    color: Color(0xFF08A875),
+                    color: SasColors.success,
                     size: 18,
                   );
                 } else if (isCurrent) {
                   textColor = primaryTextColor;
-                  fontWeight = FontWeight.w700;
+                  fontWeight = FontWeight.w600;
                   leadingIcon = const SizedBox(
                     width: 15,
                     height: 15,
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
                       valueColor: AlwaysStoppedAnimation<Color>(
-                        Color(0xFFF95721),
+                        SasColors.copper,
                       ),
                     ),
                   );
@@ -149,8 +143,8 @@ class VerificationStatusOverlay extends StatelessWidget {
                   leadingIcon = Icon(
                     Icons.radio_button_unchecked_rounded,
                     color: isDark
-                        ? const Color(0xFF475569)
-                        : const Color(0xFFCBD5E1),
+                        ? SasColors.textMuted
+                        : SasColors.textOnDark,
                     size: 16,
                   );
                 }
@@ -181,7 +175,7 @@ class VerificationStatusOverlay extends StatelessWidget {
                           style: GoogleFonts.plusJakartaSans(
                             fontSize: 11.5,
                             fontWeight: FontWeight.w600,
-                            color: const Color(0xFFF95721),
+                            color: SasColors.copper,
                           ),
                         ),
                     ],

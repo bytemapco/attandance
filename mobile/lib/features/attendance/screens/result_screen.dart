@@ -50,7 +50,7 @@ class ResultScreen extends ConsumerWidget {
       child: Scaffold(
         backgroundColor: isDark
             ? SasColors.darkCanvas
-            : const Color(0xFFF4F7FB),
+            : SasColors.lightCanvas,
         body: SafeArea(
           child: Center(
             child: ConstrainedBox(
@@ -71,9 +71,8 @@ class ResultScreen extends ConsumerWidget {
                       config.title,
                       style: GoogleFonts.plusJakartaSans(
                         fontSize: 24,
-                        fontWeight: FontWeight.w800,
-                        color: isDark ? Colors.white : const Color(0xFF0F172A),
-                        letterSpacing: -0.5,
+                        fontWeight: FontWeight.w600,
+                        color: isDark ? Colors.white : SasColors.ink,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -85,8 +84,8 @@ class ResultScreen extends ConsumerWidget {
                         textAlign: TextAlign.center,
                         style: GoogleFonts.plusJakartaSans(
                           color: isDark
-                              ? const Color(0xFF94A3B8)
-                              : const Color(0xFF64748B),
+                              ? SasColors.mutedOnDark
+                              : SasColors.textMuted,
                           fontSize: 14,
                           height: 1.4,
                           fontWeight: FontWeight.w500,
@@ -124,18 +123,18 @@ class ResultScreen extends ConsumerWidget {
                             'View details & add note',
                             style: GoogleFonts.plusJakartaSans(
                               fontSize: 15,
-                              fontWeight: FontWeight.w700,
+                              fontWeight: FontWeight.w600,
                               color: Colors.white,
                             ),
                           ),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFFF95721),
+                            backgroundColor: SasColors.copper,
                             elevation: 0,
                             shadowColor: const Color(
                               0xFFF95721,
                             ).withValues(alpha: 0.35),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
+                              borderRadius: BorderRadius.circular(12),
                             ),
                           ),
                         ),
@@ -149,8 +148,8 @@ class ResultScreen extends ConsumerWidget {
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                             color: isDark
-                                ? const Color(0xFF94A3B8)
-                                : const Color(0xFF64748B),
+                                ? SasColors.mutedOnDark
+                                : SasColors.textMuted,
                           ),
                         ),
                       ),
@@ -169,18 +168,18 @@ class ResultScreen extends ConsumerWidget {
                             'Back to dashboard',
                             style: GoogleFonts.plusJakartaSans(
                               fontSize: 15,
-                              fontWeight: FontWeight.w700,
+                              fontWeight: FontWeight.w600,
                               color: Colors.white,
                             ),
                           ),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFFF95721),
+                            backgroundColor: SasColors.copper,
                             elevation: 0,
                             shadowColor: const Color(
                               0xFFF95721,
                             ).withValues(alpha: 0.35),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
+                              borderRadius: BorderRadius.circular(12),
                             ),
                           ),
                         ),

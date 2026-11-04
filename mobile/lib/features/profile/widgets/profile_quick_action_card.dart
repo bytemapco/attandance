@@ -27,33 +27,26 @@ class ProfileQuickActionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final cardBg = isDark ? const Color(0xFF1E2838) : Colors.white;
+    final cardBg = isDark ? SasColors.darkSurface : Colors.white;
     final primaryTextColor = isDark
-        ? SasColors.brilliance
-        : const Color(0xFF0F172A);
+        ? SasColors.ivory
+        : SasColors.ink;
     final subtitleColor = isDark
-        ? const Color(0xFF94A3B8)
-        : const Color(0xFF64748B);
+        ? SasColors.mutedOnDark
+        : SasColors.textMuted;
 
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: BorderRadius.circular(12),
       child: Container(
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
           color: cardBg,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isDark ? const Color(0x1FFFFFFF) : const Color(0xFFE2E8F0),
+            color: isDark ? SasColors.darkBorder : SasColors.textOnDark,
             width: 1.0,
           ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: isDark ? 0.20 : 0.04),
-              blurRadius: 10,
-              offset: const Offset(0, 2),
-            ),
-          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -82,15 +75,15 @@ class ProfileQuickActionCard extends StatelessWidget {
                           vertical: 2,
                         ),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFEF4444),
+                          color: SasColors.danger,
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Text(
                           '$badgeCount',
                           style: SasTypography.style(
                             color: Colors.white,
-                            fontSize: 10.5,
-                            fontWeight: FontWeight.w700,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ),
@@ -110,7 +103,7 @@ class ProfileQuickActionCard extends StatelessWidget {
               title,
               style: SasTypography.style(
                 fontSize: 14.5,
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.w600,
                 color: primaryTextColor,
               ),
               maxLines: 1,

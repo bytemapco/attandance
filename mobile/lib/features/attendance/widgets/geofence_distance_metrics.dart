@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:smart_attendance_app/features/attendance/providers/geofence_verification_provider.dart';
 import 'package:smart_attendance_app/features/attendance/widgets/geofence_metric_box.dart';
+import 'package:smart_attendance_app/app/theme.dart';
 
 class GeofenceDistanceMetrics extends StatelessWidget {
   final GeofenceVerificationState state;
@@ -32,20 +33,20 @@ class GeofenceDistanceMetrics extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final containerBg = isDark
-        ? const Color(0xFF0F172A)
-        : const Color(0xFFF8FAFC);
+        ? SasColors.ink
+        : SasColors.ivory;
     final borderCol = isDark
-        ? const Color(0xFF334155)
-        : const Color(0xFFE2E8F0);
+        ? SasColors.textSecondary
+        : SasColors.textOnDark;
     final mutedTextCol = isDark
-        ? const Color(0xFF94A3B8)
-        : const Color(0xFF64748B);
+        ? SasColors.mutedOnDark
+        : SasColors.textMuted;
 
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: containerBg,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(color: borderCol),
       ),
       child: Column(
@@ -69,8 +70,8 @@ class GeofenceDistanceMetrics extends StatelessWidget {
                   meters: radius,
                   icon: Icons.radio_button_checked_rounded,
                   accentColor: isDark
-                      ? const Color(0xFFCBD5E1)
-                      : const Color(0xFF475569),
+                      ? SasColors.textOnDark
+                      : SasColors.textMuted,
                   isDark: isDark,
                   borderColor: borderCol,
                 ),

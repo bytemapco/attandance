@@ -32,40 +32,40 @@ class SasTypography {
 
 TextTheme buildSasTextTheme(Brightness brightness) {
   final isDark = brightness == Brightness.dark;
-  final primaryColor = isDark ? SasColors.brilliance : const Color(0xFF0F172A);
+  final primaryColor = isDark ? SasColors.ivory : SasColors.ink;
   final secondaryColor = isDark
-      ? const Color(0xFFE2E8F0)
-      : const Color(0xFF334155);
-  final mutedColor = isDark ? const Color(0xFFCBD5E1) : const Color(0xFF475569);
+      ? SasColors.textOnDark
+      : SasColors.textSecondary;
+  final mutedColor = isDark ? SasColors.textOnDark : SasColors.textMuted;
 
   return TextTheme(
     displayLarge: SasTypography.style(
       fontSize: 32,
-      fontWeight: FontWeight.w700,
+      fontWeight: FontWeight.w600,
       color: primaryColor,
       height: 1.20,
     ),
     displayMedium: SasTypography.style(
       fontSize: 26,
-      fontWeight: FontWeight.w700,
+      fontWeight: FontWeight.w600,
       color: primaryColor,
       height: 1.22,
     ),
     displaySmall: SasTypography.style(
       fontSize: 22,
-      fontWeight: FontWeight.w700,
+      fontWeight: FontWeight.w600,
       color: primaryColor,
       height: 1.25,
     ),
     headlineLarge: SasTypography.style(
       fontSize: 20,
-      fontWeight: FontWeight.w700,
+      fontWeight: FontWeight.w600,
       color: primaryColor,
       height: 1.25,
     ),
     headlineMedium: SasTypography.style(
       fontSize: 17,
-      fontWeight: FontWeight.w700,
+      fontWeight: FontWeight.w600,
       color: primaryColor,
       height: 1.29,
     ),
@@ -77,7 +77,7 @@ TextTheme buildSasTextTheme(Brightness brightness) {
     ),
     titleLarge: SasTypography.style(
       fontSize: 17,
-      fontWeight: FontWeight.w700,
+      fontWeight: FontWeight.w600,
       color: primaryColor,
       height: 1.29,
     ),
@@ -113,7 +113,7 @@ TextTheme buildSasTextTheme(Brightness brightness) {
     ),
     labelLarge: SasTypography.style(
       fontSize: 15,
-      fontWeight: FontWeight.w700,
+      fontWeight: FontWeight.w600,
       color: primaryColor,
       height: 1.20,
     ),

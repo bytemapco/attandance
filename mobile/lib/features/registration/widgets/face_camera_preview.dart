@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:smart_attendance_app/app/theme.dart';
 
 class FaceCameraPreview extends StatelessWidget {
   final String? capturedPath;
@@ -25,21 +26,14 @@ class FaceCameraPreview extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E293B) : Colors.white,
-        borderRadius: BorderRadius.circular(24),
+        color: isDark ? SasColors.darkSurface : Colors.white,
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
+          color: isDark ? SasColors.textSecondary : SasColors.textOnDark,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.05),
-            blurRadius: 16,
-            offset: const Offset(0, 4),
-          ),
-        ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(23),
+        borderRadius: BorderRadius.circular(12),
         child: capturedPath != null
             ? Image.file(
                 File(capturedPath!),
@@ -65,7 +59,7 @@ class FaceCameraPreview extends StatelessWidget {
                         ),
                         child: const Icon(
                           Icons.videocam_off_rounded,
-                          color: Color(0xFFF0445E),
+                          color: SasColors.danger,
                           size: 36,
                         ),
                       ),
@@ -74,7 +68,7 @@ class FaceCameraPreview extends StatelessWidget {
                         cameraError!,
                         textAlign: TextAlign.center,
                         style: GoogleFonts.plusJakartaSans(
-                          color: const Color(0xFFF0445E),
+                          color: SasColors.danger,
                           fontSize: 13,
                           fontWeight: FontWeight.w500,
                         ),
@@ -106,18 +100,9 @@ class FaceCameraPreview extends StatelessWidget {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(105),
                         border: Border.all(
-                          color: const Color(0xFFF95721).withValues(alpha: 0.8),
+                          color: SasColors.copper.withValues(alpha: 0.8),
                           width: 2.2,
                         ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: const Color(
-                              0xFFF95721,
-                            ).withValues(alpha: 0.2),
-                            blurRadius: 12,
-                            spreadRadius: 2,
-                          ),
-                        ],
                       ),
                     ),
                   ),
@@ -133,7 +118,7 @@ class FaceCameraPreview extends StatelessWidget {
                         ),
                         decoration: BoxDecoration(
                           color: Colors.black.withValues(alpha: 0.6),
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
                           'Fit face in oval',
@@ -149,7 +134,7 @@ class FaceCameraPreview extends StatelessWidget {
                 ],
               )
             : const Center(
-                child: CircularProgressIndicator(color: Color(0xFFF95721)),
+                child: CircularProgressIndicator(color: SasColors.copper),
               ),
       ),
     );

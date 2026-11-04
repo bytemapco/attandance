@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:smart_attendance_app/app/theme.dart';
-import 'package:smart_attendance_app/shared/widgets/glass_card.dart';
+import 'package:smart_attendance_app/shared/widgets/surface_card.dart';
 
 class LeavePeriodPicker extends StatelessWidget {
   final DateTime? startDate;
@@ -31,7 +31,7 @@ class LeavePeriodPicker extends StatelessWidget {
         Text(
           'Leave Duration',
           style: TextStyle(
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w600,
             fontSize: 13,
             color: textSecondary,
           ),
@@ -40,7 +40,7 @@ class LeavePeriodPicker extends StatelessWidget {
         Row(
           children: [
             Expanded(
-              child: GlassCard(
+              child: SurfaceCard(
                 onTap: onSelectStart,
                 padding: const EdgeInsets.all(12),
                 child: Column(
@@ -71,7 +71,7 @@ class LeavePeriodPicker extends StatelessWidget {
                           : 'Select date',
                       style: TextStyle(
                         fontSize: 13,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w600,
                         color: startDate != null
                             ? SasColors.textPrimaryOf(context)
                             : textMuted,
@@ -83,7 +83,7 @@ class LeavePeriodPicker extends StatelessWidget {
             ),
             const SizedBox(width: 8),
             Expanded(
-              child: GlassCard(
+              child: SurfaceCard(
                 onTap: onSelectEnd,
                 padding: const EdgeInsets.all(12),
                 child: Column(
@@ -110,7 +110,7 @@ class LeavePeriodPicker extends StatelessWidget {
                           : 'Select date',
                       style: TextStyle(
                         fontSize: 13,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w600,
                         color: endDate != null
                             ? SasColors.textPrimaryOf(context)
                             : textMuted,

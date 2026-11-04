@@ -4,7 +4,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:smart_attendance_app/app/theme.dart';
 import 'package:smart_attendance_app/app/typography.dart';
 import 'package:smart_attendance_app/features/attendance/widgets/verification_camera_tips_card.dart';
-import 'package:smart_attendance_app/shared/widgets/glass_button.dart';
+import 'package:smart_attendance_app/shared/widgets/app_button.dart';
 
 class VerificationCameraFrame extends StatelessWidget {
   final CameraController? camera;
@@ -37,28 +37,21 @@ class VerificationCameraFrame extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardBg = isDark ? SasColors.darkSurface : Colors.white;
     final borderCol = isDark
-        ? const Color(0x1FFFFFFF)
-        : const Color(0xFFE3E9F1);
+        ? SasColors.darkBorder
+        : SasColors.border;
     final primaryTextColor = isDark
-        ? SasColors.brilliance
-        : const Color(0xFF0F172A);
+        ? SasColors.ivory
+        : SasColors.ink;
 
     return Expanded(
       child: Container(
         decoration: BoxDecoration(
           color: cardBg,
-          borderRadius: BorderRadius.circular(22),
+          borderRadius: BorderRadius.circular(12),
           border: Border.all(color: borderCol),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.06),
-              blurRadius: 16,
-              offset: const Offset(0, 4),
-            ),
-          ],
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(22),
+          borderRadius: BorderRadius.circular(12),
           child: cameraError != null
               ? Center(
                   child: Padding(
@@ -90,14 +83,14 @@ class VerificationCameraFrame extends StatelessWidget {
                                 cameraError!.toLowerCase().contains(
                                   'denied',
                                 )) ...[
-                              GlassButton(
+                              AppButton(
                                 label: 'Open Settings',
                                 icon: Icons.settings_rounded,
                                 onPressed: () => Geolocator.openAppSettings(),
                               ),
                               const SizedBox(width: 8),
                             ],
-                            GlassButton(
+                            AppButton(
                               label: 'Retry Camera',
                               icon: Icons.refresh_rounded,
                               onPressed: onRetryCamera,
@@ -120,18 +113,9 @@ class VerificationCameraFrame extends StatelessWidget {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(110),
                           border: Border.all(
-                            color: const Color(0xFFF95721),
+                            color: SasColors.copper,
                             width: 2.5,
                           ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: const Color(
-                                0xFFF95721,
-                              ).withValues(alpha: 0.22),
-                              blurRadius: 16,
-                              spreadRadius: 2,
-                            ),
-                          ],
                         ),
                       ),
                     ),
@@ -148,25 +132,18 @@ class VerificationCameraFrame extends StatelessWidget {
                           decoration: BoxDecoration(
                             color:
                                 (isDark
-                                        ? const Color(0xFF0F172A)
+                                        ? SasColors.ink
                                         : Colors.white)
                                     .withValues(alpha: 0.90),
-                            borderRadius: BorderRadius.circular(24),
+                            borderRadius: BorderRadius.circular(12),
                             border: Border.all(color: borderCol),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.12),
-                                blurRadius: 10,
-                                offset: const Offset(0, 3),
-                              ),
-                            ],
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               const Icon(
                                 Icons.face_retouching_natural_rounded,
-                                color: Color(0xFFF95721),
+                                color: SasColors.copper,
                                 size: 19,
                               ),
                               const SizedBox(width: 8),
@@ -175,7 +152,7 @@ class VerificationCameraFrame extends StatelessWidget {
                                 style: SasTypography.style(
                                   color: primaryTextColor,
                                   fontSize: 13,
-                                  fontWeight: FontWeight.w700,
+                                  fontWeight: FontWeight.w600,
                                 ),
                               ),
                             ],
@@ -186,7 +163,7 @@ class VerificationCameraFrame extends StatelessWidget {
                   ],
                 )
               : const Center(
-                  child: CircularProgressIndicator(color: Color(0xFFF95721)),
+                  child: CircularProgressIndicator(color: SasColors.copper),
                 ),
         ),
       ),

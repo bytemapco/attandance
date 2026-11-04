@@ -31,7 +31,7 @@ class LeaveCategorySelector extends StatelessWidget {
         Text(
           'Leave Category',
           style: TextStyle(
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w600,
             fontSize: 13,
             color: textSecondary,
           ),
@@ -46,21 +46,21 @@ class LeaveCategorySelector extends StatelessWidget {
               label: Text(cat),
               selected: isSelected,
               onSelected: (_) => onSelected(cat),
-              selectedColor: SasColors.accentEmerald.withValues(alpha: 0.15),
+              selectedColor: SasColors.success.withValues(alpha: 0.15),
               backgroundColor: chipBg,
               labelStyle: TextStyle(
                 fontSize: 12,
-                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                color: isSelected ? SasColors.accentEmerald : textSecondary,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                color: isSelected ? SasColors.success : textSecondary,
               ),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
                 side: BorderSide(
                   color: isSelected
-                      ? SasColors.accentEmerald
+                      ? SasColors.success
                       : (isDark
-                            ? const Color(0x2AFFFFFF)
-                            : const Color(0xFFE2E8F0)),
+                            ? SasColors.darkBorder
+                            : SasColors.textOnDark),
                 ),
               ),
             );

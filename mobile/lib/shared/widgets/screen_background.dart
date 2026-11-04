@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:smart_attendance_app/app/theme.dart';
 
 /// Plain app canvas. Kept as a wrapper so screens need no changes.
-class AnimatedBackground extends StatelessWidget {
+class ScreenBackground extends StatelessWidget {
   final Widget child;
 
-  const AnimatedBackground({super.key, required this.child});
+  const ScreenBackground({super.key, required this.child});
 
   @override
   Widget build(BuildContext context) {

@@ -87,15 +87,15 @@ class _DeviceChangeDialogState extends ConsumerState<DeviceChangeDialog> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final dialogBg = isDark ? const Color(0xFF1E2838) : Colors.white;
-    final primaryText = isDark ? SasColors.brilliance : const Color(0xFF0F172A);
+    final dialogBg = isDark ? SasColors.darkSurface : Colors.white;
+    final primaryText = isDark ? SasColors.ivory : SasColors.ink;
     final secondaryText = isDark
-        ? const Color(0xFFCBD5E1)
-        : const Color(0xFF64748B);
-    final inputBg = isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC);
+        ? SasColors.textOnDark
+        : SasColors.textMuted;
+    final inputBg = isDark ? SasColors.ink : SasColors.ivory;
     final inputBorder = isDark
-        ? const Color(0xFF334155)
-        : const Color(0xFFE2E8F0);
+        ? SasColors.textSecondary
+        : SasColors.textOnDark;
 
     return Dialog(
       backgroundColor: Colors.transparent,
@@ -105,18 +105,11 @@ class _DeviceChangeDialogState extends ConsumerState<DeviceChangeDialog> {
         child: Container(
           decoration: BoxDecoration(
             color: dialogBg,
-            borderRadius: BorderRadius.circular(24),
+            borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: isDark ? const Color(0xFF334155) : const Color(0xFFF1F5F9),
+              color: isDark ? SasColors.textSecondary : SasColors.ivory,
               width: 1.2,
             ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.12),
-                blurRadius: 24,
-                offset: const Offset(0, 10),
-              ),
-            ],
           ),
           child: Padding(
             padding: const EdgeInsets.fromLTRB(22, 22, 22, 20),

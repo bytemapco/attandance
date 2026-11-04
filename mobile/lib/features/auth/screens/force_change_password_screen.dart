@@ -4,10 +4,10 @@ import 'package:smart_attendance_app/app/theme.dart';
 import 'package:smart_attendance_app/domain/enums/auth_state.dart';
 import 'package:smart_attendance_app/features/auth/providers/auth_provider.dart';
 import 'package:smart_attendance_app/features/auth/widgets/force_change_password_header.dart';
-import 'package:smart_attendance_app/shared/widgets/animated_background.dart';
-import 'package:smart_attendance_app/shared/widgets/glass_button.dart';
-import 'package:smart_attendance_app/shared/widgets/glass_card.dart';
-import 'package:smart_attendance_app/shared/widgets/glass_input.dart';
+import 'package:smart_attendance_app/shared/widgets/screen_background.dart';
+import 'package:smart_attendance_app/shared/widgets/app_button.dart';
+import 'package:smart_attendance_app/shared/widgets/surface_card.dart';
+import 'package:smart_attendance_app/shared/widgets/app_text_field.dart';
 import 'package:smart_attendance_app/shared/widgets/loading_overlay.dart';
 
 class ForceChangePasswordScreen extends ConsumerStatefulWidget {
@@ -43,7 +43,7 @@ class _ForceChangePasswordScreenState
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Password set successfully! Welcome to your account.'),
-          backgroundColor: SasColors.accentEmerald,
+          backgroundColor: SasColors.success,
         ),
       );
     }
@@ -57,7 +57,7 @@ class _ForceChangePasswordScreenState
     return Scaffold(
       body: Stack(
         children: [
-          AnimatedBackground(
+          ScreenBackground(
             child: SafeArea(
               child: Center(
                 child: SingleChildScrollView(
@@ -71,14 +71,14 @@ class _ForceChangePasswordScreenState
                       const ForceChangePasswordHeader(),
                       const SizedBox(height: 24),
 
-                      GlassCard(
+                      SurfaceCard(
                         padding: const EdgeInsets.all(24),
                         child: Form(
                           key: _formKey,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
-                              GlassInput(
+                              AppTextField(
                                 controller: _newPasswordController,
                                 label: 'New Permanent Password',
                                 hint: 'Min. 8 characters',
@@ -110,7 +110,7 @@ class _ForceChangePasswordScreenState
                                 },
                               ),
                               const SizedBox(height: 16),
-                              GlassInput(
+                              AppTextField(
                                 controller: _confirmPasswordController,
                                 label: 'Confirm New Password',
                                 hint: 'Re-enter permanent password',
@@ -149,7 +149,7 @@ class _ForceChangePasswordScreenState
                                 ),
                               ],
                               const SizedBox(height: 24),
-                              GlassButton(
+                              AppButton(
                                 label: 'Activate Account & Continue',
                                 isExpanded: true,
                                 isLoading: isLoading,

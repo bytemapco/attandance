@@ -5,9 +5,9 @@ import 'package:smart_attendance_app/data/api/student_api.dart';
 import 'package:smart_attendance_app/domain/models/leave_request.dart';
 import 'package:smart_attendance_app/features/leave/widgets/leave_history_stats.dart';
 import 'package:smart_attendance_app/features/leave/widgets/leave_history_tile.dart';
-import 'package:smart_attendance_app/shared/widgets/animated_background.dart';
-import 'package:smart_attendance_app/shared/widgets/glass_app_bar.dart';
-import 'package:smart_attendance_app/shared/widgets/glass_card.dart';
+import 'package:smart_attendance_app/shared/widgets/screen_background.dart';
+import 'package:smart_attendance_app/shared/widgets/app_top_bar.dart';
+import 'package:smart_attendance_app/shared/widgets/surface_card.dart';
 import 'package:smart_attendance_app/shared/widgets/shimmer_placeholder.dart';
 
 final leaveHistoryProvider = FutureProvider.autoDispose<List<LeaveRequest>>((
@@ -26,8 +26,8 @@ class LeaveHistoryScreen extends ConsumerWidget {
     final historyAsync = ref.watch(leaveHistoryProvider);
 
     return Scaffold(
-      appBar: const GlassAppBar(title: 'Leave History'),
-      body: AnimatedBackground(
+      appBar: const AppTopBar(title: 'Leave History'),
+      body: ScreenBackground(
         child: SafeArea(
           child: Center(
             child: ConstrainedBox(
@@ -62,7 +62,7 @@ class LeaveHistoryScreen extends ConsumerWidget {
           'Submitted Requests',
           style: TextStyle(
             fontSize: 13,
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w600,
             color: SasColors.textSecondaryOf(context),
           ),
         ),
@@ -76,7 +76,7 @@ class LeaveHistoryScreen extends ConsumerWidget {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
-        child: GlassCard(
+        child: SurfaceCard(
           padding: EdgeInsets.all(24),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -90,7 +90,7 @@ class LeaveHistoryScreen extends ConsumerWidget {
               Text(
                 'No Leave History',
                 style: TextStyle(
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w600,
                   fontSize: 15,
                   color: SasColors.textPrimaryOf(context),
                 ),
@@ -112,7 +112,7 @@ class LeaveHistoryScreen extends ConsumerWidget {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
-        child: GlassCard(
+        child: SurfaceCard(
           borderColor: SasColors.danger.withValues(alpha: 0.3),
           padding: const EdgeInsets.all(20),
           child: Column(
@@ -127,7 +127,7 @@ class LeaveHistoryScreen extends ConsumerWidget {
               const Text(
                 'Failed to Load History',
                 style: TextStyle(
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w600,
                   fontSize: 14,
                   color: SasColors.danger,
                 ),

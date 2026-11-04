@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:smart_attendance_app/app/theme.dart';
 import 'package:smart_attendance_app/domain/models/offline_payload.dart';
-import 'package:smart_attendance_app/shared/widgets/glass_card.dart';
+import 'package:smart_attendance_app/shared/widgets/surface_card.dart';
 
 class SyncQueueItem extends StatelessWidget {
   final OfflineAttendancePayload payload;
@@ -22,7 +22,7 @@ class SyncQueueItem extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
-      child: GlassCard(
+      child: SurfaceCard(
         padding: const EdgeInsets.all(12),
         borderColor: isExpiringSoon
             ? SasColors.warning.withValues(alpha: 0.3)

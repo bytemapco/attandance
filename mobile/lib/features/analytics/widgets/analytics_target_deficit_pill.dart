@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smart_attendance_app/app/typography.dart';
+import 'package:smart_attendance_app/app/theme.dart';
 
 class AnalyticsTargetDeficitPill extends StatelessWidget {
   final bool isBelow;
@@ -19,13 +20,13 @@ class AnalyticsTargetDeficitPill extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
       decoration: BoxDecoration(
         color: isBelow
-            ? (isDark ? const Color(0xFF3F1D24) : const Color(0xFFFFF1F2))
-            : (isDark ? const Color(0xFF143828) : const Color(0xFFF0FDF4)),
+            ? (isDark ? SasColors.darkDangerSoft : SasColors.dangerSoft)
+            : (isDark ? SasColors.darkSuccessSoft : SasColors.successSoft),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: isBelow
-              ? (isDark ? const Color(0xFF7F1D1D) : const Color(0xFFFECDD3))
-              : (isDark ? const Color(0xFF15803D) : const Color(0xFFBBF7D0)),
+              ? (isDark ? SasColors.danger : SasColors.dangerBorder)
+              : (isDark ? SasColors.success : SasColors.successBorder),
           width: 1.0,
         ),
       ),
@@ -36,7 +37,7 @@ class AnalyticsTargetDeficitPill extends StatelessWidget {
                 ? Icons.warning_amber_rounded
                 : Icons.check_circle_outline_rounded,
             size: 18,
-            color: isBelow ? const Color(0xFFEF4444) : const Color(0xFF16A34A),
+            color: isBelow ? SasColors.danger : SasColors.success,
           ),
           const SizedBox(width: 8),
           Expanded(
@@ -48,8 +49,8 @@ class AnalyticsTargetDeficitPill extends StatelessWidget {
                 fontSize: 11,
                 fontWeight: FontWeight.w600,
                 color: isBelow
-                    ? const Color(0xFFE11D48)
-                    : const Color(0xFF16A34A),
+                    ? SasColors.danger
+                    : SasColors.success,
                 height: 1.2,
               ),
             ),

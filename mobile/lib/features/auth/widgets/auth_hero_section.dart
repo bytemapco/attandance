@@ -14,11 +14,11 @@ class AuthHeroSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark
-        ? SasColors.brilliance
-        : const Color(0xFF0F172A);
+        ? SasColors.ivory
+        : SasColors.ink;
     final subtitleColor = isDark
-        ? const Color(0xFFE2E8F0)
-        : const Color(0xFF334155);
+        ? SasColors.textOnDark
+        : SasColors.textSecondary;
 
     final screenHeight = MediaQuery.of(context).size.height;
     final isCompact = screenHeight < 720;
@@ -53,13 +53,12 @@ class AuthHeroSection extends StatelessWidget {
                     fontWeight: FontWeight.w600,
                     color: primaryTextColor,
                     height: 1.15,
-                    letterSpacing: -0.6,
                   ),
                   children: const [
                     TextSpan(
                       text: 'Simple',
                       style: TextStyle(
-                        color: Color(0xFFF95721),
+                        color: SasColors.copper,
                         fontWeight: FontWeight.w600,
                       ),
                     ),

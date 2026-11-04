@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:smart_attendance_app/app/theme.dart';
 
 /// Circular progress gauge with calendar checkmark icon matching exact reference design.
 class HomeComplianceArc extends StatelessWidget {
@@ -12,9 +13,9 @@ class HomeComplianceArc extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final trackColor = isDark
-        ? const Color(0xFF334155)
-        : const Color(0xFFEEF2F6);
-    final iconColor = isDark ? Colors.white : const Color(0xFF475569);
+        ? SasColors.textSecondary
+        : SasColors.lightElevated;
+    final iconColor = isDark ? Colors.white : SasColors.textMuted;
 
     final displayProgress = progress.clamp(0.0, 1.0);
 
@@ -70,7 +71,7 @@ class _ArcPainter extends CustomPainter {
 
     // Active vibrant orange progress arc
     final arcPaint = Paint()
-      ..color = const Color(0xFFF95721)
+      ..color = SasColors.copper
       ..style = PaintingStyle.stroke
       ..strokeWidth = strokeWidth
       ..strokeCap = StrokeCap.round;

@@ -64,10 +64,10 @@ class _AccessibleShimmer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final base = isDark ? SasColors.darkSurface : const Color(0xFFE3E1DC);
+    final base = isDark ? SasColors.darkSurface : SasColors.border;
     final highlight = isDark
-        ? const Color(0xFF52616A)
-        : const Color(0xFFF5F2ED);
+        ? SasColors.textMuted
+        : SasColors.ivory;
 
     return Semantics(
       container: true,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smart_attendance_app/features/attendance/widgets/geofence_distance_metrics.dart';
+import 'package:smart_attendance_app/app/theme.dart';
 
 class GeofenceMetricBox extends StatelessWidget {
   final String label;
@@ -30,7 +31,7 @@ class GeofenceMetricBox extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E293B) : Colors.white,
+        color: isDark ? SasColors.darkSurface : Colors.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: borderColor),
       ),
@@ -47,8 +48,8 @@ class GeofenceMetricBox extends StatelessWidget {
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 11,
                     color: isDark
-                        ? const Color(0xFF94A3B8)
-                        : const Color(0xFF64748B),
+                        ? SasColors.mutedOnDark
+                        : SasColors.textMuted,
                     fontWeight: FontWeight.w500,
                   ),
                   overflow: TextOverflow.ellipsis,
@@ -65,9 +66,8 @@ class GeofenceMetricBox extends StatelessWidget {
                 valueText,
                 style: GoogleFonts.plusJakartaSans(
                   fontSize: 18,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w600,
                   color: accentColor,
-                  letterSpacing: -0.5,
                 ),
               ),
               const SizedBox(width: 3),

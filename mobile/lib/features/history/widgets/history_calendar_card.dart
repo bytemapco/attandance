@@ -28,13 +28,13 @@ class _HistoryCalendarCardState extends State<HistoryCalendarCard> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final cardBg = isDark ? const Color(0xFF1E2838) : Colors.white;
+    final cardBg = isDark ? SasColors.darkSurface : Colors.white;
     final primaryTextColor = isDark
-        ? SasColors.brilliance
-        : const Color(0xFF0F172A);
+        ? SasColors.ivory
+        : SasColors.ink;
     final subtitleColor = isDark
-        ? const Color(0xFFCBD5E1)
-        : const Color(0xFF64748B);
+        ? SasColors.textOnDark
+        : SasColors.textMuted;
 
     final monthItems = widget.history
         .where(
@@ -70,18 +70,11 @@ class _HistoryCalendarCardState extends State<HistoryCalendarCard> {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
       decoration: BoxDecoration(
         color: cardBg,
-        borderRadius: BorderRadius.circular(22),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isDark ? const Color(0x1FFFFFFF) : const Color(0xFFE2E8F0),
+          color: isDark ? SasColors.darkBorder : SasColors.textOnDark,
           width: 1.0,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.20 : 0.04),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
       ),
       child: Column(
         children: [
@@ -111,7 +104,7 @@ class _HistoryCalendarCardState extends State<HistoryCalendarCard> {
                 DateFormat('MMMM yyyy').format(_focusedMonth),
                 style: SasTypography.style(
                   fontSize: 16,
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w600,
                   color: primaryTextColor,
                 ),
               ),

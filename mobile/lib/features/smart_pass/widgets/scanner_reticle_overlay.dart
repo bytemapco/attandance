@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smart_attendance_app/app/theme.dart';
 
 /// Reticle viewfinder overlay with animated scanning laser beam and corner guides.
 class ScannerReticleOverlay extends StatefulWidget {
@@ -6,7 +7,7 @@ class ScannerReticleOverlay extends StatefulWidget {
 
   const ScannerReticleOverlay({
     super.key,
-    this.guideColor = const Color(0xFFF95721),
+    this.guideColor = SasColors.copper,
   });
 
   @override
@@ -86,13 +87,6 @@ class _ScannerReticleOverlayState extends State<ScannerReticleOverlay>
                           widget.guideColor.withValues(alpha: 0.0),
                         ],
                       ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: widget.guideColor.withValues(alpha: 0.65),
-                          blurRadius: 8,
-                          spreadRadius: 1.5,
-                        ),
-                      ],
                     ),
                   ),
                 );

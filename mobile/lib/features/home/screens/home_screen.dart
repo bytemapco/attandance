@@ -9,7 +9,6 @@ import 'package:smart_attendance_app/features/history/providers/history_provider
 import 'package:smart_attendance_app/features/home/providers/session_provider.dart';
 import 'package:smart_attendance_app/features/home/widgets/home_compliance_card.dart';
 import 'package:smart_attendance_app/features/home/widgets/home_header.dart';
-import 'package:smart_attendance_app/features/home/widgets/home_motivational_banner.dart';
 import 'package:smart_attendance_app/features/home/widgets/home_stat_pills_row.dart';
 import 'package:smart_attendance_app/features/home/widgets/home_today_classes_card.dart';
 import 'package:smart_attendance_app/shared/widgets/smart_pull_to_refresh.dart';
@@ -74,7 +73,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     );
 
     return Scaffold(
-      backgroundColor: isDark ? SasColors.darkCanvas : const Color(0xFFF8FAFC),
+      backgroundColor: isDark ? SasColors.darkCanvas : SasColors.ivory,
       body: Stack(
         children: [
           // Campus header photo fading cleanly into the canvas
@@ -127,7 +126,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                       vertical: 12,
                     ),
                     children: [
-                      // Modern Student Header (Avatar, Hello, Institute, Bell)
+                      // Student header: avatar, name, institution, notifications
                       HomeHeader(
                         user: user,
                         unreadCount: unreadCount,
@@ -172,10 +171,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                         onRetry: () =>
                             ref.read(sessionProvider.notifier).fetchSessions(),
                       ),
-                      const SizedBox(height: 14),
-
-                      // Bottom Motivational Trophy Banner
-                      const HomeMotivationalBanner(),
                       const SizedBox(height: 20),
                     ],
                   ),

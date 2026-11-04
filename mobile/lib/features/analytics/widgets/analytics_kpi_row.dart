@@ -24,9 +24,9 @@ class AnalyticsKpiRow extends StatelessWidget {
         Expanded(
           child: _KpiMetricCard(
             icon: Icons.groups_rounded,
-            iconColor: const Color(0xFF0284C7),
-            lightBgColor: const Color(0xFFF0F9FF),
-            lightBorderColor: const Color(0xFFBAE6FD),
+            iconColor: SasColors.info,
+            lightBgColor: SasColors.infoSoft,
+            lightBorderColor: SasColors.infoBorder,
             count: '$total',
             label: 'Total',
           ),
@@ -35,9 +35,9 @@ class AnalyticsKpiRow extends StatelessWidget {
         Expanded(
           child: _KpiMetricCard(
             icon: Icons.check_circle_rounded,
-            iconColor: const Color(0xFF10B981),
-            lightBgColor: const Color(0xFFECFDF5),
-            lightBorderColor: const Color(0xFFBBF7D0),
+            iconColor: SasColors.success,
+            lightBgColor: SasColors.successSoft,
+            lightBorderColor: SasColors.successBorder,
             count: '$present',
             label: 'Present',
           ),
@@ -46,9 +46,9 @@ class AnalyticsKpiRow extends StatelessWidget {
         Expanded(
           child: _KpiMetricCard(
             icon: Icons.cancel_rounded,
-            iconColor: const Color(0xFFEF4444),
-            lightBgColor: const Color(0xFFFFF1F2),
-            lightBorderColor: const Color(0xFFFECDD3),
+            iconColor: SasColors.danger,
+            lightBgColor: SasColors.dangerSoft,
+            lightBorderColor: SasColors.dangerBorder,
             count: '$absent',
             label: 'Absent',
           ),
@@ -57,9 +57,9 @@ class AnalyticsKpiRow extends StatelessWidget {
         Expanded(
           child: _KpiMetricCard(
             icon: Icons.flag_rounded,
-            iconColor: const Color(0xFFF59E0B),
-            lightBgColor: const Color(0xFFFFFBEB),
-            lightBorderColor: const Color(0xFFFDE68A),
+            iconColor: SasColors.warning,
+            lightBgColor: SasColors.warningSoft,
+            lightBorderColor: SasColors.warningBorder,
             count: '$flagged',
             label: 'Flagged',
           ),
@@ -89,28 +89,21 @@ class _KpiMetricCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final cardBg = isDark ? const Color(0xFF1E2838) : lightBgColor;
-    final borderColor = isDark ? const Color(0x1FFFFFFF) : lightBorderColor;
+    final cardBg = isDark ? SasColors.darkSurface : lightBgColor;
+    final borderColor = isDark ? SasColors.darkBorder : lightBorderColor;
     final primaryTextColor = isDark
-        ? SasColors.brilliance
-        : const Color(0xFF0F172A);
+        ? SasColors.ivory
+        : SasColors.ink;
     final subtitleColor = isDark
-        ? const Color(0xFF94A3B8)
-        : const Color(0xFF64748B);
+        ? SasColors.mutedOnDark
+        : SasColors.textMuted;
 
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
       decoration: BoxDecoration(
         color: cardBg,
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(color: borderColor, width: 1.0),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.15 : 0.03),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -121,7 +114,7 @@ class _KpiMetricCard extends StatelessWidget {
             count,
             style: SasTypography.style(
               fontSize: 20,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w600,
               color: primaryTextColor,
               height: 1.0,
             ),

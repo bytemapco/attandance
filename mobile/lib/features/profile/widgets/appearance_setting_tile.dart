@@ -16,11 +16,11 @@ class AppearanceSettingTile extends ConsumerWidget {
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark
-        ? SasColors.brilliance
-        : const Color(0xFF0F172A);
+        ? SasColors.ivory
+        : SasColors.ink;
     final subtitleColor = isDark
-        ? const Color(0xFF94A3B8)
-        : const Color(0xFF64748B);
+        ? SasColors.mutedOnDark
+        : SasColors.textMuted;
 
     return InkWell(
       onTap: () => _showThemeModal(context, ref, themeMode),
@@ -33,13 +33,13 @@ class AppearanceSettingTile extends ConsumerWidget {
               height: 36,
               decoration: BoxDecoration(
                 color: isDark
-                    ? const Color(0xFF332314)
-                    : const Color(0xFFFFEDD5),
+                    ? SasColors.darkWarningSoft
+                    : SasColors.copperSoft,
                 borderRadius: BorderRadius.circular(10),
               ),
               child: const Icon(
                 Icons.palette_rounded,
-                color: Color(0xFFEA580C),
+                color: SasColors.copperStrong,
                 size: 18,
               ),
             ),
@@ -51,7 +51,7 @@ class AppearanceSettingTile extends ConsumerWidget {
                   Text(
                     'Appearance',
                     style: SasTypography.style(
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w600,
                       fontSize: 14,
                       color: primaryTextColor,
                     ),
@@ -142,7 +142,7 @@ class AppearanceSettingTile extends ConsumerWidget {
       title: Text(
         title,
         style: TextStyle(
-          fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
+          fontWeight: isSelected ? FontWeight.w600 : FontWeight.w600,
           fontSize: 14,
           color: Theme.of(context).colorScheme.onSurface,
         ),
@@ -154,12 +154,12 @@ class AppearanceSettingTile extends ConsumerWidget {
       trailing: isSelected
           ? const Icon(
               Icons.check_circle_rounded,
-              color: Color(0xFFF95721),
+              color: SasColors.copper,
               size: 20,
             )
           : const Icon(
               Icons.circle_outlined,
-              color: SasColors.glassBorder,
+              color: SasColors.border,
               size: 20,
             ),
       onTap: onTap,

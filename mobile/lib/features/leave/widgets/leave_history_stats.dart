@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:smart_attendance_app/app/theme.dart';
 import 'package:smart_attendance_app/core/attendance_constants.dart';
 import 'package:smart_attendance_app/domain/models/leave_request.dart';
-import 'package:smart_attendance_app/shared/widgets/glass_card.dart';
+import 'package:smart_attendance_app/shared/widgets/surface_card.dart';
 
 class LeaveHistoryStats extends StatelessWidget {
   final List<LeaveRequest> leaves;
@@ -23,16 +23,16 @@ class LeaveHistoryStats extends StatelessWidget {
         .where((l) => l.status == kStatusRejected || l.status == 'REJECTED')
         .length;
 
-    return GlassCard(
+    return SurfaceCard(
       padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
       child: Row(
         children: [
           Expanded(child: _buildItem('Pending', pending, SasColors.warning)),
-          Container(width: 1, height: 32, color: SasColors.glassBorder),
+          Container(width: 1, height: 32, color: SasColors.border),
           Expanded(
-            child: _buildItem('Approved', approved, SasColors.accentEmerald),
+            child: _buildItem('Approved', approved, SasColors.success),
           ),
-          Container(width: 1, height: 32, color: SasColors.glassBorder),
+          Container(width: 1, height: 32, color: SasColors.border),
           Expanded(child: _buildItem('Rejected', rejected, SasColors.danger)),
         ],
       ),
@@ -46,7 +46,7 @@ class LeaveHistoryStats extends StatelessWidget {
           '$count',
           style: TextStyle(
             fontSize: 20,
-            fontWeight: FontWeight.w800,
+            fontWeight: FontWeight.w600,
             color: color,
           ),
         ),

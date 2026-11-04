@@ -14,11 +14,11 @@ class HomeComplianceInfo extends StatelessWidget {
     final isBelowGoal = percentage < 75.0;
 
     final primaryTextColor = isDark
-        ? SasColors.brilliance
-        : const Color(0xFF0F172A);
+        ? SasColors.ivory
+        : SasColors.ink;
     final subtitleColor = isDark
-        ? const Color(0xFF94A3B8)
-        : const Color(0xFF64748B);
+        ? SasColors.mutedOnDark
+        : SasColors.textMuted;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -29,7 +29,7 @@ class HomeComplianceInfo extends StatelessWidget {
             const Icon(
               Icons.date_range_rounded,
               size: 20,
-              color: Color(0xFFF95721),
+              color: SasColors.copper,
             ),
             const SizedBox(width: 8),
             Flexible(
@@ -39,9 +39,8 @@ class HomeComplianceInfo extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 style: SasTypography.style(
                   fontSize: 15,
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w600,
                   color: primaryTextColor,
-                  letterSpacing: -0.2,
                 ),
               ),
             ),
@@ -51,8 +50,8 @@ class HomeComplianceInfo extends StatelessWidget {
               height: 17,
               decoration: BoxDecoration(
                 color: isDark
-                    ? const Color(0xFF334155)
-                    : const Color(0xFFF1F5F9),
+                    ? SasColors.textSecondary
+                    : SasColors.ivory,
                 shape: BoxShape.circle,
               ),
               child: Center(
@@ -61,7 +60,7 @@ class HomeComplianceInfo extends StatelessWidget {
                   style: TextStyle(
                     color: subtitleColor,
                     fontSize: 11,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ),
@@ -75,10 +74,9 @@ class HomeComplianceInfo extends StatelessWidget {
           '${percentage.toStringAsFixed(0)}%',
           style: SasTypography.style(
             fontSize: 52,
-            fontWeight: FontWeight.w800,
+            fontWeight: FontWeight.w600,
             color: primaryTextColor,
             height: 1.0,
-            letterSpacing: -1.5,
           ),
         ),
         const SizedBox(height: 8),
@@ -90,7 +88,7 @@ class HomeComplianceInfo extends StatelessWidget {
               width: 3.5,
               height: 14,
               decoration: BoxDecoration(
-                color: const Color(0xFFF95721),
+                color: SasColors.copper,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -111,7 +109,7 @@ class HomeComplianceInfo extends StatelessWidget {
                       text: '75%',
                       style: SasTypography.style(
                         fontSize: 13.5,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w600,
                         color: primaryTextColor,
                       ),
                     ),
@@ -128,9 +126,9 @@ class HomeComplianceInfo extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
             color: isBelowGoal
-                ? (isDark ? const Color(0x33F87171) : const Color(0xFFFEE2E2))
-                : (isDark ? const Color(0x3334D399) : const Color(0xFFDCFCE7)),
-            borderRadius: BorderRadius.circular(16),
+                ? (isDark ? SasColors.darkDangerSoft : SasColors.dangerSoft)
+                : (isDark ? SasColors.darkSuccessSoft : SasColors.successSoft),
+            borderRadius: BorderRadius.circular(12),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -141,8 +139,8 @@ class HomeComplianceInfo extends StatelessWidget {
                     : Icons.check_circle_rounded,
                 size: 15,
                 color: isBelowGoal
-                    ? const Color(0xFFEF4444)
-                    : const Color(0xFF16A34A),
+                    ? SasColors.danger
+                    : SasColors.success,
               ),
               const SizedBox(width: 5),
               Flexible(
@@ -150,10 +148,10 @@ class HomeComplianceInfo extends StatelessWidget {
                   isBelowGoal ? 'Below 75%' : 'Good Standing',
                   style: SasTypography.style(
                     fontSize: 12,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
                     color: isBelowGoal
-                        ? const Color(0xFFEF4444)
-                        : const Color(0xFF16A34A),
+                        ? SasColors.danger
+                        : SasColors.success,
                   ),
                 ),
               ),

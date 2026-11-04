@@ -3,7 +3,7 @@ import 'package:smart_attendance_app/app/theme.dart';
 
 /// Flat surface with a hairline border. Depth comes from the surface step,
 /// not from shadows or gradients.
-class GlassCard extends StatelessWidget {
+class SurfaceCard extends StatelessWidget {
   final Widget child;
   final EdgeInsetsGeometry padding;
   final double borderRadius;
@@ -11,7 +11,7 @@ class GlassCard extends StatelessWidget {
   final Color? borderColor;
   final Color? backgroundColor;
 
-  const GlassCard({
+  const SurfaceCard({
     super.key,
     required this.child,
     this.padding = const EdgeInsets.all(16),
@@ -26,8 +26,8 @@ class GlassCard extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final defaultBg = isDark ? SasColors.darkSurface : SasColors.lightSurface;
     final defaultBorder = isDark
-        ? const Color(0x1EFFFFFF)
-        : SasColors.glassBorder;
+        ? SasColors.darkBorder
+        : SasColors.border;
     final radius = BorderRadius.circular(borderRadius);
     final decoration = BoxDecoration(
       color: backgroundColor ?? defaultBg,

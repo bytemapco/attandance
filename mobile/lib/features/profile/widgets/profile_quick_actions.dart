@@ -14,8 +14,8 @@ class ProfileQuickActions extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark
-        ? SasColors.brilliance
-        : const Color(0xFF0F172A);
+        ? SasColors.ivory
+        : SasColors.ink;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -24,7 +24,7 @@ class ProfileQuickActions extends StatelessWidget {
           'Quick Actions',
           style: SasTypography.style(
             fontSize: 15,
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w600,
             color: primaryTextColor,
           ),
         ),
@@ -36,13 +36,13 @@ class ProfileQuickActions extends StatelessWidget {
             Expanded(
               child: ProfileQuickActionCard(
                 icon: Icons.qr_code_2_rounded,
-                iconColor: const Color(0xFFEA580C),
+                iconColor: SasColors.copperStrong,
                 iconBgColor: isDark
-                    ? const Color(0xFF332314)
-                    : const Color(0xFFFFF7ED),
+                    ? SasColors.darkWarningSoft
+                    : SasColors.copperSoft,
                 iconBorderColor: isDark
-                    ? const Color(0xFF7C2D12)
-                    : const Color(0xFFFED7AA),
+                    ? SasColors.copperStrong
+                    : SasColors.copperSoft,
                 title: 'Smart Pass',
                 subtitle: 'Campus digital ID',
                 onTap: () => context.push('/smart-pass'),
@@ -52,13 +52,13 @@ class ProfileQuickActions extends StatelessWidget {
             Expanded(
               child: ProfileQuickActionCard(
                 icon: Icons.notifications_none_rounded,
-                iconColor: const Color(0xFFEF4444),
+                iconColor: SasColors.danger,
                 iconBgColor: isDark
-                    ? const Color(0xFF3F1D24)
-                    : const Color(0xFFFFF1F2),
+                    ? SasColors.darkDangerSoft
+                    : SasColors.dangerSoft,
                 iconBorderColor: isDark
-                    ? const Color(0xFF7F1D1D)
-                    : const Color(0xFFFECDD3),
+                    ? SasColors.danger
+                    : SasColors.dangerBorder,
                 title: 'Notifications',
                 subtitle: 'Alerts & updates',
                 badgeCount: unreadCount > 0 ? unreadCount : null,
@@ -75,13 +75,13 @@ class ProfileQuickActions extends StatelessWidget {
             Expanded(
               child: ProfileQuickActionCard(
                 icon: Icons.note_add_outlined,
-                iconColor: const Color(0xFF0284C7),
+                iconColor: SasColors.info,
                 iconBgColor: isDark
-                    ? const Color(0xFF142E47)
-                    : const Color(0xFFF0F9FF),
+                    ? SasColors.darkInfoSoft
+                    : SasColors.infoSoft,
                 iconBorderColor: isDark
-                    ? const Color(0xFF0369A1)
-                    : const Color(0xFFBAE6FD),
+                    ? SasColors.info
+                    : SasColors.infoBorder,
                 title: 'Request Leave',
                 subtitle: 'Submit absence form',
                 onTap: () => context.push('/leave/request'),
@@ -91,13 +91,13 @@ class ProfileQuickActions extends StatelessWidget {
             Expanded(
               child: ProfileQuickActionCard(
                 icon: Icons.history_rounded,
-                iconColor: const Color(0xFFF59E0B),
+                iconColor: SasColors.warning,
                 iconBgColor: isDark
-                    ? const Color(0xFF3B2D12)
-                    : const Color(0xFFFFFBEB),
+                    ? SasColors.darkWarningSoft
+                    : SasColors.warningSoft,
                 iconBorderColor: isDark
-                    ? const Color(0xFFB45309)
-                    : const Color(0xFFFDE68A),
+                    ? SasColors.warning
+                    : SasColors.warningBorder,
                 title: 'Leave History',
                 subtitle: 'Track approvals',
                 onTap: () => context.push('/leave/history'),

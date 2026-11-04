@@ -47,10 +47,10 @@ class HomeHeader extends StatelessWidget {
           width: 48,
           height: 48,
           decoration: BoxDecoration(
-            color: isDark ? SasColors.darkElevated : SasColors.sunsetInItaly,
+            color: isDark ? SasColors.darkElevated : SasColors.copperSoft,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: isDark ? const Color(0x1EFFFFFF) : SasColors.glassBorder,
+              color: isDark ? SasColors.darkBorder : SasColors.border,
             ),
           ),
           child: Center(
@@ -59,7 +59,7 @@ class HomeHeader extends StatelessWidget {
               style: SasTypography.style(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
-                color: isDark ? SasColors.brilliance : SasColors.copperStrong,
+                color: isDark ? SasColors.ivory : SasColors.copperStrong,
               ),
             ),
           ),
@@ -106,7 +106,7 @@ class HomeHeader extends StatelessWidget {
               color: isDark ? SasColors.darkSurface : SasColors.lightSurface,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: isDark ? const Color(0x1EFFFFFF) : SasColors.glassBorder,
+                color: isDark ? SasColors.darkBorder : SasColors.border,
               ),
             ),
             child: Stack(

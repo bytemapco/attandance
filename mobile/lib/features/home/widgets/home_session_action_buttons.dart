@@ -21,8 +21,8 @@ class HomeSessionActionButtons extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark
-        ? SasColors.brilliance
-        : const Color(0xFF0F172A);
+        ? SasColors.ivory
+        : SasColors.ink;
     final config = ref.watch(hiveServiceProvider).getSystemConfig();
     final showFaceMatch =
         attendanceModeFor(
@@ -35,23 +35,12 @@ class HomeSessionActionButtons extends ConsumerWidget {
         Expanded(
           child: InkWell(
             onTap: onSmartPass,
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(12),
             child: Container(
               height: 44,
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFFF95721), Color(0xFFFF7A18)],
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                ),
-                borderRadius: BorderRadius.circular(14),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xFFF95721).withValues(alpha: 0.28),
-                    blurRadius: 8,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
+                color: SasColors.carbon,
+                borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -66,7 +55,7 @@ class HomeSessionActionButtons extends ConsumerWidget {
                     'Smart Pass QR',
                     style: SasTypography.style(
                       fontSize: 13,
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w600,
                       color: Colors.white,
                     ),
                   ),
@@ -80,16 +69,16 @@ class HomeSessionActionButtons extends ConsumerWidget {
           Expanded(
             child: InkWell(
               onTap: onFaceMatch,
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: BorderRadius.circular(12),
               child: Container(
                 height: 44,
                 decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF0F172A) : Colors.white,
-                  borderRadius: BorderRadius.circular(14),
+                  color: isDark ? SasColors.ink : Colors.white,
+                  borderRadius: BorderRadius.circular(12),
                   border: Border.all(
                     color: isDark
-                        ? const Color(0x33FFFFFF)
-                        : const Color(0xFFE2E8F0),
+                        ? SasColors.darkBorderStrong
+                        : SasColors.textOnDark,
                     width: 1.2,
                   ),
                 ),
@@ -106,7 +95,7 @@ class HomeSessionActionButtons extends ConsumerWidget {
                       'Face Match',
                       style: SasTypography.style(
                         fontSize: 13,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w600,
                         color: primaryTextColor,
                       ),
                     ),

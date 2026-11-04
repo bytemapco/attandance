@@ -9,7 +9,7 @@ PreferredSizeWidget buildFlaggedDetailAppBar({
   required VoidCallback onBack,
 }) {
   return AppBar(
-    backgroundColor: isDark ? SasColors.darkCanvas : const Color(0xFFF4F7FB),
+    backgroundColor: isDark ? SasColors.darkCanvas : SasColors.lightCanvas,
     elevation: 0,
     centerTitle: true,
     leading: IconButton(
@@ -17,7 +17,7 @@ PreferredSizeWidget buildFlaggedDetailAppBar({
       icon: Icon(
         Icons.arrow_back_ios_new_rounded,
         size: 18,
-        color: isDark ? Colors.white : const Color(0xFF0F172A),
+        color: isDark ? Colors.white : SasColors.ink,
       ),
       onPressed: onBack,
     ),
@@ -25,8 +25,8 @@ PreferredSizeWidget buildFlaggedDetailAppBar({
       'Flagged Record',
       style: GoogleFonts.plusJakartaSans(
         fontSize: 16,
-        fontWeight: FontWeight.w700,
-        color: isDark ? Colors.white : const Color(0xFF0F172A),
+        fontWeight: FontWeight.w600,
+        color: isDark ? Colors.white : SasColors.ink,
       ),
     ),
   );
@@ -54,7 +54,7 @@ class FlaggedDetailEmptyScaffold extends StatelessWidget {
       child: Scaffold(
         backgroundColor: isDark
             ? SasColors.darkCanvas
-            : const Color(0xFFF4F7FB),
+            : SasColors.lightCanvas,
         appBar: buildFlaggedDetailAppBar(
           context: context,
           isDark: isDark,
@@ -79,8 +79,8 @@ class FlaggedDetailEmptyScaffold extends StatelessWidget {
                   'Record not found',
                   style: GoogleFonts.plusJakartaSans(
                     color: isDark
-                        ? const Color(0xFF94A3B8)
-                        : const Color(0xFF64748B),
+                        ? SasColors.mutedOnDark
+                        : SasColors.textMuted,
                   ),
                 ),
               ),

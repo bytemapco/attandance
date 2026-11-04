@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:smart_attendance_app/app/theme.dart';
 import 'package:smart_attendance_app/core/extensions.dart';
 import 'package:smart_attendance_app/domain/models/app_notification.dart';
-import 'package:smart_attendance_app/shared/widgets/glass_card.dart';
+import 'package:smart_attendance_app/shared/widgets/surface_card.dart';
 
 class NotificationTile extends StatelessWidget {
   final LocalNotification notification;
@@ -20,7 +20,7 @@ class NotificationTile extends StatelessWidget {
   ({IconData icon, Color color}) _getSeverity(String severity) {
     final s = severity.toLowerCase().trim();
     if (s == 'success') {
-      return (icon: Icons.check_circle_rounded, color: SasColors.accentEmerald);
+      return (icon: Icons.check_circle_rounded, color: SasColors.success);
     } else if (s == 'warning') {
       return (icon: Icons.warning_amber_rounded, color: SasColors.warning);
     } else if (s == 'danger' || s == 'error') {
@@ -76,7 +76,7 @@ class NotificationTile extends StatelessWidget {
         child: InkWell(
           onTap: () => _handleTap(context),
           borderRadius: BorderRadius.circular(12),
-          child: GlassCard(
+          child: SurfaceCard(
             padding: const EdgeInsets.all(12),
             borderColor: !notification.isRead
                 ? sev.color.withValues(alpha: 0.3)
@@ -115,7 +115,7 @@ class NotificationTile extends StatelessWidget {
                               style: TextStyle(
                                 fontWeight: notification.isRead
                                     ? FontWeight.w600
-                                    : FontWeight.w700,
+                                    : FontWeight.w600,
                                 fontSize: 13,
                                 color: SasColors.textPrimaryOf(context),
                               ),
@@ -128,7 +128,7 @@ class NotificationTile extends StatelessWidget {
                                 vertical: 2,
                               ),
                               decoration: BoxDecoration(
-                                color: SasColors.accentEmerald.withValues(
+                                color: SasColors.success.withValues(
                                   alpha: 0.1,
                                 ),
                                 borderRadius: BorderRadius.circular(4),
@@ -136,9 +136,9 @@ class NotificationTile extends StatelessWidget {
                               child: const Text(
                                 'BROADCAST',
                                 style: TextStyle(
-                                  color: SasColors.accentEmerald,
-                                  fontSize: 9,
-                                  fontWeight: FontWeight.w700,
+                                  color: SasColors.success,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
                                 ),
                               ),
                             ),
@@ -160,7 +160,7 @@ class NotificationTile extends StatelessWidget {
                             notification.timestamp.formattedDateTime,
                             style: TextStyle(
                               color: SasColors.textMutedOf(context),
-                              fontSize: 10,
+                              fontSize: 11,
                             ),
                           ),
                           if (notification.link != null &&
@@ -172,7 +172,7 @@ class NotificationTile extends StatelessWidget {
                                   'View details',
                                   style: TextStyle(
                                     color: sev.color,
-                                    fontSize: 10,
+                                    fontSize: 11,
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
