@@ -53,8 +53,6 @@ interface CampusLocationCardProps {
   onStateChange?: (state: CampusLocationState) => void;
 }
 
-const RADIUS_PRESETS = [50, 100, 200, 500];
-
 export default function CampusLocationCard({
   onSaved,
   onContinueReady,
