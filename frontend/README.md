@@ -657,7 +657,7 @@ npm run lint -- --fix
 ## 📞 Support
 
 - **UI Rules** → `/AGENTS.md`
-- **Architecture** → `/WORKSPACE_GUIDE.md`
+- **Architecture** → `/docs/ARCHITECTURE.md`
 - **Development Rules** → `/CLAUDE.md` (§1-§5)
 - **Code Patterns** → Look at similar components in `src/components/`
 - **API Endpoints** → Backend Swagger docs at http://localhost:8000/docs

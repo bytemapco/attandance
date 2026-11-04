@@ -110,7 +110,7 @@ Bug fix → write a failing test first when practical. Attendance logic changes 
 
 ## 8. Class Management Feature (Implemented Oct 2026)
 
-Admin page for creating and managing classes across departments and batches. A class is a `StudentGroup` (department + batch) with a plain `semester` number (1–8) that an admin edits. There is no academic year, semester table, class term, or promotion. See [SUMMARY.md](SUMMARY.md) for the feature overview.
+Admin page for creating and managing classes across departments and batches. A class is a `StudentGroup` (department + batch) with a plain `semester` number (1–8) that an admin edits. There is no academic year, semester table, class term, or promotion. See [docs/SUMMARY.md](docs/SUMMARY.md) for the feature overview.
 
 ### Key Implementation Patterns
 

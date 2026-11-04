@@ -10,7 +10,7 @@ Thank you for contributing to SAHAJ! This guide ensures consistency, quality, an
    - `CLAUDE.md` (§1-§2) — Hard rules & invariants
    - `docs/PRD.md` (§5 & §6) — Data model & business rules
    - `AGENTS.md` (§1) — Responsive design rules
-   - `WORKSPACE_GUIDE.md` — Architecture & navigation
+   - `docs/ARCHITECTURE.md` — Architecture & navigation
 
 2. **Understand the code:**
    - Backend: `backend/README.md`
@@ -323,7 +323,6 @@ See `docs/deployment-guide.md` for details.
 ## 📚 Learning Resources
 
 ### Project-Specific
-- `WORKSPACE_GUIDE.md` — Architecture & navigation
 - `CLAUDE.md` — Development rules
 - `docs/ARCHITECTURE.md` — System architecture
 
@@ -348,7 +347,7 @@ grep -rn "AttendanceRecord" backend/
 
 1. **Requirements unclear?** → Read `docs/PRD.md` (§13 has open questions)
 2. **Code patterns?** → Check neighboring code or ask in PR discussion
-3. **Architecture?** → Read `docs/ARCHITECTURE.md` or `WORKSPACE_GUIDE.md`
+3. **Architecture?** → Read `docs/ARCHITECTURE.md` or `backend/README.md`
 4. **Rules?** → Check `CLAUDE.md` (§2 has hard rules)
 
 ---

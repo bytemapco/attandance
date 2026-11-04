@@ -616,7 +616,7 @@ See `docs/deployment-guide.md` for details.
 
 ### For a Quick Overview
 1. Read this file (ARCHITECTURE.md)
-2. Read `WORKSPACE_GUIDE.md` (navigation)
+2. Read `backend/README.md` (folder map)
 3. Check `docs/PRD.md` (business logic)
 
 ### For Implementation Details
