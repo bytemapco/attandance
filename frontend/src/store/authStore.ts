@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import type { StateStorage } from "zustand/middleware";
+import { AUTH_STORAGE_KEY, TENANT_STORAGE_KEY } from "@/lib/config";
 import type { UserProfile } from "@/types";
 
 interface AuthState {
@@ -46,6 +47,14 @@ const cookieStorage: StateStorage = {
   },
 };
 
+function rememberTenant(user: UserProfile): string | null {
+  const tenantId = user.tenant_id ?? user.tenant_slug ?? null;
+  if (typeof window !== "undefined" && tenantId) {
+    localStorage.setItem(TENANT_STORAGE_KEY, tenantId);
+  }
+  return tenantId;
+}
+
 export const useAuthStore = create<AuthStore>()(
   persist(
     (set) => ({
@@ -58,26 +67,19 @@ export const useAuthStore = create<AuthStore>()(
       suspensionReason: null,
 
       login: (token: string, user: UserProfile): void => {
-        const tenantId = user.tenant_id ?? user.tenant_slug ?? null;
-        if (typeof window !== "undefined" && tenantId) {
-          localStorage.setItem("sas-tenant-id", tenantId);
-        }
+        const tenantId = rememberTenant(user);
         set({ token, user, tenantId, isAuthenticated: true, isSuspended: false, suspensionReason: null });
       },
 
       logout: (): void => {
         if (typeof window !== "undefined") {
-          localStorage.removeItem("sas-tenant-id");
+          localStorage.removeItem(TENANT_STORAGE_KEY);
         }
         set({ token: null, user: null, tenantId: null, isAuthenticated: false, isSuspended: false, suspensionReason: null });
       },
 
       setUser: (user: UserProfile): void => {
-        const tenantId = user.tenant_id ?? user.tenant_slug ?? null;
-        if (typeof window !== "undefined" && tenantId) {
-          localStorage.setItem("sas-tenant-id", tenantId);
-        }
-        set({ user, tenantId });
+        set({ user, tenantId: rememberTenant(user) });
       },
 
       setTenantId: (tenantId: string | null): void => {
@@ -93,7 +95,7 @@ export const useAuthStore = create<AuthStore>()(
       },
     }),
     {
-      name: "sas-auth-storage",
+      name: AUTH_STORAGE_KEY,
       storage: createJSONStorage(() => cookieStorage),
       onRehydrateStorage: () => {
         return (state): void => {
