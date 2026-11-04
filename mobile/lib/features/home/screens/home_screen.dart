@@ -8,7 +8,7 @@ import 'package:smart_attendance_app/features/auth/providers/auth_provider.dart'
 import 'package:smart_attendance_app/features/history/providers/history_provider.dart';
 import 'package:smart_attendance_app/features/home/providers/session_provider.dart';
 import 'package:smart_attendance_app/features/home/widgets/home_compliance_card.dart';
-import 'package:smart_attendance_app/features/home/widgets/home_modern_header.dart';
+import 'package:smart_attendance_app/features/home/widgets/home_header.dart';
 import 'package:smart_attendance_app/features/home/widgets/home_motivational_banner.dart';
 import 'package:smart_attendance_app/features/home/widgets/home_stat_pills_row.dart';
 import 'package:smart_attendance_app/features/home/widgets/home_today_classes_card.dart';
@@ -128,7 +128,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                     ),
                     children: [
                       // Modern Student Header (Avatar, Hello, Institute, Bell)
-                      HomeModernHeader(
+                      HomeHeader(
                         user: user,
                         unreadCount: unreadCount,
                         onNotificationTap: () => context.push('/notifications'),

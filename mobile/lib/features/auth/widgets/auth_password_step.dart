@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:smart_attendance_app/app/theme.dart';
 import 'package:smart_attendance_app/app/typography.dart';
 import 'package:smart_attendance_app/features/auth/widgets/auth_brand_header.dart';
-import 'package:smart_attendance_app/features/auth/widgets/auth_gradient_button.dart';
+import 'package:smart_attendance_app/features/auth/widgets/auth_button.dart';
 import 'package:smart_attendance_app/features/auth/widgets/auth_password_heading.dart';
 import 'package:smart_attendance_app/features/auth/widgets/auth_password_input_field.dart';
 import 'package:smart_attendance_app/features/auth/widgets/auth_security_badge.dart';
@@ -164,7 +164,7 @@ class AuthPasswordStep extends StatelessWidget {
                                     const SizedBox(height: 28),
                                     FadeSlideTransition(
                                       delay: const Duration(milliseconds: 210),
-                                      child: AuthGradientButton(
+                                      child: AuthButton(
                                         label: 'Sign In',
                                         onPressed: onSubmit,
                                         isLoading: isLoading,

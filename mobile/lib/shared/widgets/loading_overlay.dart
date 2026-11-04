@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:smart_attendance_app/app/theme.dart';
 
@@ -8,37 +7,32 @@ class LoadingOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BackdropFilter(
-      filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
-      child: Container(
-        color: const Color(0xB3FFFFFF),
-        child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const SizedBox(
-                width: 40,
-                height: 40,
-                child: CircularProgressIndicator(
-                  strokeWidth: 3,
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                    SasColors.accentEmerald,
-                  ),
+    return ColoredBox(
+      color: SasColors.lightCanvas.withValues(alpha: 0.92),
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(
+              width: 32,
+              height: 32,
+              child: CircularProgressIndicator(
+                strokeWidth: 2.5,
+                valueColor: AlwaysStoppedAnimation<Color>(SasColors.carbon),
+              ),
+            ),
+            if (message != null) ...[
+              const SizedBox(height: 16),
+              Text(
+                message!,
+                style: const TextStyle(
+                  color: SasColors.indianInk,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
-              if (message != null) ...[
-                const SizedBox(height: 16),
-                Text(
-                  message!,
-                  style: const TextStyle(
-                    color: SasColors.textPrimary,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
             ],
-          ),
+          ],
         ),
       ),
     );

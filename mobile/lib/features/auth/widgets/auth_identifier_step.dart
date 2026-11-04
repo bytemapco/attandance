@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:smart_attendance_app/app/theme.dart';
 import 'package:smart_attendance_app/app/typography.dart';
-import 'package:smart_attendance_app/features/auth/widgets/auth_gradient_button.dart';
+import 'package:smart_attendance_app/features/auth/widgets/auth_button.dart';
 import 'package:smart_attendance_app/features/auth/widgets/auth_identifier_input_field.dart';
 import 'package:smart_attendance_app/features/auth/widgets/auth_wave_painter.dart';
 
@@ -150,7 +150,7 @@ class AuthIdentifierStep extends StatelessWidget {
                           const SizedBox(height: 12),
 
                           // Continue Button
-                          AuthGradientButton(
+                          AuthButton(
                             label: 'Continue',
                             onPressed: onContinue,
                           ),

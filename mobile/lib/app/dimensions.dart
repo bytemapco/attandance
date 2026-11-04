@@ -17,11 +17,11 @@ class SasSpacing {
 class SasRadius {
   SasRadius._();
 
-  static const double sm = 8;
-  static const double md = 12;
-  static const double lg = 16;
-  static const double xl = 20;
-  static const double xxl = 28;
+  static const double sm = 6;
+  static const double md = 10;
+  static const double lg = 12;
+  static const double xl = 16;
+  static const double xxl = 20;
 
   static BorderRadius get smAll => BorderRadius.circular(sm);
   static BorderRadius get mdAll => BorderRadius.circular(md);
