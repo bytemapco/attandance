@@ -25,7 +25,7 @@ const variantStyles: Record<ButtonVariant, string> = {
 const sizeStyles: Record<ButtonSize, string> = {
   sm: "h-8 px-3 text-xs rounded-md",
   md: "h-9 px-4 text-sm rounded-md",
-  lg: "h-10 px-5 text-sm font-semibold rounded-lg",
+  lg: "h-10 px-5 text-sm rounded-md",
 };
 
 export default function GlassButton({
@@ -41,7 +41,7 @@ export default function GlassButton({
   return (
     <button
       className={cn(
-        "inline-flex items-center justify-center gap-2 border font-medium transition-all duration-150 outline-none select-none cursor-pointer",
+        "inline-flex items-center justify-center gap-2 border font-medium transition-colors duration-150 outline-none select-none cursor-pointer",
         "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
         "disabled:pointer-events-none disabled:opacity-50",
         variantStyles[variant],
@@ -49,9 +49,10 @@ export default function GlassButton({
         className
       )}
       disabled={disabled || loading}
+      aria-busy={loading || undefined}
       {...props}
     >
-      {loading ? <Loader2 className="h-4 w-4 animate-spin text-current" /> : icon}
+      {loading ? <Loader2 className="h-4 w-4 animate-spin text-current" aria-hidden /> : icon}
       {children}
     </button>
   );

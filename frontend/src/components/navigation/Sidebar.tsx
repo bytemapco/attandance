@@ -34,7 +34,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps): React.JSX.El
   return (
     <>
       {isOpen && (
-        <div className="fixed inset-0 bg-primary/40 z-30 md:hidden" onClick={onClose} />
+        <div className="fixed inset-0 bg-overlay z-30 md:hidden" onClick={onClose} aria-hidden />
       )}
 
       <aside
@@ -47,12 +47,12 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps): React.JSX.El
           <Link
             href={homeHref}
             onClick={onClose}
-            className="flex items-center gap-3 group hover:opacity-95 transition-opacity cursor-pointer min-w-0 w-full"
+            className="flex items-center gap-3 min-w-0 w-full"
           >
             <img
               src="/sahaj-app-icon.png"
               alt="SAHAJ Logo"
-              className="h-9 w-9 rounded-lg transition-transform object-contain shrink-0 self-center"
+              className="h-9 w-9 rounded-lg object-contain shrink-0 self-center"
             />
             <div className="min-w-0 flex-1">
               <h2 className="text-sm font-semibold text-primary leading-tight">SAHAJ</h2>

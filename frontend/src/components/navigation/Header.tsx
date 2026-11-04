@@ -59,12 +59,18 @@ export default function Header({ onMenuToggle }: HeaderProps): React.JSX.Element
     .toUpperCase() || "SA";
   const displayRole =
     user?.role === "SUPER_ADMIN"
-      ? "Super Administrator"
+      ? "Super administrator"
       : user?.role === "ADMIN" || user?.role === "TENANT_ADMIN"
       ? "Administrator"
       : user?.role === "TEACHER"
-      ? "Faculty Professor"
+      ? "Faculty"
       : "User";
+  const searchPlaceholder =
+    user?.role === "SUPER_ADMIN"
+      ? "Search institutions, licenses, or actions"
+      : user?.role === "ADMIN" || user?.role === "TENANT_ADMIN"
+      ? "Search students, faculty, classes, or actions"
+      : "Search students, classes, or quick actions";
 
   return (
     <>
@@ -88,27 +94,19 @@ export default function Header({ onMenuToggle }: HeaderProps): React.JSX.Element
             <span className="hidden sm:inline font-semibold">SAHAJ</span>
           </Link>
 
-          <div
+          <button
+            type="button"
             onClick={() => setIsCommandOpen(true)}
-            className="relative w-full max-w-md hidden sm:flex items-center cursor-pointer group"
+            aria-label="Open search"
+            aria-keyshortcuts="Control+K Meta+K"
+            className="relative hidden h-9 w-full max-w-md cursor-pointer items-center rounded-md border border-border bg-surface pl-9 pr-16 text-left text-sm text-muted-foreground transition-colors hover:border-border-strong sm:flex"
           >
-            <Search size={14} className="absolute left-3 text-muted-foreground group-hover:text-foreground pointer-events-none transition-colors" />
-            <input
-              type="text"
-              readOnly
-              placeholder={
-                user?.role === "SUPER_ADMIN"
-                  ? "Search institutions, licenses, or actions..."
-                  : user?.role === "ADMIN" || user?.role === "TENANT_ADMIN"
-                  ? "Search students, faculty, classes, or actions..."
-                  : "Search students, classes, or quick actions..."
-              }
-              className="w-full h-9 pl-9 pr-16 rounded-lg border border-border bg-secondary/50 text-xs text-foreground placeholder:text-muted-foreground group-hover:bg-background group-hover:border-accent/60 cursor-pointer transition-all outline-none"
-            />
-            <kbd className="absolute right-2.5 px-1.5 py-0.5 rounded-sm border border-border bg-card text-xs font-mono text-muted-foreground font-semibold pointer-events-none">
+            <Search size={14} className="absolute left-3" aria-hidden />
+            <span className="truncate">{searchPlaceholder}</span>
+            <kbd className="absolute right-2.5 rounded-sm border border-border bg-card px-1.5 py-0.5 font-mono text-xs text-muted-foreground">
               Ctrl K
             </kbd>
-          </div>
+          </button>
         </div>
 
         <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
@@ -123,8 +121,9 @@ export default function Header({ onMenuToggle }: HeaderProps): React.JSX.Element
             <button
               type="button"
               onClick={handleLogout}
-              className="p-1.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive-soft transition-colors cursor-pointer"
+              className="p-1.5 rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive-soft transition-colors cursor-pointer"
               title="Sign out"
+              aria-label="Sign out"
             >
               <LogOut size={16} />
             </button>

@@ -29,10 +29,10 @@ export default function AdminNavSection({ unreadCount, onClose }: AdminNavSectio
               href={link.href}
               onClick={onClose}
               className={cn(
-                "flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition-all",
+                "flex items-center justify-between px-3 py-2 rounded-md text-sm font-medium transition-colors",
                 isActive
-                  ? "bg-accent-soft text-primary font-semibold border-l-[3px] border-accent"
-                  : "text-muted-foreground hover:bg-secondary/70 hover:text-foreground"
+                  ? "bg-secondary text-foreground"
+                  : "text-muted-foreground hover:bg-secondary hover:text-foreground"
               )}
             >
               <div className="flex items-center gap-2.5">

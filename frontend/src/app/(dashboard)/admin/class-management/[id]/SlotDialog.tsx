@@ -7,6 +7,7 @@ import GlassButton from "@/components/ui/GlassButton";
 import GlassConfirmDialog from "@/components/ui/GlassConfirmDialog";
 import GlassInput from "@/components/ui/GlassInput";
 import GlassSelect from "@/components/ui/GlassSelect";
+import ModalFrame from "@/components/ui/ModalFrame";
 import type { ClassDetail } from "@/types";
 import DayPicker from "./DayPicker";
 import { schedulePath } from "./scheduleApi";
@@ -96,50 +97,43 @@ export default function SlotDialog({ cls, draft, onUpdated, onClose }: SlotDialo
 
   return (
     <>
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-primary/40 p-4" onClick={onClose}>
-      <div
-        role="dialog"
-        aria-label={editing ? "Change class time" : "Add class time"}
-        className="max-h-full w-full max-w-md space-y-4 overflow-y-auto rounded-lg border border-border bg-card p-6 shadow-popover"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <h3 className="text-base font-semibold text-foreground">{editing ? "Change class time" : "Add class time"}</h3>
+    <ModalFrame label={editing ? "Change class time" : "Add class time"} onClose={onClose} className="space-y-4 p-6">
+      <h3 className="text-base font-semibold text-foreground">{editing ? "Change class time" : "Add class time"}</h3>
+      {editing ? (
+        <p className="text-sm font-semibold text-foreground">{subjectName}</p>
+      ) : (
+        <GlassSelect label="Subject" placeholder="Select subject" searchable value={subjectId} onChange={pickSubject} options={subjectOptions} />
+      )}
+      <GlassSelect label="Teacher" placeholder="Select teacher" searchable value={teacherId} onChange={setTeacherId} options={teacherOptions} />
+      <DayPicker value={days} onChange={setDays} />
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+        <GlassInput label="Starts" type="time" value={start} onChange={(e) => setStart(e.target.value)} />
+        <GlassInput label="Ends" type="time" value={end} onChange={(e) => setEnd(e.target.value)} error={start && end && !timesValid ? "Must be after start" : undefined} />
+        <GlassSelect label="Room" value={roomId} onChange={setRoomChoice} options={roomOptions} />
+      </div>
+      <div className="flex flex-wrap items-center justify-between gap-2">
         {editing ? (
-          <p className="text-sm font-semibold text-foreground">{subjectName}</p>
-        ) : (
-          <GlassSelect label="Subject" placeholder="Select subject" searchable value={subjectId} onChange={pickSubject} options={subjectOptions} />
-        )}
-        <GlassSelect label="Teacher" placeholder="Select teacher" searchable value={teacherId} onChange={setTeacherId} options={teacherOptions} />
-        <DayPicker value={days} onChange={setDays} />
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-          <GlassInput label="Starts" type="time" value={start} onChange={(e) => setStart(e.target.value)} />
-          <GlassInput label="Ends" type="time" value={end} onChange={(e) => setEnd(e.target.value)} error={start && end && !timesValid ? "Must be after start" : undefined} />
-          <GlassSelect label="Room" value={roomId} onChange={setRoomChoice} options={roomOptions} />
-        </div>
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          {editing ? (
-            <div className="flex gap-1">
-              <GlassButton variant="ghost" size="sm" disabled={busy} className="text-destructive" onClick={() => void removeTime()}>
-                Remove time
-              </GlassButton>
-              <GlassButton variant="ghost" size="sm" disabled={busy} className="text-destructive" onClick={() => setConfirmingRemove(true)}>
-                Remove subject
-              </GlassButton>
-            </div>
-          ) : (
-            <span />
-          )}
-          <div className="flex gap-2">
-            <GlassButton variant="ghost" size="sm" onClick={onClose}>
-              Cancel
+          <div className="flex gap-1">
+            <GlassButton variant="ghost" size="sm" disabled={busy} className="text-destructive" onClick={() => void removeTime()}>
+              Remove time
             </GlassButton>
-            <GlassButton variant="primary" size="sm" loading={busy} disabled={!ready} onClick={() => void save()}>
-              {editing ? "Save" : days.length > 1 ? `Add to ${days.length} days` : "Add"}
+            <GlassButton variant="ghost" size="sm" disabled={busy} className="text-destructive" onClick={() => setConfirmingRemove(true)}>
+              Remove subject
             </GlassButton>
           </div>
+        ) : (
+          <span />
+        )}
+        <div className="flex gap-2">
+          <GlassButton variant="ghost" size="sm" onClick={onClose}>
+            Cancel
+          </GlassButton>
+          <GlassButton variant="primary" size="sm" loading={busy} disabled={!ready} onClick={() => void save()}>
+            {editing ? "Save" : days.length > 1 ? `Add to ${days.length} days` : "Add"}
+          </GlassButton>
         </div>
       </div>
-    </div>
+    </ModalFrame>
     <GlassConfirmDialog
       isOpen={confirmingRemove}
       title="Remove subject"

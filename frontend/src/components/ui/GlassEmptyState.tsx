@@ -23,12 +23,12 @@ export default function GlassEmptyState({
   className = "",
 }: GlassEmptyStateProps): React.ReactElement {
   return (
-    <div className={cn("rounded-lg border border-border bg-card p-10 sm:p-14 text-center", className)}>
-      <div className="mx-auto mb-3.5 flex h-12 w-12 items-center justify-center rounded-lg bg-secondary text-muted-foreground border border-border">
-        {icon || <FolderOpen size={22} />}
+    <div className={cn("rounded-lg border border-border bg-card px-6 py-12 text-center", className)}>
+      <div className="mx-auto mb-3 flex justify-center text-muted-foreground" aria-hidden>
+        {icon || <FolderOpen size={20} />}
       </div>
       <h3 className="text-base font-semibold text-foreground">{title}</h3>
-      <p className="mt-1 text-xs sm:text-sm text-muted-foreground max-w-sm mx-auto leading-relaxed">{message}</p>
+      <p className="mt-1 text-sm text-muted-foreground max-w-sm mx-auto">{message}</p>
       {actionLabel && onAction && (
         <div className="mt-5">
           <GlassButton variant="primary" size="sm" onClick={onAction}>

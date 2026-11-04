@@ -9,6 +9,8 @@ import {
 import api from "@/lib/api";
 import toast from "react-hot-toast";
 import { useAuthStore } from "@/store/authStore";
+import GlassButton from "@/components/ui/GlassButton";
+import GlassPageHeader from "@/components/ui/GlassPageHeader";
 import GlassStatCard from "@/components/ui/GlassStatCard";
 import GlassLoader from "@/components/ui/GlassLoader";
 import AdminQuickActions from "@/components/admin/AdminQuickActions";
@@ -80,35 +82,30 @@ export default function AdminDashboardPage(): React.ReactElement {
 
   return (
     <div className="space-y-6 pb-6">
-      {/* Top Welcome Banner */}
-      <div className="relative overflow-hidden rounded-lg border border-border bg-card p-5 sm:p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-5">
-        <div className="space-y-1 z-10">
-          <p className="text-xs font-medium text-muted-foreground">{todayStr}</p>
-          <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-primary">
-            {greeting}, {displayName}
-          </h1>
-        </div>
-
-        {/* Header Action Buttons */}
-        <div className="flex items-center gap-2.5 z-10 self-start md:self-center">
-          <button
-            onClick={() => router.push("/admin/notifications/broadcast")}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-border bg-secondary text-xs font-semibold text-foreground hover:bg-secondary/70 transition-all cursor-pointer"
-          >
-            <Megaphone size={14} className="text-accent-strong" />
-            <span>New Announcement</span>
-          </button>
-
-          <button
-            onClick={handleRefresh}
-            disabled={refreshing}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-border bg-card text-xs font-semibold text-foreground hover:bg-secondary transition-all disabled:opacity-50 cursor-pointer"
-          >
-            <RefreshCw size={13} className={refreshing ? "animate-spin text-accent-strong" : "text-muted-foreground"} />
-            <span>{refreshing ? "Updating..." : "Refresh"}</span>
-          </button>
-        </div>
-      </div>
+      <GlassPageHeader
+        title={`${greeting}, ${displayName}`}
+        description={todayStr}
+        className="mb-0"
+        actions={
+          <>
+            <GlassButton
+              variant="secondary"
+              icon={<Megaphone size={14} />}
+              onClick={() => router.push("/admin/notifications/broadcast")}
+            >
+              New announcement
+            </GlassButton>
+            <GlassButton
+              variant="secondary"
+              icon={<RefreshCw size={14} />}
+              loading={refreshing}
+              onClick={handleRefresh}
+            >
+              Refresh
+            </GlassButton>
+          </>
+        }
+      />
 
       <SetupGate />
 
@@ -121,6 +118,7 @@ export default function AdminDashboardPage(): React.ReactElement {
             value={stats?.studentCount ?? "—"}
             subtext="View student records"
             accentColor="mineral"
+            interactive
           />
         </Link>
         <Link href="/admin/users/teachers" aria-label="View faculty" className="rounded-lg focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-muted-foreground">
@@ -130,6 +128,7 @@ export default function AdminDashboardPage(): React.ReactElement {
             value={stats?.teacherCount ?? "—"}
             subtext="View faculty records"
             accentColor="carbon"
+            interactive
           />
         </Link>
         <Link href="/admin/class-management" aria-label="View classes" className="rounded-lg focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-muted-foreground">
@@ -139,6 +138,7 @@ export default function AdminDashboardPage(): React.ReactElement {
             value={stats?.classCount ?? "—"}
             subtext="View classes and schedules"
             accentColor="copper"
+            interactive
           />
         </Link>
         <GlassStatCard

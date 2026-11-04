@@ -25,7 +25,7 @@ export default function GlassTableHeader<T>({
   onSort,
 }: GlassTableHeaderProps<T>): React.ReactElement {
   return (
-    <thead className="border-b border-border bg-secondary/80">
+    <thead className="border-b border-border bg-surface">
       <tr>
         {columns.map((col) => {
           const isActive = activeSortKey === col.key;
@@ -34,8 +34,8 @@ export default function GlassTableHeader<T>({
               key={col.key}
               onClick={col.sortable ? () => onSort(col.key) : undefined}
               className={cn(
-                "h-10 px-4 text-xs font-semibold select-none whitespace-nowrap",
-                isActive ? "text-primary font-semibold" : "text-muted-foreground",
+                "h-10 px-4 text-xs font-medium select-none whitespace-nowrap",
+                isActive ? "text-primary" : "text-muted-foreground",
                 col.sortable && "cursor-pointer hover:text-primary"
               )}
             >

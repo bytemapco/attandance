@@ -65,7 +65,7 @@ export default function LoginPage(): React.ReactElement {
         return;
       }
 
-      toast.success("Welcome back!");
+      toast.success("Signed in");
       handleSuccessRedirect(profile);
     } catch (err: unknown) {
       const errorMsg = getApiErrorMessage(err, "Login failed. Please check your credentials.");
@@ -81,13 +81,10 @@ export default function LoginPage(): React.ReactElement {
 
   return (
     <div className="w-full max-w-[420px] mx-auto my-auto py-8 px-4">
-      <div className="rounded-lg border border-border/90 bg-white/95 p-7 sm:p-8">
+      <div className="rounded-lg border border-border bg-card p-7 sm:p-8">
         {/* Brand Header */}
         <div className="flex flex-col items-center text-center mb-6">
-          <Link
-            href="/login"
-            className="group inline-flex items-center justify-center cursor-pointer transition-transform duration-200"
-          >
+          <Link href="/login" className="inline-flex items-center justify-center">
             <img
               src="/sahaj-logo-transparent.png"
               alt="SAHAJ Logo"
@@ -105,15 +102,15 @@ export default function LoginPage(): React.ReactElement {
             <div className="rounded-lg border border-warning-border bg-warning-soft p-4 text-left flex gap-3 items-start">
               <AlertTriangle className="w-5 h-5 text-warning shrink-0 mt-0.5" />
               <div className="space-y-1">
-                <p className="text-xs font-semibold text-warning">Institution Suspended</p>
-                <p className="text-xs text-muted-foreground leading-relaxed">{suspensionError}</p>
+                <p className="text-sm font-semibold text-warning">Institution suspended</p>
+                <p className="text-sm text-muted-foreground">{suspensionError}</p>
               </div>
             </div>
           )}
 
           <div className="space-y-4">
             <GlassInput
-              label="Email Address"
+              label="Email"
               type="email"
               placeholder="name@university.edu"
               {...register("email")}
@@ -149,9 +146,9 @@ export default function LoginPage(): React.ReactElement {
               variant="primary"
               size="lg"
               loading={isSubmitting}
-              className="w-full font-semibold hover:shadow transition-shadow"
+              className="w-full"
             >
-              Sign In to Dashboard
+              Sign in
             </GlassButton>
           </div>
         </form>

@@ -16,9 +16,9 @@ export interface GlassErrorStateProps {
 
 export function GlassErrorState({
   title = "Unable to load data",
-  message = "A system issue prevented this information from displaying. Please try again.",
+  message = "This information could not be loaded. Try again.",
   details,
-  retryLabel = "Try Again",
+  retryLabel = "Try again",
   onRetry,
   className = "",
 }: GlassErrorStateProps): React.ReactElement {
@@ -26,15 +26,13 @@ export function GlassErrorState({
     <div
       role="alert"
       className={cn(
-        "rounded-lg border border-destructive-border bg-destructive-soft/60 p-8 text-center",
+        "rounded-lg border border-destructive-border bg-destructive-soft px-6 py-10 text-center",
         className
       )}
     >
-      <div className="mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-lg bg-destructive-soft text-destructive border border-destructive-border">
-        <AlertCircle size={22} aria-hidden="true" />
-      </div>
-      <h3 className="text-base font-semibold text-foreground tracking-tight">{title}</h3>
-      <p className="mt-1 text-xs sm:text-sm text-muted-foreground max-w-md mx-auto leading-relaxed">{message}</p>
+      <AlertCircle size={20} className="mx-auto mb-3 text-destructive" aria-hidden="true" />
+      <h3 className="text-base font-semibold text-foreground">{title}</h3>
+      <p className="mt-1 text-sm text-muted-foreground max-w-md mx-auto">{message}</p>
       {details && (
         <pre className="mt-3 max-w-md mx-auto overflow-x-auto rounded-lg bg-card p-2.5 text-xs text-muted-foreground border border-border text-left font-mono">
           {details}

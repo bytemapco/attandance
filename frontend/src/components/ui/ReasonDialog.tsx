@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import GlassButton from "@/components/ui/GlassButton";
 import GlassTextarea from "@/components/ui/GlassTextarea";
+import ModalFrame from "@/components/ui/ModalFrame";
 import { reasonSchema } from "@/lib/validations/classManagement";
 
 interface ReasonDialogProps {
@@ -33,28 +34,23 @@ export default function ReasonDialog({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-primary/40 p-4" onClick={onCancel}>
-      <div
-        className="w-full max-w-md rounded-lg border border-border bg-card p-6 shadow-popover"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <h3 className="mb-4 text-base font-semibold text-foreground">{title}</h3>
-        <GlassTextarea
-          label="Reason"
-          placeholder="Recorded in the class history"
-          value={reason}
-          onChange={(e) => setReason(e.target.value)}
-          error={error}
-        />
-        <div className="mt-5 flex justify-end gap-2 border-t border-border pt-3">
-          <GlassButton variant="ghost" size="sm" onClick={onCancel} disabled={loading}>
-            Cancel
-          </GlassButton>
-          <GlassButton variant="primary" size="sm" onClick={submit} loading={loading}>
-            {confirmLabel}
-          </GlassButton>
-        </div>
+    <ModalFrame label={title} onClose={onCancel} className="p-6">
+      <h3 className="mb-4 text-base font-semibold text-foreground">{title}</h3>
+      <GlassTextarea
+        label="Reason"
+        placeholder="Recorded in the class history"
+        value={reason}
+        onChange={(e) => setReason(e.target.value)}
+        error={error}
+      />
+      <div className="mt-5 flex justify-end gap-2 border-t border-border pt-3">
+        <GlassButton variant="ghost" size="sm" onClick={onCancel} disabled={loading}>
+          Cancel
+        </GlassButton>
+        <GlassButton variant="primary" size="sm" onClick={submit} loading={loading}>
+          {confirmLabel}
+        </GlassButton>
       </div>
-    </div>
+    </ModalFrame>
   );
 }

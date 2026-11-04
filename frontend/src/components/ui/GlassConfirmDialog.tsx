@@ -3,6 +3,7 @@
 import React from "react";
 import { AlertTriangle } from "lucide-react";
 import GlassButton from "./GlassButton";
+import ModalFrame from "./ModalFrame";
 import { cn } from "@/lib/utils";
 
 export interface GlassConfirmDialogProps {
@@ -29,39 +30,31 @@ export default function GlassConfirmDialog({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-primary/40" onClick={onCancel}>
-      <div
-        className="w-full max-w-md rounded-lg border border-border bg-card p-6 shadow-popover"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="flex items-start gap-3.5 mb-5">
-          <div className={cn(
-            "p-2.5 rounded-lg shrink-0 border",
-            variant === "danger"
-              ? "bg-destructive-soft text-destructive border-destructive-border"
-              : "bg-info-soft text-info border-info-border"
-          )}>
-            <AlertTriangle size={20} />
-          </div>
-          <div>
-            <h3 className="text-base font-semibold text-foreground">{title}</h3>
-            <p className="text-xs sm:text-sm text-muted-foreground mt-1 leading-relaxed">{message}</p>
-          </div>
-        </div>
-        <div className="flex justify-end gap-2 pt-3 border-t border-border">
-          <GlassButton variant="ghost" size="sm" onClick={onCancel} disabled={loading}>
-            Cancel
-          </GlassButton>
-          <GlassButton
-            variant={variant === "danger" ? "danger" : "primary"}
-            size="sm"
-            onClick={onConfirm}
-            loading={loading}
-          >
-            {confirmLabel}
-          </GlassButton>
+    <ModalFrame label={title} onClose={onCancel} className="p-6">
+      <div className="mb-5 flex items-start gap-3">
+        <AlertTriangle
+          size={20}
+          className={cn("mt-0.5 shrink-0", variant === "danger" ? "text-destructive" : "text-info")}
+          aria-hidden
+        />
+        <div>
+          <h3 className="text-base font-semibold text-foreground">{title}</h3>
+          <p className="mt-1 text-sm text-muted-foreground">{message}</p>
         </div>
       </div>
-    </div>
+      <div className="flex justify-end gap-2 border-t border-border pt-3">
+        <GlassButton variant="ghost" size="sm" onClick={onCancel} disabled={loading}>
+          Cancel
+        </GlassButton>
+        <GlassButton
+          variant={variant === "danger" ? "danger" : "primary"}
+          size="sm"
+          onClick={onConfirm}
+          loading={loading}
+        >
+          {confirmLabel}
+        </GlassButton>
+      </div>
+    </ModalFrame>
   );
 }

@@ -7,6 +7,7 @@ import { Search, X, Loader2 } from "lucide-react";
 import { useAuthStore } from "@/store/authStore";
 import api from "@/lib/api";
 import { useDebounce } from "@/hooks/useDebounce";
+import ModalFrame from "@/components/ui/ModalFrame";
 import CommandPaletteItem from "./CommandPaletteItem";
 import type { SearchResultItem, GlobalSearchResponse } from "@/types";
 
@@ -82,8 +83,6 @@ export default function CommandPaletteModal({ isOpen, onClose }: CommandPaletteM
     } else if (e.key === "Enter" && results[selectedIndex]) {
       e.preventDefault();
       handleSelect(results[selectedIndex]);
-    } else if (e.key === "Escape") {
-      onClose();
     }
   };
 
@@ -113,72 +112,74 @@ export default function CommandPaletteModal({ isOpen, onClose }: CommandPaletteM
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center pt-16 px-4 bg-primary/50">
-      <div className="fixed inset-0" onClick={onClose} />
-      
-      <div className="relative w-full max-w-2xl rounded-lg border border-border bg-background shadow-popover overflow-hidden z-10 flex flex-col max-h-[80vh]">
-        <div className="flex items-center px-4 py-3.5 border-b border-border gap-3 bg-background">
-          <Search size={18} className="text-muted-foreground shrink-0" />
-          <input
-            ref={inputRef}
-            type="text"
-            placeholder={searchPlaceholder}
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            onKeyDown={handleKeyDown}
-            className="flex-1 text-sm bg-transparent text-foreground placeholder:text-muted-foreground outline-none font-medium"
-          />
-          {loading && <Loader2 size={16} className="animate-spin text-accent-strong shrink-0" />}
-          <button
-            onClick={onClose}
-            aria-label="Close search"
-            className="p-1 rounded-lg hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
-          >
-            <X size={16} />
-          </button>
-        </div>
-
-        <div className="overflow-y-auto p-2.5 space-y-3">
-          {results.length === 0 && !loading ? (
-            <div className="py-12 text-center text-xs text-muted-foreground">
-              {query ? (
-                <>No matching results found for &ldquo;<strong className="text-foreground">{query}</strong>&rdquo;</>
-              ) : (
-                "Type a query to search across your workspace..."
-              )}
-            </div>
-          ) : (
-            groupedSections.map((section) => (
-              <div key={section.label} className="space-y-1">
-                <p className="px-3 pt-1 text-xs font-semibold text-muted-foreground">
-                  {section.label}
-                </p>
-                {section.items.map(({ item, globalIndex }) => (
-                  <CommandPaletteItem
-                    key={item.id}
-                    item={item}
-                    isSelected={selectedIndex === globalIndex}
-                    onSelect={handleSelect}
-                    onMouseEnter={() => setSelectedIndex(globalIndex)}
-                  />
-                ))}
-              </div>
-            ))
-          )}
-        </div>
-
-        <div className="px-4 py-2.5 border-t border-border bg-secondary/60 flex items-center justify-between text-xs text-muted-foreground">
-          <div className="flex items-center gap-3">
-            <span><kbd className="font-mono px-1.5 py-0.5 rounded-sm border border-border bg-background text-xs">↑↓</kbd> Navigate</span>
-            <span><kbd className="font-mono px-1.5 py-0.5 rounded-sm border border-border bg-background text-xs">↵</kbd> Select</span>
-            <span><kbd className="font-mono px-1.5 py-0.5 rounded-sm border border-border bg-background text-xs">esc</kbd> Dismiss</span>
-          </div>
-          <span className="font-semibold text-xs text-muted-foreground">
-            Sahaj Search
-          </span>
-        </div>
+    <ModalFrame
+      label="Search"
+      onClose={onClose}
+      size="lg"
+      align="top"
+      className="flex max-h-[80vh] flex-col overflow-hidden bg-background"
+    >
+      <div className="flex items-center px-4 py-3.5 border-b border-border gap-3 bg-background">
+        <Search size={18} className="text-muted-foreground shrink-0" />
+        <input
+          ref={inputRef}
+          type="text"
+          placeholder={searchPlaceholder}
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={handleKeyDown}
+          className="flex-1 text-sm bg-transparent text-foreground placeholder:text-muted-foreground outline-none font-medium"
+        />
+        {loading && <Loader2 size={16} className="animate-spin text-muted-foreground shrink-0" />}
+        <button
+          onClick={onClose}
+          aria-label="Close search"
+          className="p-1 rounded-lg hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+        >
+          <X size={16} />
+        </button>
       </div>
-    </div>
+
+      <div className="overflow-y-auto p-2.5 space-y-3">
+        {results.length === 0 && !loading ? (
+          <div className="py-12 text-center text-xs text-muted-foreground">
+            {query ? (
+              <>No matching results found for &ldquo;<strong className="text-foreground">{query}</strong>&rdquo;</>
+            ) : (
+              "Type a query to search across your workspace..."
+            )}
+          </div>
+        ) : (
+          groupedSections.map((section) => (
+            <div key={section.label} className="space-y-1">
+              <p className="px-3 pt-1 text-xs font-semibold text-muted-foreground">
+                {section.label}
+              </p>
+              {section.items.map(({ item, globalIndex }) => (
+                <CommandPaletteItem
+                  key={item.id}
+                  item={item}
+                  isSelected={selectedIndex === globalIndex}
+                  onSelect={handleSelect}
+                  onMouseEnter={() => setSelectedIndex(globalIndex)}
+                />
+              ))}
+            </div>
+          ))
+        )}
+      </div>
+
+      <div className="px-4 py-2.5 border-t border-border bg-secondary/60 flex items-center justify-between text-xs text-muted-foreground">
+        <div className="flex items-center gap-3">
+          <span><kbd className="font-mono px-1.5 py-0.5 rounded-sm border border-border bg-background text-xs">↑↓</kbd> Navigate</span>
+          <span><kbd className="font-mono px-1.5 py-0.5 rounded-sm border border-border bg-background text-xs">↵</kbd> Select</span>
+          <span><kbd className="font-mono px-1.5 py-0.5 rounded-sm border border-border bg-background text-xs">esc</kbd> Dismiss</span>
+        </div>
+        <span className="font-semibold text-xs text-muted-foreground">
+          Sahaj Search
+        </span>
+      </div>
+    </ModalFrame>
   );
 }
 

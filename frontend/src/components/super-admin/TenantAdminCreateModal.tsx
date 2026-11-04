@@ -1,10 +1,11 @@
 "use client";
 
 import React, { useState } from "react";
-import { UserPlus, X } from "lucide-react";
+import { X } from "lucide-react";
 import toast from "react-hot-toast";
 import GlassButton from "@/components/ui/GlassButton";
 import GlassInput from "@/components/ui/GlassInput";
+import ModalFrame from "@/components/ui/ModalFrame";
 import { superAdminService } from "@/services/superAdminService";
 import { getApiErrorMessage } from "@/lib/api";
 
@@ -57,72 +58,57 @@ export default function TenantAdminCreateModal({
   };
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-primary/40"
-      onClick={onClose}
-    >
-      <div
-        className="w-full max-w-md bg-card border border-border rounded-lg shadow-popover p-6 space-y-5"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="flex items-center justify-between pb-3 border-b border-border">
-          <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-lg bg-secondary text-primary border border-border">
-              <UserPlus size={16} />
-            </div>
-            <h3 className="text-sm font-semibold text-primary">Add Administrator</h3>
-          </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors cursor-pointer"
-            aria-label="Close dialog"
-          >
-            <X size={16} />
-          </button>
+    <ModalFrame label="Add administrator" onClose={onClose} className="space-y-5 p-6">
+      <div className="flex items-center justify-between pb-3 border-b border-border">
+        <h3 className="text-base font-semibold text-foreground">Add administrator</h3>
+        <button
+          type="button"
+          onClick={onClose}
+          className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors cursor-pointer"
+          aria-label="Close dialog"
+        >
+          <X size={16} />
+        </button>
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="space-y-3">
+          <GlassInput
+            label="Full Name"
+            placeholder="e.g. Dr. Rajesh Patel"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+          />
+          <GlassInput
+            label="Official Email Address"
+            type="email"
+            placeholder="e.g. admin.patel@school.edu"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-3">
-            <GlassInput
-              label="Full Name"
-              placeholder="e.g. Dr. Rajesh Patel"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-            />
-            <GlassInput
-              label="Official Email Address"
-              type="email"
-              placeholder="e.g. admin.patel@school.edu"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-
-          <div className="flex items-center justify-end gap-2 pt-2 border-t border-border">
-            <GlassButton
-              type="button"
-              variant="secondary"
-              onClick={onClose}
-              disabled={submitting}
-              className="text-xs"
-            >
-              Cancel
-            </GlassButton>
-            <GlassButton
-              type="submit"
-              variant="primary"
-              loading={submitting}
-              disabled={submitting || !email.trim() || !name.trim()}
-              className="text-xs font-semibold"
-            >
-              Send Invitation
-            </GlassButton>
-          </div>
-        </form>
-      </div>
-    </div>
+        <div className="flex items-center justify-end gap-2 pt-2 border-t border-border">
+          <GlassButton
+            type="button"
+            variant="secondary"
+            onClick={onClose}
+            disabled={submitting}
+          >
+            Cancel
+          </GlassButton>
+          <GlassButton
+            type="submit"
+            variant="primary"
+            loading={submitting}
+            disabled={submitting || !email.trim() || !name.trim()}
+          >
+            Send invitation
+          </GlassButton>
+        </div>
+      </form>
+    </ModalFrame>
   );
 }

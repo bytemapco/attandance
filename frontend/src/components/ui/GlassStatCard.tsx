@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { ArrowDown, ArrowUp } from "lucide-react";
 import GlassCard from "./GlassCard";
 import { cn } from "@/lib/utils";
 
@@ -12,41 +13,18 @@ export interface GlassStatCardProps {
   trendUp?: boolean;
   accentColor?: string;
   subtext?: string;
+  interactive?: boolean;
 }
 
-const colorStyles: Record<string, { icon: string; border: string }> = {
-  copper: {
-    icon: "text-accent-strong bg-accent-soft border-accent-border",
-    border: "hover:border-accent/60",
-  },
-  mineral: {
-    icon: "text-muted-foreground bg-secondary border-border",
-    border: "hover:border-muted-foreground/60",
-  },
-  carbon: {
-    icon: "text-primary bg-secondary border-border",
-    border: "hover:border-primary/60",
-  },
-  blue: {
-    icon: "text-info bg-info-soft border-info-border",
-    border: "hover:border-info/40",
-  },
-  emerald: {
-    icon: "text-success bg-success-soft border-success-border",
-    border: "hover:border-success/40",
-  },
-  purple: {
-    icon: "text-muted-foreground bg-secondary border-border",
-    border: "hover:border-muted-foreground/40",
-  },
-  amber: {
-    icon: "text-warning bg-warning-soft border-warning-border",
-    border: "hover:border-warning/40",
-  },
-  rose: {
-    icon: "text-destructive bg-destructive-soft border-destructive-border",
-    border: "hover:border-destructive/40",
-  },
+const iconColor: Record<string, string> = {
+  copper: "text-accent-strong",
+  mineral: "text-muted-foreground",
+  carbon: "text-primary",
+  blue: "text-info",
+  emerald: "text-success",
+  purple: "text-muted-foreground",
+  amber: "text-warning",
+  rose: "text-destructive",
 };
 
 export default function GlassStatCard({
@@ -57,50 +35,32 @@ export default function GlassStatCard({
   trendUp = true,
   accentColor = "mineral",
   subtext,
+  interactive = false,
 }: GlassStatCardProps): React.ReactElement {
-  const theme = colorStyles[accentColor] || colorStyles.mineral;
+  const TrendIcon = trendUp ? ArrowUp : ArrowDown;
 
   return (
-    <GlassCard
-      hoverable
-      padding="none"
-      className={cn(
-        "relative overflow-hidden bg-card border border-border transition-all duration-200 p-5 group",
-        theme.border
-      )}
-    >
-      <div className="flex items-center justify-between mb-3.5 relative">
-        <div className={cn("p-2.5 rounded-lg border flex items-center justify-center shrink-0", theme.icon)}>
+    <GlassCard hoverable={interactive} padding="none" className="h-full p-5">
+      <div className="flex items-center justify-between gap-3">
+        <p className="text-sm font-medium text-muted-foreground">{label}</p>
+        <span className={cn("shrink-0", iconColor[accentColor] ?? iconColor.mineral)} aria-hidden>
           {icon}
+        </span>
+      </div>
+      <p className="mt-2 text-2xl font-semibold tabular-nums text-foreground">
+        {typeof value === "number" ? value.toLocaleString() : value}
+      </p>
+      {(trend || subtext) && (
+        <div className="mt-1 flex flex-wrap items-center gap-x-2 text-xs text-muted-foreground">
+          {trend && (
+            <span className={cn("inline-flex items-center gap-0.5 font-medium tabular-nums", trendUp ? "text-success" : "text-destructive")}>
+              <TrendIcon size={12} aria-hidden />
+              {trend}
+            </span>
+          )}
+          {subtext && <span>{subtext}</span>}
         </div>
-        {trend && (
-          <span
-            className={cn(
-              "text-xs font-semibold px-2 py-0.5 rounded-full border flex items-center gap-1 tabular-nums",
-              trendUp
-                ? "bg-success-soft text-success border-success-border"
-                : "bg-destructive-soft text-destructive border-destructive-border"
-            )}
-          >
-            <span>{trendUp ? "↑" : "↓"}</span>
-            <span>{trend}</span>
-          </span>
-        )}
-      </div>
-      <div className="relative">
-          <p className="text-2xl sm:text-3xl font-semibold tracking-tight text-foreground font-sans tabular-nums">
-          {typeof value === "number" ? value.toLocaleString() : value}
-        </p>
-        <p className="text-xs font-semibold text-muted-foreground mt-1">
-          {label}
-        </p>
-        {subtext && (
-          <p className="text-xs text-muted-foreground mt-1.5 flex items-center gap-1.5 font-normal">
-            <span className="w-1.5 h-1.5 rounded-full bg-border-strong inline-block" />
-            <span>{subtext}</span>
-          </p>
-        )}
-      </div>
+      )}
     </GlassCard>
   );
 }

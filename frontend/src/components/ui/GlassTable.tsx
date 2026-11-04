@@ -135,12 +135,12 @@ export default function GlassTable<T extends Record<string, unknown>>({
                     key={rowId}
                     onClick={onRowClick ? () => onRowClick(row) : undefined}
                     className={cn(
-                      "transition-colors hover:bg-secondary/40",
+                      "transition-colors hover:bg-surface",
                       onRowClick && "cursor-pointer"
                     )}
                   >
                     {columns.map((col) => (
-                      <td key={col.key} className="p-3.5 sm:p-4 text-xs sm:text-sm text-foreground align-middle">
+                      <td key={col.key} className="px-4 py-3 text-sm text-foreground align-middle">
                         {col.render ? col.render(row) : (row[col.key] as React.ReactNode) ?? "—"}
                       </td>
                     ))}

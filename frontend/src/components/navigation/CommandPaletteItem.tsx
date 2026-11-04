@@ -21,10 +21,8 @@ export default function CommandPaletteItem({
       type="button"
       onClick={() => onSelect(item)}
       onMouseEnter={onMouseEnter}
-      className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-left text-xs transition-all cursor-pointer ${
-        isSelected
-          ? "bg-accent-soft text-primary border-l-2 border-accent"
-          : "text-muted-foreground hover:bg-secondary/60 border-l-2 border-transparent"
+      className={`w-full flex items-center justify-between px-3 py-2 rounded-md text-left text-sm transition-colors cursor-pointer ${
+        isSelected ? "bg-secondary text-foreground" : "text-muted-foreground hover:bg-secondary"
       }`}
     >
       <div className="flex items-center gap-3 min-w-0">

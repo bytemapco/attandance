@@ -23,16 +23,16 @@ export default function GlassPageHeader({
   return (
     <div className={cn("flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6", className)}>
       <div>
-        <h1 className="text-2xl sm:text-2xl font-semibold tracking-tight text-primary leading-tight">
+        <h1 className="text-2xl font-semibold tracking-tight text-primary leading-tight">
           {title}
         </h1>
         {text && (
-          <p className="text-xs sm:text-sm font-normal text-muted-foreground mt-1 leading-normal max-w-2xl">
+          <p className="text-sm text-muted-foreground mt-1 max-w-2xl">
             {text}
           </p>
         )}
       </div>
-      {actions && <div className="flex items-center gap-2.5 shrink-0 flex-wrap">{actions}</div>}
+      {actions && <div className="flex items-center gap-2 shrink-0 flex-wrap">{actions}</div>}
     </div>
   );
 }
