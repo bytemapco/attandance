@@ -1,7 +1,5 @@
 from app.schemas.admin.bulk import (
     BulkImportResponse,
-    ClassBulkCreateRequest,
-    ClassBulkItem,
     ClassroomBulkCreateRequest,
     ClassroomBulkItem,
     DepartmentBulkCreateRequest,
@@ -14,14 +12,6 @@ from app.schemas.admin.bulk import (
     SubjectBulkItem,
     TeacherBulkCreateRequest,
     TeacherBulkItem,
-)
-from app.schemas.admin.classes import (
-    AssignTeacherRequest,
-    ClassCreate,
-    ClassResponse,
-    ClassUpdate,
-    EnrollRequest,
-    EnrollStudentsResponse,
 )
 from app.schemas.admin.infrastructure import (
     ClassroomCreate,
@@ -43,12 +33,6 @@ from app.schemas.admin.system import (
 )
 
 __all__ = [
-    "ClassCreate",
-    "ClassUpdate",
-    "AssignTeacherRequest",
-    "EnrollRequest",
-    "EnrollStudentsResponse",
-    "ClassResponse",
     "DepartmentCreate",
     "DepartmentUpdate",
     "DepartmentResponse",
@@ -68,8 +52,6 @@ __all__ = [
     "StudentBulkCreateRequest",
     "TeacherBulkItem",
     "TeacherBulkCreateRequest",
-    "ClassBulkItem",
-    "ClassBulkCreateRequest",
     "DepartmentBulkItem",
     "DepartmentBulkCreateRequest",
     "SubjectBulkItem",
@@ -79,4 +61,3 @@ __all__ = [
     "DesignationBulkItem",
     "DesignationBulkCreateRequest",
 ]
-

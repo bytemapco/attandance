@@ -21,6 +21,7 @@ class AuthPasswordStep extends StatelessWidget {
   final VoidCallback onToggleObscurePassword;
   final bool isLoading;
   final String? errorMessage;
+  final Widget? institutionCodeField;
   final VoidCallback onBackPressed;
   final VoidCallback onSubmit;
 
@@ -34,6 +35,7 @@ class AuthPasswordStep extends StatelessWidget {
     required this.onToggleObscurePassword,
     required this.isLoading,
     this.errorMessage,
+    this.institutionCodeField,
     required this.onBackPressed,
     required this.onSubmit,
   });
@@ -146,6 +148,7 @@ class AuthPasswordStep extends StatelessWidget {
                                         ],
                                       ),
                                     ),
+                                    if (institutionCodeField != null) ...[const SizedBox(height: 20), institutionCodeField!],
                                     if (errorMessage != null) ...[
                                       const SizedBox(height: 14),
                                       Semantics(
@@ -154,10 +157,7 @@ class AuthPasswordStep extends StatelessWidget {
                                           errorMessage: errorMessage!,
                                           email: studentId,
                                           password: controller.text,
-                                          isFormValid:
-                                              formKey.currentState
-                                                  ?.validate() ??
-                                              false,
+                                          isFormValid: formKey.currentState?.validate() ?? false,
                                         ),
                                       ),
                                     ],

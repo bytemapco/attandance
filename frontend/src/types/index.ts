@@ -5,6 +5,7 @@ export * from "./tenant";
 export * from "./auth";
 export * from "./timetable";
 export * from "./classManagement";
+export * from "./reports";
 
 export interface AssignTeacherRequest {
   teacher_id: string;
@@ -31,7 +32,7 @@ export interface AdminStatsResponse {
   teacherCount: number;
   classCount: number;
   attendanceCount?: number;
-  biometricPassRate?: number;
+  attendanceRate?: number;
 }
 
 export interface GeofenceResponse {

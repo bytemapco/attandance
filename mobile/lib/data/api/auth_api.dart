@@ -16,6 +16,7 @@ class AuthApi {
     String email,
     String password, {
     String? deviceUuid,
+    String? tenantSlug,
   }) async {
     final response = await _dio.post<Map<String, dynamic>>(
       '/auth/login',
@@ -23,6 +24,8 @@ class AuthApi {
         'email': email,
         'password': password,
         if (deviceUuid != null) 'device_uuid': deviceUuid,
+        if (tenantSlug != null && tenantSlug.isNotEmpty)
+          'tenant_slug': tenantSlug,
       },
     );
     return TokenResponse.fromJson(response.data!);

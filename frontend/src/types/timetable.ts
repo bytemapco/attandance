@@ -90,26 +90,6 @@ export interface FlaggedRecord {
   locked: boolean;
 }
 
-export interface StudentAttendanceRow {
-  student_id: string;
-  student_name: string;
-  enrollment_number: string;
-  attended: number;
-  held: number;
-  percentage?: number | null;
-}
-
-export interface ClassAnalytics {
-  course_section_id: string;
-  class_code: string;
-  subject_name: string;
-  sessions_held: number;
-  student_count: number;
-  average_percentage?: number | null;
-  threshold: number;
-  below_threshold: StudentAttendanceRow[];
-}
-
 export interface ClassSessionStartResult {
   occurrence_id: string;
   window_closes_at?: string | null;

@@ -133,21 +133,21 @@ class AdminSearchService:
         if tenant_id:
             class_where["tenantId"] = tenant_id
 
-        classes = await db.academicclass.find_many(
+        sections = await db.coursesection.find_many(
             where=class_where,
-            include={"subject": True, "teacher": True},
+            include={"subject": True, "faculties": {"include": {"teacher": True}}},
             take=10,
         )
-        for c in classes:
-            subj_name = c.subject.name if c.subject else ""
-            teacher_name = cls._resolve_name(c.teacher.firstName, c.teacher.lastName) if c.teacher else "Unassigned"
+        for c in sections:
+            primary = next((f for f in c.faculties or [] if f.isPrimary), None) or next(iter(c.faculties or []), None)
+            teacher_name = cls._resolve_name(primary.teacher.firstName, primary.teacher.lastName) if primary else "Unassigned"
             results.append(
                 SearchResultItem(
                     id=f"class-{c.id}",
                     title=c.name,
-                    subtitle=f"{subj_name} • Faculty: {teacher_name}",
+                    subtitle=f"{c.subject.name} • Faculty: {teacher_name}",
                     category="class",
-                    href=f"/admin/classes/{c.id}",
+                    href=f"/admin/class-management/{c.groupId}" if c.groupId else "/admin/class-management",
                     icon_type="book-open",
                     badge="Course",
                 )

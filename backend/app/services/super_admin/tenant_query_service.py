@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 from typing import Optional
 from app.db.client import db
 from app.schemas.super_admin import TenantDetailResponse, TenantResponse
@@ -29,7 +30,7 @@ class TenantQueryService:
         for t in tenants:
             student_count = await db.student.count(where={"user": {"is": {"tenantId": t.id}}})
             teacher_count = await db.teacher.count(where={"user": {"is": {"tenantId": t.id}}})
-            class_count = await db.academicclass.count(where={"tenantId": t.id})
+            class_count = await db.studentgroup.count(where={"tenantId": t.id, "status": "ACTIVE"})
             items.append(
                 TenantResponse(
                     id=t.id,
@@ -64,15 +65,17 @@ class TenantQueryService:
         admin_users = await db.user.find_many(where={"tenantId": tenant_id, "role": "TENANT_ADMIN"})
         student_count = await db.student.count(where={"user": {"is": {"tenantId": t.id}}})
         teacher_count = await db.teacher.count(where={"user": {"is": {"tenantId": t.id}}})
-        class_count = await db.academicclass.count(where={"tenantId": t.id})
+        class_count = await db.studentgroup.count(where={"tenantId": t.id, "status": "ACTIVE"})
         department_count = await db.department.count(where={"tenantId": t.id})
         subject_count = await db.subject.count(where={"tenantId": t.id})
-        active_sessions_count = await db.session.count(
-            where={"academicClass": {"is": {"tenantId": t.id}}, "isActive": True}
+        active_sessions_count = await db.classoccurrence.count(
+            where={
+                "tenantId": t.id,
+                "verificationActive": True,
+                "verificationExpires": {"gt": datetime.now(timezone.utc)},
+            }
         )
-        total_attendance_count = await db.attendance.count(
-            where={"session": {"is": {"academicClass": {"is": {"tenantId": t.id}}}}}
-        )
+        total_attendance_count = await db.attendancerecord.count(where={"tenantId": t.id})
 
         return TenantDetailResponse(
             id=t.id,

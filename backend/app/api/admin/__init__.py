@@ -2,7 +2,6 @@ from fastapi import APIRouter, Depends
 
 from app.api.admin.batches import router as batches_router
 from app.api.admin.class_management import router as class_management_router
-from app.api.admin.classes import router as classes_router
 from app.api.admin.classrooms import router as classrooms_router
 from app.api.admin.departments import router as departments_router
 from app.api.admin.designations import router as designations_router
@@ -19,7 +18,6 @@ router = APIRouter(prefix="/admin", tags=["Admin System Operations"], dependenci
 
 router.include_router(students_router)
 router.include_router(teachers_router)
-router.include_router(classes_router)
 router.include_router(class_management_router)
 router.include_router(departments_router)
 router.include_router(batches_router)

@@ -22,7 +22,7 @@ export default function AdminQuickActions(): React.ReactElement {
     {
       label: "Class Schedules",
       description: "Review classes and their schedules.",
-      href: "/admin/classes",
+      href: "/admin/class-management",
       icon: <BookOpen size={18} className="text-[#526f78]" />,
     },
     {

@@ -1,7 +1,6 @@
 export type BulkImportEntityType =
   | "students"
   | "teachers"
-  | "classes"
   | "departments"
   | "subjects"
   | "classrooms"
@@ -11,10 +10,8 @@ export interface ParsedBulkRecord {
   id: string;
   email: string;
   identifier: string; // enrollment_number, employee_id, or subject_code
-  first_name: string; // first_name or class_name
-  last_name: string; // last_name or classroom_name
-  semester?: number;
-  batch?: string;
+  first_name: string; // first_name, or the name of a department, subject, classroom or designation
+  last_name: string; // last_name, or a department head
   departmentCode?: string; // students/teachers: department id, code or name
   batchCode?: string; // students: batch code within the department, e.g. CE-A-1
   isValid: boolean;

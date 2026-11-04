@@ -75,31 +75,6 @@ export interface TeacherResponse {
   invitation_sent?: boolean | null;
 }
 
-export interface ClassCreate {
-  name: string;
-  subject_id: string;
-  teacher_id: string;
-  classroom_id?: string;
-  semester?: number;
-  batch?: string;
-}
-
-export interface ClassResponse {
-  id: string;
-  name: string;
-  subject_name: string;
-  subject_code: string;
-  teacherId?: string;
-  teacher_id?: string;
-  classroom_name?: string | null;
-  semester?: number | null;
-  batch?: string | null;
-  academic_term_id?: string | null;
-  term_name?: string | null;
-  enrolled_count: number;
-  enrolled_student_ids?: string[];
-}
-
 export interface DepartmentCreate {
   name: string;
   code: string;

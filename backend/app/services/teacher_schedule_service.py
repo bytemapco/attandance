@@ -2,6 +2,7 @@ from datetime import datetime, timezone, timedelta
 from fastapi import HTTPException, status
 from app.core.datetime_utils import get_ist_today
 from app.db.client import db
+from app.services.occurrence_closer import close_occurrence, load_for_close
 from app.services.system_config_service import SystemConfigService
 
 
@@ -79,85 +80,13 @@ class TeacherScheduleService:
 
     @staticmethod
     async def stop_occurrence_attendance(tenant_id: str, faculty_id: str, user_id: str, occurrence_id: str):
-        occurrence = await db.classoccurrence.find_first(
-            where={"id": occurrence_id, "tenantId": tenant_id},
-            include={
-                "courseSection": {
-                    "include": {
-                        "enrollments": {
-                            "include": {"student": {"include": {"leaveRequests": True}}}
-                        }
-                    }
-                },
-                "attendanceRecords": True,
-            },
-        )
+        occurrence = await load_for_close(tenant_id, occurrence_id)
         if not occurrence:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Class occurrence not found.")
         if occurrence.facultyId != faculty_id and occurrence.substituteFacultyId != faculty_id:
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Unauthorized for this occurrence.")
 
-        # Deactivate verification window and lock
-        now = datetime.now(timezone.utc)
-        await db.classoccurrence.update(
-            where={"id": occurrence_id},
-            data={
-                "verificationActive": False,
-                "isAttendanceLocked": True,
-                "status": "CONDUCTED",
-            },
-        )
-
-        # Mark absent/excused for all students without a record
-        existing_student_ids = {r.studentId for r in occurrence.attendanceRecords}
-        marked_count = 0
-
-        occ_date = (
-            occurrence.date.replace(tzinfo=timezone.utc)
-            if occurrence.date.tzinfo is None
-            else occurrence.date
-        )
-
-        for enrollment in occurrence.courseSection.enrollments:
-            student = enrollment.student
-            if not student or student.id in existing_student_ids:
-                continue
-
-            on_leave = False
-            if student.leaveRequests:
-                for leave in student.leaveRequests:
-                    if leave.status == "APPROVED":
-                        l_start = leave.startDate.replace(tzinfo=timezone.utc) if leave.startDate.tzinfo is None else leave.startDate
-                        l_end = leave.endDate.replace(tzinfo=timezone.utc) if leave.endDate.tzinfo is None else leave.endDate
-                        if l_start.date() <= occ_date.date() <= l_end.date():
-                            on_leave = True
-                            break
-
-            final_status = "EXCUSED" if on_leave else "ABSENT"
-            reason_txt = "Excused via approved leave" if on_leave else "Auto-marked absent on register close"
-
-            new_rec = await db.attendancerecord.create(
-                data={
-                    "tenantId": tenant_id,
-                    "occurrenceId": occurrence_id,
-                    "studentId": student.id,
-                    "status": final_status,
-                    "method": "SYSTEM_EXCUSED" if on_leave else "MANUAL_REGISTER",
-                    "remarks": reason_txt,
-                    "verifiedAt": now,
-                }
-            )
-            await db.attendanceauditlog.create(
-                data={
-                    "attendanceRecordId": new_rec.id,
-                    "previousStatus": "ABSENT",
-                    "newStatus": final_status,
-                    "changedById": user_id,
-                    "reason": reason_txt,
-                }
-            )
-            marked_count += 1
-
+        marked_count = await close_occurrence(tenant_id, occurrence, user_id)
         return {
             "success": True,
             "occurrence_id": occurrence_id,

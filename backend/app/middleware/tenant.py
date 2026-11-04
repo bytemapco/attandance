@@ -1,204 +1,119 @@
 import contextvars
+from dataclasses import dataclass
 from typing import Optional
+
 from fastapi import Request, status
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import JSONResponse
+
+from app.core.client_ip import get_client_ip
+from app.core.config import settings
 from app.core.logging_config import get_logger
+from app.core.security import decode_session_token
+from app.core.tenancy import DEFAULT_TENANT_IDENTIFIER
+from app.services.tenant_resolver import TenantResolutionError, resolve_tenant_id
 
 logger = get_logger("app.middleware.tenant")
 
-# Thread/Async-safe context variable holding the active tenant ID for the request
+# Async-safe context variable holding the active tenant ID for the request
 current_tenant_id: contextvars.ContextVar[Optional[str]] = contextvars.ContextVar("current_tenant_id", default=None)
+
+STRICT_TENANT_HEADER = "X-Strict-Tenant-Check"
+LOCAL_HOSTS = ("localhost", "127.0.0.1", "0.0.0.0", "testserver")
+LOCAL_ENVIRONMENTS = ("development", "test")
+
+RESERVED_PLATFORM_SUBDOMAINS = (
+    "www", "api", "app", "admin", "backend", "attendance", "attendance-backend", "auth", "cdn", "static", "mail",
+)
+
+# Paths that do not require tenant resolution
+EXEMPT_PREFIXES = (
+    "/health", "/docs", "/redoc", "/openapi.json", "/api/v1/health", "/api/v1/auth", "/api/v1/super-admin",
+    "/api/v1/platform", "/ws", "/static", "/favicon.ico",
+)
 
 
 def get_current_tenant_id() -> Optional[str]:
     return current_tenant_id.get()
 
 
-RESERVED_PLATFORM_SUBDOMAINS = (
-    "www",
-    "api",
-    "app",
-    "admin",
-    "backend",
-    "attendance",
-    "attendance-backend",
-    "auth",
-    "cdn",
-    "static",
-    "mail",
-)
+@dataclass(frozen=True)
+class TokenClaims:
+    role: Optional[str] = None
+    tenant_id: Optional[str] = None
 
 
 def _is_platform_subdomain(subdomain: str) -> bool:
-    return (
-        subdomain in RESERVED_PLATFORM_SUBDOMAINS
-        or subdomain.endswith("-backend")
-        or subdomain.endswith("-api")
-    )
+    return subdomain in RESERVED_PLATFORM_SUBDOMAINS or subdomain.endswith(("-backend", "-api"))
+
+
+def _token_claims(request: Request) -> TokenClaims:
+    header = request.headers.get("Authorization", "")
+    if not header.startswith("Bearer "):
+        return TokenClaims()
+    payload = decode_session_token(header.removeprefix("Bearer ").strip())
+    if not payload:
+        return TokenClaims()
+    return TokenClaims(role=payload.get("role"), tenant_id=payload.get("tid") or payload.get("tenant_id"))
+
+
+def _subdomain_tenant(request: Request) -> Optional[str]:
+    """The institution named by a subdomain such as `<tenant>.sahaj.example.com`; None for local and platform hosts."""
+    host = request.headers.get("host", "").split(":")[0].lower()
+    if not host or host in LOCAL_HOSTS:
+        return None
+    parts = host.split(".")
+    if len(parts) < 3:
+        return None
+    if not _is_platform_subdomain(parts[0]):
+        return parts[0]
+    if len(parts) >= 4 and not _is_platform_subdomain(parts[1]):
+        return parts[1]
+    return None
+
+
+def _forbidden(detail: str) -> JSONResponse:
+    return JSONResponse(status_code=status.HTTP_403_FORBIDDEN, content={"detail": detail})
+
+
+def _missing_tenant_identifier(request: Request) -> Optional[str]:
+    """Local development and tests fall back to a default institution; anywhere else the tenant must be named."""
+    if settings.ENVIRONMENT in LOCAL_ENVIRONMENTS and not request.headers.get(STRICT_TENANT_HEADER):
+        return DEFAULT_TENANT_IDENTIFIER
+    return None
 
 
 class TenantResolutionMiddleware(BaseHTTPMiddleware):
-    # Paths that do not require tenant resolution
-    EXEMPT_PREFIXES = (
-        "/health",
-        "/docs",
-        "/redoc",
-        "/openapi.json",
-        "/api/v1/health",
-        "/api/v1/auth",
-        "/api/v1/super-admin",
-        "/api/v1/platform",
-        "/ws",
-        "/static",
-        "/favicon.ico",
-    )
-
     async def dispatch(self, request: Request, call_next):
-        # 1. Skip exempt paths
-        if any(request.url.path.startswith(prefix) for prefix in self.EXEMPT_PREFIXES):
+        if request.url.path.startswith(EXEMPT_PREFIXES):
             return await call_next(request)
 
-        # 2. Extract tenant and role from JWT token if present
-        jwt_tenant_id: Optional[str] = None
-        user_role: Optional[str] = None
-        auth_header = request.headers.get("Authorization")
-        if auth_header and auth_header.startswith("Bearer "):
-            try:
-                from app.core.security import decode_access_token
+        claims = _token_claims(request)
+        if claims.role == "SUPER_ADMIN":
+            return await call_next(request)
 
-                token = auth_header.split(" ")[1]
-                payload = decode_access_token(token)
-                if payload:
-                    user_role = payload.get("role")
-                    if user_role == "SUPER_ADMIN":
-                        return await call_next(request)
-                    jwt_tenant_id = payload.get("tid") or payload.get("tenant_id")
-            except Exception as decode_err:
-                logger.debug("Failed extracting JWT payload in tenant middleware: %s", decode_err)
-
-        # 3. Extract tenant identifier from explicit header or platform subdomain
-        explicit_header_tid = request.headers.get("X-Tenant-ID")
-
-        # 4. Enforce strict cryptographic binding: Prevent Tenant Spoofing
-        if jwt_tenant_id and explicit_header_tid and jwt_tenant_id != explicit_header_tid:
-            client_ip = request.headers.get("X-Forwarded-For", "").split(",")[0].strip() or (
-                request.client.host if request.client else "unknown"
-            )
+        # The tenant in a signed token wins over the header, and the two may not disagree.
+        header_tenant = request.headers.get("X-Tenant-ID")
+        if claims.tenant_id and header_tenant and claims.tenant_id != header_tenant:
             logger.warning(
                 "Security Alert: Tenant mismatch. Token tid=%s vs Header tid=%s from IP=%s",
-                jwt_tenant_id,
-                explicit_header_tid,
-                client_ip,
+                claims.tenant_id, header_tenant, get_client_ip(request),
             )
+            return _forbidden("Access forbidden: Cross-tenant context manipulation detected.")
+
+        identifier = claims.tenant_id or header_tenant or _subdomain_tenant(request) or _missing_tenant_identifier(request)
+        if not identifier:
             return JSONResponse(
-                status_code=status.HTTP_403_FORBIDDEN,
-                content={"detail": "Access forbidden: Cross-tenant context manipulation detected."},
+                status_code=status.HTTP_400_BAD_REQUEST,
+                content={"detail": "Tenant context missing. Provide 'X-Tenant-ID' header or subdomain."},
             )
-
-        header_tenant_id = explicit_header_tid
-        if not header_tenant_id:
-            host_header = request.headers.get("host", "").split(":")[0].lower()
-            if host_header and host_header not in ("localhost", "127.0.0.1", "0.0.0.0", "testserver"):
-                parts = host_header.split(".")
-                if len(parts) >= 3:
-                    if not _is_platform_subdomain(parts[0]):
-                        header_tenant_id = parts[0]
-                    elif len(parts) >= 4 and not _is_platform_subdomain(parts[1]):
-                        header_tenant_id = parts[1]
-
-        tenant_identifier = jwt_tenant_id or header_tenant_id
-
-        # 5. If tenant identifier is still missing:
-        if not tenant_identifier:
-            if request.url.path.startswith("/api/v1/auth/"):
-                return await call_next(request)
-            import os
-            from app.core.config import settings
-
-            env = getattr(settings, "ENVIRONMENT", os.getenv("ENVIRONMENT", "development"))
-            if env in ("development", "test") and not request.headers.get("X-Strict-Tenant-Check"):
-                tenant_identifier = "default-institution"
-            else:
-                return JSONResponse(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    content={"detail": "Tenant context missing. Provide 'X-Tenant-ID' header or subdomain."},
-                )
-
-        # 6. Resolve tenant via Redis cache or Database
-        resolved_tenant_id = None
         try:
-            from app.db.redis import get_redis
+            tenant_id = await resolve_tenant_id(identifier)
+        except TenantResolutionError as err:
+            return JSONResponse(status_code=err.status_code, content={"detail": err.detail})
 
-            redis = get_redis()
-            cached_val = await redis.get(f"tenant:resolved:{tenant_identifier}")
-            if cached_val:
-                if cached_val.startswith("SUSPENDED:"):
-                    return JSONResponse(
-                        status_code=status.HTTP_403_FORBIDDEN,
-                        content={"detail": "Tenant account is currently suspended."},
-                    )
-                elif cached_val.startswith("ACTIVE:"):
-                    resolved_tenant_id = cached_val[len("ACTIVE:") :]
-                else:
-                    # Legacy bare ID — treat as ACTIVE
-                    resolved_tenant_id = cached_val
-        except Exception as cache_err:
-            logger.debug("Could not read tenant resolution cache: %s", cache_err)
-
-        if not resolved_tenant_id:
-            try:
-                from app.db.client import db
-
-                tenant = await db.tenant.find_first(
-                    where={
-                        "OR": [
-                            {"id": tenant_identifier},
-                            {"slug": tenant_identifier},
-                        ]
-                    }
-                )
-                if not tenant:
-                    import os
-
-                    if os.getenv("ENVIRONMENT") == "test":
-                        resolved_tenant_id = tenant_identifier
-                    else:
-                        return JSONResponse(
-                            status_code=status.HTTP_404_NOT_FOUND,
-                            content={"detail": f"Tenant '{tenant_identifier}' not found."},
-                        )
-                elif tenant.status != "ACTIVE":
-                    return JSONResponse(
-                        status_code=status.HTTP_403_FORBIDDEN,
-                        content={"detail": f"Tenant account is currently {tenant.status.lower()}."},
-                    )
-                else:
-                    resolved_tenant_id = tenant.id
-                    try:
-                        from app.db.redis import get_redis
-
-                        await get_redis().setex(
-                            f"tenant:resolved:{tenant_identifier}", 3600, f"ACTIVE:{resolved_tenant_id}"
-                        )
-                    except Exception as cache_err:
-                        logger.debug("Could not set tenant resolution cache: %s", cache_err)
-            except Exception as e:
-                logger.error("Error resolving tenant: %s", e)
-                import os
-
-                if os.getenv("ENVIRONMENT") == "test":
-                    resolved_tenant_id = tenant_identifier
-                else:
-                    return JSONResponse(
-                        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                        content={"detail": "Unable to verify tenant state."},
-                    )
-
-        # 7. Bind tenant ID to context for downstream execution
-        token = current_tenant_id.set(resolved_tenant_id)
+        token = current_tenant_id.set(tenant_id)
         try:
-            response = await call_next(request)
-            return response
+            return await call_next(request)
         finally:
             current_tenant_id.reset(token)

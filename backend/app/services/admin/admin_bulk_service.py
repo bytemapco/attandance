@@ -1,4 +1,5 @@
 from typing import Optional
+from app.core.tenancy import is_real_tenant
 from app.db.client import db
 from app.services.admin.bulk_import_service import BulkImportService
 from app.services.admin.infrastructure_bulk_service import InfrastructureBulkImportService
@@ -7,23 +8,16 @@ from app.services.admin.infrastructure_bulk_service import InfrastructureBulkImp
 class AdminBulkService:
     @staticmethod
     async def bulk_create_students(students: list, send_invite: bool = True, actor: str = "system", ip: Optional[str] = None, tenant_id: Optional[str] = None) -> dict:
-        res = await BulkImportService.bulk_create_students(students, send_invite=send_invite, tenant_id=tenant_id)
+        res = await BulkImportService.bulk_create_students(students, tenant_id=tenant_id, send_invite=send_invite)
         if res["imported_count"] > 0:
             await AdminBulkService._log("BULK_IMPORT_STUDENTS", actor, f"Bulk imported {res['imported_count']} students", ip, tenant_id)
         return res
 
     @staticmethod
     async def bulk_create_teachers(teachers: list, send_invite: bool = True, actor: str = "system", ip: Optional[str] = None, tenant_id: Optional[str] = None) -> dict:
-        res = await BulkImportService.bulk_create_teachers(teachers, send_invite=send_invite, tenant_id=tenant_id)
+        res = await BulkImportService.bulk_create_teachers(teachers, tenant_id=tenant_id, send_invite=send_invite)
         if res["imported_count"] > 0:
             await AdminBulkService._log("BULK_IMPORT_TEACHERS", actor, f"Bulk imported {res['imported_count']} faculty", ip, tenant_id)
-        return res
-
-    @staticmethod
-    async def bulk_create_classes(classes: list, actor: str = "system", ip: Optional[str] = None, tenant_id: Optional[str] = None) -> dict:
-        res = await BulkImportService.bulk_create_classes(classes, tenant_id=tenant_id)
-        if res["imported_count"] > 0:
-            await AdminBulkService._log("BULK_IMPORT_CLASSES", actor, f"Bulk imported {res['imported_count']} classes", ip, tenant_id)
         return res
 
     @staticmethod
@@ -57,6 +51,6 @@ class AdminBulkService:
     @staticmethod
     async def _log(event_type: str, actor: str, desc: str, ip: Optional[str], tenant_id: Optional[str]) -> None:
         log_data = {"eventType": event_type, "severity": "INFO", "actor": actor, "target": "SYSTEM", "description": desc, "ipAddress": ip}
-        if tenant_id and tenant_id != "default-institution":
+        if is_real_tenant(tenant_id):
             log_data["tenantId"] = tenant_id
         await db.auditlog.create(data=log_data)

@@ -2,6 +2,7 @@ from typing import Optional
 from urllib.parse import urlparse
 from fastapi import Request
 from app.core.config import settings
+from app.middleware.request_logging import get_current_request
 
 
 def resolve_frontend_url(request: Optional[Request] = None, fallback_url: Optional[str] = None) -> str:
@@ -12,7 +13,6 @@ def resolve_frontend_url(request: Optional[Request] = None, fallback_url: Option
     """
     if request is None:
         try:
-            from app.middleware.request_logging import get_current_request
             request = get_current_request()
         except Exception:
             request = None

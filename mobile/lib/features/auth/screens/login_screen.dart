@@ -5,6 +5,7 @@ import 'package:smart_attendance_app/domain/enums/auth_state.dart';
 import 'package:smart_attendance_app/features/auth/providers/auth_provider.dart';
 import 'package:smart_attendance_app/features/auth/widgets/auth_hero_section.dart';
 import 'package:smart_attendance_app/features/auth/widgets/auth_identifier_step.dart';
+import 'package:smart_attendance_app/features/auth/widgets/auth_institution_code_field.dart';
 import 'package:smart_attendance_app/features/auth/widgets/auth_password_step.dart';
 import 'package:smart_attendance_app/shared/widgets/fade_slide_transition.dart';
 import 'package:smart_attendance_app/shared/widgets/loading_overlay.dart';
@@ -23,6 +24,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _passwordFormKey = GlobalKey<FormState>();
   final _identifierController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _institutionController = TextEditingController();
   final _identifierFocusNode = FocusNode();
   final _passwordFocusNode = FocusNode();
 
@@ -33,6 +35,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   void dispose() {
     _identifierController.dispose();
     _passwordController.dispose();
+    _institutionController.dispose();
     _identifierFocusNode.dispose();
     _passwordFocusNode.dispose();
     super.dispose();
@@ -46,9 +49,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   Future<void> _handleLogin() async {
     if (!_passwordFormKey.currentState!.validate()) return;
-    await ref
-        .read(authProvider.notifier)
-        .login(_identifierController.text.trim(), _passwordController.text);
+    await ref.read(authProvider.notifier).login(
+      _identifierController.text.trim(),
+      _passwordController.text,
+      tenantSlug: _institutionController.text.trim().toLowerCase(),
+    );
   }
 
   @override
@@ -179,6 +184,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         },
         isLoading: isLoading,
         errorMessage: authState.errorMessage,
+        institutionCodeField: authState.needsInstitutionCode
+            ? AuthInstitutionCodeField(
+                controller: _institutionController,
+                onSubmit: _handleLogin,
+              )
+            : null,
         onBackPressed: () {
           setState(() => _step = _LoginStep.identifier);
         },

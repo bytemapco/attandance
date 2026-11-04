@@ -8,7 +8,7 @@ import GlassButton from "@/components/ui/GlassButton";
 import GlassInput from "@/components/ui/GlassInput";
 import GlassTable, { type TableColumn } from "@/components/ui/GlassTable";
 import AddStudentsPanel from "./AddStudentsPanel";
-import ReasonDialog from "./ReasonDialog";
+import ReasonDialog from "@/components/ui/ReasonDialog";
 import type { ClassDetail, ClassMemberItem } from "@/types";
 
 type MemberRow = ClassMemberItem & Record<string, unknown>;

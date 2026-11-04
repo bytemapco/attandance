@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Literal, Optional
+from typing import Optional
 from pydantic import BaseModel, Field, ConfigDict
 
 
@@ -38,20 +38,3 @@ class AttendanceAnalyzeResponse(BaseModel):
     final_ai_score: Optional[float] = Field(..., description="Mean of the checks that ran (0.0 to 1.0), null if none ran")
     predicted_status: str = Field(..., description="'Present' or 'Flagged' — what would be saved on confirm")
     review_token: str = Field(..., description="Short-lived signed token to confirm submission without re-running AI")
-
-
-class AttendanceAsyncEnqueueResponse(BaseModel):
-    job_id: str = Field(..., description="Unique UUID of the queued attendance job")
-    status: str = Field("PENDING", description="Current status: PENDING")
-    message: str = Field("Attendance submission queued for verification", description="Informational message")
-
-
-class AttendanceJobStatusResponse(BaseModel):
-    job_id: str
-    student_id: str
-    session_id: str
-    status: Literal["PENDING", "PROCESSING", "COMPLETED", "FAILED"]
-    created_at: Optional[str] = None
-    updated_at: Optional[str] = None
-    result: Optional[dict] = None
-    error: Optional[str] = None

@@ -207,10 +207,9 @@ app.*.map.json
 *.aab
 
 # ------------------------------------------------------------------------------
-# 8. Temporary & Knowledge Graph Caches
+# 8. Temporary Files & Caches
 # ------------------------------------------------------------------------------
 temp/
 tmp/
 .reticle/
 .kilo/
-graphify-out/

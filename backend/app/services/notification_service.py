@@ -1,9 +1,39 @@
 from typing import Any, Dict, List, Optional
 
+from app.core.tenancy import is_real_tenant
 from app.core.logging_config import get_logger
 from app.db.client import db
+from app.services.connection_manager import manager
 
 logger = get_logger("app.notification")
+
+
+def _record(notif) -> Dict[str, Any]:
+    return {
+        "id": notif.id,
+        "user_id": notif.userId,
+        "role": notif.role,
+        "tenant_id": notif.tenantId,
+        "title": notif.title,
+        "message": notif.message,
+        "type": notif.type,
+        "category": notif.category,
+        "link": notif.link,
+        "is_read": notif.isRead,
+        "created_at": notif.createdAt,
+    }
+
+
+async def _push_to_clients(record: Dict[str, Any], user_id: Optional[str], role: Optional[str], tenant_id: Optional[str]) -> None:
+    """Delivers a new notification to connected clients. A client that cannot be reached still finds it in its inbox."""
+    payload = {"event": "NOTIFICATION_RECEIVED", "data": {**record, "created_at": record["created_at"].isoformat()}}
+    try:
+        if user_id:
+            await manager.send_personal_message(payload, user_id)
+        else:
+            await manager.broadcast(payload, target_role=role, tenant_id=tenant_id)
+    except Exception as exc:
+        logger.debug("WebSocket notification broadcast skipped: %s", exc)
 
 
 async def create_in_app_notification(
@@ -27,51 +57,14 @@ async def create_in_app_notification(
             "link": link,
             "isRead": False,
         }
-        if tenant_id and tenant_id != "default-institution":
+        if is_real_tenant(tenant_id):
             notif_data["tenantId"] = tenant_id
 
         notif = await db.notification.create(data=notif_data)
 
-        # Broadcast real-time event via WebSocket
-        try:
-            from app.api.websocket import manager
-
-            payload = {
-                "event": "NOTIFICATION_RECEIVED",
-                "data": {
-                    "id": notif.id,
-                    "user_id": notif.userId,
-                    "role": notif.role,
-                    "tenant_id": getattr(notif, "tenantId", None),
-                    "title": notif.title,
-                    "message": notif.message,
-                    "type": notif.type,
-                    "category": notif.category,
-                    "link": notif.link,
-                    "is_read": notif.isRead,
-                    "created_at": notif.createdAt.isoformat(),
-                },
-            }
-            if user_id:
-                await manager.send_personal_message(payload, user_id)
-            else:
-                await manager.broadcast(payload, target_role=role, tenant_id=tenant_id)
-        except Exception as ws_err:
-            logger.debug("WebSocket notification broadcast skipped: %s", ws_err)
-
-        return {
-            "id": notif.id,
-            "user_id": notif.userId,
-            "role": notif.role,
-            "tenant_id": getattr(notif, "tenantId", None),
-            "title": notif.title,
-            "message": notif.message,
-            "type": notif.type,
-            "category": notif.category,
-            "link": notif.link,
-            "is_read": notif.isRead,
-            "created_at": notif.createdAt,
-        }
+        record = _record(notif)
+        await _push_to_clients(record, user_id, role, tenant_id)
+        return record
     except Exception as err:
         logger.error("Failed to create in-app notification: %s", err, exc_info=True)
         return {}
@@ -89,7 +82,7 @@ async def get_user_notifications(
     recipient_filter = {"OR": [{"userId": user_id}, {"role": user_role}, {"role": None}]}
     where_conditions: List[Dict[str, Any]] = [recipient_filter]
 
-    if tenant_id and tenant_id != "default-institution" and user_role != "SUPER_ADMIN":
+    if is_real_tenant(tenant_id) and user_role != "SUPER_ADMIN":
         where_conditions.append({"OR": [{"tenantId": tenant_id}, {"tenantId": None}]})
 
     if unread_only:
@@ -214,56 +207,3 @@ async def broadcast_announcement(
         link=link,
     )
     return notif
-
-
-async def notify_teacher_attendance_flagged(
-    teacher_user_id: str, student_name: str, class_name: str, attendance_id: str
-):
-    await create_in_app_notification(
-        user_id=teacher_user_id,
-        title="Flagged Attendance Record",
-        message=f"{student_name}'s attendance for {class_name} was flagged by verification and awaits your review.",
-        type="warning",
-        category="attendance",
-        link=f"/teacher/review/{attendance_id}",
-    )
-
-
-async def notify_teacher_session_concluded(
-    teacher_user_id: str, class_name: str, session_id: str, present_count: int, total_count: int, flagged_count: int = 0
-):
-    pct = (present_count / max(1, total_count)) * 100
-    flagged_msg = f" ({flagged_count} flagged)" if flagged_count > 0 else ""
-    await create_in_app_notification(
-        user_id=teacher_user_id,
-        title=f"Session Concluded: {class_name}",
-        message=f"Attendance closed. {present_count}/{total_count} present ({pct:.1f}%){flagged_msg}.",
-        type="success" if pct >= 75 else "warning",
-        category="attendance",
-        link=f"/teacher/sessions/{session_id}",
-    )
-
-
-async def notify_teacher_leave_submitted(
-    teacher_user_id: str,
-    student_name: str,
-    class_name: Optional[str] = None,
-    leave_id: Optional[str] = None,
-    start_date: Optional[Any] = None,
-    end_date: Optional[Any] = None,
-    reason: Optional[str] = None,
-):
-    date_str = f" ({start_date} to {end_date})" if start_date and end_date else ""
-    target_str = f" for {class_name}" if class_name else ""
-    msg = f"{student_name} submitted a leave application{target_str}{date_str}."
-    if reason:
-        msg = f"{msg} Reason: {reason[:100]}"
-    link = f"/teacher/leaves?leave_id={leave_id}" if leave_id else "/teacher/leaves"
-    await create_in_app_notification(
-        user_id=teacher_user_id,
-        title="New Leave Request",
-        message=msg,
-        type="info",
-        category="leave",
-        link=link,
-    )

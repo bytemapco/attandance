@@ -93,22 +93,18 @@ export default function BulkImportPreviewTable({
             <thead className="bg-secondary/60 sticky top-0 z-10 border-b border-border backdrop-blur-xs">
               <tr className="text-muted-foreground font-semibold">
                 <th className="py-2 px-3 w-10 text-center">#</th>
-                <th className="py-2 px-3">{entityType === "classes" ? "Class Name" : "Name"}</th>
+                <th className="py-2 px-3">Name</th>
                 <th className="py-2 px-3">
                   {entityType === "students"
                     ? "Enrollment No."
                     : entityType === "teachers"
                     ? "Employee ID"
-                    : entityType === "classes"
-                    ? "Subject Code"
                     : entityType === "classrooms"
                     ? "Building"
                     : "Code"}
                 </th>
                 <th className="py-2 px-3">
-                  {entityType === "classes"
-                    ? "Teacher Email"
-                    : entityType === "departments" || entityType === "subjects" || entityType === "designations"
+                  {entityType === "departments" || entityType === "subjects" || entityType === "designations"
                     ? "Description"
                     : entityType === "classrooms"
                     ? "Building / Block"
@@ -130,7 +126,7 @@ export default function BulkImportPreviewTable({
                     {idx + 1}
                   </td>
                   <td className="py-2 px-3 font-medium text-foreground">
-                    {entityType === "departments" || entityType === "subjects" || entityType === "classrooms" || entityType === "designations" || entityType === "classes"
+                    {entityType === "departments" || entityType === "subjects" || entityType === "classrooms" || entityType === "designations"
                       ? r.first_name
                       : `${r.first_name} ${r.last_name}`}
                   </td>

@@ -1,3 +1,4 @@
+import secrets
 from datetime import datetime, timedelta, timezone
 from typing import Any
 
@@ -57,9 +58,15 @@ def decode_access_token(token: str) -> dict[str, Any] | None:
         return None
 
 
-def generate_temporary_password(length: int = 8) -> str:
-    import secrets
+def decode_session_token(token: str) -> dict[str, Any] | None:
+    """Decodes a login token. Tokens minted for another purpose (refresh, QR, review) carry a `type` claim and are refused."""
+    payload = decode_access_token(token)
+    if payload is None or "type" in payload:
+        return None
+    return payload
 
+
+def generate_temporary_password(length: int = 8) -> str:
     # Unambiguous uppercase, lowercase, and digits (no confusing chars like 0, O, 1, l, I)
     upper = "ABCDEFGHJKLMNPQRSTUVWXYZ"
     lower = "abcdefghijkmnpqrstuvwxyz"

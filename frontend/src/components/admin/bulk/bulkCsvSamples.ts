@@ -4,24 +4,17 @@ export function getSampleCsv(entityType: BulkImportEntityType): string {
   if (entityType === "students") {
     return (
       "email,enrollment_number,first_name,last_name,department_code,batch_code\n" +
-      "alex.carter@yopmail.com,STU2026001,Alex,Carter,CSE,CSE-A-1\n" +
-      "brooke.hayes@yopmail.com,STU2026002,Brooke,Hayes,CSE,CSE-A-1\n" +
-      "connor.reed@yopmail.com,STU2026003,Connor,Reed,CSE,CSE-A-2"
+      "alex.carter@example.com,STU2026001,Alex,Carter,CSE,CSE-A-1\n" +
+      "brooke.hayes@example.com,STU2026002,Brooke,Hayes,CSE,CSE-A-1\n" +
+      "connor.reed@example.com,STU2026003,Connor,Reed,CSE,CSE-A-2"
     );
   }
   if (entityType === "teachers") {
     return (
       "email,employee_id,first_name,last_name,department_code,designation_code,name_initials\n" +
-      "alan.turing@yopmail.com,FAC2026001,Alan,Turing,CSE,PROF,amt\n" +
-      "ada.lovelace@yopmail.com,FAC2026002,Ada,Lovelace,IT,ASSOC_PROF,anl\n" +
-      "grace.hopper@yopmail.com,FAC2026003,Grace,Hopper,CSE,ASST_PROF,gmh"
-    );
-  }
-  if (entityType === "classes") {
-    return (
-      "class_name,subject_code,teacher_email,classroom_name,semester,batch\n" +
-      "CS-101-A,CS101,alan.turing@yopmail.com,A-101,1,2022-2026\n" +
-      "MATH-201,MTH201,ada.lovelace@yopmail.com,B-204,3,2021-2025"
+      "alan.turing@example.com,FAC2026001,Alan,Turing,CSE,PROF,amt\n" +
+      "ada.lovelace@example.com,FAC2026002,Ada,Lovelace,IT,ASSOC_PROF,anl\n" +
+      "grace.hopper@example.com,FAC2026003,Grace,Hopper,CSE,ASST_PROF,gmh"
     );
   }
   if (entityType === "departments") {

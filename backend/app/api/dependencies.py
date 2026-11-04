@@ -4,12 +4,14 @@ from prisma.models import User, Student, Teacher
 
 from app.core.config import settings
 from app.core.logging_config import get_logger
-from app.core.security import decode_access_token
+from app.core.security import decode_session_token
 from app.core.redis_scripts import atomic_incr_expire
 from app.db.redis import safe_redis
 from app.repositories.user_repository import UserRepository
 from app.repositories.student_repository import StudentRepository
 from app.repositories.teacher_repository import TeacherRepository
+from app.services.token_revocation import ACCESS_TOKEN, ensure_not_revoked
+from app.middleware.tenant import get_current_tenant_id
 
 logger = get_logger("app.auth")
 
@@ -20,39 +22,9 @@ _FORBIDDEN = {"STUDENT": "Access forbidden: Students only", "TEACHER": "Access f
 _INACTIVE = "User account is inactive or disabled"
 
 
-async def _check_token_revoked(token: str) -> None:
-    r = safe_redis()
-    if not r:
-        if getattr(settings, "TOKEN_REVOCATION_FAIL_CLOSED", False):
-            raise HTTPException(
-                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-                detail="Authentication service temporarily unavailable due to revocation cache outage.",
-                headers={"WWW-Authenticate": "Bearer"},
-            )
-        return
-
-    try:
-        if await r.get(f"denylist:{token}"):
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Token has been revoked",
-                headers={"WWW-Authenticate": "Bearer"},
-            )
-    except HTTPException:
-        raise
-    except Exception as exc:
-        logger.critical("Security Alert: Could not check token revocation denylist in Redis: %s", exc)
-        if getattr(settings, "TOKEN_REVOCATION_FAIL_CLOSED", False):
-            raise HTTPException(
-                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-                detail="Authentication service temporarily unavailable due to revocation cache outage.",
-                headers={"WWW-Authenticate": "Bearer"},
-            )
-
-
 async def _validate_token_payload(token: str) -> dict:
-    await _check_token_revoked(token)
-    payload = decode_access_token(token)
+    await ensure_not_revoked(token, ACCESS_TOKEN)
+    payload = decode_session_token(token)
     if not payload:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -116,8 +88,8 @@ class RoleChecker:
 
 
 async def get_current_user_from_token(token: str) -> User:
-    await _check_token_revoked(token)
-    payload = decode_access_token(token)
+    await ensure_not_revoked(token, ACCESS_TOKEN)
+    payload = decode_session_token(token)
     if not payload:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Could not validate credentials")
     user_id = payload.get("sub")
@@ -142,8 +114,6 @@ async def get_tenant_context(current_user: User = Depends(get_current_user)) -> 
                 detail="User has no tenant association. Contact your platform administrator.",
             )
         return current_user.tenantId
-
-    from app.middleware.tenant import get_current_tenant_id
 
     tid = get_current_tenant_id()
     if not tid:

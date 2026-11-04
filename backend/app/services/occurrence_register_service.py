@@ -4,6 +4,7 @@ from fastapi import HTTPException, status
 from prisma.models import User
 from app.db.client import db
 from app.schemas.timetable import AttendanceRegisterItem
+from app.services.occurrence_closer import refresh_streaks
 from app.services.occurrence_generator import OccurrenceGenerator
 
 
@@ -121,7 +122,7 @@ class OccurrenceRegisterService:
         user: User,
         occurrence_id: str,
         updates: List[AttendanceRegisterItem],
-        reason: Optional[str] = "Manual faculty attendance submission",
+        reason: Optional[str] = None,
     ):
         user_id = user.id
         occurrence = await db.classoccurrence.find_first(
@@ -130,10 +131,10 @@ class OccurrenceRegisterService:
         if not occurrence:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Class occurrence not found")
         await _authorize_register_access(occurrence, user)
-        if occurrence.isAttendanceLocked:
+        if occurrence.isAttendanceLocked and not (reason and reason.strip()):
             raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="Attendance register for this class is locked and cannot be modified.",
+                status_code=status.HTTP_409_CONFLICT,
+                detail="This register is locked. Give a reason to change it; the change is kept in the audit log.",
             )
 
         student_ids = {item.student_id for item in updates}
@@ -196,8 +197,11 @@ class OccurrenceRegisterService:
                 )
                 updated_count += 1
 
-        await db.classoccurrence.update(
-            where={"id": occurrence_id},
-            data={"status": "CONDUCTED", "conductedAt": datetime.now()},
-        )
+        if occurrence.isAttendanceLocked:
+            await refresh_streaks(student_ids)
+        else:
+            await db.classoccurrence.update(
+                where={"id": occurrence_id},
+                data={"status": "CONDUCTED", "conductedAt": datetime.now()},
+            )
         return {"success": True, "occurrence_id": occurrence_id, "records_processed": updated_count}

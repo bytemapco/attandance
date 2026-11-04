@@ -3,6 +3,7 @@ import csv
 from datetime import datetime
 from typing import Optional
 from app.db.client import db
+from app.services.attendance_percentage import ATTENDED_STATUSES, percentage
 
 
 class AuditExportService:
@@ -72,28 +73,20 @@ class AuditExportService:
 
     @staticmethod
     async def get_stats(tenant_id: Optional[str] = None) -> dict:
-        user_where = {"tenantId": tenant_id} if tenant_id else {}
-        class_where = {"tenantId": tenant_id} if tenant_id else {}
-        total_students = await db.student.count(where={"user": {"is": user_where}} if tenant_id else {})
-        total_teachers = await db.teacher.count(where={"user": {"is": user_where}} if tenant_id else {})
-        total_classes = await db.academicclass.count(where=class_where)
-        attendance_where = {"student": {"is": {"user": {"is": user_where}}}} if tenant_id else {}
-        total_attendance = await db.attendance.count(where=attendance_where)
-        passed_where = {"status": {"in": ["Present", "Late", "Approved"]}}
-        if tenant_id:
-            passed_where["student"] = {"is": {"user": {"is": user_where}}}
-        passed_attendance = await db.attendance.count(where=passed_where)
+        scope = {"tenantId": tenant_id} if tenant_id else {}
+        total_students = await db.student.count(where=scope)
+        total_teachers = await db.teacher.count(where=scope)
+        total_classes = await db.studentgroup.count(where={**scope, "status": "ACTIVE"})
+        total_attendance = await db.attendancerecord.count(where=scope)
 
-        pass_rate = 0.0
-        if total_attendance > 0:
-            pass_rate = round((passed_attendance / total_attendance) * 100.0, 1)
+        attended = await db.attendancerecord.count(where={**scope, "status": {"in": sorted(ATTENDED_STATUSES)}})
 
         return {
             "studentCount": total_students,
             "teacherCount": total_teachers,
             "classCount": total_classes,
             "attendanceCount": total_attendance,
-            "biometricPassRate": pass_rate,
+            "attendanceRate": percentage(attended, total_attendance) or 0.0,
         }
 
     @staticmethod

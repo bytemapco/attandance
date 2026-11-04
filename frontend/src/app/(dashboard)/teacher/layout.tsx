@@ -3,7 +3,7 @@ import React from "react";
 
 export const metadata: Metadata = {
   title: "Faculty Workspace",
-  description: "Course management, session initialization, liveness verification review, and student analytics.",
+  description: "Course management, taking attendance, verifying flagged marks, and student analytics.",
 };
 
 export default function TeacherLayout({ children }: { children: React.ReactNode }): React.ReactElement {

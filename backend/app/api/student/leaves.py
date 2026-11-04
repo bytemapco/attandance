@@ -14,7 +14,7 @@ from app.api.student.helpers import (
 from app.db.client import db
 from app.repositories.leave_repository import LeaveRepository
 from app.schemas.leave import LeaveRequestListResponse, LeaveRequestResponse
-from app.services.notification_service import notify_teacher_leave_submitted
+from app.services.teacher_notifications import notify_teacher_leave_submitted
 from app.services.s3_service import s3_service
 
 router = APIRouter()
@@ -68,7 +68,7 @@ async def create_leave_request(
         s_date = date.fromisoformat(start_date)
         e_date = date.fromisoformat(end_date)
     except ValueError:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid date format. Use YYYY-MM-DD.")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid date format. Use YYYY-MM-DD.") from None
     if e_date < s_date:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="End date must be after or equal to start date.")
     reason = reason.strip()
@@ -88,9 +88,10 @@ async def create_leave_request(
             document_url = s3_service.upload_bytes(contents, key, content_type=document.content_type or "application/octet-stream")
         except Exception as exc:
             logger.error("Could not upload leave document: %s", exc)
-            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Could not save document.")
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Could not save document.") from exc
 
     leave = await leave_repo.create({
+        "tenantId": student.tenantId,
         "studentId": student.id,
         "startDate": datetime.combine(s_date, datetime.min.time()).replace(tzinfo=timezone.utc),
         "endDate": datetime.combine(e_date, datetime.max.time()).replace(tzinfo=timezone.utc),
@@ -100,22 +101,26 @@ async def create_leave_request(
     })
 
     try:
-        enrollments = await db.enrollment.find_many(where={"studentId": student.id}, include={"academicClass": {"include": {"teacher": True}}})
+        enrollments = await db.courseenrollment.find_many(
+            where={"studentId": student.id, "status": "ACTIVE", "endedAt": None},
+            include={"courseSection": {"include": {"faculties": {"include": {"teacher": True}}}}},
+        )
         notified_teachers = set()
         for enr in enrollments:
-            if enr.academicClass and enr.academicClass.teacher and enr.academicClass.teacher.userId:
-                t_user_id = enr.academicClass.teacher.userId
-                if t_user_id not in notified_teachers:
-                    notified_teachers.add(t_user_id)
-                    await notify_teacher_leave_submitted(
-                        teacher_user_id=t_user_id,
-                        student_name=resolve_student_name(student),
-                        class_name=enr.academicClass.name if enr.academicClass else None,
-                        leave_id=leave.id,
-                        start_date=start_date,
-                        end_date=end_date,
-                        reason=reason,
-                    )
+            for faculty in enr.courseSection.faculties or []:
+                t_user_id = faculty.teacher.userId
+                if t_user_id in notified_teachers:
+                    continue
+                notified_teachers.add(t_user_id)
+                await notify_teacher_leave_submitted(
+                    teacher_user_id=t_user_id,
+                    student_name=resolve_student_name(student),
+                    class_name=enr.courseSection.name,
+                    leave_id=leave.id,
+                    start_date=start_date,
+                    end_date=end_date,
+                    reason=reason,
+                )
     except Exception as exc:
         logger.warning("Failed to notify teachers of leave: %s", exc)
 

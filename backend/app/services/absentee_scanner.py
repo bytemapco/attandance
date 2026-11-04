@@ -48,7 +48,7 @@ def _run_isolation_forest(attendance_records: List[Dict[str, Any]], contaminatio
             logger.error("Missing required columns in attendance records. Required: %s", _REQUIRED_COLS)
             return []
 
-        absences = df[df["status"] == "Absent"]
+        absences = df[df["status"] == "ABSENT"]
         if absences.empty:
             return []
 

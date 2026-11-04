@@ -64,7 +64,6 @@ Use a skill only when the task matches. Do not load skills "just in case".
 
 | Task | Skill |
 |---|---|
-| Codebase / architecture question | `graphify` (query `graphify-out/` first; run `graphify update .` after code changes) |
 | Library / framework / SDK / CLI docs (Next, Prisma, FastAPI, Flutter packages…) | Context7 MCP (`context7-mcp`) |
 | Flutter UI: new screen / redesign | `flutter-design` (routes to the rest) |
 | Flutter UI: build approved design | `flutter-implementation` |
@@ -111,7 +110,7 @@ Bug fix → write a failing test first when practical. Attendance logic changes 
 
 ## 8. Class Management Feature (Implemented Oct 2026)
 
-Admin page for creating and managing classes across departments and batches. A class is a `StudentGroup` (department + batch) with a plain `semester` number (1–8) that an admin edits. There is no academic year, semester table, class term, or promotion. See [SUMMARY.md](SUMMARY.md) for the feature overview.
+Admin page for creating and managing classes across departments and batches. A class is a `StudentGroup` (department + batch) with a plain `semester` number (1–8) that an admin edits. There is no academic year, semester table, class term, or promotion. See [docs/SUMMARY.md](docs/SUMMARY.md) for the feature overview.
 
 ### Key Implementation Patterns
 
@@ -186,5 +185,16 @@ Admin page for creating and managing classes across departments and batches. A c
 - ✅ A teacher can start a class that is not scheduled: it is recorded as a one-hour class starting now
 - ✅ A day off is a cancelled occurrence. Holiday calendar and a shared time slot list are post-v1 (PRD section 10)
 - ✅ Migration: `prisma/migrations/20261101300000_remove_time_slots_and_holidays/`
+
+**Nov 2 (v1 hardening):**
+- ❌ Legacy `AcademicClass`, `Enrollment`, `Session`, `Geofence`, `Attendance`, `StudentBiometric` tables, the `/admin/classes` API and web pages, and the old async-mark pipeline. Everything runs on `CourseSection → ClassOccurrence → AttendanceRecord`.
+- ✅ `enrollmentNumber` and `employeeId` are unique **per tenant**. Login by such an ID can match several institutions: `services/login_identity.py` picks the account whose password matches, else answers 409 asking for `tenant_slug` (mobile shows an "Institution code" field).
+- ✅ `tenant_id` is NOT NULL on tenant tables (only a `SUPER_ADMIN` user has none, enforced by a CHECK). A DB trigger (`enforce_same_tenant`) refuses rows that link records of two tenants. These triggers and CHECKs live in SQL only, not in `schema.prisma`; `prisma migrate dev` would drop them.
+- ✅ Attendance history cannot be deleted by deleting a student, lesson or institution (`NO ACTION` foreign keys). Deactivate users instead; deleting an institution with attendance is refused (409).
+- ✅ Biometric consent is the `biometric_consents` table (one active grant per student, revoking deletes the face template). It was only in Redis before.
+- ✅ A closed register can be corrected **with a reason** (audited). Closing (by teacher or by the scheduler when the window ends) records absent/excused for everyone without a mark and refreshes streaks. Streaks and stats count only closed classes (`services/student_class_ledger.py`).
+- Migrations: `20261102000000_schema_hardening/`, `20261102010000_retire_legacy_attendance/`. Both are applied by hand to the dev DB, like the earlier ones.
+- Database reset: `backend/scripts/reset_database.py --force-destructive-wipe --confirm-target-db=<db>` wipes the local DB and initializes a clean schema with a default superadmin account.
+- Not built (needs a policy decision, PRD §13): per-programme thresholds, condonation workflow, guardians.
 
 ---

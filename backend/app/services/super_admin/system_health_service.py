@@ -15,8 +15,10 @@ class SystemHealthService:
         active_tenants = await db.tenant.count(where={"status": "ACTIVE"})
         total_students = await db.student.count()
         total_teachers = await db.teacher.count()
-        active_sessions = await db.session.count(where={"isActive": True})
-        total_attendance = await db.attendance.count()
+        active_sessions = await db.classoccurrence.count(
+            where={"verificationActive": True, "verificationExpires": {"gt": datetime.now(timezone.utc)}}
+        )
+        total_attendance = await db.attendancerecord.count()
         return SuperAdminStatsResponse(
             total_tenants=total_tenants,
             active_tenants=active_tenants,

@@ -35,7 +35,7 @@ class AdminStatsResponse(BaseModel):
     teacherCount: int
     classCount: int
     attendanceCount: int = 0
-    biometricPassRate: float = 0.0
+    attendanceRate: float = 0.0
 
 
 class StudentFilterFacetsResponse(BaseModel):

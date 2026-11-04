@@ -3,7 +3,7 @@ export function humanizeImportError(errorMsg: string): string {
 
   // Clean up Pydantic validation paths like "teachers.0.department_id: Field required"
   const pydanticMatch = errorMsg.match(
-    /^(?:teachers|students|classes|departments|subjects|classrooms|designations)\.(\d+)\.([a-zA-Z_]+):\s*(.*)$/i
+    /^(?:teachers|students|departments|subjects|classrooms|designations)\.(\d+)\.([a-zA-Z_]+):\s*(.*)$/i
   );
   if (pydanticMatch) {
     const rowNum = parseInt(pydanticMatch[1], 10) + 1;

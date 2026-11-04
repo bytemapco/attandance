@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from prisma.models import User
 
-from app.api.admin.helpers import get_client_ip, handle_generic_err, require_teacher_in_tenant
+from app.core.client_ip import get_client_ip
+from app.api.admin.helpers import handle_generic_err
 from app.api.dependencies import get_current_user, get_tenant_context
 from app.core.rate_limit import rate_limiter
 from app.core.url_resolver import resolve_frontend_url
@@ -114,9 +115,8 @@ async def update_teacher(
     current_user: User = Depends(get_current_user),
     admin_service: AdminService = Depends(),
 ):
-    await require_teacher_in_tenant(id, tenant_id)
     return await admin_service.update_teacher(
-        id, data.model_dump(exclude_unset=True), actor=current_user.email, ip=get_client_ip(request)
+        id, data.model_dump(exclude_unset=True), actor=current_user.email, ip=get_client_ip(request), tenant_id=tenant_id
     )
 
 
@@ -145,6 +145,6 @@ async def trigger_user_password_reset(
             message="Password reset instructions dispatched to the user's registered email address.",
         )
     except ValueError as err:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(err))
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(err)) from err
     except Exception as err:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(err))
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(err)) from err

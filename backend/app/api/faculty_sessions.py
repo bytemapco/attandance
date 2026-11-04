@@ -4,7 +4,7 @@ from prisma.models import Teacher
 from app.api.dependencies import get_current_teacher, get_tenant_context
 from app.db.client import db
 from app.schemas.teacher.class_session import ClassSessionStartResponse, OccurrenceQrResponse, TeacherClassResponse
-from app.schemas.teacher.overview import ClassAnalyticsResponse, FlaggedRecordResponse, HistoryItemResponse
+from app.schemas.teacher.overview import FlaggedRecordResponse, HistoryItemResponse
 from app.services import occurrence_qr_service, teacher_class_session_service, teacher_overview_service
 
 router = APIRouter(prefix="/faculty", tags=["Faculty Classes & Attendance Sessions"])
@@ -64,12 +64,3 @@ async def list_flagged_records(
 ) -> list[FlaggedRecordResponse]:
     rows = await teacher_overview_service.list_flagged(tenant_id or current_teacher.tenantId, current_teacher)
     return [FlaggedRecordResponse(**row) for row in rows]
-
-
-@router.get("/analytics", response_model=list[ClassAnalyticsResponse])
-async def class_analytics(
-    current_teacher: Teacher = Depends(get_current_teacher),
-    tenant_id: str = Depends(get_tenant_context),
-) -> list[ClassAnalyticsResponse]:
-    rows = await teacher_overview_service.class_analytics(tenant_id or current_teacher.tenantId, current_teacher)
-    return [ClassAnalyticsResponse(**row) for row in rows]

@@ -56,6 +56,8 @@ export default function StudentsPage(): React.ReactElement {
     extraParams,
   });
 
+  const hasFilters = searchQuery.trim() !== "" || department !== "all" || semester !== "all" || batch !== "all" || status !== "all";
+
   useEffect(() => {
     async function loadMetadata(): Promise<void> {
       try {
@@ -166,7 +168,11 @@ export default function StudentsPage(): React.ReactElement {
           sortBy={sortBy}
           sortOrder={sortOrder}
           onSortChange={handleSort}
-          emptyMessage="No students found"
+          emptyMessage={
+            hasFilters
+              ? "No students match these filters."
+              : "No students yet. Add one, or import a CSV to add many at once."
+          }
         />
         <EnterprisePagination
           totalItems={totalItems}

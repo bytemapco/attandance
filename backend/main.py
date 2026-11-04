@@ -20,6 +20,7 @@ hardware_manager.initialize(
 from app.db.client import connect_db, disconnect_db
 from app.db.redis import connect_redis, disconnect_redis
 from app.services.s3_service import s3_service
+from app.services.connection_manager import manager as connection_manager
 from app.services.scheduler import session_scheduler
 from app.api import (
     auth,
@@ -36,6 +37,8 @@ from app.api import (
     timetable,
     faculty_register,
     faculty_sessions,
+    reports,
+    sso,
 )
 from app.middleware.request_logging import RequestLoggingMiddleware
 from app.middleware.security_headers import SecurityHeadersMiddleware
@@ -60,13 +63,13 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     await connect_db()
     await connect_redis()
     s3_service.ensure_bucket_exists()
-    websocket_router.manager.start_heartbeat()
+    connection_manager.start_heartbeat()
     session_scheduler.start()
     logger.info("Server ready")
     yield
     logger.info("Shutting down...")
     session_scheduler.stop()
-    websocket_router.manager.stop_heartbeat()
+    connection_manager.stop_heartbeat()
     await disconnect_db()
     await disconnect_redis()
     logger.info("Shutdown complete")
@@ -104,6 +107,7 @@ app.add_middleware(
 app.include_router(health.router)
 app.include_router(health.router, prefix=settings.API_V1_STR)
 app.include_router(auth.router, prefix=settings.API_V1_STR)
+app.include_router(sso.router, prefix=settings.API_V1_STR)
 app.include_router(super_admin.router, prefix=settings.API_V1_STR)
 app.include_router(student.router, prefix=settings.API_V1_STR)
 app.include_router(teacher.router, prefix=settings.API_V1_STR)
@@ -116,6 +120,7 @@ app.include_router(scim.router, prefix=settings.API_V1_STR)
 app.include_router(timetable.router, prefix=settings.API_V1_STR)
 app.include_router(faculty_register.router, prefix=settings.API_V1_STR)
 app.include_router(faculty_sessions.router, prefix=settings.API_V1_STR)
+app.include_router(reports.router, prefix=settings.API_V1_STR)
 
 
 register_db_error_handlers(app)

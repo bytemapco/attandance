@@ -42,13 +42,13 @@ async def create_scim_user(
     try:
         body = await request.json()
     except Exception:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid JSON body")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid JSON body") from None
 
     tenant_id = getattr(current_user, "tenantId", None)
     try:
         return await SCIMService.create_user(body, tenant_id=tenant_id)
     except ValueError as err:
-        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(err))
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(err)) from err
 
 
 @router.delete("/Users/{user_id}", status_code=status.HTTP_204_NO_CONTENT)

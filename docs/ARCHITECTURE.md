@@ -616,14 +616,13 @@ See `docs/deployment-guide.md` for details.
 
 ### For a Quick Overview
 1. Read this file (ARCHITECTURE.md)
-2. Read `WORKSPACE_GUIDE.md` (navigation)
+2. Read `backend/README.md` (folder map)
 3. Check `docs/PRD.md` (business logic)
 
 ### For Implementation Details
 1. Read service module docs in backend/README.md
 2. Check the code in `backend/app/services/`
 3. Look at tests in `backend/tests/`
-4. Use `graphify query "<topic>"` for code search
 
 ### For Questions
 - **Data model:** `backend/prisma/schema.prisma`

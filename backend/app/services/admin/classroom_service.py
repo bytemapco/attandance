@@ -39,7 +39,8 @@ class ClassroomService:
         classroom = await db.classroom.find_first(where=where)
         if not classroom:
             raise ValueError("Classroom not found.")
-        class_count = await db.academicclass.count(where={"classroomId": id})
-        if class_count > 0:
+        used_by_sections = await db.coursesection.count(where={"defaultRoomId": id})
+        used_by_rules = await db.timetablerule.count(where={"classroomId": id})
+        if used_by_sections + used_by_rules > 0:
             raise ValueError("Cannot delete classroom because it is currently assigned.")
         await db.classroom.delete(where={"id": id})

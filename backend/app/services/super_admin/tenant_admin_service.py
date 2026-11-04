@@ -1,6 +1,7 @@
 from typing import Any, Dict
 from app.core.logging_config import get_logger
 from app.db.client import db
+from app.services.invitations import send_invitation
 from app.core.security import hash_password, generate_temporary_password
 
 logger = get_logger("app.super_admin.admin_mgmt")
@@ -31,31 +32,9 @@ class TenantAdminService:
             }
         )
 
-        try:
-            from app.services.auth_service import AuthService
-            from app.services.email_service import email_service
-
-            auth_svc = AuthService()
-            token = await auth_svc.create_invitation_token(
-                user_id=user.id,
-                email=user.email,
-                role=user.role,
-                name=name,
-            )
-            invitation_sent = await email_service.send_invitation_email(
-                to_email=user.email,
-                recipient_name=name,
-                role=user.role,
-                invite_token=token,
-                identifier_label="Institution ID",
-                identifier_value=t.slug,
-                temp_password=plain_pwd,
-            )
-            if not invitation_sent:
-                logger.warning("Admin invitation email was not sent for %s", user.email)
-        except Exception as mail_err:
-            logger.warning("Failed preparing admin invitation token for %s: %s", user.email, mail_err)
-            invitation_sent = False
+        invitation_sent = await send_invitation(
+            user.id, user.email, name, user.role, "Institution ID", t.slug, temp_password=plain_pwd
+        )
 
         await db.auditlog.create(
             data={

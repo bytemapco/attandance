@@ -14,6 +14,7 @@ interface RegisterGridProps {
   edits: Edits;
   counts: Counts;
   locked: boolean;
+  editable: boolean;
   shortcutsEnabled: boolean;
   onMark: (studentId: string, status: MarkStatus | null) => void;
 }
@@ -22,12 +23,12 @@ const FILTERS: { key: RegisterFilter; label: string }[] = [
   { key: "ALL", label: "All" },
   { key: "PRESENT", label: "Present" },
   { key: "WAITING", label: "Waiting" },
-  { key: "FLAGGED", label: "Flagged" },
+  { key: "FLAGGED", label: "To verify" },
   { key: "ABSENT", label: "Absent" },
   { key: "EXCUSED", label: "On leave" },
 ];
 
-export default function RegisterGrid({ students, edits, counts, locked, shortcutsEnabled, onMark }: RegisterGridProps): React.ReactElement {
+export default function RegisterGrid({ students, edits, counts, locked, editable, shortcutsEnabled, onMark }: RegisterGridProps): React.ReactElement {
   const [filter, setFilter] = useState<RegisterFilter>("ALL");
   const [query, setQuery] = useState("");
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -56,7 +57,7 @@ export default function RegisterGrid({ students, edits, counts, locked, shortcut
 
   useGridKeys({
     enabled: shortcutsEnabled,
-    canMark: !locked,
+    canMark: editable,
     ids,
     activeId: currentId,
     statusOf: (id) => rows.find((r) => r.student.student_id === id)?.status ?? "WAITING",
@@ -125,7 +126,7 @@ export default function RegisterGrid({ students, edits, counts, locked, shortcut
                 status={status}
                 active={student.student_id === currentId}
                 unsaved={student.student_id in edits}
-                disabled={locked}
+                disabled={!editable}
                 onActivate={() => setActiveId(student.student_id)}
                 onMark={(next) => onMark(student.student_id, next)}
               />

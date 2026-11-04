@@ -65,26 +65,6 @@ class TeacherBulkCreateRequest(BaseModel):
     send_invite: bool = Field(default=True, description="Whether to dispatch invitation email")
 
 
-class ClassBulkItem(BaseModel):
-    name: str = Field(..., min_length=2, max_length=100)
-    subject_code: str = Field(..., min_length=1, max_length=50)
-    teacher_email: EmailStr
-    classroom_name: Optional[str] = Field(None, max_length=100)
-    semester: Optional[int] = Field(None, ge=1, le=8)
-    batch: Optional[str] = Field(None, max_length=20)
-
-    @field_validator("teacher_email", mode="before")
-    @classmethod
-    def strip_email(cls, v: str) -> str:
-        return v.strip().lower() if isinstance(v, str) else v
-
-
-class ClassBulkCreateRequest(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
-    classes: list[ClassBulkItem] = Field(..., min_length=1, description="List of class records to ingest")
-
-
 class DepartmentBulkItem(BaseModel):
     name: str = Field(..., min_length=2, max_length=100)
     code: str = Field(..., min_length=2, max_length=20)

@@ -10,13 +10,12 @@ Thank you for contributing to SAHAJ! This guide ensures consistency, quality, an
    - `CLAUDE.md` (§1-§2) — Hard rules & invariants
    - `docs/PRD.md` (§5 & §6) — Data model & business rules
    - `AGENTS.md` (§1) — Responsive design rules
-   - `WORKSPACE_GUIDE.md` — Architecture & navigation
+   - `docs/ARCHITECTURE.md` — Architecture & navigation
 
 2. **Understand the code:**
    - Backend: `backend/README.md`
    - Frontend: `frontend/README.md`
    - Mobile: `mobile/README.md`
-   - Run `graphify query "<topic>"` for code search
 
 3. **Setup locally:**
    ```bash
@@ -79,9 +78,6 @@ npm run lint
 # For UI changes, start dev server & test in browser
 npm run dev:frontend    # Then visit http://localhost:3000
 # Use Reticle or manual browser testing for critical flows
-
-# Update graphify if architecture changed
-graphify update .
 ```
 
 ### 4. Commit
@@ -327,9 +323,8 @@ See `docs/deployment-guide.md` for details.
 ## 📚 Learning Resources
 
 ### Project-Specific
-- `WORKSPACE_GUIDE.md` — Architecture & navigation
 - `CLAUDE.md` — Development rules
-- `graphify-out/GRAPH_REPORT.md` — Code structure analysis
+- `docs/ARCHITECTURE.md` — System architecture
 
 ### Technology Docs
 - [FastAPI](https://fastapi.tiangolo.com/)
@@ -342,13 +337,8 @@ See `docs/deployment-guide.md` for details.
 ### Code Search
 ```bash
 # Find code by keyword
-graphify query "enrollment sync"
-
-# Find relationships
-graphify path "CourseSection" "AttendanceRecord"
-
-# Explain concept
-graphify explain "multi-tenancy"
+grep -rn "enrollment_sync" backend/
+grep -rn "AttendanceRecord" backend/
 ```
 
 ---
@@ -357,7 +347,7 @@ graphify explain "multi-tenancy"
 
 1. **Requirements unclear?** → Read `docs/PRD.md` (§13 has open questions)
 2. **Code patterns?** → Check neighboring code or ask in PR discussion
-3. **Architecture?** → Run `graphify query "<topic>"` or read `WORKSPACE_GUIDE.md`
+3. **Architecture?** → Read `docs/ARCHITECTURE.md` or `backend/README.md`
 4. **Rules?** → Check `CLAUDE.md` (§2 has hard rules)
 
 ---

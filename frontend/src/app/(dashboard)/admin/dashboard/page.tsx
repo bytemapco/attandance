@@ -132,7 +132,7 @@ export default function AdminDashboardPage(): React.ReactElement {
             accentColor="carbon"
           />
         </Link>
-        <Link href="/admin/classes" aria-label="View classes" className="rounded-xl focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#526f78]">
+        <Link href="/admin/class-management" aria-label="View classes" className="rounded-xl focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#526f78]">
           <GlassStatCard
             icon={<BookOpen size={20} />}
             label="Classes"
@@ -144,7 +144,7 @@ export default function AdminDashboardPage(): React.ReactElement {
         <GlassStatCard
           icon={<ShieldCheck size={20} />}
           label="Attendance Rate"
-          value={stats && (stats.attendanceCount ?? 0) > 0 ? `${stats.biometricPassRate ?? 0}%` : "—"}
+          value={stats && (stats.attendanceCount ?? 0) > 0 ? `${stats.attendanceRate ?? 0}%` : "—"}
           subtext={stats && (stats.attendanceCount ?? 0) > 0 ? "Present, late or approved" : stats ? "No attendance recorded yet" : "Unavailable"}
           accentColor="emerald"
         />

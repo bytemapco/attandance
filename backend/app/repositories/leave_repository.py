@@ -3,28 +3,30 @@ from typing import List, Optional
 
 from prisma.models import LeaveRequest
 from app.db.client import db
+from app.repositories.student_repository import taught_by
 
 
 class LeaveRepository:
     async def create(self, data: dict) -> LeaveRequest:
         return await db.leaverequest.create(data=data, include={"student": True})
 
-    async def get_by_id(self, leave_id: str) -> Optional[LeaveRequest]:
-        return await db.leaverequest.find_unique(where={"id": leave_id}, include={"student": True})
+    async def get_by_id(self, leave_id: str, tenant_id: str) -> Optional[LeaveRequest]:
+        return await db.leaverequest.find_first(
+            where={"id": leave_id, "tenantId": tenant_id}, include={"student": True}
+        )
 
     async def get_by_student_id(self, student_id: str) -> List[LeaveRequest]:
         return await db.leaverequest.find_many(
             where={"studentId": student_id}, include={"student": True}, order={"createdAt": "desc"}
         )
 
-    async def get_pending_for_teacher(self, teacher_id: str) -> List[LeaveRequest]:
-        enrollments = await db.enrollment.find_many(
-            where={"academicClass": {"is": {"teacherId": teacher_id}}},
-            include={"student": True},
-        )
-        student_ids = [e.studentId for e in enrollments]
+    async def get_pending_for_teacher(self, tenant_id: str, teacher_id: str) -> List[LeaveRequest]:
         return await db.leaverequest.find_many(
-            where={"studentId": {"in": student_ids}, "status": "PENDING"},
+            where={
+                "tenantId": tenant_id,
+                "status": "PENDING",
+                "student": {"is": taught_by(teacher_id)},
+            },
             include={"student": True},
             order={"createdAt": "asc"},
         )
