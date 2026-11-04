@@ -25,7 +25,7 @@ export default function RootError({
           </div>
 
           <h1 className="text-xl font-semibold tracking-tight text-primary mb-2">
-            Something unexpected occurred
+            This page failed to load
           </h1>
 
           <p className="text-xs sm:text-sm text-muted-foreground mb-6 max-w-sm mx-auto leading-relaxed">

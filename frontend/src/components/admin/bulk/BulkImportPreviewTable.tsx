@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Trash2, Mail, Layers, CheckCircle, AlertTriangle } from "lucide-react";
+import { Trash2, Mail, Layers, CheckCircle, AlertTriangle, Check } from "lucide-react";
 import { ParsedBulkRecord, BulkImportEntityType } from "./bulkTypes";
 
 interface BulkImportPreviewTableProps {
@@ -75,8 +75,8 @@ export default function BulkImportPreviewTable({
           </div>
         ) : (
           <div className="p-3 bg-secondary/30 rounded-lg border border-border flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-success/10 flex items-center justify-center text-success font-semibold text-xs">
-              ✓
+            <div className="w-8 h-8 rounded-lg bg-success/10 flex items-center justify-center text-success">
+              <Check size={16} aria-hidden />
             </div>
             <div>
               <p className="text-xs text-muted-foreground font-medium">Import Status</p>

@@ -1,9 +1,10 @@
 "use client";
 
 import React, { useState } from "react";
-import { Inbox, AlertCircle, RotateCw, Trash2, X } from "lucide-react";
+import { Inbox, Trash2, X } from "lucide-react";
 import { NotificationFeedItem } from "./NotificationFeedItem";
 import GlassConfirmDialog from "@/components/ui/GlassConfirmDialog";
+import GlassErrorState from "@/components/ui/GlassErrorState";
 import type { NotificationItem } from "@/types/notification";
 import { Skeleton } from "@/components/ui/Skeleton";
 
@@ -60,19 +61,7 @@ export function NotificationFeedList({
 
   if (error && notifications.length === 0) {
     return (
-      <div className="p-8 rounded-lg bg-destructive-soft border border-destructive/20 text-center space-y-3">
-        <div className="inline-flex p-3 rounded-lg bg-destructive/10 text-destructive"><AlertCircle size={22} /></div>
-        <h3 className="text-base font-semibold text-foreground">Unable to load notifications</h3>
-        <p className="text-xs sm:text-sm text-muted-foreground max-w-sm mx-auto">{error}</p>
-        <button
-          type="button"
-          onClick={onRetry}
-          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-primary-foreground bg-destructive hover:bg-destructive-hover rounded-lg transition-all cursor-pointer"
-        >
-          <RotateCw size={13} />
-          <span>Retry</span>
-        </button>
-      </div>
+      <GlassErrorState title="Unable to load notifications" message={error} onRetry={onRetry} />
     );
   }
 

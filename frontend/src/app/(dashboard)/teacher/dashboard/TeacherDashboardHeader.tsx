@@ -2,6 +2,7 @@
 
 import React from "react";
 import { RefreshCw } from "lucide-react";
+import GlassButton from "@/components/ui/GlassButton";
 import { useAuthStore } from "@/store/authStore";
 
 interface TeacherDashboardHeaderProps {
@@ -50,14 +51,9 @@ export default function TeacherDashboardHeader({
       </div>
 
       <div className="flex items-center gap-2.5 self-start md:self-center shrink-0">
-        <button
-          type="button"
-          onClick={onRefresh}
-          className="inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg border border-border bg-card text-xs font-semibold text-foreground hover:bg-secondary transition-all cursor-pointer"
-        >
-          <RefreshCw size={13} className="text-muted-foreground" />
-          <span>Refresh</span>
-        </button>
+        <GlassButton variant="secondary" icon={<RefreshCw size={14} />} onClick={onRefresh}>
+          Refresh
+        </GlassButton>
       </div>
     </div>
   );

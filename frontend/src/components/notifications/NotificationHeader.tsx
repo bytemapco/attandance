@@ -3,6 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { CheckCheck, RotateCw, Plus } from "lucide-react";
+import GlassButton from "@/components/ui/GlassButton";
 
 interface ActionButtonProps {
   label: string;
@@ -46,29 +47,23 @@ export function NotificationHeader({
           type="button"
           onClick={onRefresh}
           disabled={loading}
-          className="inline-flex items-center justify-center h-9 w-9 text-xs text-muted-foreground hover:text-foreground bg-card hover:bg-secondary border border-border rounded-lg transition-colors disabled:opacity-50 cursor-pointer"
+          className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-border bg-card text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground disabled:opacity-50 cursor-pointer"
           title="Refresh notifications"
           aria-label="Refresh notifications"
         >
-          <RotateCw size={14} className={loading ? "animate-spin text-accent-strong" : ""} />
+          <RotateCw size={14} className={loading ? "animate-spin" : ""} />
         </button>
 
         {unreadCount > 0 && (
-          <button
-            type="button"
-            onClick={onMarkAllRead}
-            disabled={loading}
-            className="inline-flex items-center gap-1.5 h-9 px-3.5 text-xs font-semibold text-foreground bg-card hover:bg-secondary border border-border rounded-lg transition-all disabled:opacity-50 cursor-pointer"
-          >
-            <CheckCheck size={14} className="text-success" />
-            <span>Mark all read</span>
-          </button>
+          <GlassButton variant="secondary" icon={<CheckCheck size={14} />} onClick={onMarkAllRead} disabled={loading}>
+            Mark all read
+          </GlassButton>
         )}
 
         {actionButton && (
           <Link
             href={actionButton.href}
-            className="inline-flex items-center gap-1.5 h-9 px-4 text-xs font-semibold text-primary-foreground bg-primary hover:bg-foreground rounded-lg transition-all"
+            className="inline-flex h-9 items-center gap-2 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary-hover"
           >
             {actionButton.icon || <Plus size={14} />}
             <span>{actionButton.label}</span>

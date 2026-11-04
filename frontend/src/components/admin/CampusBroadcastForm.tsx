@@ -2,6 +2,7 @@
 
 import React from "react";
 import { Megaphone, Send, RotateCcw } from "lucide-react";
+import GlassButton from "@/components/ui/GlassButton";
 import GlassCard from "@/components/ui/GlassCard";
 import BroadcastTargetSection from "@/components/admin/BroadcastTargetSection";
 import type { NotificationBroadcastCreate } from "@/types/notification";
@@ -87,24 +88,13 @@ export default function CampusBroadcastForm({
       <BroadcastTargetSection formData={formData} onChange={onChange} />
 
       <div className="flex items-center justify-between gap-3 pt-1">
-        <button
-          type="button"
-          onClick={onReset}
-          disabled={submitting}
-          className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-muted-foreground hover:text-primary bg-card border border-border rounded-lg hover:bg-secondary transition-colors disabled:opacity-50 cursor-pointer"
-        >
-          <RotateCcw size={13} />
-          <span>Reset Draft</span>
-        </button>
+        <GlassButton type="button" variant="secondary" icon={<RotateCcw size={14} />} onClick={onReset} disabled={submitting}>
+          Reset draft
+        </GlassButton>
 
-        <button
-          type="submit"
-          disabled={submitting}
-          className="inline-flex items-center gap-2 px-5 py-2 text-xs font-semibold text-primary-foreground bg-primary hover:bg-foreground rounded-lg transition-colors disabled:opacity-50 cursor-pointer"
-        >
-          <Send size={13} />
-          <span>{submitting ? "Dispatching..." : "Dispatch Broadcast Announcement"}</span>
-        </button>
+        <GlassButton type="submit" icon={<Send size={14} />} loading={submitting}>
+          Send announcement
+        </GlassButton>
       </div>
     </form>
   );

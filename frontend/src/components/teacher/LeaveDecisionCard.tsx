@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { CheckCircle2, XCircle, ShieldCheck } from "lucide-react";
+import GlassButton from "@/components/ui/GlassButton";
 import GlassCard from "@/components/ui/GlassCard";
 
 interface LeaveDecisionCardProps {
@@ -50,25 +51,24 @@ export default function LeaveDecisionCard({
       </div>
 
       <div className="grid grid-cols-2 gap-3 pt-2">
-        <button
-          type="button"
+        <GlassButton
+          variant="secondary"
           disabled={submitting}
           onClick={() => handleSubmit("REJECTED")}
-          className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-destructive/30 bg-destructive/10 text-destructive hover:bg-destructive/20 font-semibold text-xs transition-all cursor-pointer disabled:opacity-50"
+          icon={<XCircle size={16} />}
+          className="w-full text-destructive"
         >
-          <XCircle size={16} />
-          <span>Reject Leave</span>
-        </button>
+          Reject leave
+        </GlassButton>
 
-        <button
-          type="button"
+        <GlassButton
           disabled={submitting}
           onClick={() => handleSubmit("APPROVED")}
-          className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-success hover:bg-success text-primary-foreground font-semibold text-xs transition-all cursor-pointer disabled:opacity-50"
+          icon={<CheckCircle2 size={16} />}
+          className="w-full"
         >
-          <CheckCircle2 size={16} />
-          <span>Approve Leave</span>
-        </button>
+          Approve leave
+        </GlassButton>
       </div>
     </GlassCard>
   );

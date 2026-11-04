@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import GlassButton from "@/components/ui/GlassButton";
 
 export default function GlobalError({
   error,
@@ -31,20 +32,14 @@ export default function GlobalError({
           </div>
 
           <h1 className="text-xl font-semibold tracking-tight text-primary mb-2">
-            Something went critically wrong
+            The application failed to load
           </h1>
 
           <p className="text-xs sm:text-sm text-muted-foreground mb-6 max-w-sm mx-auto leading-relaxed">
             {error.message || "A critical system error occurred. Restarting the session usually resolves this."}
           </p>
 
-          <button
-            type="button"
-            onClick={() => reset()}
-            className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary-hover transition-all cursor-pointer"
-          >
-            Restart Application
-          </button>
+          <GlassButton onClick={() => reset()}>Reload</GlassButton>
         </div>
       </body>
     </html>

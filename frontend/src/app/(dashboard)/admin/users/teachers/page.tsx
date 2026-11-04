@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Plus, Upload } from "lucide-react";
 import api from "@/lib/api";
 import GlassBreadcrumb from "@/components/ui/GlassBreadcrumb";
+import GlassButton from "@/components/ui/GlassButton";
 import GlassTable from "@/components/ui/GlassTable";
 import EnterpriseTableToolbar, { type ToolbarFilterConfig } from "@/components/ui/EnterpriseTableToolbar";
 import EnterprisePagination from "@/components/ui/EnterprisePagination";
@@ -123,18 +124,12 @@ export default function TeachersPage(): React.ReactElement {
         </div>
 
         <div className="flex items-center gap-2">
-          <button
-            onClick={() => setIsBulkImportOpen(true)}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-card text-xs font-medium text-foreground hover:bg-secondary transition-colors"
-          >
-            <Upload size={13} /> Bulk Import
-          </button>
-          <button
-            onClick={() => router.push("/admin/users/teachers/add")}
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-primary text-primary-foreground text-xs font-medium hover:bg-foreground transition-colors"
-          >
-            <Plus size={14} /> Add Teacher
-          </button>
+          <GlassButton variant="secondary" icon={<Upload size={14} />} onClick={() => setIsBulkImportOpen(true)}>
+            Bulk import
+          </GlassButton>
+          <GlassButton icon={<Plus size={14} />} onClick={() => router.push("/admin/users/teachers/add")}>
+            Add teacher
+          </GlassButton>
         </div>
       </div>
 
