@@ -47,7 +47,7 @@ export function NotificationFilterBar({
           <button
             type="button"
             onClick={() => onSearchChange("")}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-0.5 rounded cursor-pointer"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-0.5 rounded-sm cursor-pointer"
             title="Clear search"
             aria-label="Clear search"
           >

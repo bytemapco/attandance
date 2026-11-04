@@ -75,7 +75,7 @@ export default function ComboboxDropdown({
                 onClick={() => onSelectOption(opt.value)}
                 onMouseEnter={() => onHighlightIndex(index)}
                 className={cn(
-                  "relative flex cursor-pointer items-center justify-between rounded px-2.5 py-2 transition-colors",
+                  "relative flex cursor-pointer items-center justify-between rounded-sm px-2.5 py-2 transition-colors",
                   isHighlighted && "bg-secondary text-foreground",
                   isSelected && !isHighlighted && "bg-secondary/60 font-medium",
                   !isSelected && !isHighlighted && "text-foreground hover:bg-secondary/50"

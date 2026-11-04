@@ -26,11 +26,11 @@ export function GlassErrorState({
     <div
       role="alert"
       className={cn(
-        "rounded-xl border border-destructive-border bg-destructive-soft/60 p-8 text-center shadow-xs",
+        "rounded-lg border border-destructive-border bg-destructive-soft/60 p-8 text-center shadow-xs",
         className
       )}
     >
-      <div className="mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-2xl bg-destructive-soft text-destructive border border-destructive-border">
+      <div className="mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-lg bg-destructive-soft text-destructive border border-destructive-border">
         <AlertCircle size={22} aria-hidden="true" />
       </div>
       <h3 className="text-base font-bold text-foreground tracking-tight">{title}</h3>

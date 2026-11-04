@@ -23,7 +23,7 @@ interface SessionHeaderProps {
 }
 
 function Kbd({ children }: { children: React.ReactNode }): React.ReactElement {
-  return <kbd aria-hidden className="ml-1 hidden rounded border border-current/25 px-1 text-[10px] font-medium opacity-70 xl:inline">{children}</kbd>;
+  return <kbd aria-hidden className="ml-1 hidden rounded-sm border border-current/25 px-1 text-[10px] font-medium opacity-70 xl:inline">{children}</kbd>;
 }
 
 export default function SessionHeader({

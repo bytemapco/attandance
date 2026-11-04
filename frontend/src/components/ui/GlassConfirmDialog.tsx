@@ -31,12 +31,12 @@ export default function GlassConfirmDialog({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-primary/40" onClick={onCancel}>
       <div
-        className="w-full max-w-md rounded-2xl border border-border bg-card p-6 shadow-[0_8px_24px_rgba(40,54,59,0.12)]"
+        className="w-full max-w-md rounded-lg border border-border bg-card p-6 shadow-[0_8px_24px_rgba(40,54,59,0.12)]"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-start gap-3.5 mb-5">
           <div className={cn(
-            "p-2.5 rounded-xl shrink-0 border",
+            "p-2.5 rounded-lg shrink-0 border",
             variant === "danger"
               ? "bg-destructive-soft text-destructive border-destructive-border"
               : "bg-info-soft text-info border-info-border"

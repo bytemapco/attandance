@@ -62,14 +62,14 @@ export default function CampusBroadcastPreview({ formData }: CampusBroadcastPrev
             <Bell size={13} />
             <span>In-App Notification Feed</span>
           </div>
-          <span className={`text-[10px] font-semibold px-2 py-0.5 rounded border uppercase ${priority.style}`}>
+          <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-sm border uppercase ${priority.style}`}>
             {priority.label}
           </span>
         </div>
 
         <div className="p-3.5 rounded-lg border border-border bg-muted/30 space-y-1.5">
           <div className="flex items-center gap-2">
-            <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-muted border border-border text-foreground">
+            <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-sm bg-muted border border-border text-foreground">
               {categoryLabel}
             </span>
             <span className="text-[10px] text-muted-foreground">Just now</span>

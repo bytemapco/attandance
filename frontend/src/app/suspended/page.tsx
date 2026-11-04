@@ -28,7 +28,7 @@ export default function SuspendedPage(): React.ReactElement {
     <div className="min-h-screen flex items-center justify-center bg-background px-4 py-8">
       <div className="max-w-md w-full text-center space-y-7">
         <div className="relative inline-flex">
-          <div className="w-20 h-20 rounded-2xl bg-warning-soft border border-warning-border flex items-center justify-center">
+          <div className="w-20 h-20 rounded-lg bg-warning-soft border border-warning-border flex items-center justify-center">
             <Building2 className="w-10 h-10 text-warning" />
           </div>
           <div className="absolute -top-1.5 -right-1.5 w-7 h-7 rounded-full bg-destructive-soft border border-destructive-border flex items-center justify-center">
@@ -50,7 +50,7 @@ export default function SuspendedPage(): React.ReactElement {
           </p>
         </div>
 
-        <div className="rounded-xl border border-warning-border bg-warning-soft/60 p-4 text-left space-y-2">
+        <div className="rounded-lg border border-warning-border bg-warning-soft/60 p-4 text-left space-y-2">
           <p className="text-xs font-bold uppercase tracking-wider text-warning">
             Status Details
           </p>

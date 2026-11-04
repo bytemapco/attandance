@@ -92,7 +92,7 @@ export function NotificationFeedItem({
 
   return (
     <div
-      className={`group relative p-4 rounded-xl border transition-all duration-150 ${
+      className={`group relative p-4 rounded-lg border transition-all duration-150 ${
         isSelected
           ? "bg-secondary/40 border-primary/40 ring-1 ring-primary/20"
           : isUnread
@@ -107,7 +107,7 @@ export function NotificationFeedItem({
               type="checkbox"
               checked={isSelected}
               onChange={() => onToggleSelect(notification.id)}
-              className="h-4 w-4 rounded border-border text-primary focus:ring-primary cursor-pointer accent-primary"
+              className="h-4 w-4 rounded-sm border-border text-primary focus:ring-primary cursor-pointer accent-primary"
               aria-label={`Select ${notification.title}`}
             />
           </div>

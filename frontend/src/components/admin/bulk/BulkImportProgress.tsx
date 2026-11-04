@@ -54,7 +54,7 @@ export default function BulkImportProgress({
 
       {/* Real-time KPI Counters */}
       <div className="grid grid-cols-3 gap-3">
-        <div className="p-3 bg-success/10 border border-success/20 rounded-xl">
+        <div className="p-3 bg-success/10 border border-success/20 rounded-lg">
           <p className="text-[10px] uppercase tracking-wider font-semibold text-success">
             Imported
           </p>
@@ -63,7 +63,7 @@ export default function BulkImportProgress({
           </p>
         </div>
 
-        <div className="p-3 bg-info/10 border border-info/20 rounded-xl">
+        <div className="p-3 bg-info/10 border border-info/20 rounded-lg">
           <p className="text-[10px] uppercase tracking-wider font-semibold text-info">
             Invitations Sent
           </p>
@@ -72,7 +72,7 @@ export default function BulkImportProgress({
           </p>
         </div>
 
-        <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-xl">
+        <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
           <p className="text-[10px] uppercase tracking-wider font-semibold text-destructive">
             Failed
           </p>
@@ -83,7 +83,7 @@ export default function BulkImportProgress({
       </div>
 
       {/* Live Batch Queue List */}
-      <div className="rounded-xl border border-border overflow-hidden bg-card">
+      <div className="rounded-lg border border-border overflow-hidden bg-card">
         <div className="px-3 py-2 bg-secondary/50 border-b border-border text-xs font-semibold text-muted-foreground flex justify-between">
           <span>Import Progress by Batch</span>
           <span>Status</span>

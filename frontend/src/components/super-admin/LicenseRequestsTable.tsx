@@ -47,7 +47,7 @@ export default function LicenseRequestsTable({
 }: LicenseRequestsTableProps): React.ReactElement {
   if (loading) {
     return (
-      <div className="space-y-4 rounded-xl border border-border bg-card p-4" role="status" aria-label="Loading license requests" aria-busy="true">
+      <div className="space-y-4 rounded-lg border border-border bg-card p-4" role="status" aria-label="Loading license requests" aria-busy="true">
         {Array.from({ length: 5 }).map((_, i) => (
           <div key={i} className="flex items-center gap-3 border-b border-border pb-3 last:border-0 last:pb-0">
             <div className="min-w-0 flex-1 space-y-2">
@@ -63,7 +63,7 @@ export default function LicenseRequestsTable({
 
   if (requests.length === 0) {
     return (
-      <div className="bg-card border border-border rounded-2xl p-10 flex flex-col items-center justify-center text-center">
+      <div className="bg-card border border-border rounded-lg p-10 flex flex-col items-center justify-center text-center">
         <Inbox size={32} className="text-muted-foreground/50 mb-3" />
         <p className="text-sm font-semibold text-primary">No license requests</p>
         <p className="text-xs text-muted-foreground mt-1">
@@ -76,7 +76,7 @@ export default function LicenseRequestsTable({
   }
 
   return (
-    <div className="bg-card border border-border rounded-xl overflow-hidden shadow-[0_2px_8px_rgba(40,54,59,0.04)]">
+    <div className="bg-card border border-border rounded-lg overflow-hidden shadow-[0_2px_8px_rgba(40,54,59,0.04)]">
       <div className="overflow-x-auto">
         <table className="w-full text-left text-xs">
           <thead className="bg-secondary/80 border-b border-border text-[11px] font-bold text-muted-foreground uppercase tracking-wider">

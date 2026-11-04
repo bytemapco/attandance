@@ -31,7 +31,7 @@ export default function BroadcastTargetSection({
   return (
     <GlassCard className="p-5 bg-card border border-border space-y-4 shadow-2xs">
       <div className="flex items-center gap-2.5 pb-3 border-b border-border">
-        <div className="p-1.5 rounded-xl bg-info/10 text-info border border-info/20">
+        <div className="p-1.5 rounded-lg bg-info/10 text-info border border-info/20">
           <Users size={16} />
         </div>
         <div>
@@ -52,7 +52,7 @@ export default function BroadcastTargetSection({
                 key={opt.id}
                 type="button"
                 onClick={() => onChange({ ...formData, target_role: opt.id })}
-                className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
+                className={`p-2.5 rounded-lg border text-left transition-all cursor-pointer ${
                   isSelected
                     ? "bg-card text-primary border-accent ring-1 ring-accent shadow-xs"
                     : "bg-background border-border text-muted-foreground hover:text-primary hover:bg-secondary"

@@ -39,7 +39,7 @@ export default function AdminQuickActions(): React.ReactElement {
         <Link
           key={action.href}
           href={action.href}
-          className="group flex min-h-28 items-start gap-3 rounded-xl border border-border bg-card p-4 transition-colors duration-150 hover:border-accent/60 hover:bg-background/60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-muted-foreground"
+          className="group flex min-h-28 items-start gap-3 rounded-lg border border-border bg-card p-4 transition-colors duration-150 hover:border-accent/60 hover:bg-background/60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-muted-foreground"
         >
           <div className="mt-0.5 rounded-lg border border-border bg-secondary p-2.5">
             {action.icon}

@@ -8,7 +8,7 @@ export default function StructureStep({ refresh }: StepProps): React.ReactElemen
   const onChanged = (): void => void refresh();
   return (
     <div className="space-y-4">
-      <section className="space-y-3 rounded-xl border border-border bg-surface/60 p-4 sm:p-5">
+      <section className="space-y-3 rounded-lg border border-border bg-surface/60 p-4 sm:p-5">
         <div>
           <h3 className="text-sm font-semibold text-foreground">Departments</h3>
           <p className="text-xs text-muted-foreground">Academic divisions for students, teachers, and classrooms.</p>
@@ -26,7 +26,7 @@ export default function StructureStep({ refresh }: StepProps): React.ReactElemen
         />
       </section>
 
-      <section className="space-y-3 rounded-xl border border-border bg-surface/60 p-4 sm:p-5">
+      <section className="space-y-3 rounded-lg border border-border bg-surface/60 p-4 sm:p-5">
         <div>
           <h3 className="text-sm font-semibold text-foreground">Teacher</h3>
           <p className="text-xs text-muted-foreground">Faculty designations and academic ranks.</p>

@@ -34,7 +34,7 @@ export const studentColumns: TableColumn<StudentResponse & Record<string, unknow
     header: "Login / ID",
     sortable: true,
     render: (r) => (
-      <span className="font-mono text-xs text-foreground bg-secondary/80 px-2 py-0.5 rounded border border-border">
+      <span className="font-mono text-xs text-foreground bg-secondary/80 px-2 py-0.5 rounded-sm border border-border">
         {String(r.enrollment_number || (r as { enrollmentNumber?: string }).enrollmentNumber || "stu-000")}
       </span>
     ),

@@ -40,7 +40,7 @@ function MarkButton({ target, current, disabled, onClick }: { target: MarkStatus
         e.stopPropagation();
         onClick();
       }}
-      className={`flex h-9 w-9 cursor-pointer items-center justify-center rounded-[10px] border transition-colors duration-150 outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 ${
+      className={`flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border transition-colors duration-150 outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 ${
         on ? onClass : `border-border bg-card ${offClass}`
       }`}
     >
@@ -57,7 +57,7 @@ export default function StudentTile({ student, status, active, unsaved, disabled
       id={`tile-${student.student_id}`}
       aria-current={active ? "true" : undefined}
       onClick={onActivate}
-      className={`flex cursor-pointer items-center gap-3 rounded-[10px] border bg-card px-3 py-2.5 transition-colors duration-150 ${
+      className={`flex cursor-pointer items-center gap-3 rounded-lg border bg-card px-3 py-2.5 transition-colors duration-150 ${
         active ? "border-muted-foreground ring-2 ring-ring/25" : "border-border hover:border-border-strong"
       }`}
     >

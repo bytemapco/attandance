@@ -47,10 +47,10 @@ export default function DeleteTenantModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
-      <div className="bg-card border border-destructive/30 w-full max-w-md rounded-2xl shadow-2xl overflow-hidden">
+      <div className="bg-card border border-destructive/30 w-full max-w-md rounded-lg shadow-2xl overflow-hidden">
         <div className="flex items-center justify-between px-6 py-4 border-b border-border bg-destructive/10">
           <div className="flex items-center gap-3">
-            <div className="h-9 w-9 rounded-xl bg-destructive/20 text-destructive flex items-center justify-center">
+            <div className="h-9 w-9 rounded-lg bg-destructive/20 text-destructive flex items-center justify-center">
               <AlertTriangle size={20} />
             </div>
             <div>
@@ -78,7 +78,7 @@ export default function DeleteTenantModal({
             </div>
           )}
 
-          <div className="space-y-2 bg-muted/30 p-3.5 rounded-xl border border-border">
+          <div className="space-y-2 bg-muted/30 p-3.5 rounded-lg border border-border">
             <label className="text-xs font-medium text-foreground block">
               To confirm, type <span className="font-mono font-bold text-destructive select-all">{expectedText}</span> below:
             </label>

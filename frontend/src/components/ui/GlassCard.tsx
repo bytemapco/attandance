@@ -29,7 +29,7 @@ export default function GlassCard({
   return (
     <div
       className={cn(
-        "rounded-xl border border-border bg-card text-card-foreground shadow-[0_2px_8px_rgba(40,54,59,0.05)] transition-all duration-200",
+        "rounded-lg border border-border bg-card text-card-foreground shadow-[0_2px_8px_rgba(40,54,59,0.05)] transition-all duration-200",
         padMap[padding],
         hoverable && "hover:border-accent/60 hover:shadow-[0_4px_16px_rgba(40,54,59,0.08)]",
         onClick && "cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",

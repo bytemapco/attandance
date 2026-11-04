@@ -80,7 +80,7 @@ export default function DeviceChangeTable({ requests, onActionComplete }: Device
             <span className="text-xs font-mono text-foreground">{req.new_device_uuid.substring(0, 8)}...</span>
           </div>
           {req.reason && (
-            <div className="flex items-center gap-1 mt-1 text-xs text-warning bg-warning/10 border border-warning/20 w-fit px-2 py-0.5 rounded">
+            <div className="flex items-center gap-1 mt-1 text-xs text-warning bg-warning/10 border border-warning/20 w-fit px-2 py-0.5 rounded-sm">
               <AlertCircle size={10} />
               <span className="truncate max-w-[200px]">{req.reason}</span>
             </div>
@@ -126,7 +126,7 @@ export default function DeviceChangeTable({ requests, onActionComplete }: Device
 
   if (localRequests.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center p-12 text-center border border-border rounded-xl bg-card">
+      <div className="flex flex-col items-center justify-center p-12 text-center border border-border rounded-lg bg-card">
         <div className="w-12 h-12 rounded-full bg-secondary text-muted-foreground flex items-center justify-center mb-3">
           <Smartphone size={24} />
         </div>
@@ -156,7 +156,7 @@ export default function DeviceChangeTable({ requests, onActionComplete }: Device
         )}
       </div>
 
-      <div className="rounded-xl border border-border bg-card shadow-2xs overflow-hidden">
+      <div className="rounded-lg border border-border bg-card shadow-2xs overflow-hidden">
         <GlassTable
           columns={columns}
           data={paginatedRequests as (DeviceChangeRequest & Record<string, unknown>)[]}

@@ -35,7 +35,7 @@ export default function ScannerStats({
               {totalFlagged}
             </p>
           </div>
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-destructive-soft text-destructive border border-destructive-border">
+          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-destructive-soft text-destructive border border-destructive-border">
             <Users size={18} />
           </span>
         </GlassCard>
@@ -48,7 +48,7 @@ export default function ScannerStats({
               {avgScore.toFixed(3)}
             </p>
           </div>
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-warning-soft text-warning border border-warning-border">
+          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-warning-soft text-warning border border-warning-border">
             <Activity size={18} />
           </span>
         </GlassCard>
@@ -61,7 +61,7 @@ export default function ScannerStats({
               {maxScore.toFixed(3)}
             </p>
           </div>
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-accent-soft text-accent-strong border border-accent-border">
+          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent-soft text-accent-strong border border-accent-border">
             <AlertTriangle size={18} />
           </span>
         </GlassCard>
@@ -79,7 +79,7 @@ export default function ScannerStats({
             placeholder="Search by name or ID..."
             value={searchTerm}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => onSearchChange(e.target.value)}
-            className="w-full h-9 pl-9 pr-8 text-xs bg-card border border-border/80 rounded-xl placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-shadow"
+            className="w-full h-9 pl-9 pr-8 text-xs bg-card border border-border/80 rounded-lg placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-shadow"
           />
           {searchTerm && (
             <button
@@ -101,7 +101,7 @@ export default function ScannerStats({
             onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
               onSortChange(e.target.value as "score" | "absences" | "name")
             }
-            className="h-9 text-xs bg-card border border-border/80 rounded-xl px-2.5 text-foreground focus:outline-none focus:ring-2 focus:ring-ring cursor-pointer"
+            className="h-9 text-xs bg-card border border-border/80 rounded-lg px-2.5 text-foreground focus:outline-none focus:ring-2 focus:ring-ring cursor-pointer"
           >
             <option value="score">Highest Risk</option>
             <option value="absences">Most Absences</option>

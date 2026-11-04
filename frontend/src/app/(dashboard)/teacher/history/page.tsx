@@ -121,13 +121,13 @@ export default function AttendanceHistoryPage(): React.ReactElement {
             </div>
           </div>
           {filtered.length === 0 ? (
-            <p className="rounded-[14px] border border-border bg-card px-4 py-10 text-center text-sm text-muted-foreground">Nothing matches these filters.</p>
+            <p className="rounded-lg border border-border bg-card px-4 py-10 text-center text-sm text-muted-foreground">Nothing matches these filters.</p>
           ) : (
             <div className="space-y-4">
               {groups.map(([key, day]) => (
                 <section key={key} aria-label={dayLabel(key)}>
                   <h2 className="mb-1.5 px-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">{dayLabel(key)}</h2>
-                  <ul className="divide-y divide-border overflow-hidden rounded-[14px] border border-border bg-card">
+                  <ul className="divide-y divide-border overflow-hidden rounded-lg border border-border bg-card">
                     {day.map((i) => <SessionRow key={i.occurrence_id} item={i} />)}
                   </ul>
                 </section>
@@ -136,7 +136,7 @@ export default function AttendanceHistoryPage(): React.ReactElement {
                 <button
                   type="button"
                   onClick={() => setShown((n) => n + PAGE_SIZE)}
-                  className="mx-auto block rounded-[10px] border border-border bg-card px-4 py-2 text-sm font-semibold text-foreground hover:bg-secondary/60"
+                  className="mx-auto block rounded-lg border border-border bg-card px-4 py-2 text-sm font-semibold text-foreground hover:bg-secondary/60"
                 >
                   Show more ({filtered.length - shown} left)
                 </button>

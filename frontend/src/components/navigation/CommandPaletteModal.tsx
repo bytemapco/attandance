@@ -116,7 +116,7 @@ export default function CommandPaletteModal({ isOpen, onClose }: CommandPaletteM
     <div className="fixed inset-0 z-50 flex items-start justify-center pt-16 px-4 bg-primary/50">
       <div className="fixed inset-0" onClick={onClose} />
       
-      <div className="relative w-full max-w-2xl rounded-2xl border border-border bg-background shadow-[0_8px_24px_rgba(40,54,59,0.14)] overflow-hidden z-10 flex flex-col max-h-[80vh]">
+      <div className="relative w-full max-w-2xl rounded-lg border border-border bg-background shadow-[0_8px_24px_rgba(40,54,59,0.14)] overflow-hidden z-10 flex flex-col max-h-[80vh]">
         <div className="flex items-center px-4 py-3.5 border-b border-border gap-3 bg-background">
           <Search size={18} className="text-muted-foreground shrink-0" />
           <input
@@ -169,9 +169,9 @@ export default function CommandPaletteModal({ isOpen, onClose }: CommandPaletteM
 
         <div className="px-4 py-2.5 border-t border-border bg-secondary/60 flex items-center justify-between text-[11px] text-muted-foreground">
           <div className="flex items-center gap-3">
-            <span><kbd className="font-mono px-1.5 py-0.5 rounded border border-border bg-background text-[10px]">↑↓</kbd> Navigate</span>
-            <span><kbd className="font-mono px-1.5 py-0.5 rounded border border-border bg-background text-[10px]">↵</kbd> Select</span>
-            <span><kbd className="font-mono px-1.5 py-0.5 rounded border border-border bg-background text-[10px]">esc</kbd> Dismiss</span>
+            <span><kbd className="font-mono px-1.5 py-0.5 rounded-sm border border-border bg-background text-[10px]">↑↓</kbd> Navigate</span>
+            <span><kbd className="font-mono px-1.5 py-0.5 rounded-sm border border-border bg-background text-[10px]">↵</kbd> Select</span>
+            <span><kbd className="font-mono px-1.5 py-0.5 rounded-sm border border-border bg-background text-[10px]">esc</kbd> Dismiss</span>
           </div>
           <span className="font-semibold text-[11px] text-muted-foreground">
             Sahaj Search

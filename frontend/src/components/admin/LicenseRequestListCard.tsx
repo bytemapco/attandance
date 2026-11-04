@@ -48,7 +48,7 @@ export default function LicenseRequestListCard({
           {requests.map((request) => (
             <div
               key={request.id}
-              className="flex items-center justify-between p-3 rounded-xl border border-border bg-secondary/30"
+              className="flex items-center justify-between p-3 rounded-lg border border-border bg-secondary/30"
             >
               <div>
                 <p className="text-xs font-semibold text-primary">

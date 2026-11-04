@@ -23,7 +23,7 @@ export default function SetupStepper({ checks, activeIndex, onSelect }: SetupSte
   const score = Math.round((complete / required.length) * 100);
 
   return (
-    <div className="rounded-xl border border-border bg-card p-4 sm:p-5">
+    <div className="rounded-lg border border-border bg-card p-4 sm:p-5">
       <div className="mb-4 space-y-2">
         <div className="flex items-center justify-between gap-3 text-sm">
           <h2 className="font-semibold text-foreground">Setup progress</h2>
@@ -74,7 +74,7 @@ export default function SetupStepper({ checks, activeIndex, onSelect }: SetupSte
                   disabled={!reachable}
                   aria-current={active ? "step" : undefined}
                   onClick={() => onSelect(index)}
-                  className={`group flex w-full items-center gap-3 rounded-xl border px-3 py-2.5 text-left transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+                  className={`group flex w-full items-center gap-3 rounded-lg border px-3 py-2.5 text-left transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
                     active
                       ? "border-accent/50 bg-surface shadow-xs"
                       : reachable
@@ -100,7 +100,7 @@ export default function SetupStepper({ checks, activeIndex, onSelect }: SetupSte
                         {step.title}
                       </span>
                       {step.optional && (
-                        <span className="shrink-0 rounded bg-secondary px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+                        <span className="shrink-0 rounded-sm bg-secondary px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
                           Opt
                         </span>
                       )}

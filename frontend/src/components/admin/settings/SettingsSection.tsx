@@ -36,7 +36,7 @@ export default function SettingsSection({
   children,
 }: SettingsSectionProps): React.ReactElement {
   return (
-    <section id={id} aria-labelledby={`${id}-title`} className="scroll-mt-6 rounded-xl border border-border-strong bg-card">
+    <section id={id} aria-labelledby={`${id}-title`} className="scroll-mt-6 rounded-lg border border-border-strong bg-card">
       <header className="flex items-center justify-between gap-4 border-b border-border px-5 py-3.5">
         <h2 id={`${id}-title`} className="text-sm font-semibold text-foreground">{title}</h2>
         {status && <span className={`text-xs font-medium ${TONE[status.tone]}`}>{status.label}</span>}

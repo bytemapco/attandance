@@ -39,7 +39,7 @@ export default function DeviceChangesPage(): React.ReactElement {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 className="text-2xl md:text-3xl font-bold text-foreground tracking-tight flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-primary/10 border border-primary/20 text-primary">
+            <div className="p-2 rounded-lg bg-primary/10 border border-primary/20 text-primary">
               <Smartphone size={24} />
             </div>
             Device Change Requests
@@ -61,7 +61,7 @@ export default function DeviceChangesPage(): React.ReactElement {
 
       <div className="relative z-10">
         {loading ? (
-          <div className="flex items-center justify-center h-64 border rounded-2xl bg-card border-border">
+          <div className="flex items-center justify-center h-64 border rounded-lg bg-card border-border">
             <RefreshCw size={32} className="animate-spin text-muted-foreground" />
           </div>
         ) : (

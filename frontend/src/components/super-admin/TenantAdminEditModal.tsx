@@ -66,7 +66,7 @@ export default function TenantAdminEditModal({
       onClick={onClose}
     >
       <div
-        className="w-full max-w-md bg-card border border-border rounded-2xl shadow-xl p-6 space-y-5"
+        className="w-full max-w-md bg-card border border-border rounded-lg shadow-xl p-6 space-y-5"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between pb-3 border-b border-border">

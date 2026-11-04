@@ -46,7 +46,7 @@ export function NotificationFeedList({
     return (
       <div className="space-y-3" role="status" aria-label="Loading notifications" aria-busy="true">
         {[1, 2, 3, 4].map((i) => (
-          <div key={i} className="flex items-start gap-3.5 rounded-xl border border-border bg-card p-4">
+          <div key={i} className="flex items-start gap-3.5 rounded-lg border border-border bg-card p-4">
             <Skeleton className="size-9 shrink-0 rounded-lg" />
             <div className="min-w-0 flex-1 space-y-2">
               <Skeleton className="h-3.5 w-32" />
@@ -60,7 +60,7 @@ export function NotificationFeedList({
 
   if (error && notifications.length === 0) {
     return (
-      <div className="p-8 rounded-xl bg-destructive-soft border border-destructive/20 text-center space-y-3">
+      <div className="p-8 rounded-lg bg-destructive-soft border border-destructive/20 text-center space-y-3">
         <div className="inline-flex p-3 rounded-lg bg-destructive/10 text-destructive"><AlertCircle size={22} /></div>
         <h3 className="text-base font-semibold text-foreground">Unable to load notifications</h3>
         <p className="text-xs sm:text-sm text-muted-foreground max-w-sm mx-auto">{error}</p>
@@ -78,8 +78,8 @@ export function NotificationFeedList({
 
   if (notifications.length === 0) {
     return (
-      <div className="p-12 rounded-xl bg-card border border-border text-center space-y-3">
-        <div className="inline-flex p-3.5 rounded-xl bg-secondary text-muted-foreground border border-border"><Inbox size={24} /></div>
+      <div className="p-12 rounded-lg bg-card border border-border text-center space-y-3">
+        <div className="inline-flex p-3.5 rounded-lg bg-secondary text-muted-foreground border border-border"><Inbox size={24} /></div>
         <h3 className="text-base font-semibold text-foreground">{searchQuery ? "No matching notifications" : "Inbox zero"}</h3>
         <p className="text-xs sm:text-sm text-muted-foreground max-w-md mx-auto leading-relaxed">
           {searchQuery ? `No alerts match "${searchQuery}". Check spelling or switch filter tabs.` : "You have reviewed all platform alerts. New campus activities will appear here in real time."}
@@ -113,7 +113,7 @@ export function NotificationFeedList({
                 type="checkbox"
                 checked={allSelected}
                 onChange={onSelectAll}
-                className="h-4 w-4 rounded border-border text-primary focus:ring-primary cursor-pointer accent-primary"
+                className="h-4 w-4 rounded-sm border-border text-primary focus:ring-primary cursor-pointer accent-primary"
               />
               <span className="text-muted-foreground font-semibold">
                 {selectedCount > 0 ? `${selectedCount} selected` : "Select all"}

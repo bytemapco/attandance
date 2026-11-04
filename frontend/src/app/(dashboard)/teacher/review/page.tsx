@@ -47,7 +47,7 @@ export default function ReviewQueuePage(): React.ReactElement {
       {items.length === 0 ? (
         <GlassEmptyState title="Nothing to verify" message="Marks that need your check will appear here. Nothing needs your action right now." />
       ) : (
-        <ul className="divide-y divide-border overflow-hidden rounded-[14px] border border-border bg-card">
+        <ul className="divide-y divide-border overflow-hidden rounded-lg border border-border bg-card">
           {items.map((item) => (
             <li key={item.record_id} className="flex flex-wrap items-center gap-4 px-5 py-4">
               <div className="min-w-0 flex-1 space-y-1">
@@ -65,7 +65,7 @@ export default function ReviewQueuePage(): React.ReactElement {
               <GlassBadge variant="warning">To verify · {METHOD[item.method] ?? item.method}</GlassBadge>
               <Link
                 href={`/teacher/attendance/${item.occurrence_id}`}
-                className="inline-flex h-9 items-center gap-2 rounded-[10px] border border-border bg-card px-4 text-xs font-semibold text-foreground outline-none hover:bg-secondary focus-visible:ring-2 focus-visible:ring-ring"
+                className="inline-flex h-9 items-center gap-2 rounded-lg border border-border bg-card px-4 text-xs font-semibold text-foreground outline-none hover:bg-secondary focus-visible:ring-2 focus-visible:ring-ring"
               >
                 {item.locked ? "View register" : "Review in register"} <ArrowRight size={14} aria-hidden />
               </Link>

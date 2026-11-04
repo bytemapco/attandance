@@ -22,9 +22,9 @@ export default function TenantHeaderBanner({
   onDelete,
 }: TenantHeaderBannerProps): React.ReactElement {
   return (
-    <div className="bg-card border border-border rounded-2xl p-6 shadow-xs flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+    <div className="bg-card border border-border rounded-lg p-6 shadow-xs flex flex-col md:flex-row md:items-center md:justify-between gap-4">
       <div className="flex items-center gap-4">
-        <div className="h-14 w-14 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+        <div className="h-14 w-14 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
           <Building2 size={28} />
         </div>
         <div>

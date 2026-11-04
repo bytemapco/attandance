@@ -28,7 +28,7 @@ export default function BulkImportPreviewTable({
     <div className="space-y-4">
       {/* Overview Strip */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-        <div className="p-3 bg-secondary/30 rounded-xl border border-border flex items-center gap-3">
+        <div className="p-3 bg-secondary/30 rounded-lg border border-border flex items-center gap-3">
           <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-bold text-xs">
             {records.length}
           </div>
@@ -40,7 +40,7 @@ export default function BulkImportPreviewTable({
           </div>
         </div>
 
-        <div className="p-3 bg-secondary/30 rounded-xl border border-border flex items-center gap-3">
+        <div className="p-3 bg-secondary/30 rounded-lg border border-border flex items-center gap-3">
           <div className="w-8 h-8 rounded-lg bg-info/10 flex items-center justify-center text-info">
             <Layers size={16} />
           </div>
@@ -53,7 +53,7 @@ export default function BulkImportPreviewTable({
         </div>
 
         {showInviteToggle ? (
-          <div className="p-3 bg-secondary/30 rounded-xl border border-border flex items-center justify-between">
+          <div className="p-3 bg-secondary/30 rounded-lg border border-border flex items-center justify-between">
             <div className="flex items-center gap-2.5">
               <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${sendInvite ? "bg-success/10 text-success" : "bg-muted text-muted-foreground"}`}>
                 <Mail size={16} />
@@ -74,7 +74,7 @@ export default function BulkImportPreviewTable({
             </label>
           </div>
         ) : (
-          <div className="p-3 bg-secondary/30 rounded-xl border border-border flex items-center gap-3">
+          <div className="p-3 bg-secondary/30 rounded-lg border border-border flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg bg-success/10 flex items-center justify-center text-success font-bold text-xs">
               ✓
             </div>
@@ -87,7 +87,7 @@ export default function BulkImportPreviewTable({
       </div>
 
       {/* Table Container */}
-      <div className="rounded-xl border border-border overflow-hidden">
+      <div className="rounded-lg border border-border overflow-hidden">
         <div className="max-h-[260px] overflow-y-auto">
           <table className="w-full text-xs text-left border-collapse">
             <thead className="bg-secondary/60 sticky top-0 z-10 border-b border-border">
@@ -154,7 +154,7 @@ export default function BulkImportPreviewTable({
                     <button
                       type="button"
                       onClick={() => onRemoveRecord(r.id)}
-                      className="p-1 rounded text-muted-foreground hover:text-destructive transition-colors cursor-pointer"
+                      className="p-1 rounded-sm text-muted-foreground hover:text-destructive transition-colors cursor-pointer"
                       title="Remove row"
                     >
                       <Trash2 size={13} />

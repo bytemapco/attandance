@@ -29,7 +29,7 @@ export default function TenantMetricsRow({
       {/* Students Card */}
       <GlassCard className="p-4 flex flex-col justify-center">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-secondary text-muted-foreground border border-border">
+          <div className="p-2.5 rounded-lg bg-secondary text-muted-foreground border border-border">
             <GraduationCap size={20} />
           </div>
           <div>
@@ -44,7 +44,7 @@ export default function TenantMetricsRow({
       {/* Faculty Card */}
       <GlassCard className="p-4 flex flex-col justify-center">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-accent-soft text-accent-strong border border-accent-border">
+          <div className="p-2.5 rounded-lg bg-accent-soft text-accent-strong border border-accent-border">
             <Users size={20} />
           </div>
           <div>
@@ -59,7 +59,7 @@ export default function TenantMetricsRow({
       {/* License Usage Card */}
       <GlassCard className="p-4 flex flex-col justify-between">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-secondary text-primary border border-border">
+          <div className="p-2.5 rounded-lg bg-secondary text-primary border border-border">
             <ShieldCheck size={20} />
           </div>
           <div>
@@ -88,7 +88,7 @@ export default function TenantMetricsRow({
       {/* Academic Structure Card */}
       <GlassCard className="p-4 flex flex-col justify-center">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-secondary text-muted-foreground border border-border">
+          <div className="p-2.5 rounded-lg bg-secondary text-muted-foreground border border-border">
             <Building2 size={20} />
           </div>
           <div>
@@ -103,7 +103,7 @@ export default function TenantMetricsRow({
       {/* Attendance Activity Card */}
       <GlassCard className="p-4 flex flex-col justify-center">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-success-soft text-success border border-success-border">
+          <div className="p-2.5 rounded-lg bg-success-soft text-success border border-success-border">
             <Radio size={20} />
           </div>
           <div>

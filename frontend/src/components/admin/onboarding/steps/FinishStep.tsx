@@ -49,7 +49,7 @@ export default function FinishStep({ status, refresh }: StepProps): React.ReactE
 
   return (
     <div className="space-y-5">
-      <div className="flex items-start gap-3 rounded-xl bg-background p-4">
+      <div className="flex items-start gap-3 rounded-lg bg-background p-4">
         {canFinish ? (
           <CheckCircle2 size={20} className="mt-0.5 shrink-0 text-success" aria-hidden />
         ) : (

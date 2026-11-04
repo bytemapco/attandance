@@ -53,6 +53,12 @@
   --color-ring: var(--ring);
   --color-overlay: var(--overlay);
 
+  /* Radius scale: 4 / 6 / 8px. rounded-full stays for pills and avatars. */
+  --radius-*: initial;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+
   --font-sans: var(--font-plus-jakarta), "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: var(--font-geist-mono), "Geist Mono", ui-monospace, Menlo, Monaco, Consolas, monospace;
 }

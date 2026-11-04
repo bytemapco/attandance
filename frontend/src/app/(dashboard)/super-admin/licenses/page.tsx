@@ -122,7 +122,7 @@ export default function LicenseRequestsPage(): React.JSX.Element {
         </p>
       </div>
 
-      <div className="rounded-xl overflow-hidden border border-border">
+      <div className="rounded-lg overflow-hidden border border-border">
         <LicenseRequestsTable
           requests={requests}
           loading={loading}

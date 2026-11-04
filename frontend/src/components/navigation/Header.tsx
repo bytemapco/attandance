@@ -105,7 +105,7 @@ export default function Header({ onMenuToggle }: HeaderProps): React.JSX.Element
               }
               className="w-full h-9 pl-9 pr-16 rounded-lg border border-border bg-secondary/50 text-xs text-foreground placeholder:text-muted-foreground group-hover:bg-background group-hover:border-accent/60 cursor-pointer transition-all outline-none"
             />
-            <kbd className="absolute right-2.5 px-1.5 py-0.5 rounded border border-border bg-card text-[10px] font-mono text-muted-foreground font-semibold shadow-2xs pointer-events-none">
+            <kbd className="absolute right-2.5 px-1.5 py-0.5 rounded-sm border border-border bg-card text-[10px] font-mono text-muted-foreground font-semibold shadow-2xs pointer-events-none">
               Ctrl K
             </kbd>
           </div>

@@ -64,7 +64,7 @@ export default function BulkImportResults({
     <div className="space-y-4">
       {/* Banner */}
       <div
-        className={`p-4 rounded-xl border flex items-center gap-3.5 ${
+        className={`p-4 rounded-lg border flex items-center gap-3.5 ${
           isAllSuccess
             ? "bg-success/10 border-success/20 text-success"
             : isPartial
@@ -95,19 +95,19 @@ export default function BulkImportResults({
 
       {/* Summary KPI Cards */}
       <div className="grid grid-cols-3 gap-3">
-        <div className="p-3 bg-secondary/30 rounded-xl border border-border">
+        <div className="p-3 bg-secondary/30 rounded-lg border border-border">
           <p className="text-[11px] text-muted-foreground font-medium">Successfully Added</p>
           <p className="text-xl font-bold font-mono text-foreground mt-0.5">{summary.totalImported}</p>
         </div>
 
-        <div className="p-3 bg-secondary/30 rounded-xl border border-border">
+        <div className="p-3 bg-secondary/30 rounded-lg border border-border">
           <p className="text-[11px] text-muted-foreground font-medium flex items-center gap-1">
             <Mail size={12} className="text-info" /> Invitations Sent
           </p>
           <p className="text-xl font-bold font-mono text-foreground mt-0.5">{summary.totalInvited}</p>
         </div>
 
-        <div className="p-3 bg-secondary/30 rounded-xl border border-border">
+        <div className="p-3 bg-secondary/30 rounded-lg border border-border">
           <p className="text-[11px] text-muted-foreground font-medium">Failed</p>
           <p className="text-xl font-bold font-mono text-foreground mt-0.5">{summary.totalFailed}</p>
         </div>
@@ -115,7 +115,7 @@ export default function BulkImportResults({
 
       {/* Error / Discrepancy Breakdown */}
       {summary.allErrors.length > 0 && (
-        <div className="rounded-xl border border-destructive/20 bg-destructive/5 p-3.5 space-y-2">
+        <div className="rounded-lg border border-destructive/20 bg-destructive/5 p-3.5 space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-destructive flex items-center gap-1.5">
               <AlertTriangle size={13} /> {summary.allErrors.length} {summary.allErrors.length === 1 ? "Issue" : "Issues"} to Review
@@ -132,7 +132,7 @@ export default function BulkImportResults({
           </div>
           <div className="max-h-28 overflow-y-auto space-y-1 text-[11px] font-sans text-destructive pr-1">
             {summary.allErrors.map((err, idx) => (
-              <p key={idx} className="bg-background/60 px-2.5 py-1.5 rounded border border-destructive/10 font-medium">
+              <p key={idx} className="bg-background/60 px-2.5 py-1.5 rounded-sm border border-destructive/10 font-medium">
                 {err}
               </p>
             ))}

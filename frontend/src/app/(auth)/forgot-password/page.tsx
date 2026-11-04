@@ -77,7 +77,7 @@ export default function ForgotPasswordPage(): React.ReactElement {
               <img
                 src="/sahaj-app-icon.png"
                 alt="SAHAJ Logo"
-                className="w-14 h-14 rounded-2xl shadow-sm object-contain"
+                className="w-14 h-14 rounded-lg shadow-sm object-contain"
               />
             </div>
             <h1 className="text-2xl font-bold tracking-tight text-primary">
@@ -88,7 +88,7 @@ export default function ForgotPasswordPage(): React.ReactElement {
         </div>
 
         {submitted ? (
-          <div className="rounded-2xl border border-border bg-card p-6 sm:p-7 text-center space-y-5 shadow-[0_4px_16px_rgba(40,54,59,0.06)]">
+          <div className="rounded-lg border border-border bg-card p-6 sm:p-7 text-center space-y-5 shadow-[0_4px_16px_rgba(40,54,59,0.06)]">
             <div className="inline-flex p-3 rounded-full bg-success-soft border border-success-border text-success">
               <CheckCircle2 size={32} />
             </div>
@@ -132,7 +132,7 @@ export default function ForgotPasswordPage(): React.ReactElement {
           <form
             noValidate
             onSubmit={handleSubmit(onSubmit)}
-            className="rounded-2xl border border-border bg-card p-6 sm:p-7 space-y-5 shadow-[0_4px_16px_rgba(40,54,59,0.06)]"
+            className="rounded-lg border border-border bg-card p-6 sm:p-7 space-y-5 shadow-[0_4px_16px_rgba(40,54,59,0.06)]"
           >
             <div className="space-y-1">
               <h2 className="text-base font-bold text-foreground">Reset Password</h2>

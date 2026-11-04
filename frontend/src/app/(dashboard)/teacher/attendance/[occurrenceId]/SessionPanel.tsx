@@ -28,7 +28,7 @@ function closingTime(iso?: string | null): string | null {
 
 function Stat({ icon, label, value }: { icon: React.ReactNode; label: string; value: number }): React.ReactElement {
   return (
-    <div className="rounded-[10px] bg-secondary px-3 py-2">
+    <div className="rounded-lg bg-secondary px-3 py-2">
       <p className="text-lg font-semibold tabular-nums leading-tight text-foreground">{value}</p>
       <p className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground">
         {icon}
@@ -74,7 +74,7 @@ function FullscreenView({ qr, failed, counts, onClose }: { qr: OccurrenceQrData 
         {counts.PRESENT} <span className="text-lg font-medium text-muted-foreground">of {counts.ALL} present</span>
       </p>
       <GlassButton variant="secondary" size="md" icon={<X size={15} />} onClick={onClose}>
-        Close <kbd className="ml-1 rounded border border-border px-1.5 text-[11px] text-muted-foreground">Esc</kbd>
+        Close <kbd className="ml-1 rounded-sm border border-border px-1.5 text-[11px] text-muted-foreground">Esc</kbd>
       </GlassButton>
     </div>
   );
@@ -90,7 +90,7 @@ export default function SessionPanel({
   if (live && fullscreen) return <FullscreenView qr={qr} failed={failed} counts={counts} onClose={() => onFullscreenChange(false)} />;
 
   return (
-    <aside className="flex flex-col gap-5 rounded-[14px] border border-border bg-card p-5 shadow-[0_2px_8px_rgba(40,54,59,0.05)] lg:min-h-0 lg:overflow-y-auto">
+    <aside className="flex flex-col gap-5 rounded-lg border border-border bg-card p-5 shadow-[0_2px_8px_rgba(40,54,59,0.05)] lg:min-h-0 lg:overflow-y-auto">
       {live && (
         <>
           <div className="flex items-center justify-between gap-2">
@@ -101,14 +101,14 @@ export default function SessionPanel({
               className="inline-flex h-8 cursor-pointer items-center gap-1.5 rounded-md px-2 text-xs font-semibold text-muted-foreground hover:bg-secondary hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring outline-none"
             >
               <Maximize2 size={14} /> Full screen
-              <kbd className="rounded border border-border px-1.5 text-[11px] font-medium">F</kbd>
+              <kbd className="rounded-sm border border-border px-1.5 text-[11px] font-medium">F</kbd>
             </button>
           </div>
           <QrCodeTile qr={qr} failed={failed} />
         </>
       )}
       {state === "NOT_STARTED" && (
-        <div className="flex flex-col items-center gap-3 rounded-[10px] border border-dashed border-border px-4 py-8 text-center">
+        <div className="flex flex-col items-center gap-3 rounded-lg border border-dashed border-border px-4 py-8 text-center">
           <QrCode size={28} className="text-muted-foreground" />
           <p className="text-sm font-semibold text-foreground">Attendance hasn&apos;t started</p>
           <p className="text-xs text-muted-foreground">Start to show the QR code and let students mark themselves.</p>

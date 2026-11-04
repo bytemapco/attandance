@@ -75,7 +75,7 @@ export default function BulkImportModal({
   return (
     <div role="dialog" aria-modal="true" className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
       <div className="fixed inset-0" onClick={stage !== "importing" ? handleClose : undefined} />
-      <div className="relative w-full max-w-2xl rounded-2xl border border-border bg-card shadow-2xl p-6 z-10 space-y-4">
+      <div className="relative w-full max-w-2xl rounded-lg border border-border bg-card shadow-2xl p-6 z-10 space-y-4">
         {/* Modal Header */}
         <div className="flex items-center justify-between border-b border-border pb-3">
           <div className="flex items-center gap-2.5">

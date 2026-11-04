@@ -60,7 +60,7 @@ export default function GlassInput({
             disabled={disabled}
             onClick={() => setShowPassword((prev) => !prev)}
             aria-label={showPassword ? "Hide password" : "Show password"}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded p-0.5 transition-colors cursor-pointer"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm p-0.5 transition-colors cursor-pointer"
           >
             {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
           </button>

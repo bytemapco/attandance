@@ -136,7 +136,7 @@ export default function ReportsPage({ description }: ReportsPageProps): React.Re
         onDateFrom={setDateFrom}
         onDateTo={setDateTo}
       />
-      <div role="tablist" className="inline-flex flex-wrap rounded-[10px] border border-border bg-card p-1">
+      <div role="tablist" className="inline-flex flex-wrap rounded-lg border border-border bg-card p-1">
         {TABS.map(({ id, label }) => (
           <button
             key={id}
@@ -145,7 +145,7 @@ export default function ReportsPage({ description }: ReportsPageProps): React.Re
             aria-selected={tab === id}
             onClick={() => changeTab(id)}
             className={cn(
-              "rounded-[8px] px-3 py-1.5 text-sm font-semibold transition-colors",
+              "rounded-lg px-3 py-1.5 text-sm font-semibold transition-colors",
               tab === id ? "bg-muted-foreground text-primary-foreground" : "text-muted-foreground hover:text-foreground"
             )}
           >

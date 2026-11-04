@@ -46,7 +46,7 @@ export default function TenantOverviewTab({ tenant }: TenantOverviewTabProps): R
             <GlassBadge variant="neutral">Slug-based</GlassBadge>
           </div>
 
-          <div className="p-3.5 bg-muted/40 rounded-xl border border-border space-y-2.5">
+          <div className="p-3.5 bg-muted/40 rounded-lg border border-border space-y-2.5">
             <div className="flex items-center justify-between text-xs">
               <span className="text-muted-foreground font-medium">Login URL:</span>
               <span className="font-mono text-foreground font-semibold">
@@ -73,7 +73,7 @@ export default function TenantOverviewTab({ tenant }: TenantOverviewTabProps): R
           </div>
 
           {admins.length === 0 ? (
-            <div className="p-4 text-center rounded-xl border border-dashed border-border text-xs text-muted-foreground">
+            <div className="p-4 text-center rounded-lg border border-dashed border-border text-xs text-muted-foreground">
               No administrator assigned yet. Add one in the Administrators tab.
             </div>
           ) : (
@@ -81,7 +81,7 @@ export default function TenantOverviewTab({ tenant }: TenantOverviewTabProps): R
               {admins.slice(0, 3).map((admin) => (
                 <div
                   key={admin.id}
-                  className="flex items-center justify-between p-2.5 rounded-xl border border-border bg-muted/20 text-xs"
+                  className="flex items-center justify-between p-2.5 rounded-lg border border-border bg-muted/20 text-xs"
                 >
                   <div className="space-y-0.5">
                     <p className="font-semibold text-foreground">{admin.email}</p>

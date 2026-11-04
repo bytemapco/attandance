@@ -18,7 +18,7 @@ export default function LeaveDocumentViewer({ url }: LeaveDocumentViewerProps): 
     <GlassCard className="p-0 overflow-hidden bg-card border border-border flex flex-col h-full min-h-[550px]">
       <div className="flex items-center justify-between px-5 py-4 border-b border-border bg-secondary/40">
         <div className="flex items-center gap-2.5">
-          <div className="p-2 rounded-xl bg-success/10 text-success">
+          <div className="p-2 rounded-lg bg-success/10 text-success">
             {isPdf ? <FileText size={16} /> : <ImageIcon size={16} />}
           </div>
           <div>
@@ -35,7 +35,7 @@ export default function LeaveDocumentViewer({ url }: LeaveDocumentViewerProps): 
               href={url}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-border bg-card text-xs font-medium text-primary hover:bg-secondary transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-card text-xs font-medium text-primary hover:bg-secondary transition-colors"
             >
               <ExternalLink size={13} />
               <span>Open in Tab</span>
@@ -43,7 +43,7 @@ export default function LeaveDocumentViewer({ url }: LeaveDocumentViewerProps): 
             <a
               href={url}
               download
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-border bg-card text-xs font-medium text-primary hover:bg-secondary transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-card text-xs font-medium text-primary hover:bg-secondary transition-colors"
             >
               <Download size={13} />
               <span>Download</span>
@@ -65,7 +65,7 @@ export default function LeaveDocumentViewer({ url }: LeaveDocumentViewerProps): 
           <iframe
             src={url}
             title="Leave Document Evidence"
-            className="w-full h-full min-h-[500px] rounded-xl border border-border shadow-xs"
+            className="w-full h-full min-h-[500px] rounded-lg border border-border shadow-xs"
           />
         ) : docLoadError ? (
           <div className="text-center py-16 space-y-3">
@@ -78,7 +78,7 @@ export default function LeaveDocumentViewer({ url }: LeaveDocumentViewerProps): 
               href={url}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-primary text-primary-foreground text-xs font-medium hover:bg-foreground transition-colors"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-primary text-primary-foreground text-xs font-medium hover:bg-foreground transition-colors"
             >
               <ExternalLink size={14} /> Open Document
             </a>
@@ -99,7 +99,7 @@ export default function LeaveDocumentViewer({ url }: LeaveDocumentViewerProps): 
                 setDocLoading(false);
                 setDocLoadError(true);
               }}
-              className="max-h-[600px] max-w-full rounded-xl object-contain border border-border shadow-xs"
+              className="max-h-[600px] max-w-full rounded-lg object-contain border border-border shadow-xs"
             />
           </div>
         )}

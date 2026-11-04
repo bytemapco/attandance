@@ -12,8 +12,8 @@ export default function GlobalError({
   return (
     <html lang="en">
       <body className="min-h-screen bg-background text-foreground flex items-center justify-center p-4 font-sans antialiased">
-        <div className="w-full max-w-md text-center rounded-2xl border border-border bg-card p-8 shadow-[0_8px_24px_rgba(40,54,59,0.1)]">
-          <div className="inline-flex p-3 rounded-2xl bg-destructive-soft text-destructive border border-destructive-border mb-5">
+        <div className="w-full max-w-md text-center rounded-lg border border-border bg-card p-8 shadow-[0_8px_24px_rgba(40,54,59,0.1)]">
+          <div className="inline-flex p-3 rounded-lg bg-destructive-soft text-destructive border border-destructive-border mb-5">
             <svg
               className="h-8 w-8"
               fill="none"

@@ -38,7 +38,7 @@ export default function AnomalyCard({ result }: AnomalyCardProps): React.ReactEl
   }
 
   return (
-    <GlassCard className="bg-card border-border/80 p-4 rounded-2xl flex flex-col justify-between hover:border-border-strong transition-all duration-200 shadow-xs">
+    <GlassCard className="bg-card border-border/80 p-4 rounded-lg flex flex-col justify-between hover:border-border-strong transition-all duration-200 shadow-xs">
       <div className="space-y-3.5">
         {/* Top Header */}
         <div className="flex items-start justify-between gap-2">
@@ -63,7 +63,7 @@ export default function AnomalyCard({ result }: AnomalyCardProps): React.ReactEl
 
         {/* Key Metrics Strip */}
         <div className="grid grid-cols-2 gap-2 text-xs">
-          <div className="p-2 rounded-xl bg-secondary/60 border border-border/40">
+          <div className="p-2 rounded-lg bg-secondary/60 border border-border/40">
             <span className="text-[10px] text-muted-foreground block font-medium">
               Total Absences
             </span>
@@ -71,7 +71,7 @@ export default function AnomalyCard({ result }: AnomalyCardProps): React.ReactEl
               {result.total_absences ?? "—"}
             </span>
           </div>
-          <div className="p-2 rounded-xl bg-secondary/60 border border-border/40">
+          <div className="p-2 rounded-lg bg-secondary/60 border border-border/40">
             <span className="text-[10px] text-muted-foreground block font-medium">
               Risk Score
             </span>

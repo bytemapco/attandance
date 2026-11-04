@@ -129,7 +129,7 @@ export default function GeofenceMap({
   }, [onLocationChange]);
 
   return (
-    <div className="relative h-full w-full overflow-hidden rounded-xl border border-border bg-surface">
+    <div className="relative h-full w-full overflow-hidden rounded-lg border border-border bg-surface">
       <style>{`
         .custom-campus-pin {
           background: transparent !important;

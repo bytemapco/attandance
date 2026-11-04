@@ -120,7 +120,7 @@ export default function SystemServicesGrid({ health }: SystemServicesGridProps):
             className="px-5 py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-muted/10 transition-colors"
           >
             <div className="flex items-center gap-3 min-w-0">
-              <div className={`p-2 rounded-xl ${item.iconBg} ${item.iconColor} shrink-0`}>
+              <div className={`p-2 rounded-lg ${item.iconBg} ${item.iconColor} shrink-0`}>
                 {item.icon}
               </div>
               <div className="min-w-0">

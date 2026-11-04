@@ -146,7 +146,7 @@ export default function TeachersPage(): React.ReactElement {
         onResetAll={handleResetAll}
       />
 
-      <div className="rounded-xl border border-border bg-card shadow-2xs overflow-hidden">
+      <div className="rounded-lg border border-border bg-card shadow-2xs overflow-hidden">
         <GlassTable
           columns={teacherColumns}
           data={teachers as (TeacherResponse & Record<string, unknown>)[]}

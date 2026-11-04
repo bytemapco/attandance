@@ -97,11 +97,11 @@ export default function ClassManagementPage(): React.ReactElement {
       render: (row) => (
         <div className="flex items-center gap-2">
           <span className="font-semibold text-foreground text-sm">{row.code}</span>
-          <span className="inline-block text-[11px] font-medium text-muted-foreground bg-muted/60 px-1.5 py-0.5 rounded border border-border/60">
+          <span className="inline-block text-[11px] font-medium text-muted-foreground bg-muted/60 px-1.5 py-0.5 rounded-sm border border-border/60">
             Sem {row.semester_number}
           </span>
           {row.status !== "ACTIVE" && (
-            <span className="text-[11px] font-medium text-muted-foreground bg-muted px-1.5 py-0.5 rounded border border-border">
+            <span className="text-[11px] font-medium text-muted-foreground bg-muted px-1.5 py-0.5 rounded-sm border border-border">
               {row.status}
             </span>
           )}
@@ -192,7 +192,7 @@ export default function ClassManagementPage(): React.ReactElement {
       />
 
       {/* Clean Structured Table */}
-      <div className="rounded-2xl border border-border bg-card shadow-[0_2px_8px_rgba(40,54,59,0.04)] overflow-hidden">
+      <div className="rounded-lg border border-border bg-card shadow-[0_2px_8px_rgba(40,54,59,0.04)] overflow-hidden">
         <GlassTable
           columns={columns}
           data={classes}

@@ -94,7 +94,7 @@ export default function ClassTimetable({ cls, onUpdated }: ClassTimetableProps):
         ))}
       </div>
 
-      <div className="overflow-x-auto rounded-xl border border-border-strong bg-card">
+      <div className="overflow-x-auto rounded-lg border border-border-strong bg-card">
         <div className="grid min-w-[42rem]" style={{ gridTemplateColumns: `3.5rem repeat(${days.length}, minmax(7rem, 1fr))` }}>
           <div className="border-b border-border bg-surface" />
           {days.map((day) => (

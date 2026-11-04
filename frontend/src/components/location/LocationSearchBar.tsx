@@ -132,7 +132,7 @@ export default function LocationSearchBar({
           <button
             type="button"
             onClick={handleClear}
-            className="absolute right-2.5 rounded p-1 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+            className="absolute right-2.5 rounded-sm p-1 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
             title="Clear search"
           >
             <X size={14} />
@@ -141,7 +141,7 @@ export default function LocationSearchBar({
       </div>
 
       {isOpen && results.length > 0 && (
-        <ul className="absolute left-0 right-0 z-[1000] mt-1.5 max-h-60 divide-y divide-border overflow-y-auto rounded-xl border border-border bg-card py-1 shadow-lg">
+        <ul className="absolute left-0 right-0 z-[1000] mt-1.5 max-h-60 divide-y divide-border overflow-y-auto rounded-lg border border-border bg-card py-1 shadow-lg">
           {results.map((item) => {
             const parts = item.display_name.split(",");
             const title = parts[0];

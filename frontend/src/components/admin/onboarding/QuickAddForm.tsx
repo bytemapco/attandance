@@ -108,7 +108,7 @@ export default function QuickAddForm({
               type="button"
               tabIndex={-1}
               onClick={applySuggestion}
-              className="absolute right-2 top-1/2 -translate-y-1/2 z-20 flex items-center gap-1 rounded border border-border bg-surface px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground shadow-2xs transition-colors hover:bg-secondary hover:text-foreground cursor-pointer"
+              className="absolute right-2 top-1/2 -translate-y-1/2 z-20 flex items-center gap-1 rounded-sm border border-border bg-surface px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground shadow-2xs transition-colors hover:bg-secondary hover:text-foreground cursor-pointer"
               title="Press Tab to apply suggestion"
             >
               <span>Tab</span>

@@ -27,7 +27,7 @@ export default function QuickAddChips({
           <Check size={12} className="stroke-[2.5]" aria-hidden />
           <span className="font-semibold text-foreground">{item.name}</span>
           {item.code && showCodes && (
-            <span className="rounded border border-success-border bg-card px-1.5 py-0.5 text-[10px] font-semibold tracking-wider text-muted-foreground">
+            <span className="rounded-sm border border-success-border bg-card px-1.5 py-0.5 text-[10px] font-semibold tracking-wider text-muted-foreground">
               {item.code}
             </span>
           )}
@@ -35,7 +35,7 @@ export default function QuickAddChips({
             type="button"
             disabled={removingId === item.id}
             onClick={() => onRemove(item.id, item.name)}
-            className="ml-0.5 rounded p-0.5 text-muted-foreground transition-colors hover:bg-secondary hover:text-destructive focus:outline-none focus:ring-1 focus:ring-success"
+            className="ml-0.5 rounded-sm p-0.5 text-muted-foreground transition-colors hover:bg-secondary hover:text-destructive focus:outline-none focus:ring-1 focus:ring-success"
             title={`Remove ${item.name}`}
             aria-label={`Remove ${item.name}`}
           >

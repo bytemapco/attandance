@@ -36,7 +36,7 @@ function DayHead({ day, today, selected }: { day: string; today: string; selecte
 /** Time slots down the side, weekdays across the top. The time column stays put while the grid scrolls. */
 export default function TimetableGrid({ grid, today, selected, statusOf, openingId, onActivate }: TimetableGridProps): React.ReactElement {
   return (
-    <div className="overflow-x-auto rounded-xl border border-border-strong bg-card">
+    <div className="overflow-x-auto rounded-lg border border-border-strong bg-card">
       <table className="w-full min-w-[44rem] border-collapse">
         <thead>
           <tr className="border-b border-border bg-surface">

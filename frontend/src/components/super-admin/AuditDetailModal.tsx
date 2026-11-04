@@ -74,13 +74,13 @@ export default function AuditDetailModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-primary/40" onClick={onClose}>
       <div
-        className="bg-card border border-border rounded-2xl w-full max-w-2xl shadow-[0_12px_36px_rgba(40,54,59,0.14)] overflow-hidden flex flex-col max-h-[90vh]"
+        className="bg-card border border-border rounded-lg w-full max-w-2xl shadow-[0_12px_36px_rgba(40,54,59,0.14)] overflow-hidden flex flex-col max-h-[90vh]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Modal Header */}
         <div className="px-6 py-4.5 border-b border-border flex items-center justify-between bg-card">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-accent-soft text-accent-strong border border-accent-border">
+            <div className="p-2.5 rounded-lg bg-accent-soft text-accent-strong border border-accent-border">
               <ShieldAlert size={18} />
             </div>
             <div>
@@ -109,7 +109,7 @@ export default function AuditDetailModal({
         <div className="p-6 space-y-4.5 overflow-y-auto text-xs">
           {/* Metadata Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <div className="p-3.5 rounded-xl bg-secondary/50 border border-border space-y-1">
+            <div className="p-3.5 rounded-lg bg-secondary/50 border border-border space-y-1">
               <span className="text-[11px] text-muted-foreground font-medium flex items-center gap-1">
                 <Clock size={12} /> Timestamp
               </span>
@@ -121,7 +121,7 @@ export default function AuditDetailModal({
               </p>
             </div>
 
-            <div className="p-3.5 rounded-xl bg-secondary/50 border border-border space-y-1">
+            <div className="p-3.5 rounded-lg bg-secondary/50 border border-border space-y-1">
               <span className="text-[11px] text-muted-foreground font-medium flex items-center gap-1">
                 <User size={12} /> Actor
               </span>
@@ -133,7 +133,7 @@ export default function AuditDetailModal({
               </p>
             </div>
 
-            <div className="p-3.5 rounded-xl bg-secondary/50 border border-border space-y-1">
+            <div className="p-3.5 rounded-lg bg-secondary/50 border border-border space-y-1">
               <span className="text-[11px] text-muted-foreground font-medium flex items-center gap-1">
                 <Globe size={12} /> Target Resource
               </span>
@@ -146,7 +146,7 @@ export default function AuditDetailModal({
           {/* Description */}
           <div className="space-y-1.5">
             <span className="text-xs font-semibold text-muted-foreground">Summary</span>
-            <div className="p-3.5 rounded-xl bg-secondary/40 border border-border text-foreground font-medium leading-relaxed">
+            <div className="p-3.5 rounded-lg bg-secondary/40 border border-border text-foreground font-medium leading-relaxed">
               {log.description}
             </div>
           </div>
@@ -164,7 +164,7 @@ export default function AuditDetailModal({
                 <span>{copied ? "Copied" : "Copy Payload"}</span>
               </button>
             </div>
-            <pre className="p-3.5 rounded-xl bg-primary text-primary-foreground text-[11px] font-mono overflow-x-auto max-h-44 leading-relaxed border border-foreground">
+            <pre className="p-3.5 rounded-lg bg-primary text-primary-foreground text-[11px] font-mono overflow-x-auto max-h-44 leading-relaxed border border-foreground">
               {JSON.stringify(
                 {
                   id: log.id,

@@ -16,7 +16,7 @@ export default function ResetPasswordStatusCard({
 }: ResetPasswordStatusCardProps): React.ReactElement {
   if (status === "invalid") {
     return (
-      <div className="rounded-2xl border border-border bg-card p-7 text-center space-y-5 shadow-sm">
+      <div className="rounded-lg border border-border bg-card p-7 text-center space-y-5 shadow-sm">
         <div className="inline-flex p-3 rounded-full bg-destructive/10 border border-destructive/20 text-destructive">
           <AlertCircle size={32} />
         </div>
@@ -34,7 +34,7 @@ export default function ResetPasswordStatusCard({
   }
 
   return (
-    <div className="rounded-2xl border border-border bg-card p-7 text-center space-y-5 shadow-sm">
+    <div className="rounded-lg border border-border bg-card p-7 text-center space-y-5 shadow-sm">
       <div className="inline-flex p-3 rounded-full bg-success/10 border border-success/20 text-success">
         <CheckCircle2 size={32} />
       </div>

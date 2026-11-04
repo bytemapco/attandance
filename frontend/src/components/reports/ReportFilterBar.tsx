@@ -29,7 +29,7 @@ export default function ReportFilterBar(props: ReportFilterBarProps): React.Reac
     ...props.subjects.map((s) => ({ value: s.section_id, label: `${s.subject_code} · ${s.subject_name}` })),
   ];
   return (
-    <div className="grid gap-3 rounded-[14px] border border-border bg-card p-4 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="grid gap-3 rounded-lg border border-border bg-card p-4 sm:grid-cols-2 lg:grid-cols-4">
       <GlassSelect label="Class" options={classOptions} value={props.classId} onChange={props.onClass} placeholder="Choose a class" />
       {props.showSubject ? (
         <GlassSelect

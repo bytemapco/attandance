@@ -59,7 +59,7 @@ export default function ProvisionAdminAccountsCard({
         {fields.map((fieldItem, index) => (
           <div
             key={fieldItem.id}
-            className="p-4 rounded-xl border border-border bg-card/60 relative space-y-4"
+            className="p-4 rounded-lg border border-border bg-card/60 relative space-y-4"
           >
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">

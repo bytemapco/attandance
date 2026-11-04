@@ -9,7 +9,7 @@ export default function StudentMobileAppCallout({
   token,
 }: StudentMobileAppCalloutProps): React.ReactElement {
   return (
-    <div className="p-3.5 rounded-xl bg-primary/5 border border-primary/20 space-y-2">
+    <div className="p-3.5 rounded-lg bg-primary/5 border border-primary/20 space-y-2">
       <div className="flex items-center gap-2 text-xs font-semibold text-primary">
         <Smartphone size={16} />
         <span>SAHAJ Mobile App</span>

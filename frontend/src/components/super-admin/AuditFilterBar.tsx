@@ -63,7 +63,7 @@ export default function AuditFilterBar({
   }, [eventTypes]);
 
   return (
-    <div className="bg-card border border-border rounded-xl p-3 sm:p-4 mb-4 flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 shadow-2xs">
+    <div className="bg-card border border-border rounded-lg p-3 sm:p-4 mb-4 flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 shadow-2xs">
       {/* Actor / User Search */}
       <div className="relative flex-1 max-w-full lg:max-w-md">
         <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />

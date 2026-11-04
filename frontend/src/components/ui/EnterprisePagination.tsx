@@ -52,7 +52,7 @@ export default function EnterprisePagination({
   const pageNumbers = getPageNumbers(validPage, totalPages);
 
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-4 py-3 border-t border-border bg-card rounded-b-xl text-xs text-muted-foreground">
+    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-4 py-3 border-t border-border bg-card rounded-b-lg text-xs text-muted-foreground">
       <p className="select-none">
         Showing <span className="font-semibold text-foreground">{startItem.toLocaleString()}</span> to{" "}
         <span className="font-semibold text-foreground">{endItem.toLocaleString()}</span> of{" "}

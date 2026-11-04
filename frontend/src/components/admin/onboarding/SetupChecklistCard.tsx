@@ -26,7 +26,7 @@ export default function SetupChecklistCard({ status }: SetupChecklistCardProps):
   const nextBlocker = stepBlockers(next, status.checks)[0];
 
   return (
-    <section aria-labelledby="setup-progress-title" className="space-y-5 rounded-2xl border border-border bg-card p-5 shadow-[0_2px_8px_rgba(40,54,59,0.04)] sm:p-6">
+    <section aria-labelledby="setup-progress-title" className="space-y-5 rounded-lg border border-border bg-card p-5 shadow-[0_2px_8px_rgba(40,54,59,0.04)] sm:p-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0 space-y-1">
           <p className="text-xs font-semibold uppercase tracking-wider text-accent-strong">Campus setup</p>

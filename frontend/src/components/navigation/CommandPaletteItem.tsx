@@ -21,7 +21,7 @@ export default function CommandPaletteItem({
       type="button"
       onClick={() => onSelect(item)}
       onMouseEnter={onMouseEnter}
-      className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-left text-xs transition-all cursor-pointer ${
+      className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-left text-xs transition-all cursor-pointer ${
         isSelected
           ? "bg-accent-soft text-primary shadow-2xs border-l-2 border-accent"
           : "text-muted-foreground hover:bg-secondary/60 border-l-2 border-transparent"
@@ -36,7 +36,7 @@ export default function CommandPaletteItem({
             <span>{item.title}</span>
             {item.badge && item.badge !== "Action" && (
               <span
-                className={`px-1.5 py-0.5 rounded text-[10px] font-bold border ${
+                className={`px-1.5 py-0.5 rounded-sm text-[10px] font-bold border ${
                   item.badge === "LIVE"
                     ? "bg-success-soft text-success border-success-border"
                     : "bg-secondary text-muted-foreground border-border"

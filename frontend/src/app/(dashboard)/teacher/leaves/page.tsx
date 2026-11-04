@@ -44,7 +44,7 @@ export default function LeavesPage(): React.JSX.Element {
       key: "enrollment_number", 
       header: "Enrollment #",
       render: (r) => (
-        <span className="font-mono text-xs text-foreground bg-secondary/80 px-2 py-0.5 rounded border border-border">
+        <span className="font-mono text-xs text-foreground bg-secondary/80 px-2 py-0.5 rounded-sm border border-border">
           {r.enrollment_number}
         </span>
       )
@@ -138,7 +138,7 @@ export default function LeavesPage(): React.JSX.Element {
       {leaves.length === 0 ? (
         <GlassEmptyState title="All Clear" message="No pending leave requests found." />
       ) : (
-        <div className="rounded-xl border border-border bg-card shadow-2xs overflow-hidden">
+        <div className="rounded-lg border border-border bg-card shadow-2xs overflow-hidden">
           <GlassTable
             columns={columns}
             data={paginated as (PendingLeaveItem & Record<string, unknown>)[]}

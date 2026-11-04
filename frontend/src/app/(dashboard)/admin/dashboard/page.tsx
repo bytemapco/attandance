@@ -81,7 +81,7 @@ export default function AdminDashboardPage(): React.ReactElement {
   return (
     <div className="space-y-6 pb-6">
       {/* Top Welcome Banner */}
-      <div className="relative overflow-hidden rounded-2xl border border-border bg-card p-5 sm:p-6 shadow-[0_2px_8px_rgba(40,54,59,0.05)] flex flex-col md:flex-row md:items-center md:justify-between gap-5">
+      <div className="relative overflow-hidden rounded-lg border border-border bg-card p-5 sm:p-6 shadow-[0_2px_8px_rgba(40,54,59,0.05)] flex flex-col md:flex-row md:items-center md:justify-between gap-5">
         <div className="space-y-1 z-10">
           <p className="text-xs font-medium text-muted-foreground">{todayStr}</p>
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-primary">
@@ -114,7 +114,7 @@ export default function AdminDashboardPage(): React.ReactElement {
 
       {/* KPI Metric Strip */}
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <Link href="/admin/users/students" aria-label="View students" className="rounded-xl focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-muted-foreground">
+        <Link href="/admin/users/students" aria-label="View students" className="rounded-lg focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-muted-foreground">
           <GlassStatCard
             icon={<GraduationCap size={20} />}
             label="Students"
@@ -123,7 +123,7 @@ export default function AdminDashboardPage(): React.ReactElement {
             accentColor="mineral"
           />
         </Link>
-        <Link href="/admin/users/teachers" aria-label="View faculty" className="rounded-xl focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-muted-foreground">
+        <Link href="/admin/users/teachers" aria-label="View faculty" className="rounded-lg focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-muted-foreground">
           <GlassStatCard
             icon={<Users size={20} />}
             label="Faculty"
@@ -132,7 +132,7 @@ export default function AdminDashboardPage(): React.ReactElement {
             accentColor="carbon"
           />
         </Link>
-        <Link href="/admin/class-management" aria-label="View classes" className="rounded-xl focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-muted-foreground">
+        <Link href="/admin/class-management" aria-label="View classes" className="rounded-lg focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-muted-foreground">
           <GlassStatCard
             icon={<BookOpen size={20} />}
             label="Classes"

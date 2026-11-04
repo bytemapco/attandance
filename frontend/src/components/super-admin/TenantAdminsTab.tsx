@@ -79,7 +79,7 @@ export default function TenantAdminsTab({ tenant, onRefresh }: TenantAdminsTabPr
         </GlassButton>
       </div>
 
-      <div className="bg-card border border-border rounded-xl overflow-hidden shadow-2xs">
+      <div className="bg-card border border-border rounded-lg overflow-hidden shadow-2xs">
         <table className="w-full text-left text-xs">
           <thead className="bg-secondary/60 border-b border-border text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
             <tr>
@@ -119,7 +119,7 @@ export default function TenantAdminsTab({ tenant, onRefresh }: TenantAdminsTabPr
                       <button
                         type="button"
                         onClick={() => setAdminToEdit({ id: admin.id, email: admin.email })}
-                        className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground font-medium px-1.5 py-1 rounded hover:bg-secondary transition-colors cursor-pointer"
+                        className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground font-medium px-1.5 py-1 rounded-sm hover:bg-secondary transition-colors cursor-pointer"
                         title="Edit email"
                       >
                         <Pencil size={13} />
@@ -128,7 +128,7 @@ export default function TenantAdminsTab({ tenant, onRefresh }: TenantAdminsTabPr
                       <button
                         type="button"
                         onClick={() => setAdminToReset({ id: admin.id, email: admin.email })}
-                        className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground font-medium px-1.5 py-1 rounded hover:bg-secondary transition-colors cursor-pointer"
+                        className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground font-medium px-1.5 py-1 rounded-sm hover:bg-secondary transition-colors cursor-pointer"
                         title="Send reset password email"
                       >
                         <KeyRound size={13} />
@@ -137,7 +137,7 @@ export default function TenantAdminsTab({ tenant, onRefresh }: TenantAdminsTabPr
                       <button
                         type="button"
                         onClick={() => setAdminToDelete({ id: admin.id, email: admin.email })}
-                        className="inline-flex items-center gap-1 text-xs text-destructive hover:bg-destructive-soft font-medium px-1.5 py-1 rounded transition-colors cursor-pointer"
+                        className="inline-flex items-center gap-1 text-xs text-destructive hover:bg-destructive-soft font-medium px-1.5 py-1 rounded-sm transition-colors cursor-pointer"
                         title="Delete administrator"
                       >
                         <Trash2 size={13} />

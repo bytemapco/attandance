@@ -175,7 +175,7 @@ export default function CampusLocationCard({
       </div>
 
       {/* Map canvas with a fixed height, so it renders inside any parent */}
-      <div className="h-[22rem] overflow-hidden rounded-xl border border-border bg-surface sm:h-[26rem]">
+      <div className="h-[22rem] overflow-hidden rounded-lg border border-border bg-surface sm:h-[26rem]">
         {hasPin ? (
           <div className="h-full w-full">
             <GeofenceMap

@@ -88,7 +88,7 @@ export default function TenantLicensesPage(): React.JSX.Element {
       {loading && !usage ? (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3" role="status" aria-label="Loading license usage" aria-busy="true">
           {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="space-y-3 rounded-xl border border-border bg-card p-5">
+            <div key={i} className="space-y-3 rounded-lg border border-border bg-card p-5">
               <Skeleton className="h-3 w-28" />
               <Skeleton className="h-7 w-20" />
               <Skeleton className="h-3 w-36 max-w-full" />
@@ -141,7 +141,7 @@ export default function TenantLicensesPage(): React.JSX.Element {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <GlassCard className="p-5 space-y-4">
           <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-xl bg-primary/10 text-primary">
+            <div className="p-2 rounded-lg bg-primary/10 text-primary">
               <KeyRound size={16} />
             </div>
             <div>

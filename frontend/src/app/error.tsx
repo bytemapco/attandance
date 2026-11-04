@@ -19,8 +19,8 @@ export default function RootError({
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 bg-background text-foreground relative overflow-hidden">
       <div className="w-full max-w-md text-center z-10">
-        <div className="rounded-2xl border border-border bg-card p-8 sm:p-10 shadow-[0_8px_24px_rgba(40,54,59,0.08)]">
-          <div className="inline-flex p-3 rounded-2xl bg-destructive-soft text-destructive border border-destructive-border mb-5">
+        <div className="rounded-lg border border-border bg-card p-8 sm:p-10 shadow-[0_8px_24px_rgba(40,54,59,0.08)]">
+          <div className="inline-flex p-3 rounded-lg bg-destructive-soft text-destructive border border-destructive-border mb-5">
             <AlertCircle size={32} aria-hidden="true" />
           </div>
 
@@ -33,7 +33,7 @@ export default function RootError({
           </p>
 
           {error.digest && (
-            <p className="text-[11px] text-muted-foreground font-mono mb-6 bg-secondary/70 py-1 px-2.5 rounded border border-border inline-block">
+            <p className="text-[11px] text-muted-foreground font-mono mb-6 bg-secondary/70 py-1 px-2.5 rounded-sm border border-border inline-block">
               Reference: {error.digest}
             </p>
           )}

@@ -111,7 +111,7 @@ export default function SecurityAuditPage(): React.JSX.Element {
         />
 
         {!loading && total > 0 && (
-          <div className="mt-3 bg-card border border-border rounded-xl">
+          <div className="mt-3 bg-card border border-border rounded-lg">
             <EnterprisePagination
               currentPage={page}
               totalItems={total}

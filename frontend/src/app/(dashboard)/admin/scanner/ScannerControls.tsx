@@ -50,7 +50,7 @@ export default function ScannerControls({
         {/* Left: Sensitivity Segmented Control */}
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-xs font-medium text-muted-foreground mr-1">Sensitivity:</span>
-          <div className="inline-flex rounded-xl bg-secondary/80 p-0.5 border border-border/40">
+          <div className="inline-flex rounded-lg bg-secondary/80 p-0.5 border border-border/40">
             {PRESETS.map((preset) => {
               const isSelected = !showSlider && activePreset?.id === preset.id;
               return (

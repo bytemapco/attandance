@@ -27,7 +27,7 @@ export default function TeacherDashboardHeader({
   })();
 
   return (
-    <div className="rounded-2xl border border-border bg-card p-5 sm:p-6 shadow-[0_2px_8px_rgba(40,54,59,0.05)] flex flex-col md:flex-row md:items-center justify-between gap-5">
+    <div className="rounded-lg border border-border bg-card p-5 sm:p-6 shadow-[0_2px_8px_rgba(40,54,59,0.05)] flex flex-col md:flex-row md:items-center justify-between gap-5">
       <div className="space-y-1.5">
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-xs font-medium text-muted-foreground">{todayStr}</span>

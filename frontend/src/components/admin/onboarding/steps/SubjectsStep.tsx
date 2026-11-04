@@ -10,7 +10,7 @@ export default function SubjectsStep({ refresh }: StepProps): React.ReactElement
   return (
     <div className="space-y-4">
       {/* Subjects Section */}
-      <section className="space-y-3 rounded-xl border border-border bg-surface/60 p-4 sm:p-5">
+      <section className="space-y-3 rounded-lg border border-border bg-surface/60 p-4 sm:p-5">
         <div>
           <h3 className="text-sm font-semibold text-foreground">Subjects</h3>
           <p className="text-xs text-muted-foreground">Academic courses and teaching subjects.</p>
@@ -26,7 +26,7 @@ export default function SubjectsStep({ refresh }: StepProps): React.ReactElement
       </section>
 
       {/* Classrooms Section */}
-      <section className="space-y-3 rounded-xl border border-border bg-surface/60 p-4 sm:p-5">
+      <section className="space-y-3 rounded-lg border border-border bg-surface/60 p-4 sm:p-5">
         <div>
           <h3 className="text-sm font-semibold text-foreground">Classrooms</h3>
           <p className="text-xs text-muted-foreground">Rooms, laboratories, and lecture halls.</p>

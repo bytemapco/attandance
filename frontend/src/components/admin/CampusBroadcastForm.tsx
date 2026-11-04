@@ -25,7 +25,7 @@ export default function CampusBroadcastForm({
     <form onSubmit={onSubmit} className="space-y-5">
       <GlassCard className="p-5 bg-card border border-border space-y-4 shadow-2xs">
         <div className="flex items-center gap-2.5 pb-3 border-b border-border">
-          <div className="p-1.5 rounded-xl bg-primary/10 text-primary border border-primary/20">
+          <div className="p-1.5 rounded-lg bg-primary/10 text-primary border border-primary/20">
             <Megaphone size={16} />
           </div>
           <div>
@@ -46,7 +46,7 @@ export default function CampusBroadcastForm({
             value={formData.title}
             onChange={(e) => onChange({ ...formData, title: e.target.value })}
             maxLength={120}
-            className="w-full px-3 py-2 rounded-xl border border-border bg-card text-xs sm:text-sm text-primary placeholder:text-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent transition-all"
+            className="w-full px-3 py-2 rounded-lg border border-border bg-card text-xs sm:text-sm text-primary placeholder:text-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent transition-all"
           />
         </div>
 
@@ -62,7 +62,7 @@ export default function CampusBroadcastForm({
             value={formData.message}
             onChange={(e) => onChange({ ...formData, message: e.target.value })}
             maxLength={500}
-            className="w-full px-3 py-2 rounded-xl border border-border bg-card text-xs sm:text-sm text-primary placeholder:text-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent transition-all resize-y"
+            className="w-full px-3 py-2 rounded-lg border border-border bg-card text-xs sm:text-sm text-primary placeholder:text-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent transition-all resize-y"
           />
           <div className="flex justify-end mt-1 text-[11px] text-muted-foreground">
             {formData.message.length}/500 characters
@@ -79,7 +79,7 @@ export default function CampusBroadcastForm({
             placeholder="e.g. /teacher/dashboard or https://portal.institution.edu/notices"
             value={formData.link || ""}
             onChange={(e) => onChange({ ...formData, link: e.target.value })}
-            className="w-full px-3 py-1.5 rounded-xl border border-border bg-card text-xs text-primary placeholder:text-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent transition-all font-mono"
+            className="w-full px-3 py-1.5 rounded-lg border border-border bg-card text-xs text-primary placeholder:text-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent transition-all font-mono"
           />
         </div>
       </GlassCard>
@@ -91,7 +91,7 @@ export default function CampusBroadcastForm({
           type="button"
           onClick={onReset}
           disabled={submitting}
-          className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-muted-foreground hover:text-primary bg-card border border-border rounded-xl hover:bg-secondary transition-colors disabled:opacity-50 cursor-pointer"
+          className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-muted-foreground hover:text-primary bg-card border border-border rounded-lg hover:bg-secondary transition-colors disabled:opacity-50 cursor-pointer"
         >
           <RotateCcw size={13} />
           <span>Reset Draft</span>
@@ -100,7 +100,7 @@ export default function CampusBroadcastForm({
         <button
           type="submit"
           disabled={submitting}
-          className="inline-flex items-center gap-2 px-5 py-2 text-xs font-semibold text-primary-foreground bg-primary hover:bg-foreground rounded-xl shadow-xs transition-colors disabled:opacity-50 cursor-pointer"
+          className="inline-flex items-center gap-2 px-5 py-2 text-xs font-semibold text-primary-foreground bg-primary hover:bg-foreground rounded-lg shadow-xs transition-colors disabled:opacity-50 cursor-pointer"
         >
           <Send size={13} />
           <span>{submitting ? "Dispatching..." : "Dispatch Broadcast Announcement"}</span>

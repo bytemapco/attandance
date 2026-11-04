@@ -44,7 +44,7 @@ export const teacherColumns: TableColumn<TeacherResponse & Record<string, unknow
     render: (r) => {
       const empId = r.employee_id || (r as { employeeId?: string }).employeeId || "FAC-000";
       return (
-        <span className="font-mono text-xs text-foreground bg-secondary/80 px-2 py-0.5 rounded border border-border">
+        <span className="font-mono text-xs text-foreground bg-secondary/80 px-2 py-0.5 rounded-sm border border-border">
           {String(empId)}
         </span>
       );

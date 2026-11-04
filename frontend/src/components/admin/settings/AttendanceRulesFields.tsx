@@ -62,7 +62,7 @@ export default function AttendanceRulesFields({ value, onChange }: AttendanceRul
       <label className="flex items-center gap-2 text-sm text-foreground">
         <input
           type="checkbox"
-          className="h-4 w-4 rounded border-border-strong"
+          className="h-4 w-4 rounded-sm border-border-strong"
           checked={value.saturdayEnabled}
           onChange={(event) => onChange({ ...value, saturdayEnabled: event.target.checked })}
         />

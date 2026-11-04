@@ -38,7 +38,7 @@ export default function GlassResetPasswordDialog({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/40">
-      <div className="w-full max-w-md rounded-xl border border-border bg-card p-6 shadow-xl relative">
+      <div className="w-full max-w-md rounded-lg border border-border bg-card p-6 shadow-xl relative">
         <div className="flex items-center gap-2.5 pb-3 border-b border-border">
           <div className="p-2 rounded-lg bg-secondary text-primary border border-border">
             <KeyRound size={16} />

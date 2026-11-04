@@ -70,7 +70,7 @@ export default function GlassStatCard({
       )}
     >
       <div className="flex items-center justify-between mb-3.5 relative">
-        <div className={cn("p-2.5 rounded-xl border flex items-center justify-center shrink-0 shadow-2xs", theme.icon)}>
+        <div className={cn("p-2.5 rounded-lg border flex items-center justify-center shrink-0 shadow-2xs", theme.icon)}>
           {icon}
         </div>
         {trend && (

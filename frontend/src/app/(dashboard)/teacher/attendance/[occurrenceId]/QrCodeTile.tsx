@@ -14,7 +14,7 @@ export default function QrCodeTile({ qr, failed }: QrCodeTileProps): React.React
   const rotation = qr?.refresh_interval_seconds ?? 5;
   return (
     <div>
-      <div className="mx-auto w-full max-w-[260px] rounded-[14px] border border-border bg-card p-3">
+      <div className="mx-auto w-full max-w-[260px] rounded-lg border border-border bg-card p-3">
         {qr ? (
           <QRCodeSVG value={qr.qr_token} className="h-auto w-full" size={512} level="M" fgColor={BRAND_COLORS.primary} aria-label="Attendance QR code" />
         ) : (

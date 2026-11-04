@@ -69,16 +69,16 @@ export default function PlatformHealthPage(): React.ReactElement {
 
       {loading || !health ? (
         <div className="space-y-4" role="status" aria-label="Loading system health" aria-busy="true">
-          <Skeleton className="h-16 rounded-xl" />
+          <Skeleton className="h-16 rounded-lg" />
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="space-y-3 rounded-xl border border-border bg-card p-4">
+              <div key={i} className="space-y-3 rounded-lg border border-border bg-card p-4">
                 <Skeleton className="h-3 w-24" />
                 <Skeleton className="h-6 w-16" />
               </div>
             ))}
           </div>
-          <div className="space-y-4 rounded-xl border border-border bg-card p-4">
+          <div className="space-y-4 rounded-lg border border-border bg-card p-4">
             <Skeleton className="h-5 w-40" />
             <Skeleton className="h-44 w-full rounded-lg" />
           </div>

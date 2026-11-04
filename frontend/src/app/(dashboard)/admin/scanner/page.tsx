@@ -104,7 +104,7 @@ export default function ScannerPage(): React.ReactElement {
 
       {!loading && hasRun && results.length === 0 && (
         <GlassCard className="flex flex-col items-center justify-center py-16 text-center bg-card border-border/80">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-success/10 text-success mb-3 border border-success/20">
+          <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-success/10 text-success mb-3 border border-success/20">
             <CheckCircle2 size={24} />
           </div>
           <h4 className="text-sm font-semibold text-foreground">No Anomalies Found</h4>

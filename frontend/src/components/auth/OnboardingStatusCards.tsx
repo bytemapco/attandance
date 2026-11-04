@@ -11,7 +11,7 @@ interface OnboardingInvalidCardProps {
 
 export function OnboardingInvalidCard({ message }: OnboardingInvalidCardProps): React.ReactElement {
   return (
-    <div className="rounded-2xl border border-destructive-border bg-card p-6 sm:p-7 text-center space-y-5 shadow-[0_4px_16px_rgba(40,54,59,0.06)]">
+    <div className="rounded-lg border border-destructive-border bg-card p-6 sm:p-7 text-center space-y-5 shadow-[0_4px_16px_rgba(40,54,59,0.06)]">
       <div className="inline-flex p-3 rounded-full bg-destructive-soft border border-destructive-border text-destructive">
         <AlertCircle size={32} />
       </div>
@@ -30,7 +30,7 @@ export function OnboardingInvalidCard({ message }: OnboardingInvalidCardProps): 
 
 export function OnboardingCompletedCard(): React.ReactElement {
   return (
-    <div className="rounded-2xl border border-success-border bg-card p-6 sm:p-7 text-center space-y-5 shadow-[0_4px_16px_rgba(40,54,59,0.06)]">
+    <div className="rounded-lg border border-success-border bg-card p-6 sm:p-7 text-center space-y-5 shadow-[0_4px_16px_rgba(40,54,59,0.06)]">
       <div className="inline-flex p-3 rounded-full bg-success-soft border border-success-border text-success">
         <CheckCircle2 size={32} />
       </div>

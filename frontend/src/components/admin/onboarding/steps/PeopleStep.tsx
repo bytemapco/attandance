@@ -31,7 +31,7 @@ export default function PeopleStep({ status }: StepProps): React.ReactElement {
       )}
       <div className="grid gap-3 sm:grid-cols-2">
         {cards.map(({ id, title, icon: Icon, add, list }) => (
-          <div key={id} className="space-y-3 rounded-xl border border-border p-4">
+          <div key={id} className="space-y-3 rounded-lg border border-border p-4">
             <div className="flex items-center justify-between">
               <span className="flex items-center gap-2 font-medium text-foreground">
                 <Icon size={18} aria-hidden /> {title}

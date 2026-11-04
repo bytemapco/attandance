@@ -52,7 +52,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps): React.JSX.El
             <img
               src="/sahaj-app-icon.png"
               alt="SAHAJ Logo"
-              className="h-9 w-9 rounded-xl shadow-xs transition-transform object-contain shrink-0 self-center"
+              className="h-9 w-9 rounded-lg shadow-xs transition-transform object-contain shrink-0 self-center"
             />
             <div className="min-w-0 flex-1">
               <h2 className="text-sm font-bold text-primary tracking-wider leading-tight">SAHAJ</h2>
