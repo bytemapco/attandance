@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smart_attendance_app/app/typography.dart';
+import 'package:smart_attendance_app/app/theme.dart';
 
 class ProfileAvatar extends StatelessWidget {
   final String initials;
@@ -17,10 +18,10 @@ class ProfileAvatar extends StatelessWidget {
       width: 66,
       height: 66,
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF332314) : const Color(0xFFFFE4D6),
-        borderRadius: BorderRadius.circular(18),
+        color: isDark ? SasColors.darkWarningSoft : SasColors.copperSoft,
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isDark ? const Color(0xFF7C2D12) : const Color(0xFFFFD1BD),
+          color: isDark ? SasColors.copperStrong : SasColors.copperSoft,
           width: 1.0,
         ),
       ),
@@ -28,9 +29,9 @@ class ProfileAvatar extends StatelessWidget {
         child: Text(
           initials,
           style: SasTypography.style(
-            color: const Color(0xFFEA580C),
+            color: SasColors.copperStrong,
             fontSize: 22,
-            fontWeight: FontWeight.w800,
+            fontWeight: FontWeight.w600,
             letterSpacing: 0.5,
           ),
         ),

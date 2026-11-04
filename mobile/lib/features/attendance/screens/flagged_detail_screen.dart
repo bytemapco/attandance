@@ -73,7 +73,7 @@ class _FlaggedDetailScreenState extends ConsumerState<FlaggedDetailScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Submission failed: $e'),
-            backgroundColor: const Color(0xFFF0445E),
+            backgroundColor: SasColors.danger,
           ),
         );
       }
@@ -120,7 +120,7 @@ class _FlaggedDetailScreenState extends ConsumerState<FlaggedDetailScreen> {
       child: Scaffold(
         backgroundColor: isDark
             ? SasColors.darkCanvas
-            : const Color(0xFFF4F7FB),
+            : SasColors.lightCanvas,
         appBar: buildFlaggedDetailAppBar(
           context: context,
           isDark: isDark,

@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:smart_attendance_app/app/theme.dart';
 
-class GlassAppBar extends StatelessWidget implements PreferredSizeWidget {
+class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final List<Widget>? actions;
   final bool showBack;
   final VoidCallback? onBackPressed;
 
-  const GlassAppBar({
+  const AppTopBar({
     super.key,
     required this.title,
     this.actions,
@@ -22,11 +22,11 @@ class GlassAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textColor = isDark ? SasColors.brilliance : SasColors.indianInk;
+    final textColor = isDark ? SasColors.ivory : SasColors.ink;
     final bgColor = isDark ? SasColors.darkSurface : SasColors.lightSurface;
     final borderColor = isDark
-        ? const Color(0x1EFFFFFF)
-        : const Color(0x14000000);
+        ? SasColors.darkBorder
+        : SasColors.border;
 
     bool canPop = false;
     try {
@@ -70,9 +70,8 @@ class GlassAppBar extends StatelessWidget implements PreferredSizeWidget {
                   title,
                   style: TextStyle(
                     fontSize: 16,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
                     color: textColor,
-                    letterSpacing: -0.3,
                   ),
                   textAlign: (showBack || canPop)
                       ? TextAlign.left

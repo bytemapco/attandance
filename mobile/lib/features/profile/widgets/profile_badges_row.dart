@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smart_attendance_app/app/typography.dart';
+import 'package:smart_attendance_app/app/theme.dart';
 
 class ProfileBadgesRow extends StatelessWidget {
   final bool isDark;
@@ -19,15 +20,15 @@ class ProfileBadgesRow extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF332314) : const Color(0xFFFFEDD5),
+            color: isDark ? SasColors.darkWarningSoft : SasColors.copperSoft,
             borderRadius: BorderRadius.circular(8),
           ),
           child: Text(
             'STUDENT',
             style: SasTypography.style(
-              color: const Color(0xFFEA580C),
-              fontSize: 10,
-              fontWeight: FontWeight.w800,
+              color: SasColors.copperStrong,
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
               letterSpacing: 0.3,
             ),
           ),
@@ -38,7 +39,7 @@ class ProfileBadgesRow extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF143828) : const Color(0xFFECFDF5),
+            color: isDark ? SasColors.darkSuccessSoft : SasColors.successSoft,
             borderRadius: BorderRadius.circular(8),
           ),
           child: Row(
@@ -50,18 +51,18 @@ class ProfileBadgesRow extends StatelessWidget {
                     : Icons.error_outline_rounded,
                 size: 12,
                 color: isFaceVerified
-                    ? const Color(0xFF10B981)
-                    : const Color(0xFFF59E0B),
+                    ? SasColors.success
+                    : SasColors.warning,
               ),
               const SizedBox(width: 4),
               Text(
                 isFaceVerified ? 'Face ID Verified' : 'Face ID Pending',
                 style: SasTypography.style(
                   color: isFaceVerified
-                      ? const Color(0xFF059669)
-                      : const Color(0xFFD97706),
-                  fontSize: 10,
-                  fontWeight: FontWeight.w700,
+                      ? SasColors.success
+                      : SasColors.warning,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ],

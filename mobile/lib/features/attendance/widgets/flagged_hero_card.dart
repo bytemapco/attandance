@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:smart_attendance_app/core/attendance_utils.dart';
 import 'package:smart_attendance_app/domain/models/attendance.dart';
+import 'package:smart_attendance_app/app/theme.dart';
 
 class FlaggedHeroCard extends StatelessWidget {
   final AttendanceHistoryItem item;
@@ -13,7 +14,7 @@ class FlaggedHeroCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final isFlagged = item.status == 'Flagged';
-    final col = isFlagged ? const Color(0xFFF95721) : statusColor(item.status);
+    final col = isFlagged ? SasColors.copper : statusColor(item.status);
     final hasSubject =
         item.subject.isNotEmpty &&
         !item.className.toLowerCase().contains(item.subject.toLowerCase()) &&
@@ -22,18 +23,11 @@ class FlaggedHeroCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E293B) : Colors.white,
-        borderRadius: BorderRadius.circular(22),
+        color: isDark ? SasColors.darkSurface : Colors.white,
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isDark ? const Color(0xFF334155) : const Color(0xFFF1F5F9),
+          color: isDark ? SasColors.textSecondary : SasColors.ivory,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.03),
-            blurRadius: 14,
-            offset: const Offset(0, 4),
-          ),
-        ],
       ),
       child: Column(
         children: [
@@ -42,7 +36,7 @@ class FlaggedHeroCard extends StatelessWidget {
             height: 56,
             decoration: BoxDecoration(
               color: col.withValues(alpha: isDark ? 0.16 : 0.10),
-              borderRadius: BorderRadius.circular(18),
+              borderRadius: BorderRadius.circular(12),
               border: Border.all(
                 color: col.withValues(alpha: 0.22),
                 width: 1.2,
@@ -60,10 +54,9 @@ class FlaggedHeroCard extends StatelessWidget {
           Text(
             item.className,
             style: GoogleFonts.plusJakartaSans(
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w600,
               fontSize: 18,
-              color: isDark ? Colors.white : const Color(0xFF0F172A),
-              letterSpacing: -0.3,
+              color: isDark ? Colors.white : SasColors.ink,
             ),
             textAlign: TextAlign.center,
           ),
@@ -73,8 +66,8 @@ class FlaggedHeroCard extends StatelessWidget {
               item.subject,
               style: GoogleFonts.plusJakartaSans(
                 color: isDark
-                    ? const Color(0xFF94A3B8)
-                    : const Color(0xFF64748B),
+                    ? SasColors.mutedOnDark
+                    : SasColors.textMuted,
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
               ),
@@ -86,7 +79,7 @@ class FlaggedHeroCard extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
             decoration: BoxDecoration(
               color: isFlagged
-                  ? (isDark ? const Color(0xFF3B1E24) : const Color(0xFFFFEEEE))
+                  ? (isDark ? SasColors.darkDangerSoft : SasColors.dangerSoft)
                   : col.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(8),
             ),
@@ -95,7 +88,7 @@ class FlaggedHeroCard extends StatelessWidget {
               style: GoogleFonts.plusJakartaSans(
                 color: col,
                 fontSize: 12,
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ),
@@ -103,7 +96,7 @@ class FlaggedHeroCard extends StatelessWidget {
           Text(
             DateFormat('EEEE, MMM d · h:mm a').format(item.markedAt),
             style: GoogleFonts.plusJakartaSans(
-              color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
+              color: isDark ? SasColors.mutedOnDark : SasColors.textMuted,
               fontSize: 12,
               fontWeight: FontWeight.w500,
             ),

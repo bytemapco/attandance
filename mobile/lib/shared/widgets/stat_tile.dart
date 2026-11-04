@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:smart_attendance_app/app/theme.dart';
-import 'package:smart_attendance_app/shared/widgets/glass_card.dart';
+import 'package:smart_attendance_app/shared/widgets/surface_card.dart';
 
 /// Unified stat display widget replacing _QuickStat, _StatCard, _StatChip,
 /// and _MonthStat across home, history, and analytics screens.
 ///
 /// [variant] controls layout:
-/// - [StatTileVariant.compact] — icon + value + label stacked vertically inside a GlassCard
+/// - [StatTileVariant.compact] — icon + value + label stacked vertically inside a SurfaceCard
 /// - [StatTileVariant.pill] — value + label in a bordered container (no card wrapper)
 /// - [StatTileVariant.minimal] — just value + label text (no container)
 enum StatTileVariant { compact, pill, minimal }
@@ -39,7 +39,7 @@ class StatTile extends StatelessWidget {
   }
 
   Widget _buildCompact(BuildContext context) {
-    return GlassCard(
+    return SurfaceCard(
       onTap: onTap,
       padding: const EdgeInsets.symmetric(
         vertical: SasSpacing.md,
@@ -57,7 +57,7 @@ class StatTile extends StatelessWidget {
               value,
               style: TextStyle(
                 color: color,
-                fontWeight: FontWeight.w800,
+                fontWeight: FontWeight.w600,
                 fontSize: icon != null ? 14 : 20,
               ),
             ),
@@ -67,7 +67,7 @@ class StatTile extends StatelessWidget {
             label,
             style: TextStyle(
               color: SasColors.textSecondaryOf(context),
-              fontSize: 10.5,
+              fontSize: 11,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -90,7 +90,7 @@ class StatTile extends StatelessWidget {
             value,
             style: TextStyle(
               color: color,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w600,
               fontSize: 16,
             ),
           ),
@@ -98,7 +98,7 @@ class StatTile extends StatelessWidget {
             label,
             style: TextStyle(
               color: SasColors.textSecondaryOf(context),
-              fontSize: 10.5,
+              fontSize: 11,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -114,7 +114,7 @@ class StatTile extends StatelessWidget {
           value,
           style: TextStyle(
             color: color,
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w600,
             fontSize: 16,
           ),
         ),

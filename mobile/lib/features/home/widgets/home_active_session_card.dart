@@ -28,27 +28,20 @@ class HomeActiveSessionCard extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardBg = isDark ? SasColors.darkSurface : Colors.white;
     final primaryTextColor = isDark
-        ? SasColors.brilliance
-        : const Color(0xFF0F172A);
+        ? SasColors.ivory
+        : SasColors.ink;
     final subtitleColor = isDark
-        ? const Color(0xFF94A3B8)
-        : const Color(0xFF64748B);
+        ? SasColors.mutedOnDark
+        : SasColors.textMuted;
 
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: cardBg,
-        borderRadius: BorderRadius.circular(22),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isDark ? const Color(0x1FFFFFFF) : const Color(0x0F000000),
+          color: isDark ? SasColors.darkBorder : SasColors.border,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.20 : 0.04),
-            blurRadius: 14,
-            offset: const Offset(0, 4),
-          ),
-        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -65,9 +58,8 @@ class HomeActiveSessionCard extends StatelessWidget {
             courseTitle,
             style: SasTypography.style(
               fontSize: 18,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w600,
               color: primaryTextColor,
-              letterSpacing: -0.3,
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
@@ -94,15 +86,15 @@ class HomeActiveSessionCard extends StatelessWidget {
               const Icon(
                 Icons.access_time_rounded,
                 size: 15,
-                color: Color(0xFFF97316),
+                color: SasColors.copper,
               ),
               const SizedBox(width: 4),
               Text(
                 timeText,
                 style: SasTypography.style(
                   fontSize: 13.5,
-                  fontWeight: FontWeight.w700,
-                  color: const Color(0xFFF97316),
+                  fontWeight: FontWeight.w600,
+                  color: SasColors.copper,
                 ),
               ),
             ],
@@ -121,14 +113,14 @@ class HomeActiveSessionCard extends StatelessWidget {
           // View All Classes Button
           InkWell(
             onTap: onViewAll,
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(12),
             child: Container(
               height: 44,
               decoration: BoxDecoration(
                 color: isDark
-                    ? const Color(0xFF1E2838)
-                    : const Color(0xFFF1F5F9),
-                borderRadius: BorderRadius.circular(14),
+                    ? SasColors.darkSurface
+                    : SasColors.ivory,
+                borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -137,7 +129,7 @@ class HomeActiveSessionCard extends StatelessWidget {
                     'View All Classes',
                     style: SasTypography.style(
                       fontSize: 13.5,
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w600,
                       color: primaryTextColor,
                     ),
                   ),

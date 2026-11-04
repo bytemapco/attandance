@@ -12,11 +12,11 @@ class AnalyticsHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark
-        ? SasColors.brilliance
-        : const Color(0xFF0F172A);
+        ? SasColors.ivory
+        : SasColors.ink;
     final subtitleColor = isDark
-        ? const Color(0xFF94A3B8)
-        : const Color(0xFF64748B);
+        ? SasColors.mutedOnDark
+        : SasColors.textMuted;
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -30,9 +30,8 @@ class AnalyticsHeader extends StatelessWidget {
                 'Performance',
                 style: SasTypography.style(
                   fontSize: 24,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w600,
                   color: primaryTextColor,
-                  letterSpacing: -0.6,
                 ),
               ),
               const SizedBox(height: 3),
@@ -51,25 +50,18 @@ class AnalyticsHeader extends StatelessWidget {
         // "Last 4 weeks" dropdown pill
         InkWell(
           onTap: onFilterTap,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(12),
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7.5),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF1E2838) : Colors.white,
-              borderRadius: BorderRadius.circular(20),
+              color: isDark ? SasColors.darkSurface : Colors.white,
+              borderRadius: BorderRadius.circular(12),
               border: Border.all(
                 color: isDark
-                    ? const Color(0x1FFFFFFF)
-                    : const Color(0xFFE2E8F0),
+                    ? SasColors.darkBorder
+                    : SasColors.textOnDark,
                 width: 1.0,
               ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: isDark ? 0.20 : 0.04),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ],
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -78,8 +70,8 @@ class AnalyticsHeader extends StatelessWidget {
                   Icons.calendar_today_outlined,
                   size: 14,
                   color: isDark
-                      ? SasColors.brilliance
-                      : const Color(0xFF0F172A),
+                      ? SasColors.ivory
+                      : SasColors.ink,
                 ),
                 const SizedBox(width: 6),
                 Text(
@@ -88,8 +80,8 @@ class AnalyticsHeader extends StatelessWidget {
                     fontSize: 12.5,
                     fontWeight: FontWeight.w600,
                     color: isDark
-                        ? SasColors.brilliance
-                        : const Color(0xFF0F172A),
+                        ? SasColors.ivory
+                        : SasColors.ink,
                   ),
                 ),
                 const SizedBox(width: 4),

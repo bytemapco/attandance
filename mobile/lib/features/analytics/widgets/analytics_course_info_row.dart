@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smart_attendance_app/app/typography.dart';
+import 'package:smart_attendance_app/app/theme.dart';
 
 class AnalyticsCourseInfoRow extends StatelessWidget {
   final String classCode;
@@ -32,10 +33,10 @@ class AnalyticsCourseInfoRow extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF332314) : const Color(0xFFFFF7ED),
+            color: isDark ? SasColors.darkWarningSoft : SasColors.copperSoft,
             borderRadius: BorderRadius.circular(10),
             border: Border.all(
-              color: isDark ? const Color(0xFF7C2D12) : const Color(0xFFFED7AA),
+              color: isDark ? SasColors.copperStrong : SasColors.copperSoft,
               width: 1.0,
             ),
           ),
@@ -43,8 +44,8 @@ class AnalyticsCourseInfoRow extends StatelessWidget {
             classCode,
             style: SasTypography.style(
               fontSize: 13,
-              fontWeight: FontWeight.w800,
-              color: const Color(0xFFEA580C),
+              fontWeight: FontWeight.w600,
+              color: SasColors.copperStrong,
             ),
           ),
         ),
@@ -59,7 +60,7 @@ class AnalyticsCourseInfoRow extends StatelessWidget {
                 courseName,
                 style: SasTypography.style(
                   fontSize: 14.5,
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w600,
                   color: primaryTextColor,
                 ),
                 maxLines: 1,
@@ -88,8 +89,8 @@ class AnalyticsCourseInfoRow extends StatelessWidget {
               '${pct.toStringAsFixed(0)}%',
               style: SasTypography.style(
                 fontSize: 18,
-                fontWeight: FontWeight.w800,
-                color: const Color(0xFFF95721),
+                fontWeight: FontWeight.w600,
+                color: SasColors.copper,
               ),
             ),
             const SizedBox(height: 2),

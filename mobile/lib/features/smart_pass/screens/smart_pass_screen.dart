@@ -10,7 +10,7 @@ import 'package:smart_attendance_app/features/smart_pass/widgets/smart_pass_guid
 import 'package:smart_attendance_app/features/smart_pass/widgets/smart_pass_permission_card.dart';
 import 'package:smart_attendance_app/features/smart_pass/widgets/smart_pass_scanner_view.dart';
 import 'package:smart_attendance_app/features/smart_pass/widgets/smart_pass_success_card.dart';
-import 'package:smart_attendance_app/shared/widgets/glass_app_bar.dart';
+import 'package:smart_attendance_app/shared/widgets/app_top_bar.dart';
 
 class SmartPassScreen extends ConsumerStatefulWidget {
   const SmartPassScreen({super.key});
@@ -126,7 +126,7 @@ class _SmartPassScreenState extends ConsumerState<SmartPassScreen>
       },
       child: Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        appBar: GlassAppBar(
+        appBar: AppTopBar(
           title: 'Smart Pass Scanner',
           showBack: true,
           onBackPressed: _handleBack,

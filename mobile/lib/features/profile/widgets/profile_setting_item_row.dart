@@ -27,11 +27,11 @@ class ProfileSettingItemRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark
-        ? SasColors.brilliance
-        : const Color(0xFF0F172A);
+        ? SasColors.ivory
+        : SasColors.ink;
     final subtitleColor = isDark
-        ? const Color(0xFF94A3B8)
-        : const Color(0xFF64748B);
+        ? SasColors.mutedOnDark
+        : SasColors.textMuted;
 
     return InkWell(
       onTap: () {
@@ -59,7 +59,7 @@ class ProfileSettingItemRow extends StatelessWidget {
                   Text(
                     title,
                     style: SasTypography.style(
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w600,
                       fontSize: 14,
                       color: primaryTextColor,
                     ),

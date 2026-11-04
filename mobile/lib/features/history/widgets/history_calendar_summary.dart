@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smart_attendance_app/app/typography.dart';
+import 'package:smart_attendance_app/app/theme.dart';
 
 /// Legend row displaying colored status dots for calendar events.
 class HistoryCalendarLegend extends StatelessWidget {
@@ -12,15 +13,15 @@ class HistoryCalendarLegend extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
-        borderRadius: BorderRadius.circular(14),
+        color: isDark ? SasColors.ink : SasColors.ivory,
+        borderRadius: BorderRadius.circular(12),
       ),
       child: const Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _LegendItem(color: Color(0xFF10B981), label: 'Present'),
-          _LegendItem(color: Color(0xFFEF4444), label: 'Absent'),
-          _LegendItem(color: Color(0xFFF59E0B), label: 'Excused'),
+          _LegendItem(color: SasColors.success, label: 'Present'),
+          _LegendItem(color: SasColors.danger, label: 'Absent'),
+          _LegendItem(color: SasColors.warning, label: 'Excused'),
         ],
       ),
     );
@@ -37,8 +38,8 @@ class _LegendItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor = isDark
-        ? const Color(0xFFCBD5E1)
-        : const Color(0xFF64748B);
+        ? SasColors.textOnDark
+        : SasColors.textMuted;
 
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -82,17 +83,17 @@ class HistoryCalendarStatsRow extends StatelessWidget {
         _StatCountColumn(
           count: '$present',
           label: 'Present',
-          countColor: const Color(0xFF10B981),
+          countColor: SasColors.success,
         ),
         _StatCountColumn(
           count: '$absent',
           label: 'Absent',
-          countColor: const Color(0xFFEF4444),
+          countColor: SasColors.danger,
         ),
         _StatCountColumn(
           count: '$excused',
           label: 'Excused',
-          countColor: const Color(0xFFF59E0B),
+          countColor: SasColors.warning,
         ),
       ],
     );
@@ -114,8 +115,8 @@ class _StatCountColumn extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final subtitleColor = isDark
-        ? const Color(0xFFCBD5E1)
-        : const Color(0xFF64748B);
+        ? SasColors.textOnDark
+        : SasColors.textMuted;
 
     return Expanded(
       child: Column(
@@ -124,7 +125,7 @@ class _StatCountColumn extends StatelessWidget {
             count,
             style: SasTypography.style(
               fontSize: 22,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w600,
               color: countColor,
               height: 1.0,
             ),

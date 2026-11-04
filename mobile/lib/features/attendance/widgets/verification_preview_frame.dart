@@ -29,11 +29,11 @@ class VerificationPreviewFrame extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardBg = isDark ? SasColors.darkSurface : Colors.white;
     final borderCol = isDark
-        ? const Color(0x1FFFFFFF)
-        : const Color(0xFFE3E9F1);
+        ? SasColors.darkBorder
+        : SasColors.border;
     final primaryTextColor = isDark
-        ? SasColors.brilliance
-        : const Color(0xFF0F172A);
+        ? SasColors.ivory
+        : SasColors.ink;
 
     return Column(
       children: [
@@ -41,18 +41,11 @@ class VerificationPreviewFrame extends StatelessWidget {
           child: Container(
             decoration: BoxDecoration(
               color: cardBg,
-              borderRadius: BorderRadius.circular(22),
+              borderRadius: BorderRadius.circular(12),
               border: Border.all(color: borderCol),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.05),
-                  blurRadius: 14,
-                  offset: const Offset(0, 4),
-                ),
-              ],
             ),
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(22),
+              borderRadius: BorderRadius.circular(12),
               child: Stack(
                 fit: StackFit.expand,
                 children: [
@@ -69,7 +62,7 @@ class VerificationPreviewFrame extends StatelessWidget {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(105),
                         border: Border.all(
-                          color: const Color(0xFFF95721),
+                          color: SasColors.copper,
                           width: 2.2,
                         ),
                       ),
@@ -87,24 +80,17 @@ class VerificationPreviewFrame extends StatelessWidget {
                         ),
                         decoration: BoxDecoration(
                           color:
-                              (isDark ? const Color(0xFF0F172A) : Colors.white)
+                              (isDark ? SasColors.ink : Colors.white)
                                   .withValues(alpha: 0.92),
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.circular(12),
                           border: Border.all(color: borderCol),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.08),
-                              blurRadius: 8,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
                         ),
                         child: Text(
                           'Review Captured Photo',
                           style: GoogleFonts.plusJakartaSans(
                             color: primaryTextColor,
                             fontSize: 13,
-                            fontWeight: FontWeight.w700,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ),

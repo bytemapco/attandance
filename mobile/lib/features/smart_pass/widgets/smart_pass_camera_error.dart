@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:smart_attendance_app/app/theme.dart';
-import 'package:smart_attendance_app/shared/widgets/glass_button.dart';
+import 'package:smart_attendance_app/shared/widgets/app_button.dart';
 
 /// Error fallback state displayed when camera initialization or permissions fail.
 class SmartPassCameraError extends StatelessWidget {
@@ -34,7 +34,7 @@ class SmartPassCameraError extends StatelessWidget {
               'Camera Access Required',
               style: GoogleFonts.plusJakartaSans(
                 color: Colors.white,
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.w600,
                 fontSize: 14,
               ),
             ),
@@ -49,7 +49,7 @@ class SmartPassCameraError extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 14),
-            GlassButton(label: 'Start Camera', height: 38, onPressed: onRetry),
+            AppButton(label: 'Start Camera', height: 38, onPressed: onRetry),
           ],
         ),
       ),

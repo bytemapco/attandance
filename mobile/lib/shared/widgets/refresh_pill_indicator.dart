@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:smart_attendance_app/app/theme.dart';
 import 'package:smart_attendance_app/app/typography.dart';
 
-/// Floating glassmorphic sync pill displaying live refresh progress and labels.
+/// Sync pill showing refresh progress and its label.
 class RefreshPillIndicator extends StatelessWidget {
   final bool isRefreshing;
   final double progress;
@@ -26,19 +26,12 @@ class RefreshPillIndicator extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF1E2838) : Colors.white,
-            borderRadius: BorderRadius.circular(24),
+            color: isDark ? SasColors.darkSurface : Colors.white,
+            borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: isDark ? const Color(0x33FFFFFF) : const Color(0x1F000000),
+              color: isDark ? SasColors.darkBorderStrong : SasColors.border,
               width: 1.0,
             ),
-            boxShadow: [
-              BoxShadow(
-                color: const Color(0xFFF95721).withValues(alpha: 0.22),
-                blurRadius: 16,
-                offset: const Offset(0, 4),
-              ),
-            ],
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -52,7 +45,7 @@ class RefreshPillIndicator extends StatelessWidget {
                           child: const Icon(
                             Icons.sync_rounded,
                             size: 18,
-                            color: Color(0xFFF95721),
+                            color: SasColors.copper,
                           ),
                         );
                       },
@@ -64,7 +57,7 @@ class RefreshPillIndicator extends StatelessWidget {
                             ? Icons.keyboard_double_arrow_down_rounded
                             : Icons.arrow_downward_rounded,
                         size: 17,
-                        color: const Color(0xFFF95721),
+                        color: SasColors.copper,
                       ),
                     ),
               const SizedBox(width: 8),
@@ -76,10 +69,10 @@ class RefreshPillIndicator extends StatelessWidget {
                           : 'Pull to Refresh'),
                 style: SasTypography.style(
                   fontSize: 12.5,
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w600,
                   color: isDark
-                      ? SasColors.brilliance
-                      : const Color(0xFF0F172A),
+                      ? SasColors.ivory
+                      : SasColors.ink,
                 ),
               ),
             ],

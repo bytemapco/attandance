@@ -5,7 +5,7 @@ import 'package:smart_attendance_app/app/typography.dart';
 import 'package:smart_attendance_app/features/home/providers/session_provider.dart';
 import 'package:smart_attendance_app/features/home/widgets/home_active_session_card.dart';
 import 'package:smart_attendance_app/features/home/widgets/home_empty_classes.dart';
-import 'package:smart_attendance_app/shared/widgets/glass_card.dart';
+import 'package:smart_attendance_app/shared/widgets/surface_card.dart';
 import 'package:smart_attendance_app/shared/widgets/shimmer_placeholder.dart';
 
 /// Section showing Today's Classes header and active class card matching reference design.
@@ -33,11 +33,11 @@ class HomeTodayClassesCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark
-        ? SasColors.brilliance
-        : const Color(0xFF0F172A);
+        ? SasColors.ivory
+        : SasColors.ink;
     final subtitleColor = isDark
-        ? const Color(0xFF94A3B8)
-        : const Color(0xFF64748B);
+        ? SasColors.mutedOnDark
+        : SasColors.textMuted;
 
     final activeSession =
         sessions.where((s) => s.isActive).firstOrNull ?? sessions.firstOrNull;
@@ -84,9 +84,8 @@ class HomeTodayClassesCard extends StatelessWidget {
                 "Today's Classes",
                 style: SasTypography.style(
                   fontSize: 18.5,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w600,
                   color: primaryTextColor,
-                  letterSpacing: -0.4,
                 ),
               ),
               Row(
@@ -154,7 +153,7 @@ class _ClassesErrorState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textColor = SasColors.textPrimaryOf(context);
-    return GlassCard(
+    return SurfaceCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

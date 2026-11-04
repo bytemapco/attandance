@@ -24,8 +24,8 @@ class HomeStatPillsRow extends StatelessWidget {
         Expanded(
           child: _StatPillCard(
             icon: Icons.local_fire_department_rounded,
-            iconColor: const Color(0xFFF95721),
-            iconBg: const Color(0xFFFFEDD5),
+            iconColor: SasColors.copper,
+            iconBg: SasColors.copperSoft,
             title: '$streakDays ${streakDays == 1 ? "Day" : "Days"}',
             subtitle: 'Streak',
             onTap: onTapStreak,
@@ -35,8 +35,8 @@ class HomeStatPillsRow extends StatelessWidget {
         Expanded(
           child: _StatPillCard(
             icon: Icons.school_rounded,
-            iconColor: const Color(0xFF2563EB),
-            iconBg: const Color(0xFFDBEAFE),
+            iconColor: SasColors.info,
+            iconBg: SasColors.infoSoft,
             title:
                 '$classesThisWeek ${classesThisWeek == 1 ? "Class" : "Classes"}',
             subtitle: 'This Week',
@@ -70,31 +70,24 @@ class _StatPillCard extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardBg = isDark ? SasColors.darkSurface : Colors.white;
     final primaryTextColor = isDark
-        ? SasColors.brilliance
-        : const Color(0xFF0F172A);
+        ? SasColors.ivory
+        : SasColors.ink;
     final subtitleColor = isDark
-        ? const Color(0xFFE2E8F0)
-        : const Color(0xFF475569);
+        ? SasColors.textOnDark
+        : SasColors.textMuted;
 
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: BorderRadius.circular(12),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         decoration: BoxDecoration(
           color: cardBg,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isDark ? const Color(0x1FFFFFFF) : const Color(0x0F000000),
+            color: isDark ? SasColors.darkBorder : SasColors.border,
             width: 1.0,
           ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: isDark ? 0.20 : 0.04),
-              blurRadius: 10,
-              offset: const Offset(0, 3),
-            ),
-          ],
         ),
         child: Row(
           children: [
@@ -117,9 +110,8 @@ class _StatPillCard extends StatelessWidget {
                     title,
                     style: SasTypography.style(
                       fontSize: 15.5,
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w600,
                       color: primaryTextColor,
-                      letterSpacing: -0.3,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,

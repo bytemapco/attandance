@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smart_attendance_app/app/typography.dart';
+import 'package:smart_attendance_app/app/theme.dart';
 
 class DeviceChangeActions extends StatelessWidget {
   final bool isLoading;
@@ -40,17 +41,8 @@ class DeviceChangeActions extends StatelessWidget {
         const SizedBox(width: 8),
         DecoratedBox(
           decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              colors: [Color(0xFFFF7A18), Color(0xFFF95721)],
-            ),
+            color: SasColors.carbon,
             borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              BoxShadow(
-                color: const Color(0xFFF95721).withValues(alpha: 0.35),
-                blurRadius: 10,
-                offset: const Offset(0, 3),
-              ),
-            ],
           ),
           child: ElevatedButton(
             onPressed: isLoading ? null : onSubmit,
@@ -75,7 +67,7 @@ class DeviceChangeActions extends StatelessWidget {
                     'Submit Request',
                     style: SasTypography.style(
                       fontSize: 14,
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w600,
                       color: Colors.white,
                     ),
                   ),

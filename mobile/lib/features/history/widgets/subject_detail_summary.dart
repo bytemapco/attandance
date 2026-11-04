@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:smart_attendance_app/app/theme.dart';
 import 'package:smart_attendance_app/core/attendance_utils.dart';
 import 'package:smart_attendance_app/domain/models/attendance.dart';
-import 'package:smart_attendance_app/shared/widgets/glass_card.dart';
+import 'package:smart_attendance_app/shared/widgets/surface_card.dart';
 
 class SubjectDetailSummary extends StatelessWidget {
   final String subjectName;
@@ -32,7 +32,7 @@ class SubjectDetailSummary extends StatelessWidget {
       target: target,
     );
 
-    return GlassCard(
+    return SurfaceCard(
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -40,7 +40,7 @@ class SubjectDetailSummary extends StatelessWidget {
           Text(
             subjectName,
             style: TextStyle(
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w600,
               fontSize: 16,
               color: SasColors.textPrimaryOf(context),
             ),
@@ -57,7 +57,7 @@ class SubjectDetailSummary extends StatelessWidget {
                 child: _buildMiniStat(
                   'Present',
                   '$present',
-                  SasColors.accentEmerald,
+                  SasColors.success,
                 ),
               ),
               const SizedBox(width: 8),
@@ -86,7 +86,7 @@ class SubjectDetailSummary extends StatelessWidget {
                 '${pct.toStringAsFixed(1)}%',
                 style: TextStyle(
                   color: color,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w600,
                   fontSize: 15,
                 ),
               ),
@@ -97,7 +97,7 @@ class SubjectDetailSummary extends StatelessWidget {
             borderRadius: BorderRadius.circular(4),
             child: LinearProgressIndicator(
               value: (pct / 100).clamp(0.0, 1.0),
-              backgroundColor: SasColors.glassBorder,
+              backgroundColor: SasColors.border,
               valueColor: AlwaysStoppedAnimation<Color>(color),
               minHeight: 6,
             ),
@@ -111,7 +111,7 @@ class SubjectDetailSummary extends StatelessWidget {
                 : 'Attend ${needs.needToAttend} more sessions to reach ${target.toStringAsFixed(0)}%',
             style: TextStyle(
               color: pct >= target
-                  ? SasColors.accentEmerald
+                  ? SasColors.success
                   : SasColors.warning,
               fontSize: 12,
               fontWeight: FontWeight.w500,
@@ -136,7 +136,7 @@ class SubjectDetailSummary extends StatelessWidget {
             value,
             style: TextStyle(
               color: color,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w600,
               fontSize: 16,
             ),
           ),
@@ -144,7 +144,7 @@ class SubjectDetailSummary extends StatelessWidget {
             label,
             style: const TextStyle(
               color: SasColors.textMuted,
-              fontSize: 10,
+              fontSize: 11,
               fontWeight: FontWeight.w600,
             ),
           ),

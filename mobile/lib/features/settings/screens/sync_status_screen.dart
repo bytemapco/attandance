@@ -4,10 +4,10 @@ import 'package:smart_attendance_app/app/theme.dart';
 import 'package:smart_attendance_app/data/local/hive_service.dart';
 import 'package:smart_attendance_app/data/local/offline_sync_service.dart';
 import 'package:smart_attendance_app/features/settings/widgets/sync_queue_item.dart';
-import 'package:smart_attendance_app/shared/widgets/animated_background.dart';
-import 'package:smart_attendance_app/shared/widgets/glass_app_bar.dart';
-import 'package:smart_attendance_app/shared/widgets/glass_button.dart';
-import 'package:smart_attendance_app/shared/widgets/glass_card.dart';
+import 'package:smart_attendance_app/shared/widgets/screen_background.dart';
+import 'package:smart_attendance_app/shared/widgets/app_top_bar.dart';
+import 'package:smart_attendance_app/shared/widgets/app_button.dart';
+import 'package:smart_attendance_app/shared/widgets/surface_card.dart';
 
 class SyncStatusScreen extends ConsumerStatefulWidget {
   const SyncStatusScreen({super.key});
@@ -34,8 +34,8 @@ class _SyncStatusScreenState extends ConsumerState<SyncStatusScreen> {
     final queue = hive.getQueue();
 
     return Scaffold(
-      appBar: const GlassAppBar(title: 'Offline Sync Status'),
-      body: AnimatedBackground(
+      appBar: const AppTopBar(title: 'Offline Sync Status'),
+      body: ScreenBackground(
         child: SafeArea(
           child: Center(
             child: ConstrainedBox(
@@ -43,9 +43,9 @@ class _SyncStatusScreenState extends ConsumerState<SyncStatusScreen> {
               child: ListView(
                 padding: const EdgeInsets.all(16),
                 children: [
-                  GlassCard(
+                  SurfaceCard(
                     borderColor: queue.isEmpty
-                        ? SasColors.accentEmerald.withValues(alpha: 0.3)
+                        ? SasColors.success.withValues(alpha: 0.3)
                         : SasColors.info.withValues(alpha: 0.3),
                     padding: const EdgeInsets.all(16),
                     child: Row(
@@ -55,7 +55,7 @@ class _SyncStatusScreenState extends ConsumerState<SyncStatusScreen> {
                           decoration: BoxDecoration(
                             color:
                                 (queue.isEmpty
-                                        ? SasColors.accentEmerald
+                                        ? SasColors.success
                                         : SasColors.info)
                                     .withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(10),
@@ -65,7 +65,7 @@ class _SyncStatusScreenState extends ConsumerState<SyncStatusScreen> {
                                 ? Icons.cloud_done_rounded
                                 : Icons.cloud_sync_rounded,
                             color: queue.isEmpty
-                                ? SasColors.accentEmerald
+                                ? SasColors.success
                                 : SasColors.info,
                             size: 22,
                           ),
@@ -80,7 +80,7 @@ class _SyncStatusScreenState extends ConsumerState<SyncStatusScreen> {
                                     ? 'All Synced'
                                     : '${queue.length} Pending Records',
                                 style: TextStyle(
-                                  fontWeight: FontWeight.w700,
+                                  fontWeight: FontWeight.w600,
                                   fontSize: 15,
                                   color: SasColors.textPrimaryOf(context),
                                 ),
@@ -99,7 +99,7 @@ class _SyncStatusScreenState extends ConsumerState<SyncStatusScreen> {
                           ),
                         ),
                         if (queue.isNotEmpty)
-                          GlassButton(
+                          AppButton(
                             label: 'Sync Now',
                             isLoading: _isSyncing,
                             icon: Icons.refresh_rounded,
@@ -114,7 +114,7 @@ class _SyncStatusScreenState extends ConsumerState<SyncStatusScreen> {
                       'Queued Submissions',
                       style: TextStyle(
                         fontSize: 13,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w600,
                         color: SasColors.textSecondaryOf(context),
                       ),
                     ),
@@ -128,7 +128,7 @@ class _SyncStatusScreenState extends ConsumerState<SyncStatusScreen> {
                           Icon(
                             Icons.cloud_done_rounded,
                             size: 48,
-                            color: SasColors.accentEmerald.withValues(
+                            color: SasColors.success.withValues(
                               alpha: 0.4,
                             ),
                           ),
@@ -138,7 +138,7 @@ class _SyncStatusScreenState extends ConsumerState<SyncStatusScreen> {
                             style: TextStyle(
                               color: SasColors.textPrimaryOf(context),
                               fontSize: 14,
-                              fontWeight: FontWeight.w700,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                           const SizedBox(height: 4),

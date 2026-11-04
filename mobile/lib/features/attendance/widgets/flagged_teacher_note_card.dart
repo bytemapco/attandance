@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:smart_attendance_app/app/theme.dart';
 
 class FlaggedTeacherNoteCard extends StatelessWidget {
   final String note;
@@ -28,12 +29,12 @@ class FlaggedTeacherNoteCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF0F9FF),
-              borderRadius: BorderRadius.circular(16),
+              color: isDark ? SasColors.darkSurface : SasColors.infoSoft,
+              borderRadius: BorderRadius.circular(12),
               border: Border.all(
                 color: isDark
-                    ? const Color(0xFF334155)
-                    : const Color(0xFFBAE6FD),
+                    ? SasColors.textSecondary
+                    : SasColors.infoBorder,
               ),
             ),
             child: Row(
@@ -41,7 +42,7 @@ class FlaggedTeacherNoteCard extends StatelessWidget {
               children: [
                 const Icon(
                   Icons.rate_review_outlined,
-                  color: Color(0xFF0284C7),
+                  color: SasColors.info,
                   size: 18,
                 ),
                 const SizedBox(width: 10),
@@ -52,11 +53,11 @@ class FlaggedTeacherNoteCard extends StatelessWidget {
                       Text(
                         'Instructor note',
                         style: GoogleFonts.plusJakartaSans(
-                          fontWeight: FontWeight.w700,
+                          fontWeight: FontWeight.w600,
                           fontSize: 12,
                           color: isDark
-                              ? const Color(0xFF38BDF8)
-                              : const Color(0xFF0284C7),
+                              ? SasColors.info
+                              : SasColors.info,
                         ),
                       ),
                       const SizedBox(height: 2),
@@ -65,7 +66,7 @@ class FlaggedTeacherNoteCard extends StatelessWidget {
                         style: GoogleFonts.plusJakartaSans(
                           color: isDark
                               ? Colors.white
-                              : const Color(0xFF1E293B),
+                              : SasColors.darkSurface,
                           fontSize: 13,
                           height: 1.4,
                           fontWeight: FontWeight.w500,
@@ -85,10 +86,10 @@ class FlaggedTeacherNoteCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E293B) : Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        color: isDark ? SasColors.darkSurface : Colors.white,
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isDark ? const Color(0xFF334155) : const Color(0xFFF1F5F9),
+          color: isDark ? SasColors.textSecondary : SasColors.ivory,
         ),
       ),
       child: Row(
@@ -106,14 +107,14 @@ class FlaggedTeacherNoteCard extends StatelessWidget {
                 height: 52,
                 decoration: BoxDecoration(
                   color: isDark
-                      ? const Color(0xFF334155)
-                      : const Color(0xFFF1F5F9),
+                      ? SasColors.textSecondary
+                      : SasColors.ivory,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: const Icon(
                   Icons.person_rounded,
                   size: 24,
-                  color: Color(0xFF94A3B8),
+                  color: SasColors.mutedOnDark,
                 ),
               ),
             ),
@@ -126,9 +127,9 @@ class FlaggedTeacherNoteCard extends StatelessWidget {
                 Text(
                   'Verification snapshot',
                   style: GoogleFonts.plusJakartaSans(
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
                     fontSize: 13.5,
-                    color: isDark ? Colors.white : const Color(0xFF0F172A),
+                    color: isDark ? Colors.white : SasColors.ink,
                   ),
                 ),
                 const SizedBox(height: 2),
@@ -138,8 +139,8 @@ class FlaggedTeacherNoteCard extends StatelessWidget {
                     fontSize: 11.5,
                     fontWeight: FontWeight.w500,
                     color: isDark
-                        ? const Color(0xFF94A3B8)
-                        : const Color(0xFF64748B),
+                        ? SasColors.mutedOnDark
+                        : SasColors.textMuted,
                   ),
                 ),
               ],

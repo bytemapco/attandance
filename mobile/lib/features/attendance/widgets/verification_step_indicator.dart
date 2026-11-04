@@ -23,13 +23,13 @@ class VerificationStepIndicator extends StatelessWidget {
     };
 
     final inactiveTrack = isDark
-        ? const Color(0xFF1E293B)
-        : const Color(0xFFE9EEF5);
+        ? SasColors.darkSurface
+        : SasColors.lightElevated;
     final borderCol = isDark
-        ? const Color(0x2AFFFFFF)
-        : const Color(0xFFE3E9F1);
-    const orangeCol = Color(0xFFF95721);
-    const emeraldCol = Color(0xFF08A875);
+        ? SasColors.darkBorder
+        : SasColors.border;
+    const orangeCol = SasColors.copper;
+    const emeraldCol = SasColors.success;
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -43,7 +43,7 @@ class VerificationStepIndicator extends StatelessWidget {
             ? emeraldCol
             : isCurrent
             ? orangeCol
-            : (isDark ? const Color(0xFF64748B) : const Color(0xFF94A3B8));
+            : (isDark ? SasColors.textMuted : SasColors.mutedOnDark);
 
         return Expanded(
           child: Column(
@@ -68,8 +68,8 @@ class VerificationStepIndicator extends StatelessWidget {
                           ? emeraldCol
                           : isCurrent
                           ? (isDark
-                                ? const Color(0x33F95721)
-                                : const Color(0xFFFFEDD5))
+                                ? SasColors.darkElevated
+                                : SasColors.copperSoft)
                           : inactiveTrack,
                       border: Border.all(
                         color: isCompleted
@@ -79,15 +79,6 @@ class VerificationStepIndicator extends StatelessWidget {
                             : borderCol,
                         width: isCurrent ? 2.2 : 1.2,
                       ),
-                      boxShadow: isCurrent
-                          ? [
-                              BoxShadow(
-                                color: orangeCol.withValues(alpha: 0.25),
-                                blurRadius: 8,
-                                spreadRadius: 1,
-                              ),
-                            ]
-                          : null,
                     ),
                     child: Center(
                       child: isCompleted
@@ -101,7 +92,7 @@ class VerificationStepIndicator extends StatelessWidget {
                               style: SasTypography.style(
                                 fontSize: 12,
                                 fontWeight: isCurrent
-                                    ? FontWeight.w800
+                                    ? FontWeight.w600
                                     : FontWeight.w600,
                                 color: isCurrent ? orangeCol : stepColor,
                               ),
@@ -124,11 +115,11 @@ class VerificationStepIndicator extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: SasTypography.style(
                   fontSize: 11,
-                  fontWeight: isCurrent ? FontWeight.w700 : FontWeight.w500,
+                  fontWeight: isCurrent ? FontWeight.w600 : FontWeight.w500,
                   color: isCurrent
                       ? (isDark
-                            ? SasColors.brilliance
-                            : const Color(0xFF0F172A))
+                            ? SasColors.ivory
+                            : SasColors.ink)
                       : stepColor,
                 ),
               ),

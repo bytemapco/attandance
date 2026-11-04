@@ -26,45 +26,38 @@ class HistoryCardItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final cardBg = isDark ? const Color(0xFF1E2838) : Colors.white;
+    final cardBg = isDark ? SasColors.darkSurface : Colors.white;
     final primaryTextColor = isDark
-        ? SasColors.brilliance
-        : const Color(0xFF0F172A);
+        ? SasColors.ivory
+        : SasColors.ink;
     final subtitleColor = isDark
-        ? const Color(0xFF94A3B8)
-        : const Color(0xFF64748B);
+        ? SasColors.mutedOnDark
+        : SasColors.textMuted;
 
     final normalizedStatus = _formatStatus(status);
     final isPresent = normalizedStatus == 'Present';
     final isAbsent = normalizedStatus == 'Absent';
 
     final pillBg = isPresent
-        ? const Color(0xFFE8F8F0)
-        : (isAbsent ? const Color(0xFFFEE8E8) : const Color(0xFFFEF3C7));
+        ? SasColors.successSoft
+        : (isAbsent ? SasColors.dangerSoft : SasColors.warningSoft);
     final pillText = isPresent
-        ? const Color(0xFF16A34A)
-        : (isAbsent ? const Color(0xFFDC2626) : const Color(0xFFD97706));
+        ? SasColors.success
+        : (isAbsent ? SasColors.danger : SasColors.warning);
 
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(18),
+      borderRadius: BorderRadius.circular(12),
       child: Container(
         margin: const EdgeInsets.only(bottom: 11),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         decoration: BoxDecoration(
           color: cardBg,
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isDark ? const Color(0x1FFFFFFF) : const Color(0xFFE2E8F0),
+            color: isDark ? SasColors.darkBorder : SasColors.textOnDark,
             width: 1.0,
           ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: isDark ? 0.20 : 0.04),
-              blurRadius: 10,
-              offset: const Offset(0, 2),
-            ),
-          ],
         ),
         child: Row(
           children: [
@@ -74,19 +67,19 @@ class HistoryCardItem extends StatelessWidget {
               height: 52,
               decoration: BoxDecoration(
                 color: isDark
-                    ? const Color(0xFF0F172A)
-                    : const Color(0xFFF1F5F9),
+                    ? SasColors.ink
+                    : SasColors.ivory,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    monthText.toUpperCase(),
+                    monthText,
                     style: SasTypography.style(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w700,
-                      color: const Color(0xFFF95721),
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: SasColors.copper,
                     ),
                   ),
                   const SizedBox(height: 1),
@@ -94,7 +87,7 @@ class HistoryCardItem extends StatelessWidget {
                     dayText,
                     style: SasTypography.style(
                       fontSize: 17,
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.w600,
                       color: primaryTextColor,
                       height: 1.0,
                     ),
@@ -114,7 +107,7 @@ class HistoryCardItem extends StatelessWidget {
                     courseTitle,
                     style: SasTypography.style(
                       fontSize: 14.5,
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w600,
                       color: primaryTextColor,
                     ),
                     maxLines: 1,
@@ -162,7 +155,7 @@ class HistoryCardItem extends StatelessWidget {
                     normalizedStatus,
                     style: SasTypography.style(
                       fontSize: 11,
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w600,
                       color: pillText,
                     ),
                   ),

@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_attendance_app/app/theme.dart';
 import 'package:smart_attendance_app/features/settings/providers/preferences_provider.dart';
-import 'package:smart_attendance_app/shared/widgets/animated_background.dart';
-import 'package:smart_attendance_app/shared/widgets/glass_app_bar.dart';
-import 'package:smart_attendance_app/shared/widgets/glass_card.dart';
+import 'package:smart_attendance_app/shared/widgets/screen_background.dart';
+import 'package:smart_attendance_app/shared/widgets/app_top_bar.dart';
+import 'package:smart_attendance_app/shared/widgets/surface_card.dart';
 
 class NotificationPrefsScreen extends ConsumerWidget {
   const NotificationPrefsScreen({super.key});
@@ -17,8 +17,8 @@ class NotificationPrefsScreen extends ConsumerWidget {
     final textPrimary = SasColors.textPrimaryOf(context);
 
     return Scaffold(
-      appBar: const GlassAppBar(title: 'Notification Preferences'),
-      body: AnimatedBackground(
+      appBar: const AppTopBar(title: 'Notification Preferences'),
+      body: ScreenBackground(
         child: SafeArea(
           child: Center(
             child: ConstrainedBox(
@@ -65,7 +65,7 @@ class NotificationPrefsScreen extends ConsumerWidget {
                   ),
                   if (prefs.notifyLowAttendance) ...[
                     const SizedBox(height: 16),
-                    GlassCard(
+                    SurfaceCard(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -90,7 +90,7 @@ class NotificationPrefsScreen extends ConsumerWidget {
                                   Theme.of(context).brightness ==
                                       Brightness.dark
                                   ? SasColors.darkSurface
-                                  : SasColors.glassBg,
+                                  : SasColors.lightSurface,
                               thumbColor: SasColors.warning,
                               overlayColor: SasColors.warning.withValues(
                                 alpha: 0.1,
@@ -142,14 +142,14 @@ class _ToggleTile extends StatelessWidget {
     final textSecondary = SasColors.textSecondaryOf(context);
     final textMuted = SasColors.textMutedOf(context);
 
-    return GlassCard(
+    return SurfaceCard(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(9),
             decoration: BoxDecoration(
-              color: isDark ? SasColors.darkSurface : SasColors.glassBg,
+              color: isDark ? SasColors.darkSurface : SasColors.lightSurface,
               borderRadius: BorderRadius.circular(10),
             ),
             child: Icon(icon, size: 18, color: textSecondary),
@@ -177,11 +177,11 @@ class _ToggleTile extends StatelessWidget {
           Switch(
             value: value,
             onChanged: onChanged,
-            activeThumbColor: SasColors.accentEmerald,
+            activeThumbColor: SasColors.success,
             inactiveThumbColor: textMuted,
             inactiveTrackColor: isDark
                 ? SasColors.darkSurface
-                : SasColors.glassBg,
+                : SasColors.lightSurface,
           ),
         ],
       ),

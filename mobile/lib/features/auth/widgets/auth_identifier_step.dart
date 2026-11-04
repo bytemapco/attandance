@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:smart_attendance_app/app/theme.dart';
 import 'package:smart_attendance_app/app/typography.dart';
-import 'package:smart_attendance_app/features/auth/widgets/auth_gradient_button.dart';
+import 'package:smart_attendance_app/features/auth/widgets/auth_button.dart';
 import 'package:smart_attendance_app/features/auth/widgets/auth_identifier_input_field.dart';
 import 'package:smart_attendance_app/features/auth/widgets/auth_wave_painter.dart';
 
@@ -25,15 +25,15 @@ class AuthIdentifierStep extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final sheetBg = isDark ? SasColors.darkSurface : Colors.white;
     final primaryTextColor = isDark
-        ? SasColors.brilliance
-        : const Color(0xFF0F172A);
+        ? SasColors.ivory
+        : SasColors.ink;
     final subtitleColor = isDark
-        ? SasColors.maidenMist
-        : const Color(0xFF475569);
-    final inputBg = isDark ? SasColors.darkElevated : const Color(0xFFF8FAFC);
+        ? SasColors.mutedOnDark
+        : SasColors.textMuted;
+    final inputBg = isDark ? SasColors.darkElevated : SasColors.ivory;
     final inputBorder = isDark
-        ? const Color(0x2EFFFFFF)
-        : const Color(0xFFE2E8F0);
+        ? SasColors.darkBorder
+        : SasColors.textOnDark;
 
     return Align(
       alignment: Alignment.bottomCenter,
@@ -44,13 +44,6 @@ class AuthIdentifierStep extends StatelessWidget {
           decoration: BoxDecoration(
             color: sheetBg,
             borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.08),
-                blurRadius: 24,
-                offset: const Offset(0, -6),
-              ),
-            ],
           ),
           child: ClipRRect(
             borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
@@ -97,8 +90,8 @@ class AuthIdentifierStep extends StatelessWidget {
                               height: 4,
                               decoration: BoxDecoration(
                                 color: isDark
-                                    ? const Color(0xFF334155)
-                                    : const Color(0xFFCBD5E1),
+                                    ? SasColors.textSecondary
+                                    : SasColors.textOnDark,
                                 borderRadius: BorderRadius.circular(2),
                               ),
                             ),
@@ -111,7 +104,6 @@ class AuthIdentifierStep extends StatelessWidget {
                             style: SasTypography.style(
                               fontSize: 24,
                               fontWeight: FontWeight.w600,
-                              letterSpacing: -0.5,
                               color: primaryTextColor,
                             ),
                           ),
@@ -150,7 +142,7 @@ class AuthIdentifierStep extends StatelessWidget {
                           const SizedBox(height: 12),
 
                           // Continue Button
-                          AuthGradientButton(
+                          AuthButton(
                             label: 'Continue',
                             onPressed: onContinue,
                           ),

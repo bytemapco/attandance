@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:smart_attendance_app/app/theme.dart';
-import 'package:smart_attendance_app/shared/widgets/glass_button.dart';
-import 'package:smart_attendance_app/shared/widgets/glass_card.dart';
+import 'package:smart_attendance_app/shared/widgets/app_button.dart';
+import 'package:smart_attendance_app/shared/widgets/surface_card.dart';
 
 /// Severity levels for info banners — drives icon and color selection.
 enum BannerSeverity { info, success, warning, danger }
@@ -28,7 +28,7 @@ class InfoBanner extends StatelessWidget {
   Widget build(BuildContext context) {
     final config = _resolveConfig();
 
-    return GlassCard(
+    return SurfaceCard(
       borderColor: config.color.withValues(alpha: 0.3),
       child: Column(
         children: [
@@ -45,7 +45,7 @@ class InfoBanner extends StatelessWidget {
           ),
           if (onAction != null && actionLabel != null) ...[
             const SizedBox(height: SasSpacing.lg),
-            GlassButton(
+            AppButton(
               label: actionLabel!,
               icon: Icons.refresh_rounded,
               onPressed: onAction,

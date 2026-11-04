@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smart_attendance_app/core/attendance_utils.dart';
+import 'package:smart_attendance_app/app/theme.dart';
 
 class ResultMetricTile extends StatelessWidget {
   final IconData icon;
@@ -21,16 +22,16 @@ class ResultMetricTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final value = score;
-    final col = value == null ? const Color(0xFF94A3B8) : scoreColor(value);
+    final col = value == null ? SasColors.mutedOnDark : scoreColor(value);
     final text = value == null ? '—' : '${(value * 100).round()}%';
 
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
-        borderRadius: BorderRadius.circular(16),
+        color: isDark ? SasColors.ink : SasColors.ivory,
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isDark ? const Color(0xFF334155) : const Color(0xFFF1F5F9),
+          color: isDark ? SasColors.textSecondary : SasColors.ivory,
         ),
       ),
       child: Column(
@@ -41,7 +42,7 @@ class ResultMetricTile extends StatelessWidget {
             text,
             style: GoogleFonts.plusJakartaSans(
               color: col,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w600,
               fontSize: 17,
             ),
           ),
@@ -49,7 +50,7 @@ class ResultMetricTile extends StatelessWidget {
           Text(
             label,
             style: GoogleFonts.plusJakartaSans(
-              color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
+              color: isDark ? SasColors.mutedOnDark : SasColors.textMuted,
               fontSize: 12,
               fontWeight: FontWeight.w500,
             ),

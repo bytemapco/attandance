@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:smart_attendance_app/app/theme.dart';
-import 'package:smart_attendance_app/shared/widgets/glass_button.dart';
-import 'package:smart_attendance_app/shared/widgets/glass_card.dart';
+import 'package:smart_attendance_app/shared/widgets/app_button.dart';
+import 'package:smart_attendance_app/shared/widgets/surface_card.dart';
 
 class ResetPasswordLoadingCard extends StatelessWidget {
   const ResetPasswordLoadingCard({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const GlassCard(
+    return const SurfaceCard(
       padding: EdgeInsets.all(32),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -33,7 +33,7 @@ class ResetPasswordInvalidCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GlassCard(
+    return SurfaceCard(
       padding: const EdgeInsets.all(28),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -53,7 +53,7 @@ class ResetPasswordInvalidCard extends StatelessWidget {
           const SizedBox(height: 16),
           const Text(
             'Invalid or Expired Link',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 8),
           Text(
@@ -63,7 +63,7 @@ class ResetPasswordInvalidCard extends StatelessWidget {
             style: const TextStyle(color: SasColors.textMuted, fontSize: 13),
           ),
           const SizedBox(height: 24),
-          GlassButton(
+          AppButton(
             label: 'Back to Login',
             isExpanded: true,
             onPressed: () => context.go('/login'),

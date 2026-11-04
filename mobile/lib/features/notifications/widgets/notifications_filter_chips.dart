@@ -45,18 +45,18 @@ class NotificationsFilterChips extends StatelessWidget {
     final isSelected = selectedFilter == key;
     return InkWell(
       onTap: () => onSelected(key),
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: BorderRadius.circular(12),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
           color: isSelected
-              ? SasColors.accentEmerald
+              ? SasColors.success
               : (isDark ? SasColors.darkSurface : SasColors.bgSecondary),
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: isSelected
-                ? SasColors.accentEmerald
-                : (isDark ? const Color(0x2AFFFFFF) : const Color(0xFFE2E8F0)),
+                ? SasColors.success
+                : (isDark ? SasColors.darkBorder : SasColors.textOnDark),
           ),
         ),
         child: Text(
@@ -66,7 +66,7 @@ class NotificationsFilterChips extends StatelessWidget {
                 ? Colors.white
                 : SasColors.textSecondaryOf(context),
             fontSize: 12,
-            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
           ),
         ),
       ),

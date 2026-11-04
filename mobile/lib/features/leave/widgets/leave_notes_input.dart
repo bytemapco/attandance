@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smart_attendance_app/app/theme.dart';
-import 'package:smart_attendance_app/shared/widgets/glass_card.dart';
+import 'package:smart_attendance_app/shared/widgets/surface_card.dart';
 
 class LeaveNotesInput extends StatelessWidget {
   final TextEditingController controller;
@@ -15,13 +15,13 @@ class LeaveNotesInput extends StatelessWidget {
         Text(
           'Reason Details & Notes',
           style: TextStyle(
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w600,
             fontSize: 13,
             color: SasColors.textSecondaryOf(context),
           ),
         ),
         const SizedBox(height: 8),
-        GlassCard(
+        SurfaceCard(
           padding: const EdgeInsets.all(12),
           child: TextField(
             controller: controller,

@@ -5,9 +5,9 @@ import 'package:smart_attendance_app/features/history/providers/history_provider
 import 'package:smart_attendance_app/features/history/widgets/subject_detail_summary.dart';
 import 'package:smart_attendance_app/features/history/widgets/subject_session_row.dart';
 import 'package:smart_attendance_app/features/settings/providers/preferences_provider.dart';
-import 'package:smart_attendance_app/shared/widgets/animated_background.dart';
-import 'package:smart_attendance_app/shared/widgets/glass_app_bar.dart';
-import 'package:smart_attendance_app/shared/widgets/glass_card.dart';
+import 'package:smart_attendance_app/shared/widgets/screen_background.dart';
+import 'package:smart_attendance_app/shared/widgets/app_top_bar.dart';
+import 'package:smart_attendance_app/shared/widgets/surface_card.dart';
 
 class SubjectDetailScreen extends ConsumerWidget {
   final String classId;
@@ -29,8 +29,8 @@ class SubjectDetailScreen extends ConsumerWidget {
     final className = items.isNotEmpty ? items.first.className : '';
 
     return Scaffold(
-      appBar: GlassAppBar(title: subjectName),
-      body: AnimatedBackground(
+      appBar: AppTopBar(title: subjectName),
+      body: ScreenBackground(
         child: SafeArea(
           child: Center(
             child: ConstrainedBox(
@@ -46,7 +46,7 @@ class SubjectDetailScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: 16),
                   if (items.isEmpty)
-                    GlassCard(
+                    SurfaceCard(
                       child: Center(
                         child: Padding(
                           padding: const EdgeInsets.all(16),
@@ -65,7 +65,7 @@ class SubjectDetailScreen extends ConsumerWidget {
                       'Session Timeline',
                       style: TextStyle(
                         fontSize: 13,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w600,
                         color: SasColors.textSecondaryOf(context),
                       ),
                     ),

@@ -50,7 +50,7 @@ class ResultConfig {
 
   factory ResultConfig.present(AttendanceResult att) => ResultConfig(
     icon: Icons.check_circle_rounded,
-    color: SasColors.accentEmerald,
+    color: SasColors.success,
     title: 'Verified Present',
     subtitle: 'Attendance confirmed for this class session.',
     scores: ScoreData(
@@ -63,7 +63,7 @@ class ResultConfig {
 
   factory ResultConfig.flagged(AttendanceResult att) => ResultConfig(
     icon: Icons.schedule_rounded,
-    color: const Color(0xFFF95721),
+    color: SasColors.copper,
     title: 'Sent for Review',
     subtitle: 'Attendance recorded. Pending instructor review.',
     scores: ScoreData(

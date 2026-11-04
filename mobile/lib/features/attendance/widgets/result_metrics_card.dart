@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:smart_attendance_app/core/attendance_utils.dart';
 import 'package:smart_attendance_app/features/attendance/widgets/result_config.dart';
 import 'package:smart_attendance_app/features/attendance/widgets/result_metric_tile.dart';
+import 'package:smart_attendance_app/app/theme.dart';
 
 class ResultMetricsCard extends StatelessWidget {
   final ScoreData scores;
@@ -19,18 +20,11 @@ class ResultMetricsCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E293B) : Colors.white,
-        borderRadius: BorderRadius.circular(24),
+        color: isDark ? SasColors.darkSurface : Colors.white,
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isDark ? const Color(0xFF334155) : const Color(0xFFF1F5F9),
+          color: isDark ? SasColors.textSecondary : SasColors.ivory,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.04),
-            blurRadius: 18,
-            offset: const Offset(0, 4),
-          ),
-        ],
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -42,8 +36,8 @@ class ResultMetricsCard extends StatelessWidget {
                 'Verification score',
                 style: GoogleFonts.plusJakartaSans(
                   fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                  color: isDark ? Colors.white : const Color(0xFF0F172A),
+                  fontWeight: FontWeight.w600,
+                  color: isDark ? Colors.white : SasColors.ink,
                 ),
               ),
               Container(
@@ -53,20 +47,20 @@ class ResultMetricsCard extends StatelessWidget {
                 ),
                 decoration: BoxDecoration(
                   color: isPass
-                      ? const Color(0xFFECFDF5)
+                      ? SasColors.successSoft
                       : (isDark
-                            ? const Color(0xFF3B1E24)
-                            : const Color(0xFFFFEEEE)),
+                            ? SasColors.darkDangerSoft
+                            : SasColors.dangerSoft),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
                   '$overallPct% · ${isPass ? "Passed" : "Needs review"}',
                   style: GoogleFonts.plusJakartaSans(
                     color: isPass
-                        ? const Color(0xFF08A875)
-                        : const Color(0xFFF0445E),
+                        ? SasColors.success
+                        : SasColors.danger,
                     fontSize: 12,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ),
@@ -78,8 +72,8 @@ class ResultMetricsCard extends StatelessWidget {
             child: LinearProgressIndicator(
               value: scores.overall.clamp(0.0, 1.0),
               backgroundColor: isDark
-                  ? const Color(0xFF334155)
-                  : const Color(0xFFE9EEF5),
+                  ? SasColors.textSecondary
+                  : SasColors.lightElevated,
               valueColor: AlwaysStoppedAnimation<Color>(overallCol),
               minHeight: 7,
             ),
@@ -124,16 +118,16 @@ class ResultMetricsCard extends StatelessWidget {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: isDark
-                      ? const Color(0xFF0C4A6E)
-                      : const Color(0xFFE0F2FE),
+                      ? SasColors.info
+                      : SasColors.infoSoft,
                 ),
                 child: Center(
                   child: Icon(
                     Icons.info_outline_rounded,
                     size: 14,
                     color: isDark
-                        ? const Color(0xFF38BDF8)
-                        : const Color(0xFF0284C7),
+                        ? SasColors.info
+                        : SasColors.info,
                   ),
                 ),
               ),
@@ -147,8 +141,8 @@ class ResultMetricsCard extends StatelessWidget {
                     fontSize: 12.5,
                     fontWeight: FontWeight.w500,
                     color: isDark
-                        ? const Color(0xFF94A3B8)
-                        : const Color(0xFF64748B),
+                        ? SasColors.mutedOnDark
+                        : SasColors.textMuted,
                   ),
                 ),
               ),

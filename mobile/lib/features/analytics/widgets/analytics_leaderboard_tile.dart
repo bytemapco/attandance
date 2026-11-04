@@ -16,33 +16,26 @@ class AnalyticsLeaderboardTile extends ConsumerWidget {
     final userRank = lbState.data?.userRank ?? 1;
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final cardBg = isDark ? const Color(0xFF1E2838) : Colors.white;
+    final cardBg = isDark ? SasColors.darkSurface : Colors.white;
     final primaryTextColor = isDark
-        ? SasColors.brilliance
-        : const Color(0xFF0F172A);
+        ? SasColors.ivory
+        : SasColors.ink;
     final subtitleColor = isDark
-        ? const Color(0xFF94A3B8)
-        : const Color(0xFF64748B);
+        ? SasColors.mutedOnDark
+        : SasColors.textMuted;
 
     return InkWell(
       onTap: () => context.push('/leaderboard'),
-      borderRadius: BorderRadius.circular(18),
+      borderRadius: BorderRadius.circular(12),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         decoration: BoxDecoration(
           color: cardBg,
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isDark ? const Color(0x1FFFFFFF) : const Color(0xFFE2E8F0),
+            color: isDark ? SasColors.darkBorder : SasColors.textOnDark,
             width: 1.0,
           ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: isDark ? 0.20 : 0.04),
-              blurRadius: 10,
-              offset: const Offset(0, 2),
-            ),
-          ],
         ),
         child: Row(
           children: [
@@ -51,13 +44,13 @@ class AnalyticsLeaderboardTile extends ConsumerWidget {
               width: 44,
               height: 44,
               decoration: const BoxDecoration(
-                color: Color(0xFFFFEDD5),
+                color: SasColors.copperSoft,
                 shape: BoxShape.circle,
               ),
               child: const Center(
                 child: Icon(
                   Icons.emoji_events_rounded,
-                  color: Color(0xFFEA580C),
+                  color: SasColors.copperStrong,
                   size: 22,
                 ),
               ),
@@ -74,7 +67,7 @@ class AnalyticsLeaderboardTile extends ConsumerWidget {
                     'Department leaderboard',
                     style: SasTypography.style(
                       fontSize: 14.5,
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w600,
                       color: primaryTextColor,
                     ),
                   ),

@@ -23,25 +23,18 @@ class VerificationQualityMetricsCard extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardBg = isDark ? SasColors.darkSurface : Colors.white;
     final borderCol = isDark
-        ? const Color(0x1FFFFFFF)
-        : const Color(0xFFE3E9F1);
+        ? SasColors.darkBorder
+        : SasColors.border;
     final primaryTextColor = isDark
-        ? SasColors.brilliance
-        : const Color(0xFF0F172A);
+        ? SasColors.ivory
+        : SasColors.ink;
 
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: cardBg,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(color: borderCol),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.20 : 0.04),
-            blurRadius: 10,
-            offset: const Offset(0, 3),
-          ),
-        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -49,7 +42,7 @@ class VerificationQualityMetricsCard extends StatelessWidget {
           Text(
             'Photo Quality',
             style: GoogleFonts.plusJakartaSans(
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w600,
               fontSize: 14,
               color: primaryTextColor,
             ),
@@ -64,7 +57,7 @@ class VerificationQualityMetricsCard extends StatelessWidget {
                   height: 22,
                   child: CircularProgressIndicator(
                     strokeWidth: 2.2,
-                    color: Color(0xFFF95721),
+                    color: SasColors.copper,
                   ),
                 ),
               ),
@@ -97,7 +90,7 @@ class VerificationQualityMetricsCard extends StatelessWidget {
                   ).withValues(alpha: isDark ? 0.15 : 0.08),
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(
-                    color: const Color(0xFFF59E0B).withValues(alpha: 0.25),
+                    color: SasColors.warning.withValues(alpha: 0.25),
                   ),
                 ),
                 child: Row(
@@ -105,7 +98,7 @@ class VerificationQualityMetricsCard extends StatelessWidget {
                     const Icon(
                       Icons.wb_incandescent_outlined,
                       size: 16,
-                      color: Color(0xFFF59E0B),
+                      color: SasColors.warning,
                     ),
                     const SizedBox(width: 8),
                     Expanded(
@@ -113,8 +106,8 @@ class VerificationQualityMetricsCard extends StatelessWidget {
                         'Low lighting detected. Retake in brighter light for faster verification.',
                         style: GoogleFonts.plusJakartaSans(
                           color: isDark
-                              ? const Color(0xFFFBBF24)
-                              : const Color(0xFFB45309),
+                              ? SasColors.warning
+                              : SasColors.warning,
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
                           height: 1.3,

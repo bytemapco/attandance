@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:smart_attendance_app/app/theme.dart';
 
 class VerificationActionButtons extends StatelessWidget {
   final String primaryLabel;
@@ -37,7 +38,7 @@ class VerificationActionButtons extends StatelessWidget {
                     ? Icon(
                         secondaryIcon,
                         size: 18,
-                        color: isDark ? Colors.white : const Color(0xFF0F172A),
+                        color: isDark ? Colors.white : SasColors.ink,
                       )
                     : const SizedBox.shrink(),
                 label: Text(
@@ -45,18 +46,18 @@ class VerificationActionButtons extends StatelessWidget {
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: isDark ? Colors.white : const Color(0xFF0F172A),
+                    color: isDark ? Colors.white : SasColors.ink,
                   ),
                 ),
                 style: OutlinedButton.styleFrom(
                   side: BorderSide(
                     color: isDark
-                        ? const Color(0xFF334155)
-                        : const Color(0xFFCBD5E1),
+                        ? SasColors.textSecondary
+                        : SasColors.textOnDark,
                     width: 1.2,
                   ),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14),
+                    borderRadius: BorderRadius.circular(12),
                   ),
                 ),
               ),
@@ -81,11 +82,11 @@ class VerificationActionButtons extends StatelessWidget {
                 ),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFF95721),
+                backgroundColor: SasColors.copper,
                 elevation: 1,
-                shadowColor: const Color(0xFFF95721).withValues(alpha: 0.35),
+                shadowColor: SasColors.copper.withValues(alpha: 0.35),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14),
+                  borderRadius: BorderRadius.circular(12),
                 ),
               ),
             ),

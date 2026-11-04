@@ -22,8 +22,8 @@ class GeofenceStatusCard extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardBg = isDark ? SasColors.darkSurface : Colors.white;
     final borderCol = isDark
-        ? const Color(0x1FFFFFFF)
-        : const Color(0xFFE3E9F1);
+        ? SasColors.darkBorder
+        : SasColors.border;
 
     Color statusColor;
     String statusTitle;
@@ -34,24 +34,24 @@ class GeofenceStatusCard extends StatelessWidget {
 
     switch (state.status) {
       case GeofenceStatus.scanning:
-        statusColor = const Color(0xFF2583E8);
+        statusColor = SasColors.info;
         statusTitle = 'Checking Location';
         statusDesc = 'Finding your GPS position...';
         break;
       case GeofenceStatus.success:
-        statusColor = const Color(0xFF08A875);
+        statusColor = SasColors.success;
         statusTitle = 'Location Verified';
         statusDesc = 'You are inside the classroom boundary.';
         break;
       case GeofenceStatus.notConfigured:
-        statusColor = const Color(0xFFF59E0B);
+        statusColor = SasColors.warning;
         statusTitle = 'Campus Location Not Set';
         statusDesc =
             'Your institution has not set the campus location. '
             'Your attendance will be flagged for teacher review.';
         break;
       case GeofenceStatus.failed:
-        statusColor = const Color(0xFFF0445E);
+        statusColor = SasColors.danger;
         statusTitle = state.distanceMeters != null
             ? 'Outside Campus Zone'
             : 'Location Unavailable';
@@ -62,7 +62,7 @@ class GeofenceStatusCard extends StatelessWidget {
                 : kOutsideBoundaryMessage);
         break;
       default:
-        statusColor = const Color(0xFF64748B);
+        statusColor = SasColors.textMuted;
         statusTitle = 'Checking Location';
         statusDesc = '';
     }
@@ -71,15 +71,8 @@ class GeofenceStatusCard extends StatelessWidget {
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: cardBg,
-        borderRadius: BorderRadius.circular(22),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(color: borderCol),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.20 : 0.04),
-            blurRadius: 14,
-            offset: const Offset(0, 4),
-          ),
-        ],
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -90,7 +83,7 @@ class GeofenceStatusCard extends StatelessWidget {
             statusTitle,
             style: GoogleFonts.plusJakartaSans(
               fontSize: 16.5,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w600,
               color: statusColor,
             ),
             textAlign: TextAlign.center,
@@ -99,7 +92,7 @@ class GeofenceStatusCard extends StatelessWidget {
           Text(
             statusDesc,
             style: GoogleFonts.plusJakartaSans(
-              color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
+              color: isDark ? SasColors.mutedOnDark : SasColors.textMuted,
               fontSize: 13,
               fontWeight: FontWeight.w500,
             ),
@@ -130,11 +123,11 @@ class GeofenceStatusCard extends StatelessWidget {
                   ),
                 ),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFF95721),
+                  backgroundColor: SasColors.copper,
                   elevation: 1,
-                  shadowColor: const Color(0xFFF95721).withValues(alpha: 0.35),
+                  shadowColor: SasColors.copper.withValues(alpha: 0.35),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14),
+                    borderRadius: BorderRadius.circular(12),
                   ),
                 ),
               ),

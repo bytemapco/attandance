@@ -17,8 +17,8 @@ class AuthBrandHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final smartTextColor = isLightBackground
-        ? (isDark ? SasColors.brilliance : const Color(0xFF0F172A))
-        : SasColors.brilliance;
+        ? (isDark ? SasColors.ivory : SasColors.ink)
+        : SasColors.ivory;
 
     final logo = Expanded(
       child: Row(
@@ -49,7 +49,7 @@ class AuthBrandHeader extends StatelessWidget {
                   'SAHAJ',
                   style: SasTypography.style(
                     fontSize: 16,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
                     letterSpacing: 1.5,
                     color: smartTextColor,
                     height: 1.0,
@@ -59,12 +59,12 @@ class AuthBrandHeader extends StatelessWidget {
                 Text(
                   'Campus, made effortless',
                   style: SasTypography.style(
-                    fontSize: 10,
+                    fontSize: 11,
                     fontWeight: FontWeight.w500,
                     letterSpacing: 0.3,
                     color: isDark
-                        ? SasColors.maidenMist
-                        : const Color(0xFF526F78),
+                        ? SasColors.mutedOnDark
+                        : SasColors.textMuted,
                     height: 1.0,
                   ),
                 ),
@@ -107,7 +107,7 @@ class _BackButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final background = isDark ? SasColors.darkSurface : Colors.white;
-    final border = isDark ? const Color(0x1EFFFFFF) : const Color(0x12000000);
+    final border = isDark ? SasColors.darkBorder : SasColors.border;
 
     return Tooltip(
       message: 'Back',
@@ -125,13 +125,6 @@ class _BackButton extends StatelessWidget {
               color: background,
               shape: BoxShape.circle,
               border: Border.all(color: border),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.05),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ],
             ),
             child: Icon(Icons.chevron_left_rounded, color: color, size: 24),
           ),

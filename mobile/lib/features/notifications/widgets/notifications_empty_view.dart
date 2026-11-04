@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:smart_attendance_app/app/theme.dart';
-import 'package:smart_attendance_app/shared/widgets/glass_card.dart';
+import 'package:smart_attendance_app/shared/widgets/surface_card.dart';
 
 class NotificationsEmptyView extends StatelessWidget {
   const NotificationsEmptyView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return GlassCard(
+    return SurfaceCard(
       padding: const EdgeInsets.all(32),
       child: Column(
         children: [
@@ -22,7 +22,7 @@ class NotificationsEmptyView extends StatelessWidget {
             style: TextStyle(
               color: SasColors.textPrimaryOf(context),
               fontSize: 14,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w600,
             ),
           ),
           const SizedBox(height: 4),

@@ -11,9 +11,9 @@ import 'package:smart_attendance_app/features/analytics/widgets/analytics_rate_c
 import 'package:smart_attendance_app/features/analytics/widgets/analytics_weekly_chart.dart';
 import 'package:smart_attendance_app/features/history/providers/history_provider.dart';
 import 'package:smart_attendance_app/features/settings/providers/preferences_provider.dart';
-import 'package:smart_attendance_app/shared/widgets/animated_background.dart';
-import 'package:smart_attendance_app/shared/widgets/glass_button.dart';
-import 'package:smart_attendance_app/shared/widgets/glass_card.dart';
+import 'package:smart_attendance_app/shared/widgets/screen_background.dart';
+import 'package:smart_attendance_app/shared/widgets/app_button.dart';
+import 'package:smart_attendance_app/shared/widgets/surface_card.dart';
 import 'package:smart_attendance_app/shared/widgets/shimmer_placeholder.dart';
 import 'package:smart_attendance_app/shared/widgets/smart_pull_to_refresh.dart';
 
@@ -54,7 +54,7 @@ class _AnalyticsScreenState extends ConsumerState<AnalyticsScreen> {
     final pct = hState.data?.overallAttendancePercentage ?? 0.0;
     final pctClean = (pct.isNaN || pct.isInfinite) ? 0.0 : pct;
 
-    return AnimatedBackground(
+    return ScreenBackground(
       child: SafeArea(
         child: Center(
           child: ConstrainedBox(
@@ -126,7 +126,7 @@ class _AnalyticsScreenState extends ConsumerState<AnalyticsScreen> {
   }
 
   Widget _buildErrorCard(String error, bool isDark) {
-    return GlassCard(
+    return SurfaceCard(
       borderColor: SasColors.danger.withValues(alpha: 0.30),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 12),
@@ -142,12 +142,12 @@ class _AnalyticsScreenState extends ConsumerState<AnalyticsScreen> {
               error,
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: isDark ? SasColors.maidenMist : SasColors.textSecondary,
+                color: isDark ? SasColors.mutedOnDark : SasColors.textSecondary,
                 fontSize: 13,
               ),
             ),
             const SizedBox(height: 14),
-            GlassButton(
+            AppButton(
               label: 'Retry',
               icon: Icons.refresh_rounded,
               onPressed: () => ref.read(historyProvider.notifier).fetch(),

@@ -18,13 +18,13 @@ class AnalyticsRateCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final cardBg = isDark ? const Color(0xFF1E2838) : Colors.white;
+    final cardBg = isDark ? SasColors.darkSurface : Colors.white;
     final primaryTextColor = isDark
-        ? SasColors.brilliance
-        : const Color(0xFF0F172A);
+        ? SasColors.ivory
+        : SasColors.ink;
     final subtitleColor = isDark
-        ? const Color(0xFF94A3B8)
-        : const Color(0xFF64748B);
+        ? SasColors.mutedOnDark
+        : SasColors.textMuted;
 
     final cleanPct = (percentage.isNaN || percentage.isInfinite)
         ? 0.0
@@ -36,18 +36,11 @@ class AnalyticsRateCard extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: cardBg,
-        borderRadius: BorderRadius.circular(22),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isDark ? const Color(0x1FFFFFFF) : const Color(0xFFE2E8F0),
+          color: isDark ? SasColors.darkBorder : SasColors.textOnDark,
           width: 1.0,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.20 : 0.04),
-            blurRadius: 12,
-            offset: const Offset(0, 3),
-          ),
-        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -57,7 +50,7 @@ class AnalyticsRateCard extends StatelessWidget {
             children: [
               const Icon(
                 Icons.bar_chart_rounded,
-                color: Color(0xFFF95721),
+                color: SasColors.copper,
                 size: 20,
               ),
               const SizedBox(width: 8),
@@ -65,7 +58,7 @@ class AnalyticsRateCard extends StatelessWidget {
                 'Overall Attendance Rate',
                 style: SasTypography.style(
                   fontSize: 15,
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w600,
                   color: primaryTextColor,
                 ),
               ),
@@ -100,7 +93,7 @@ class AnalyticsRateCard extends StatelessWidget {
                           '${cleanPct.toStringAsFixed(1)}%',
                           style: SasTypography.style(
                             fontSize: 19,
-                            fontWeight: FontWeight.w800,
+                            fontWeight: FontWeight.w600,
                             color: primaryTextColor,
                             height: 1.0,
                           ),
@@ -110,7 +103,7 @@ class AnalyticsRateCard extends StatelessWidget {
                           'Overall\nattendance',
                           textAlign: TextAlign.center,
                           style: SasTypography.style(
-                            fontSize: 9.5,
+                            fontSize: 11,
                             fontWeight: FontWeight.w500,
                             color: subtitleColor,
                             height: 1.15,
@@ -141,7 +134,7 @@ class AnalyticsRateCard extends StatelessWidget {
                       '${target.toStringAsFixed(0)}%',
                       style: SasTypography.style(
                         fontSize: 22,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w600,
                         color: primaryTextColor,
                         height: 1.1,
                       ),

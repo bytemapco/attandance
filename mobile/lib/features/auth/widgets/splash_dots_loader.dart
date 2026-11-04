@@ -28,7 +28,7 @@ class SplashDotsLoader extends AnimatedWidget {
               height: 5,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: SasColors.osageOrange.withValues(
+                color: SasColors.copper.withValues(
                   alpha: 0.3 + 0.7 * anim.value,
                 ),
               ),

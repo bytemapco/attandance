@@ -13,11 +13,11 @@ class HistoryHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark
-        ? SasColors.brilliance
-        : const Color(0xFF0F172A);
+        ? SasColors.ivory
+        : SasColors.ink;
     final subtitleColor = isDark
-        ? const Color(0xFF94A3B8)
-        : const Color(0xFF64748B);
+        ? SasColors.mutedOnDark
+        : SasColors.textMuted;
 
     final cleanPct = (percentage.isNaN || percentage.isInfinite)
         ? 0.0
@@ -35,9 +35,8 @@ class HistoryHeader extends StatelessWidget {
                 'Attendance Log',
                 style: SasTypography.style(
                   fontSize: 24,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w600,
                   color: primaryTextColor,
-                  letterSpacing: -0.5,
                 ),
               ),
               const SizedBox(height: 3),
@@ -58,15 +57,8 @@ class HistoryHeader extends StatelessWidget {
           width: 58,
           height: 58,
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF1E2838) : Colors.white,
+            color: isDark ? SasColors.darkSurface : Colors.white,
             shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: isDark ? 0.20 : 0.05),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
-            ],
           ),
           child: Stack(
             alignment: Alignment.center,
@@ -88,8 +80,8 @@ class HistoryHeader extends StatelessWidget {
                     '${cleanPct.toStringAsFixed(0)}%',
                     style: SasTypography.style(
                       fontSize: 13.5,
-                      fontWeight: FontWeight.w800,
-                      color: const Color(0xFFF95721),
+                      fontWeight: FontWeight.w600,
+                      color: SasColors.copper,
                       height: 1.0,
                     ),
                   ),
@@ -97,7 +89,7 @@ class HistoryHeader extends StatelessWidget {
                   Text(
                     'Overall',
                     style: SasTypography.style(
-                      fontSize: 8.5,
+                      fontSize: 11,
                       fontWeight: FontWeight.w600,
                       color: subtitleColor,
                       height: 1.0,
@@ -126,7 +118,7 @@ class _OverallGaugePainter extends CustomPainter {
 
     // Track
     final trackPaint = Paint()
-      ..color = isDark ? const Color(0xFF334155) : const Color(0xFFFFDDD2)
+      ..color = isDark ? SasColors.textSecondary : SasColors.copperSoft
       ..style = PaintingStyle.stroke
       ..strokeWidth = 4.0
       ..strokeCap = StrokeCap.round;
@@ -134,7 +126,7 @@ class _OverallGaugePainter extends CustomPainter {
 
     // Active arc
     final arcPaint = Paint()
-      ..color = const Color(0xFFF95721)
+      ..color = SasColors.copper
       ..style = PaintingStyle.stroke
       ..strokeWidth = 4.0
       ..strokeCap = StrokeCap.round;

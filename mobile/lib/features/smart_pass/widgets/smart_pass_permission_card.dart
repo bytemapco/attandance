@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smart_attendance_app/app/theme.dart';
 import 'package:smart_attendance_app/data/local/permission_service.dart';
-import 'package:smart_attendance_app/shared/widgets/glass_button.dart';
+import 'package:smart_attendance_app/shared/widgets/app_button.dart';
 
 /// Card explaining GPS or location permissions needed for Smart Pass scan.
 class SmartPassPermissionCard extends StatelessWidget {
@@ -24,21 +24,14 @@ class SmartPassPermissionCard extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardBg = isDark ? SasColors.darkSurface : Colors.white;
     final borderColor = isDark
-        ? const Color(0x1EFFFFFF)
-        : const Color(0x140F172A);
+        ? SasColors.darkBorder
+        : SasColors.border;
 
     return Container(
       decoration: BoxDecoration(
         color: cardBg,
-        borderRadius: BorderRadius.circular(22),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(color: borderColor),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.05),
-            blurRadius: 18,
-            offset: const Offset(0, 6),
-          ),
-        ],
       ),
       padding: const EdgeInsets.all(22),
       child: Column(
@@ -65,7 +58,7 @@ class SmartPassPermissionCard extends StatelessWidget {
             textAlign: TextAlign.center,
             style: GoogleFonts.plusJakartaSans(
               fontSize: 15,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w600,
               color: SasColors.textPrimaryOf(context),
             ),
           ),
@@ -84,7 +77,7 @@ class SmartPassPermissionCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 18),
-          GlassButton(
+          AppButton(
             label: isPermanent
                 ? 'Open App Settings'
                 : isGpsOff

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:smart_attendance_app/app/theme.dart';
 
 class FaceRegistrationBottomBar extends StatelessWidget {
   final String? capturedPath;
@@ -92,11 +93,11 @@ class FaceRegistrationBottomBar extends StatelessWidget {
             ),
           ),
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFFF95721),
+            backgroundColor: SasColors.copper,
             elevation: 1.5,
-            shadowColor: const Color(0xFFF95721).withValues(alpha: 0.35),
+            shadowColor: SasColors.copper.withValues(alpha: 0.35),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(12),
             ),
           ),
         ),
@@ -110,23 +111,23 @@ class FaceRegistrationBottomBar extends StatelessWidget {
         icon: Icon(
           icon,
           size: 20,
-          color: isDark ? Colors.white : const Color(0xFF0F172A),
+          color: isDark ? Colors.white : SasColors.ink,
         ),
         label: Text(
           label,
           style: GoogleFonts.plusJakartaSans(
             fontSize: 15,
             fontWeight: FontWeight.w600,
-            color: isDark ? Colors.white : const Color(0xFF0F172A),
+            color: isDark ? Colors.white : SasColors.ink,
           ),
         ),
         style: OutlinedButton.styleFrom(
           side: BorderSide(
-            color: isDark ? const Color(0xFF334155) : const Color(0xFFCBD5E1),
+            color: isDark ? SasColors.textSecondary : SasColors.textOnDark,
             width: 1.2,
           ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(12),
           ),
         ),
       ),

@@ -127,7 +127,7 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen>
       child: Scaffold(
         backgroundColor: isDark
             ? SasColors.darkCanvas
-            : const Color(0xFFF4F7FB),
+            : SasColors.lightCanvas,
         appBar: const VerificationAppBar(),
         body: VerificationBodyView(
           vState: vState,

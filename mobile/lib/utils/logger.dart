@@ -5,16 +5,16 @@ class AppLogger {
   AppLogger._();
 
   static void debug(String message, {Map<String, dynamic>? context}) =>
-      _log('⚫', message, context);
+      _log('DEBUG', message, context);
 
   static void info(String message, {Map<String, dynamic>? context}) =>
-      _log('🔵', message, context);
+      _log('INFO', message, context);
 
   static void warn(String message, {Map<String, dynamic>? context}) =>
-      _log('🟡', message, context);
+      _log('WARN', message, context);
 
   static void error(String message, {Map<String, dynamic>? context}) =>
-      _log('🔴', message, context);
+      _log('ERROR', message, context);
 
   static void _log(
     String level,

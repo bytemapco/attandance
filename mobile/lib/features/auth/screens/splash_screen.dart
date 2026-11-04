@@ -98,18 +98,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Color(0xFF0F2035),
-              SasColors.darkCanvas,
-              Color(0xFF081218),
-            ],
-            stops: [0.0, 0.55, 1.0],
-          ),
-        ),
+        color: SasColors.darkCanvas,
         child: SafeArea(
           child: Column(
             children: [
@@ -124,19 +113,10 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                     width: 96,
                     height: 96,
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(24),
-                      boxShadow: [
-                        BoxShadow(
-                          color: const Color(
-                            0xFFC98260,
-                          ).withValues(alpha: 0.35),
-                          blurRadius: 36,
-                          offset: const Offset(0, 10),
-                        ),
-                      ],
+                      borderRadius: BorderRadius.circular(12),
                     ),
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(24),
+                      borderRadius: BorderRadius.circular(12),
                       child: Image.asset(
                         'assets/images/sahaj_app_icon.png',
                         semanticLabel: 'SAHAJ',
@@ -161,9 +141,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                       Text(
                         'SAHAJ',
                         style: SasTypography.style(
-                          color: SasColors.brilliance,
+                          color: SasColors.ivory,
                           fontSize: 32,
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.w600,
                           letterSpacing: 2.0,
                           height: 1.1,
                         ),
@@ -172,7 +152,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                       Text(
                         'Campus, made effortless.',
                         style: SasTypography.style(
-                          color: SasColors.maidenMist,
+                          color: SasColors.mutedOnDark,
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
                           letterSpacing: 0.3,

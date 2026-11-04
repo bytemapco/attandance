@@ -17,28 +17,21 @@ class GoalsSliderCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark
-        ? SasColors.brilliance
-        : const Color(0xFF0F172A);
+        ? SasColors.ivory
+        : SasColors.ink;
     final subtitleColor = isDark
-        ? const Color(0xFF94A3B8)
-        : const Color(0xFF64748B);
+        ? SasColors.mutedOnDark
+        : SasColors.textMuted;
 
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E2838) : Colors.white,
-        borderRadius: BorderRadius.circular(22),
+        color: isDark ? SasColors.darkSurface : Colors.white,
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isDark ? const Color(0x1FFFFFFF) : const Color(0xFFE2E8F0),
+          color: isDark ? SasColors.darkBorder : SasColors.textOnDark,
           width: 1.0,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.20 : 0.04),
-            blurRadius: 12,
-            offset: const Offset(0, 3),
-          ),
-        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -51,14 +44,14 @@ class GoalsSliderCard extends StatelessWidget {
                 height: 40,
                 decoration: BoxDecoration(
                   color: isDark
-                      ? const Color(0xFF332314)
-                      : const Color(0xFFFFEDD5),
+                      ? SasColors.darkWarningSoft
+                      : SasColors.copperSoft,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: const Center(
                   child: Icon(
                     Icons.track_changes_rounded,
-                    color: Color(0xFFEA580C),
+                    color: SasColors.copperStrong,
                     size: 22,
                   ),
                 ),
@@ -82,9 +75,8 @@ class GoalsSliderCard extends StatelessWidget {
               '${targetVal.toStringAsFixed(0)}%',
               style: SasTypography.style(
                 fontSize: 48,
-                fontWeight: FontWeight.w800,
+                fontWeight: FontWeight.w600,
                 color: primaryTextColor,
-                letterSpacing: -1.2,
                 height: 1.0,
               ),
             ),
@@ -95,16 +87,16 @@ class GoalsSliderCard extends StatelessWidget {
           SliderTheme(
             data: SliderTheme.of(context).copyWith(
               trackHeight: 7,
-              activeTrackColor: const Color(0xFFF95721),
+              activeTrackColor: SasColors.copper,
               inactiveTrackColor: isDark
-                  ? const Color(0xFF334155)
-                  : const Color(0xFFF1F5F9),
-              thumbColor: const Color(0xFFF95721),
+                  ? SasColors.textSecondary
+                  : SasColors.ivory,
+              thumbColor: SasColors.copper,
               thumbShape: const RoundSliderThumbShape(
                 enabledThumbRadius: 11,
                 elevation: 4,
               ),
-              overlayColor: const Color(0xFFF95721).withValues(alpha: 0.15),
+              overlayColor: SasColors.copper.withValues(alpha: 0.15),
               overlayShape: const RoundSliderOverlayShape(overlayRadius: 20),
             ),
             child: Slider(
@@ -136,8 +128,8 @@ class GoalsSliderCard extends StatelessWidget {
                     '75% ',
                     style: SasTypography.style(
                       fontSize: 12,
-                      fontWeight: FontWeight.w700,
-                      color: const Color(0xFFF95721),
+                      fontWeight: FontWeight.w600,
+                      color: SasColors.copper,
                     ),
                   ),
                   Text(

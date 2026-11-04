@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smart_attendance_app/features/attendance/widgets/result_config.dart';
+import 'package:smart_attendance_app/app/theme.dart';
 
 class ResultHeroIcon extends StatelessWidget {
   final ResultConfig config;
@@ -34,20 +35,13 @@ class ResultHeroIcon extends StatelessWidget {
             height: 60,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: isDark ? const Color(0xFF1E293B) : Colors.white,
+              color: isDark ? SasColors.darkSurface : Colors.white,
               border: Border.all(
                 color: isDark
-                    ? const Color(0xFF334155)
+                    ? SasColors.textSecondary
                     : primaryCol.withValues(alpha: 0.20),
                 width: 1.5,
               ),
-              boxShadow: [
-                BoxShadow(
-                  color: primaryCol.withValues(alpha: isDark ? 0.25 : 0.12),
-                  blurRadius: 16,
-                  offset: const Offset(0, 4),
-                ),
-              ],
             ),
             child: Center(
               child: Icon(config.icon, size: 28, color: primaryCol),

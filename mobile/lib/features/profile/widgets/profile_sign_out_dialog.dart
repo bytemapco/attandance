@@ -10,20 +10,20 @@ Future<void> showSignOutDialog(
   return showDialog<void>(
     context: context,
     builder: (ctx) => AlertDialog(
-      backgroundColor: isDark ? const Color(0xFF1E2838) : Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      backgroundColor: isDark ? SasColors.darkSurface : Colors.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       title: Text(
         'Sign Out?',
         style: SasTypography.style(
-          fontWeight: FontWeight.w800,
+          fontWeight: FontWeight.w600,
           fontSize: 18,
-          color: isDark ? SasColors.brilliance : const Color(0xFF0F172A),
+          color: isDark ? SasColors.ivory : SasColors.ink,
         ),
       ),
       content: Text(
         'You will need to re-authenticate with your university credentials to access the app.',
         style: SasTypography.style(
-          color: isDark ? const Color(0xFFCBD5E1) : const Color(0xFF64748B),
+          color: isDark ? SasColors.textOnDark : SasColors.textMuted,
           fontSize: 13.5,
           height: 1.4,
         ),
@@ -35,7 +35,7 @@ Future<void> showSignOutDialog(
             'Cancel',
             style: SasTypography.style(
               fontSize: 14,
-              color: isDark ? const Color(0xFFCBD5E1) : const Color(0xFF64748B),
+              color: isDark ? SasColors.textOnDark : SasColors.textMuted,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -49,8 +49,8 @@ Future<void> showSignOutDialog(
             'Sign Out',
             style: SasTypography.style(
               fontSize: 14,
-              color: const Color(0xFFEF4444),
-              fontWeight: FontWeight.w700,
+              color: SasColors.danger,
+              fontWeight: FontWeight.w600,
             ),
           ),
         ),

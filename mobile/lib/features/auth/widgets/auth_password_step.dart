@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:smart_attendance_app/app/theme.dart';
 import 'package:smart_attendance_app/app/typography.dart';
 import 'package:smart_attendance_app/features/auth/widgets/auth_brand_header.dart';
-import 'package:smart_attendance_app/features/auth/widgets/auth_gradient_button.dart';
+import 'package:smart_attendance_app/features/auth/widgets/auth_button.dart';
 import 'package:smart_attendance_app/features/auth/widgets/auth_password_heading.dart';
 import 'package:smart_attendance_app/features/auth/widgets/auth_password_input_field.dart';
 import 'package:smart_attendance_app/features/auth/widgets/auth_security_badge.dart';
@@ -44,19 +44,19 @@ class AuthPasswordStep extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark
-        ? SasColors.brilliance
-        : const Color(0xFF0F172A);
+        ? SasColors.ivory
+        : SasColors.ink;
     final subtitleColor = isDark
-        ? SasColors.maidenMist
-        : const Color(0xFF475569);
-    final inputBg = isDark ? SasColors.darkElevated : const Color(0xFFF8FAFC);
+        ? SasColors.mutedOnDark
+        : SasColors.textMuted;
+    final inputBg = isDark ? SasColors.darkElevated : SasColors.ivory;
     final inputBorder = isDark
-        ? const Color(0x2EFFFFFF)
-        : const Color(0xFFE2E8F0);
+        ? SasColors.darkBorder
+        : SasColors.textOnDark;
 
     return SizedBox.expand(
       child: ColoredBox(
-        color: isDark ? SasColors.darkCanvas : const Color(0xFFFFFDF9),
+        color: isDark ? SasColors.darkCanvas : SasColors.copperSoft,
         child: Stack(
           fit: StackFit.expand,
           children: [
@@ -164,7 +164,7 @@ class AuthPasswordStep extends StatelessWidget {
                                     const SizedBox(height: 28),
                                     FadeSlideTransition(
                                       delay: const Duration(milliseconds: 210),
-                                      child: AuthGradientButton(
+                                      child: AuthButton(
                                         label: 'Sign In',
                                         onPressed: onSubmit,
                                         isLoading: isLoading,

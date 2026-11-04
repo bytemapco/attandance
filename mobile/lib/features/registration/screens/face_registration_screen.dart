@@ -76,8 +76,8 @@ class _FaceRegistrationScreenState
     if (success && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Biometric profile enrolled successfully!'),
-          backgroundColor: Color(0xFF08A875),
+          content: Text('Face registered'),
+          backgroundColor: SasColors.success,
         ),
       );
       await Future.delayed(const Duration(milliseconds: 600));
@@ -98,7 +98,7 @@ class _FaceRegistrationScreenState
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? SasColors.darkCanvas : const Color(0xFFF4F7FB),
+      backgroundColor: isDark ? SasColors.darkCanvas : SasColors.lightCanvas,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
@@ -115,7 +115,7 @@ class _FaceRegistrationScreenState
                 ),
                 child: const Icon(
                   Icons.face_retouching_natural_rounded,
-                  color: Color(0xFFF95721),
+                  color: SasColors.copper,
                   size: 28,
                 ),
               ),
@@ -123,9 +123,9 @@ class _FaceRegistrationScreenState
               Text(
                 'Biometric Enrollment',
                 style: GoogleFonts.plusJakartaSans(
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w600,
                   fontSize: 20,
-                  color: isDark ? Colors.white : const Color(0xFF0F172A),
+                  color: isDark ? Colors.white : SasColors.ink,
                 ),
               ),
               const SizedBox(height: 4),
@@ -134,8 +134,8 @@ class _FaceRegistrationScreenState
                 textAlign: TextAlign.center,
                 style: GoogleFonts.plusJakartaSans(
                   color: isDark
-                      ? const Color(0xFF94A3B8)
-                      : const Color(0xFF64748B),
+                      ? SasColors.mutedOnDark
+                      : SasColors.textMuted,
                   fontSize: 12.5,
                 ),
               ),
@@ -162,7 +162,7 @@ class _FaceRegistrationScreenState
                   child: Text(
                     regState.errorMessage!,
                     style: GoogleFonts.plusJakartaSans(
-                      color: const Color(0xFFF0445E),
+                      color: SasColors.danger,
                       fontSize: 12,
                     ),
                   ),

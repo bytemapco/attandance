@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:smart_attendance_app/app/typography.dart';
+import 'package:smart_attendance_app/app/theme.dart';
 
 enum HistoryViewMode { calendar, list }
 
@@ -25,19 +26,12 @@ class HistorySegmentedTabs extends StatelessWidget {
       height: 52,
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E2838) : Colors.white,
-        borderRadius: BorderRadius.circular(26),
+        color: isDark ? SasColors.darkSurface : Colors.white,
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isDark ? const Color(0x1FFFFFFF) : const Color(0xFFE2E8F0),
+          color: isDark ? SasColors.darkBorder : SasColors.textOnDark,
           width: 1.0,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.20 : 0.04),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
       ),
       child: LayoutBuilder(
         builder: (context, constraints) {
@@ -55,19 +49,8 @@ class HistorySegmentedTabs extends StatelessWidget {
                 width: tabWidth,
                 child: Container(
                   decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFFF95721), Color(0xFFFF7A18)],
-                      begin: Alignment.centerLeft,
-                      end: Alignment.centerRight,
-                    ),
-                    borderRadius: BorderRadius.circular(22),
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(0xFFF95721).withValues(alpha: 0.35),
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
+                    color: SasColors.carbon,
+                    borderRadius: BorderRadius.circular(12),
                   ),
                 ),
               ),
@@ -127,8 +110,8 @@ class _TabLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final inactiveColor = isDark
-        ? const Color(0xFF94A3B8)
-        : const Color(0xFF64748B);
+        ? SasColors.mutedOnDark
+        : SasColors.textMuted;
     final targetColor = selected ? Colors.white : inactiveColor;
 
     return Expanded(
@@ -156,7 +139,7 @@ class _TabLabel extends StatelessWidget {
                     label,
                     style: SasTypography.style(
                       fontSize: 13.5,
-                      fontWeight: selected ? FontWeight.w700 : FontWeight.w600,
+                      fontWeight: selected ? FontWeight.w600 : FontWeight.w600,
                       color: color,
                     ),
                   );

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:smart_attendance_app/app/theme.dart';
-import 'package:smart_attendance_app/shared/widgets/animated_background.dart';
-import 'package:smart_attendance_app/shared/widgets/glass_app_bar.dart';
-import 'package:smart_attendance_app/shared/widgets/glass_card.dart';
+import 'package:smart_attendance_app/shared/widgets/screen_background.dart';
+import 'package:smart_attendance_app/shared/widgets/app_top_bar.dart';
+import 'package:smart_attendance_app/shared/widgets/surface_card.dart';
 
 class HelpScreen extends StatelessWidget {
   const HelpScreen({super.key});
@@ -51,8 +51,8 @@ class HelpScreen extends StatelessWidget {
     final textSecondary = SasColors.textSecondaryOf(context);
 
     return Scaffold(
-      appBar: const GlassAppBar(title: 'Help & FAQ'),
-      body: AnimatedBackground(
+      appBar: const AppTopBar(title: 'Help & FAQ'),
+      body: ScreenBackground(
         child: SafeArea(
           child: Center(
             child: ConstrainedBox(
@@ -60,13 +60,13 @@ class HelpScreen extends StatelessWidget {
               child: ListView(
                 padding: const EdgeInsets.all(20),
                 children: [
-                  GlassCard(
-                    borderColor: SasColors.accentEmerald.withValues(alpha: 0.3),
+                  SurfaceCard(
+                    borderColor: SasColors.success.withValues(alpha: 0.3),
                     child: Row(
                       children: [
                         const Icon(
                           Icons.help_outline_rounded,
-                          color: SasColors.accentEmerald,
+                          color: SasColors.success,
                           size: 22,
                         ),
                         const SizedBox(width: 12),
@@ -116,7 +116,7 @@ class _FaqTileState extends State<_FaqTile> {
     final textSecondary = SasColors.textSecondaryOf(context);
     final textMuted = SasColors.textMutedOf(context);
 
-    return GlassCard(
+    return SurfaceCard(
       padding: const EdgeInsets.all(0),
       child: Theme(
         data: Theme.of(context).copyWith(dividerColor: Colors.transparent),

@@ -13,10 +13,10 @@ class GoalsInfoCallout extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF142E47) : const Color(0xFFF0F9FF),
-        borderRadius: BorderRadius.circular(18),
+        color: isDark ? SasColors.darkInfoSoft : SasColors.infoSoft,
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isDark ? const Color(0xFF0369A1) : const Color(0xFFBAE6FD),
+          color: isDark ? SasColors.info : SasColors.infoBorder,
           width: 1.0,
         ),
       ),
@@ -25,7 +25,7 @@ class GoalsInfoCallout extends StatelessWidget {
         children: [
           const Icon(
             Icons.info_outline_rounded,
-            color: Color(0xFF0284C7),
+            color: SasColors.info,
             size: 22,
           ),
           const SizedBox(width: 12),
@@ -36,8 +36,8 @@ class GoalsInfoCallout extends StatelessWidget {
                 fontSize: 12.5,
                 fontWeight: FontWeight.w500,
                 color: isDark
-                    ? const Color(0xFFBAE6FD)
-                    : const Color(0xFF0369A1),
+                    ? SasColors.infoBorder
+                    : SasColors.info,
                 height: 1.35,
               ),
             ),
@@ -62,28 +62,21 @@ class GoalsRecommendedCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final primaryTextColor = isDark
-        ? SasColors.brilliance
-        : const Color(0xFF0F172A);
+        ? SasColors.ivory
+        : SasColors.ink;
 
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(18),
+      borderRadius: BorderRadius.circular(12),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF1E2838) : Colors.white,
-          borderRadius: BorderRadius.circular(18),
+          color: isDark ? SasColors.darkSurface : Colors.white,
+          borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isDark ? const Color(0x1FFFFFFF) : const Color(0xFFE2E8F0),
+            color: isDark ? SasColors.darkBorder : SasColors.textOnDark,
             width: 1.0,
           ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: isDark ? 0.20 : 0.04),
-              blurRadius: 10,
-              offset: const Offset(0, 2),
-            ),
-          ],
         ),
         child: Row(
           children: [
@@ -92,14 +85,14 @@ class GoalsRecommendedCard extends StatelessWidget {
               height: 38,
               decoration: BoxDecoration(
                 color: isDark
-                    ? const Color(0xFF332314)
-                    : const Color(0xFFFFEDD5),
+                    ? SasColors.darkWarningSoft
+                    : SasColors.copperSoft,
                 borderRadius: BorderRadius.circular(10),
               ),
               child: const Center(
                 child: Icon(
                   Icons.check_circle_rounded,
-                  color: Color(0xFFEA580C),
+                  color: SasColors.copperStrong,
                   size: 22,
                 ),
               ),
@@ -109,7 +102,7 @@ class GoalsRecommendedCard extends StatelessWidget {
               'Recommended target',
               style: SasTypography.style(
                 fontSize: 14.5,
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.w600,
                 color: primaryTextColor,
               ),
             ),

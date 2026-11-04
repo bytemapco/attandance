@@ -7,7 +7,7 @@ import 'package:smart_attendance_app/app/typography.dart';
 import 'package:smart_attendance_app/features/settings/providers/preferences_provider.dart';
 import 'package:smart_attendance_app/features/settings/widgets/goals_info_cards.dart';
 import 'package:smart_attendance_app/features/settings/widgets/goals_slider_card.dart';
-import 'package:smart_attendance_app/shared/widgets/animated_background.dart';
+import 'package:smart_attendance_app/shared/widgets/screen_background.dart';
 
 class GoalsScreen extends ConsumerWidget {
   const GoalsScreen({super.key});
@@ -18,16 +18,16 @@ class GoalsScreen extends ConsumerWidget {
     final notifier = ref.read(preferencesProvider.notifier);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark
-        ? SasColors.brilliance
-        : const Color(0xFF0F172A);
+        ? SasColors.ivory
+        : SasColors.ink;
     final subtitleColor = isDark
-        ? const Color(0xFF94A3B8)
-        : const Color(0xFF64748B);
+        ? SasColors.mutedOnDark
+        : SasColors.textMuted;
 
     final targetVal = prefs.attendanceTarget;
 
     return Scaffold(
-      body: AnimatedBackground(
+      body: ScreenBackground(
         child: SafeArea(
           child: Center(
             child: ConstrainedBox(
@@ -60,7 +60,7 @@ class GoalsScreen extends ConsumerWidget {
                         'Goals & Targets',
                         style: SasTypography.style(
                           fontSize: 18,
-                          fontWeight: FontWeight.w700,
+                          fontWeight: FontWeight.w600,
                           color: primaryTextColor,
                         ),
                       ),
@@ -73,9 +73,8 @@ class GoalsScreen extends ConsumerWidget {
                     'Attendance target',
                     style: SasTypography.style(
                       fontSize: 24,
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.w600,
                       color: primaryTextColor,
-                      letterSpacing: -0.5,
                     ),
                   ),
                   const SizedBox(height: 4),

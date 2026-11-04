@@ -4,11 +4,11 @@ import 'package:smart_attendance_app/app/theme.dart';
 
 /// Premium bottom navigation with animated amber pill indicator
 /// and filled/outlined icon state transitions.
-class GlassBottomNav extends StatelessWidget {
+class AppBottomNav extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onTap;
 
-  const GlassBottomNav({
+  const AppBottomNav({
     super.key,
     required this.currentIndex,
     required this.onTap,
@@ -43,22 +43,13 @@ class GlassBottomNav extends StatelessWidget {
 
     final bgColor = isDark ? SasColors.darkCanvas : SasColors.lightSurface;
     final borderColor = isDark
-        ? const Color(0x1EFFFFFF)
-        : const Color(0x14000000);
+        ? SasColors.darkBorder
+        : SasColors.border;
 
     return Container(
       decoration: BoxDecoration(
         color: bgColor,
         border: Border(top: BorderSide(color: borderColor, width: 0.5)),
-        boxShadow: isDark
-            ? null
-            : [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.06),
-                  blurRadius: 16,
-                  offset: const Offset(0, -4),
-                ),
-              ],
       ),
       child: SafeArea(
         top: false,
@@ -117,10 +108,10 @@ class _NavTabItem extends StatelessWidget {
     final transitionDuration = reduceMotion
         ? Duration.zero
         : SasDurations.normal;
-    final activeColor = SasColors.osageOrange;
+    final activeColor = SasColors.copper;
     final inactiveColor = isDark
-        ? const Color(0xFFCBD5E1)
-        : const Color(0xFF475569);
+        ? SasColors.textOnDark
+        : SasColors.textMuted;
 
     return Expanded(
       child: Semantics(
@@ -144,11 +135,11 @@ class _NavTabItem extends StatelessWidget {
                   height: 32,
                   decoration: BoxDecoration(
                     color: selected
-                        ? SasColors.osageOrange.withValues(
+                        ? SasColors.copper.withValues(
                             alpha: isDark ? 0.18 : 0.12,
                           )
                         : Colors.transparent,
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(12),
                   ),
                   child: Center(
                     child: AnimatedSwitcher(
@@ -173,7 +164,7 @@ class _NavTabItem extends StatelessWidget {
                   duration: transitionDuration,
                   style: TextStyle(
                     fontSize: 11.5,
-                    fontWeight: selected ? FontWeight.w700 : FontWeight.w600,
+                    fontWeight: selected ? FontWeight.w600 : FontWeight.w600,
                     color: selected ? activeColor : inactiveColor,
                     letterSpacing: selected ? -0.1 : 0,
                   ),

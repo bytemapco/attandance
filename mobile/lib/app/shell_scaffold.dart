@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:smart_attendance_app/shared/widgets/glass_bottom_nav.dart';
+import 'package:smart_attendance_app/shared/widgets/app_bottom_nav.dart';
 
 class ShellScaffold extends StatelessWidget {
   final Widget child;
@@ -22,7 +22,7 @@ class ShellScaffold extends StatelessWidget {
 
     return Scaffold(
       body: child,
-      bottomNavigationBar: GlassBottomNav(
+      bottomNavigationBar: AppBottomNav(
         currentIndex: currentIndex,
         onTap: (index) => context.go(_tabPaths[index]),
       ),
