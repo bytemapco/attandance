@@ -150,7 +150,7 @@ export default function CommandPaletteModal({ isOpen, onClose }: CommandPaletteM
           ) : (
             groupedSections.map((section) => (
               <div key={section.label} className="space-y-1">
-                <p className="px-3 pt-1 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+                <p className="px-3 pt-1 text-xs font-semibold text-muted-foreground">
                   {section.label}
                 </p>
                 {section.items.map(({ item, globalIndex }) => (
@@ -167,13 +167,13 @@ export default function CommandPaletteModal({ isOpen, onClose }: CommandPaletteM
           )}
         </div>
 
-        <div className="px-4 py-2.5 border-t border-border bg-secondary/60 flex items-center justify-between text-[11px] text-muted-foreground">
+        <div className="px-4 py-2.5 border-t border-border bg-secondary/60 flex items-center justify-between text-xs text-muted-foreground">
           <div className="flex items-center gap-3">
-            <span><kbd className="font-mono px-1.5 py-0.5 rounded-sm border border-border bg-background text-[10px]">↑↓</kbd> Navigate</span>
-            <span><kbd className="font-mono px-1.5 py-0.5 rounded-sm border border-border bg-background text-[10px]">↵</kbd> Select</span>
-            <span><kbd className="font-mono px-1.5 py-0.5 rounded-sm border border-border bg-background text-[10px]">esc</kbd> Dismiss</span>
+            <span><kbd className="font-mono px-1.5 py-0.5 rounded-sm border border-border bg-background text-xs">↑↓</kbd> Navigate</span>
+            <span><kbd className="font-mono px-1.5 py-0.5 rounded-sm border border-border bg-background text-xs">↵</kbd> Select</span>
+            <span><kbd className="font-mono px-1.5 py-0.5 rounded-sm border border-border bg-background text-xs">esc</kbd> Dismiss</span>
           </div>
-          <span className="font-semibold text-[11px] text-muted-foreground">
+          <span className="font-semibold text-xs text-muted-foreground">
             Sahaj Search
           </span>
         </div>

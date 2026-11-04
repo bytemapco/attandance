@@ -23,7 +23,7 @@ export default function LeaveDocumentViewer({ url }: LeaveDocumentViewerProps): 
           </div>
           <div>
             <h4 className="text-xs font-semibold text-primary">Attached Document Evidence</h4>
-            <p className="text-[11px] text-muted-foreground">
+            <p className="text-xs text-muted-foreground">
               {url ? (isPdf ? "Adobe PDF Document" : "Medical Certificate / Image Proof") : "No Document Attached"}
             </p>
           </div>
@@ -57,7 +57,7 @@ export default function LeaveDocumentViewer({ url }: LeaveDocumentViewerProps): 
           <div className="text-center py-16 text-muted-foreground space-y-2">
             <FileText size={40} className="mx-auto text-muted-foreground/40 mb-2" />
             <p className="text-xs font-semibold text-primary">No supporting document uploaded</p>
-            <p className="text-[11px] max-w-xs text-muted-foreground">
+            <p className="text-xs max-w-xs text-muted-foreground">
               Student submitted this leave request without an attached medical prescription or event permission slip.
             </p>
           </div>
@@ -71,7 +71,7 @@ export default function LeaveDocumentViewer({ url }: LeaveDocumentViewerProps): 
           <div className="text-center py-16 space-y-3">
             <AlertCircle size={36} className="mx-auto text-destructive mb-1" />
             <p className="text-xs font-semibold text-primary">Preview cannot be rendered in frame</p>
-            <p className="text-[11px] text-muted-foreground max-w-xs">
+            <p className="text-xs text-muted-foreground max-w-xs">
               Please use the download or external tab links above to view this attached proof.
             </p>
             <a

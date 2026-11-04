@@ -83,7 +83,7 @@ export default function BulkImportModal({
               {getEntityIcon()}
             </div>
             <div>
-              <h3 className="text-base font-bold text-foreground">
+              <h3 className="text-base font-semibold text-foreground">
                 Import {getEntityTitle()}
               </h3>
               {fileName && (

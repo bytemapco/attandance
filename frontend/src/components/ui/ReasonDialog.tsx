@@ -38,7 +38,7 @@ export default function ReasonDialog({
         className="w-full max-w-md rounded-lg border border-border bg-card p-6 shadow-popover"
         onClick={(e) => e.stopPropagation()}
       >
-        <h3 className="mb-4 text-base font-bold text-foreground">{title}</h3>
+        <h3 className="mb-4 text-base font-semibold text-foreground">{title}</h3>
         <GlassTextarea
           label="Reason"
           placeholder="Recorded in the class history"

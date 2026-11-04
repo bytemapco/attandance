@@ -23,7 +23,7 @@ interface SessionHeaderProps {
 }
 
 function Kbd({ children }: { children: React.ReactNode }): React.ReactElement {
-  return <kbd aria-hidden className="ml-1 hidden rounded-sm border border-current/25 px-1 text-[10px] font-medium opacity-70 xl:inline">{children}</kbd>;
+  return <kbd aria-hidden className="ml-1 hidden rounded-sm border border-current/25 px-1 text-xs font-medium opacity-70 xl:inline">{children}</kbd>;
 }
 
 export default function SessionHeader({
@@ -36,7 +36,7 @@ export default function SessionHeader({
           <ArrowLeft size={14} /> My classes
         </Link>
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-          <h1 className="text-[28px] font-bold leading-tight tracking-tight text-foreground">{register.course_name}</h1>
+          <h1 className="text-2xl font-semibold leading-tight tracking-tight text-foreground">{register.course_name}</h1>
           <GlassBadge variant={STATE_BADGE[state]}>{STATE_LABEL[state]}</GlassBadge>
         </div>
         <p className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground">

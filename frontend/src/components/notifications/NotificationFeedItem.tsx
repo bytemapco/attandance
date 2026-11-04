@@ -130,7 +130,7 @@ export function NotificationFeedItem({
               >
                 {notification.title}
               </h3>
-              <span className="text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded-md bg-secondary border border-border text-muted-foreground shrink-0">
+              <span className="text-xs font-semibold px-1.5 py-0.5 rounded-md bg-secondary border border-border text-muted-foreground shrink-0">
                 {categoryConfig.label}
               </span>
             </div>

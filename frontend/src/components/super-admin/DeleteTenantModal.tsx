@@ -54,7 +54,7 @@ export default function DeleteTenantModal({
               <AlertTriangle size={20} />
             </div>
             <div>
-              <h2 className="text-base font-bold text-destructive">Delete Institution</h2>
+              <h2 className="text-base font-semibold text-destructive">Delete Institution</h2>
               <p className="text-xs text-muted-foreground font-mono">{tenant.name}</p>
             </div>
           </div>
@@ -80,7 +80,7 @@ export default function DeleteTenantModal({
 
           <div className="space-y-2 bg-muted/30 p-3.5 rounded-lg border border-border">
             <label className="text-xs font-medium text-foreground block">
-              To confirm, type <span className="font-mono font-bold text-destructive select-all">{expectedText}</span> below:
+              To confirm, type <span className="font-mono font-semibold text-destructive select-all">{expectedText}</span> below:
             </label>
             <input
               type="text"

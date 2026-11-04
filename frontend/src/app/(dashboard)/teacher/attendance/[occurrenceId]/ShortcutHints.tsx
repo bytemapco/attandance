@@ -25,7 +25,7 @@ export default function ShortcutHints(): React.ReactElement {
         {SHORTCUTS.map(([keys, label]) => (
           <li key={label} className="flex items-center justify-between gap-3 text-xs text-muted-foreground">
             {label}
-            <kbd className="rounded-sm border border-border bg-background px-1.5 py-0.5 font-sans text-[11px] font-semibold text-foreground">{keys}</kbd>
+            <kbd className="rounded-sm border border-border bg-background px-1.5 py-0.5 font-sans text-xs font-semibold text-foreground">{keys}</kbd>
           </li>
         ))}
       </ul>

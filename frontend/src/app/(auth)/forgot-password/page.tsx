@@ -80,7 +80,7 @@ export default function ForgotPasswordPage(): React.ReactElement {
                 className="w-14 h-14 rounded-lg object-contain"
               />
             </div>
-            <h1 className="text-2xl font-bold tracking-tight text-primary">
+            <h1 className="text-2xl font-semibold tracking-tight text-primary">
               SAHAJ
             </h1>
             <p className="text-xs text-muted-foreground mt-0.5 font-medium">Campus, made effortless.</p>
@@ -93,11 +93,11 @@ export default function ForgotPasswordPage(): React.ReactElement {
               <CheckCircle2 size={32} />
             </div>
             <div className="space-y-1.5">
-              <h2 className="text-lg font-bold text-foreground">Check Your Inbox</h2>
+              <h2 className="text-lg font-semibold text-foreground">Check Your Inbox</h2>
               <p className="text-xs text-muted-foreground leading-relaxed">
                 We sent a password reset link to <strong className="text-foreground">{emailValue}</strong>.
               </p>
-              <p className="text-[11px] text-muted-foreground pt-1">
+              <p className="text-xs text-muted-foreground pt-1">
                 Check your spam folder if it doesn&apos;t arrive in a few minutes.
               </p>
             </div>
@@ -135,7 +135,7 @@ export default function ForgotPasswordPage(): React.ReactElement {
             className="rounded-lg border border-border bg-card p-6 sm:p-7 space-y-5"
           >
             <div className="space-y-1">
-              <h2 className="text-base font-bold text-foreground">Reset Password</h2>
+              <h2 className="text-base font-semibold text-foreground">Reset Password</h2>
               <p className="text-xs text-muted-foreground">
                 Enter your institutional email and we&apos;ll send you a recovery link.
               </p>

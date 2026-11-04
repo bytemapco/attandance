@@ -100,7 +100,7 @@ export default function SetupStepper({ checks, activeIndex, onSelect }: SetupSte
                         {step.title}
                       </span>
                       {step.optional && (
-                        <span className="shrink-0 rounded-sm bg-secondary px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+                        <span className="shrink-0 rounded-sm bg-secondary px-1.5 py-0.5 text-xs font-medium text-muted-foreground">
                           Opt
                         </span>
                       )}

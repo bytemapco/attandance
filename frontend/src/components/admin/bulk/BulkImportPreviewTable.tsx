@@ -29,11 +29,11 @@ export default function BulkImportPreviewTable({
       {/* Overview Strip */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <div className="p-3 bg-secondary/30 rounded-lg border border-border flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-bold text-xs">
+          <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-semibold text-xs">
             {records.length}
           </div>
           <div>
-            <p className="text-[11px] text-muted-foreground font-medium">Records Found</p>
+            <p className="text-xs text-muted-foreground font-medium">Records Found</p>
             <p className="text-xs font-semibold text-foreground">
               {validCount} ready {invalidCount > 0 && `• ${invalidCount} to review`}
             </p>
@@ -45,7 +45,7 @@ export default function BulkImportPreviewTable({
             <Layers size={16} />
           </div>
           <div>
-            <p className="text-[11px] text-muted-foreground font-medium">Batch Processing</p>
+            <p className="text-xs text-muted-foreground font-medium">Batch Processing</p>
             <p className="text-xs font-semibold text-foreground">
               {batchCount} {batchCount === 1 ? "batch" : "batches"} (10 per batch)
             </p>
@@ -59,7 +59,7 @@ export default function BulkImportPreviewTable({
                 <Mail size={16} />
               </div>
               <div>
-                <p className="text-[11px] text-muted-foreground font-medium">Send Welcome Emails</p>
+                <p className="text-xs text-muted-foreground font-medium">Send Welcome Emails</p>
                 <p className="text-xs font-semibold text-foreground">{sendInvite ? "Enabled" : "Disabled"}</p>
               </div>
             </div>
@@ -75,11 +75,11 @@ export default function BulkImportPreviewTable({
           </div>
         ) : (
           <div className="p-3 bg-secondary/30 rounded-lg border border-border flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-success/10 flex items-center justify-center text-success font-bold text-xs">
+            <div className="w-8 h-8 rounded-lg bg-success/10 flex items-center justify-center text-success font-semibold text-xs">
               ✓
             </div>
             <div>
-              <p className="text-[11px] text-muted-foreground font-medium">Import Status</p>
+              <p className="text-xs text-muted-foreground font-medium">Import Status</p>
               <p className="text-xs font-semibold text-foreground">Ready to Import</p>
             </div>
           </div>
@@ -122,7 +122,7 @@ export default function BulkImportPreviewTable({
                     !r.isValid ? "bg-destructive/5 text-destructive" : ""
                   }`}
                 >
-                  <td className="py-2 px-3 text-center text-muted-foreground font-mono text-[11px]">
+                  <td className="py-2 px-3 text-center text-muted-foreground font-mono text-xs">
                     {idx + 1}
                   </td>
                   <td className="py-2 px-3 font-medium text-foreground">
@@ -130,7 +130,7 @@ export default function BulkImportPreviewTable({
                       ? r.first_name
                       : `${r.first_name} ${r.last_name}`}
                   </td>
-                  <td className="py-2 px-3 font-mono text-[11px] text-muted-foreground">
+                  <td className="py-2 px-3 font-mono text-xs text-muted-foreground">
                     {r.identifier || "—"}
                   </td>
                   <td className="py-2 px-3 text-muted-foreground truncate max-w-[160px]">
@@ -138,13 +138,13 @@ export default function BulkImportPreviewTable({
                   </td>
                   <td className="py-2 px-3 text-center">
                     {r.isValid ? (
-                      <span className="inline-flex items-center gap-1 text-[11px] text-success font-medium">
+                      <span className="inline-flex items-center gap-1 text-xs text-success font-medium">
                         <CheckCircle size={12} /> Ready
                       </span>
                     ) : (
                       <span
                         title={r.validationError}
-                        className="inline-flex items-center gap-1 text-[11px] text-destructive font-medium cursor-help"
+                        className="inline-flex items-center gap-1 text-xs text-destructive font-medium cursor-help"
                       >
                         <AlertTriangle size={12} /> Review
                       </span>

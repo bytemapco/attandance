@@ -76,7 +76,7 @@ export default function LeavesPage(): React.JSX.Element {
       key: "document_url",
       header: "Proof Attached",
       render: (r) => r.document_url ? (
-        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-success/10 text-success border border-success/20 text-[11px] font-semibold">
+        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-success/10 text-success border border-success/20 text-xs font-semibold">
           {r.document_url.toLowerCase().split("?")[0].endsWith(".pdf") ? <FileText size={12} /> : <ImageIcon size={12} />}
           <span>Attached</span>
         </span>

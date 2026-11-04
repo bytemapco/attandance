@@ -64,7 +64,7 @@ export default function CampusBroadcastForm({
             maxLength={500}
             className="w-full px-3 py-2 rounded-lg border border-border bg-card text-xs sm:text-sm text-primary placeholder:text-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent transition-all resize-y"
           />
-          <div className="flex justify-end mt-1 text-[11px] text-muted-foreground">
+          <div className="flex justify-end mt-1 text-xs text-muted-foreground">
             {formData.message.length}/500 characters
           </div>
         </div>

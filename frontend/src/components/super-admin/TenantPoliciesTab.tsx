@@ -37,7 +37,7 @@ export default function TenantPoliciesTab({
     <form onSubmit={handleSubmit} className="space-y-6">
       <GlassCard className="p-6 space-y-6">
         <div>
-          <h3 className="text-sm font-bold text-foreground">General Settings</h3>
+          <h3 className="text-sm font-semibold text-foreground">General Settings</h3>
           <p className="text-xs text-muted-foreground">Institution name and license quota.</p>
         </div>
 

@@ -74,7 +74,7 @@ export default function StudentTile({ student, status, active, unsaved, disabled
         )}
       </div>
       <div className="flex shrink-0 flex-col items-end gap-1 sm:w-36 sm:items-start">
-        <GlassBadge variant={badge.variant} icon={badge.icon} className="px-2 py-0 text-[11px]">
+        <GlassBadge variant={badge.variant} icon={badge.icon} className="px-2 py-0 text-xs">
           {badge.label}
         </GlassBadge>
         <p className="text-xs text-muted-foreground">

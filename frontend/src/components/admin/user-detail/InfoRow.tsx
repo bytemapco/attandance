@@ -23,7 +23,7 @@ export default function InfoRow({ icon: Icon, label, value, copyValue, copyKey }
           <Icon size={16} />
         </div>
         <div className="min-w-0">
-          <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">{label}</p>
+          <p className="text-xs font-medium text-muted-foreground">{label}</p>
           <p className="text-sm font-semibold text-foreground truncate">{value}</p>
         </div>
       </div>

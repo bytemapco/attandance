@@ -27,7 +27,7 @@ export default function GlassEmptyState({
       <div className="mx-auto mb-3.5 flex h-12 w-12 items-center justify-center rounded-lg bg-secondary text-muted-foreground border border-border">
         {icon || <FolderOpen size={22} />}
       </div>
-      <h3 className="text-base font-bold text-foreground">{title}</h3>
+      <h3 className="text-base font-semibold text-foreground">{title}</h3>
       <p className="mt-1 text-xs sm:text-sm text-muted-foreground max-w-sm mx-auto leading-relaxed">{message}</p>
       {actionLabel && onAction && (
         <div className="mt-5">

@@ -78,7 +78,7 @@ export default function BulkImportResults({
           {!isAllSuccess && !isPartial && <XCircle size={24} className="text-destructive" />}
         </div>
         <div>
-          <h4 className="text-sm font-bold text-foreground">
+          <h4 className="text-sm font-semibold text-foreground">
             {isAllSuccess
               ? "Import Completed Successfully"
               : isPartial
@@ -96,20 +96,20 @@ export default function BulkImportResults({
       {/* Summary KPI Cards */}
       <div className="grid grid-cols-3 gap-3">
         <div className="p-3 bg-secondary/30 rounded-lg border border-border">
-          <p className="text-[11px] text-muted-foreground font-medium">Successfully Added</p>
-          <p className="text-xl font-bold font-mono text-foreground mt-0.5">{summary.totalImported}</p>
+          <p className="text-xs text-muted-foreground font-medium">Successfully Added</p>
+          <p className="text-xl font-semibold font-mono text-foreground mt-0.5">{summary.totalImported}</p>
         </div>
 
         <div className="p-3 bg-secondary/30 rounded-lg border border-border">
-          <p className="text-[11px] text-muted-foreground font-medium flex items-center gap-1">
+          <p className="text-xs text-muted-foreground font-medium flex items-center gap-1">
             <Mail size={12} className="text-info" /> Invitations Sent
           </p>
-          <p className="text-xl font-bold font-mono text-foreground mt-0.5">{summary.totalInvited}</p>
+          <p className="text-xl font-semibold font-mono text-foreground mt-0.5">{summary.totalInvited}</p>
         </div>
 
         <div className="p-3 bg-secondary/30 rounded-lg border border-border">
-          <p className="text-[11px] text-muted-foreground font-medium">Failed</p>
-          <p className="text-xl font-bold font-mono text-foreground mt-0.5">{summary.totalFailed}</p>
+          <p className="text-xs text-muted-foreground font-medium">Failed</p>
+          <p className="text-xl font-semibold font-mono text-foreground mt-0.5">{summary.totalFailed}</p>
         </div>
       </div>
 
@@ -124,13 +124,13 @@ export default function BulkImportResults({
               <button
                 type="button"
                 onClick={handleDownloadFailedCsv}
-                className="text-[11px] text-destructive hover:text-destructive underline font-medium flex items-center gap-1 cursor-pointer"
+                className="text-xs text-destructive hover:text-destructive underline font-medium flex items-center gap-1 cursor-pointer"
               >
                 <Download size={11} /> Download Error Report
               </button>
             )}
           </div>
-          <div className="max-h-28 overflow-y-auto space-y-1 text-[11px] font-sans text-destructive pr-1">
+          <div className="max-h-28 overflow-y-auto space-y-1 text-xs font-sans text-destructive pr-1">
             {summary.allErrors.map((err, idx) => (
               <p key={idx} className="bg-background/60 px-2.5 py-1.5 rounded-sm border border-destructive/10 font-medium">
                 {err}

@@ -44,7 +44,7 @@ export default function LeaveDecisionCard({
           maxLength={300}
           className="w-full px-3.5 py-2.5 rounded-lg border border-border bg-card text-xs text-primary placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-accent/40 transition-all resize-y"
         />
-        <div className="flex justify-end mt-1 text-[11px] text-muted-foreground font-mono">
+        <div className="flex justify-end mt-1 text-xs text-muted-foreground font-mono">
           {approverNote.length}/300
         </div>
       </div>

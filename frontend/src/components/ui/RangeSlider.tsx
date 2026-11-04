@@ -48,7 +48,7 @@ export default function RangeSlider({
         className="h-1.5 w-full cursor-pointer appearance-none rounded-full bg-secondary accent-primary"
       />
       {(minLabel || maxLabel) && (
-        <div className="flex justify-between text-[11px] text-muted-foreground">
+        <div className="flex justify-between text-xs text-muted-foreground">
           <span>{minLabel}</span>
           <span>{maxLabel}</span>
         </div>

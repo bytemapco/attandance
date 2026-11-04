@@ -79,13 +79,13 @@ export default function Header({ onMenuToggle }: HeaderProps): React.JSX.Element
             <Menu size={20} />
           </button>
 
-          <Link href={homeHref} className="md:hidden flex items-center gap-2 font-bold text-xs text-primary shrink-0 hover:opacity-85 transition-opacity">
+          <Link href={homeHref} className="md:hidden flex items-center gap-2 font-semibold text-xs text-primary shrink-0 hover:opacity-85 transition-opacity">
             <img
               src="/sahaj-app-icon.png"
               alt="SAHAJ Logo"
               className="h-7 w-7 rounded-lg object-contain"
             />
-            <span className="hidden sm:inline tracking-wider font-bold">SAHAJ</span>
+            <span className="hidden sm:inline font-semibold">SAHAJ</span>
           </Link>
 
           <div
@@ -105,7 +105,7 @@ export default function Header({ onMenuToggle }: HeaderProps): React.JSX.Element
               }
               className="w-full h-9 pl-9 pr-16 rounded-lg border border-border bg-secondary/50 text-xs text-foreground placeholder:text-muted-foreground group-hover:bg-background group-hover:border-accent/60 cursor-pointer transition-all outline-none"
             />
-            <kbd className="absolute right-2.5 px-1.5 py-0.5 rounded-sm border border-border bg-card text-[10px] font-mono text-muted-foreground font-semibold pointer-events-none">
+            <kbd className="absolute right-2.5 px-1.5 py-0.5 rounded-sm border border-border bg-card text-xs font-mono text-muted-foreground font-semibold pointer-events-none">
               Ctrl K
             </kbd>
           </div>
@@ -113,12 +113,12 @@ export default function Header({ onMenuToggle }: HeaderProps): React.JSX.Element
 
         <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
           <div className="flex items-center gap-2.5 pl-1 sm:pl-2">
-            <div className="h-8 w-8 rounded-full bg-primary text-primary-foreground font-bold text-xs flex items-center justify-center select-none">
+            <div className="h-8 w-8 rounded-full bg-primary text-primary-foreground font-semibold text-xs flex items-center justify-center select-none">
               {initials}
             </div>
             <div className="hidden lg:block text-left">
-              <p className="text-xs font-bold text-foreground leading-tight">{displayName}</p>
-              <p className="text-[10px] text-muted-foreground font-medium mt-0.5">{displayRole}</p>
+              <p className="text-xs font-semibold text-foreground leading-tight">{displayName}</p>
+              <p className="text-xs text-muted-foreground font-medium mt-0.5">{displayRole}</p>
             </div>
             <button
               type="button"

@@ -34,7 +34,7 @@ export default function TenantMetricsRow({
           </div>
           <div>
             <p className="text-xs text-muted-foreground font-medium">Students</p>
-            <p className="text-2xl font-bold text-foreground">
+            <p className="text-2xl font-semibold text-foreground">
               {studentCount.toLocaleString()}
             </p>
           </div>
@@ -49,7 +49,7 @@ export default function TenantMetricsRow({
           </div>
           <div>
             <p className="text-xs text-muted-foreground font-medium">Faculty</p>
-            <p className="text-2xl font-bold text-foreground">
+            <p className="text-2xl font-semibold text-foreground">
               {teacherCount.toLocaleString()}
             </p>
           </div>
@@ -64,7 +64,7 @@ export default function TenantMetricsRow({
           </div>
           <div>
             <p className="text-xs text-muted-foreground font-medium">License Quota</p>
-            <p className="text-xl font-bold text-foreground">
+            <p className="text-xl font-semibold text-foreground">
               {totalUsers.toLocaleString()} / {licenseCount.toLocaleString()}
             </p>
           </div>
@@ -78,7 +78,7 @@ export default function TenantMetricsRow({
               style={{ width: `${capacityPct}%` }}
             />
           </div>
-          <div className="flex items-center justify-between mt-1 text-[10px] text-muted-foreground">
+          <div className="flex items-center justify-between mt-1 text-xs text-muted-foreground">
             <span>{remainingSeats.toLocaleString()} left</span>
             <span>{capacityPct}%</span>
           </div>
@@ -93,7 +93,7 @@ export default function TenantMetricsRow({
           </div>
           <div>
             <p className="text-xs text-muted-foreground font-medium">Academics</p>
-            <p className="text-2xl font-bold text-foreground">
+            <p className="text-2xl font-semibold text-foreground">
               {tenant.department_count || 0} Depts
             </p>
           </div>
@@ -108,7 +108,7 @@ export default function TenantMetricsRow({
           </div>
           <div>
             <p className="text-xs text-muted-foreground font-medium">Live Sessions</p>
-            <p className="text-2xl font-bold text-foreground">
+            <p className="text-2xl font-semibold text-foreground">
               {tenant.active_sessions_count || 0}
             </p>
           </div>

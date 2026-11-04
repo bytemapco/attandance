@@ -38,7 +38,7 @@ export default function DeviceChangesPage(): React.ReactElement {
     <div className="p-6 md:p-8 max-w-[1400px] mx-auto space-y-8">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-foreground tracking-tight flex items-center gap-3">
+          <h1 className="text-2xl md:text-3xl font-semibold text-foreground tracking-tight flex items-center gap-3">
             <div className="p-2 rounded-lg bg-primary/10 border border-primary/20 text-primary">
               <Smartphone size={24} />
             </div>

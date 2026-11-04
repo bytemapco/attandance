@@ -44,7 +44,7 @@ export default function GlassConfirmDialog({
             <AlertTriangle size={20} />
           </div>
           <div>
-            <h3 className="text-base font-bold text-foreground">{title}</h3>
+            <h3 className="text-base font-semibold text-foreground">{title}</h3>
             <p className="text-xs sm:text-sm text-muted-foreground mt-1 leading-relaxed">{message}</p>
           </div>
         </div>

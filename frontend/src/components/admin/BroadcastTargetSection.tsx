@@ -59,7 +59,7 @@ export default function BroadcastTargetSection({
                 }`}
               >
                 <p className="text-xs font-semibold leading-tight">{opt.label}</p>
-                <p className="text-[10px] text-muted-foreground mt-0.5 leading-tight">{opt.desc}</p>
+                <p className="text-xs text-muted-foreground mt-0.5 leading-tight">{opt.desc}</p>
               </button>
             );
           })}

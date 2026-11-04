@@ -97,11 +97,11 @@ export default function ClassManagementPage(): React.ReactElement {
       render: (row) => (
         <div className="flex items-center gap-2">
           <span className="font-semibold text-foreground text-sm">{row.code}</span>
-          <span className="inline-block text-[11px] font-medium text-muted-foreground bg-muted/60 px-1.5 py-0.5 rounded-sm border border-border/60">
+          <span className="inline-block text-xs font-medium text-muted-foreground bg-muted/60 px-1.5 py-0.5 rounded-sm border border-border/60">
             Sem {row.semester_number}
           </span>
           {row.status !== "ACTIVE" && (
-            <span className="text-[11px] font-medium text-muted-foreground bg-muted px-1.5 py-0.5 rounded-sm border border-border">
+            <span className="text-xs font-medium text-muted-foreground bg-muted px-1.5 py-0.5 rounded-sm border border-border">
               {row.status}
             </span>
           )}
@@ -169,7 +169,7 @@ export default function ClassManagementPage(): React.ReactElement {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-2 border-b border-border">
         <div className="flex items-center gap-2.5">
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">Classes</h1>
+          <h1 className="text-2xl font-semibold tracking-tight text-foreground">Classes</h1>
           <span className="text-xs font-medium text-muted-foreground">({classes.length} total)</span>
         </div>
         <GlassButton 

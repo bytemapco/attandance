@@ -134,7 +134,7 @@ export default function EnterprisePagination({
 
         {onPageSizeChange && (
           <div className="flex items-center gap-1.5 ml-2 pl-2 border-l border-border">
-            <span className="text-[11px] text-muted-foreground">Rows:</span>
+            <span className="text-xs text-muted-foreground">Rows:</span>
             <Select
               value={String(pageSize)}
               onValueChange={(val) => onPageSizeChange(Number(val))}

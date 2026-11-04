@@ -108,11 +108,11 @@ export default function QuickAddForm({
               type="button"
               tabIndex={-1}
               onClick={applySuggestion}
-              className="absolute right-2 top-1/2 -translate-y-1/2 z-20 flex items-center gap-1 rounded-sm border border-border bg-surface px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground cursor-pointer"
+              className="absolute right-2 top-1/2 -translate-y-1/2 z-20 flex items-center gap-1 rounded-sm border border-border bg-surface px-1.5 py-0.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground cursor-pointer"
               title="Press Tab to apply suggestion"
             >
               <span>Tab</span>
-              <span className="text-[11px] leading-none">⇥</span>
+              <span className="text-xs leading-none">⇥</span>
             </button>
           )}
         </div>
@@ -145,7 +145,7 @@ export default function QuickAddForm({
             value={code}
             onChange={(event) => setCode(event.target.value.toUpperCase())}
             placeholder={suggestCode(name) || codePlaceholder || "e.g. CSE"}
-            className="flex h-9 sm:h-10 w-full rounded-md border border-border bg-card px-3 py-1 text-sm transition-colors text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:border-transparent uppercase"
+            className="flex h-9 sm:h-10 w-full rounded-md border border-border bg-card px-3 py-1 text-sm transition-colors text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:border-transparent"
           />
         </div>
       )}

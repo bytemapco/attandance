@@ -163,7 +163,7 @@ export default function LocationSearchBar({
                       {title}
                     </p>
                     {subtitle && (
-                      <p className="truncate text-[11px] text-muted-foreground">
+                      <p className="truncate text-xs text-muted-foreground">
                         {subtitle}
                       </p>
                     )}

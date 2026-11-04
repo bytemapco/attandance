@@ -39,7 +39,7 @@ export default function TenantOverviewTab({ tenant }: TenantOverviewTabProps): R
         {/* Tenant Access Card */}
         <GlassCard className="p-5 space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+            <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
               <Globe size={16} className="text-primary" />
               <span>Tenant Login</span>
             </h3>
@@ -63,7 +63,7 @@ export default function TenantOverviewTab({ tenant }: TenantOverviewTabProps): R
         {/* Primary Administrators Card */}
         <GlassCard className="p-5 space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+            <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
               <UserCheck size={16} className="text-primary" />
               <span>Primary Administrators</span>
             </h3>
@@ -85,9 +85,9 @@ export default function TenantOverviewTab({ tenant }: TenantOverviewTabProps): R
                 >
                   <div className="space-y-0.5">
                     <p className="font-semibold text-foreground">{admin.email}</p>
-                    <p className="text-[11px] text-muted-foreground">{admin.role}</p>
+                    <p className="text-xs text-muted-foreground">{admin.role}</p>
                   </div>
-                  <div className="flex items-center gap-1.5 text-success font-medium text-[11px]">
+                  <div className="flex items-center gap-1.5 text-success font-medium text-xs">
                     <CheckCircle2 size={13} />
                     <span>{admin.is_active !== false ? "Active" : "Suspended"}</span>
                   </div>

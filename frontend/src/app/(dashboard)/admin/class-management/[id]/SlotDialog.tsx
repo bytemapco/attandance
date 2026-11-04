@@ -103,7 +103,7 @@ export default function SlotDialog({ cls, draft, onUpdated, onClose }: SlotDialo
         className="max-h-full w-full max-w-md space-y-4 overflow-y-auto rounded-lg border border-border bg-card p-6 shadow-popover"
         onClick={(e) => e.stopPropagation()}
       >
-        <h3 className="text-base font-bold text-foreground">{editing ? "Change class time" : "Add class time"}</h3>
+        <h3 className="text-base font-semibold text-foreground">{editing ? "Change class time" : "Add class time"}</h3>
         {editing ? (
           <p className="text-sm font-semibold text-foreground">{subjectName}</p>
         ) : (

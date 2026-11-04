@@ -126,7 +126,7 @@ export default function AttendanceHistoryPage(): React.ReactElement {
             <div className="space-y-4">
               {groups.map(([key, day]) => (
                 <section key={key} aria-label={dayLabel(key)}>
-                  <h2 className="mb-1.5 px-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">{dayLabel(key)}</h2>
+                  <h2 className="mb-1.5 px-1 text-xs font-semibold text-muted-foreground">{dayLabel(key)}</h2>
                   <ul className="divide-y divide-border overflow-hidden rounded-lg border border-border bg-card">
                     {day.map((i) => <SessionRow key={i.occurrence_id} item={i} />)}
                   </ul>

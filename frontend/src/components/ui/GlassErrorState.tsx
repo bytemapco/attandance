@@ -33,7 +33,7 @@ export function GlassErrorState({
       <div className="mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-lg bg-destructive-soft text-destructive border border-destructive-border">
         <AlertCircle size={22} aria-hidden="true" />
       </div>
-      <h3 className="text-base font-bold text-foreground tracking-tight">{title}</h3>
+      <h3 className="text-base font-semibold text-foreground tracking-tight">{title}</h3>
       <p className="mt-1 text-xs sm:text-sm text-muted-foreground max-w-md mx-auto leading-relaxed">{message}</p>
       {details && (
         <pre className="mt-3 max-w-md mx-auto overflow-x-auto rounded-lg bg-card p-2.5 text-xs text-muted-foreground border border-border text-left font-mono">

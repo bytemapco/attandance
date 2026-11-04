@@ -98,7 +98,7 @@ export default function ClassDetailPage(): React.ReactElement {
               Classes
             </GlassButton>
             <span className="text-muted-foreground/50">|</span>
-            <h1 className="text-2xl font-bold tracking-tight text-foreground">
+            <h1 className="text-2xl font-semibold tracking-tight text-foreground">
               {cls.code}
             </h1>
             <label htmlFor="class-semester" className="sr-only">Semester</label>
@@ -106,7 +106,7 @@ export default function ClassDetailPage(): React.ReactElement {
               id="class-semester"
               value={cls.semester_number}
               onChange={(event) => void changeSemester(Number(event.target.value))}
-              className="cursor-pointer rounded-full border border-info-border bg-info-soft px-2 py-0.5 text-xs font-bold text-info focus-visible:outline-2 focus-visible:outline-muted-foreground"
+              className="cursor-pointer rounded-full border border-info-border bg-info-soft px-2 py-0.5 text-xs font-semibold text-info focus-visible:outline-2 focus-visible:outline-muted-foreground"
             >
               {SEMESTER_NUMBERS.map((number) => (
                 <option key={number} value={number}>Semester {number}</option>
@@ -136,13 +136,13 @@ export default function ClassDetailPage(): React.ReactElement {
             <div className="text-xs text-muted-foreground font-medium flex items-center gap-1 justify-center">
               <Users size={12} className="text-info" /> Students
             </div>
-            <div className="text-lg font-bold text-foreground font-mono">{cls.member_count}</div>
+            <div className="text-lg font-semibold text-foreground font-mono">{cls.member_count}</div>
           </div>
           <div className="px-3.5 py-1.5 rounded-lg border border-border bg-card text-center">
             <div className="text-xs text-muted-foreground font-medium flex items-center gap-1 justify-center">
               <BookOpen size={12} className="text-success" /> Subjects
             </div>
-            <div className="text-lg font-bold text-foreground font-mono">{cls.subject_count}</div>
+            <div className="text-lg font-semibold text-foreground font-mono">{cls.subject_count}</div>
           </div>
         </div>
       </div>
@@ -178,7 +178,7 @@ export default function ClassDetailPage(): React.ReactElement {
         >
           <Users size={14} className={tab === "students" ? "text-info" : "text-muted-foreground"} />
           <span>Students</span>
-          <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-secondary text-secondary-foreground font-mono">
+          <span className="px-1.5 py-0.2 rounded-full text-xs bg-secondary text-secondary-foreground font-mono">
             {cls.member_count}
           </span>
         </button>
@@ -197,7 +197,7 @@ export default function ClassDetailPage(): React.ReactElement {
           <CalendarDays size={14} className={tab === "timetable" ? "text-accent-strong" : "text-muted-foreground"} />
           <span>Timetable</span>
           <span className={cn(
-            "px-1.5 py-0.2 rounded-full text-[10px] font-mono",
+            "px-1.5 py-0.2 rounded-full text-xs font-mono",
             isNeedsSetup ? "bg-warning text-primary-foreground" : "bg-secondary text-secondary-foreground"
           )}>
             {cls.subject_count}

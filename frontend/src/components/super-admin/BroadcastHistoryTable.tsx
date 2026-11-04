@@ -114,7 +114,7 @@ export default function BroadcastHistoryTable({
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs border-collapse">
             <thead>
-              <tr className="border-b border-border text-[11px] font-semibold text-muted-foreground uppercase tracking-wider bg-secondary/40">
+              <tr className="border-b border-border text-xs font-semibold text-muted-foreground bg-secondary/40">
                 <th className="py-2.5 px-3">Title</th>
                 <th className="py-2.5 px-3">Audience</th>
                 <th className="py-2.5 px-3">Severity</th>
@@ -123,25 +123,25 @@ export default function BroadcastHistoryTable({
                 <th className="py-2.5 px-3 text-right">Date</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-border/60 text-[11px]">
+            <tbody className="divide-y divide-border/60 text-xs">
               {items.map((item) => {
                 const badge = getSeverityBadge(item.severity);
                 return (
                   <tr key={item.id} className="hover:bg-secondary/30 transition-colors">
                     <td className="py-3 px-3 max-w-[280px]">
                       <div className="font-semibold text-foreground truncate">{item.title}</div>
-                      <div className="text-[11px] text-muted-foreground truncate mt-0.5">
+                      <div className="text-xs text-muted-foreground truncate mt-0.5">
                         {item.description}
                       </div>
                     </td>
                     <td className="py-3 px-3 whitespace-nowrap">
-                      <span className="inline-flex items-center gap-1 text-[11px] text-muted-foreground">
+                      <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
                         <Users size={11} className="text-muted-foreground" />
                         <span>{item.target ? item.target.replace(/_/g, " ") : "All users"}</span>
                       </span>
                     </td>
                     <td className="py-3 px-3 whitespace-nowrap">
-                      <GlassBadge variant={badge.variant} className="gap-1 text-[10px]">
+                      <GlassBadge variant={badge.variant} className="gap-1 text-xs">
                         {badge.icon}
                         <span>{item.severity}</span>
                       </GlassBadge>

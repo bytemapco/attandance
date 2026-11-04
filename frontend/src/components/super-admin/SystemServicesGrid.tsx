@@ -105,7 +105,7 @@ export default function SystemServicesGrid({ health }: SystemServicesGridProps):
   return (
     <GlassCard padding="none" className="overflow-hidden">
       <div className="px-5 py-3 border-b border-border/60 bg-muted/20 flex items-center justify-between">
-        <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+        <h3 className="text-xs font-semibold text-muted-foreground">
           Infrastructure Services
         </h3>
         <span className="text-xs text-muted-foreground">

@@ -31,7 +31,7 @@ export function NotificationHeader({
   return (
     <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border">
       <div className="flex items-center gap-3">
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-primary">
+        <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-primary">
           {title}
         </h1>
         {unreadCount > 0 && (

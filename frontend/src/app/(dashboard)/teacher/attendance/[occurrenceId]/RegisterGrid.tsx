@@ -109,7 +109,7 @@ export default function RegisterGrid({ students, edits, counts, locked, editable
             placeholder="Search name or enrollment"
             className="h-9 w-full rounded-lg border border-input bg-background pl-9 pr-9 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
           />
-          <kbd className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 rounded-sm border border-border px-1.5 text-[11px] text-muted-foreground">/</kbd>
+          <kbd className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 rounded-sm border border-border px-1.5 text-xs text-muted-foreground">/</kbd>
         </label>
       </div>
       <div className="max-h-[70dvh] flex-1 overflow-y-auto p-4 lg:max-h-none">

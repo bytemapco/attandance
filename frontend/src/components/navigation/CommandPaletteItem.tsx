@@ -36,7 +36,7 @@ export default function CommandPaletteItem({
             <span>{item.title}</span>
             {item.badge && item.badge !== "Action" && (
               <span
-                className={`px-1.5 py-0.5 rounded-sm text-[10px] font-bold border ${
+                className={`px-1.5 py-0.5 rounded-sm text-xs font-semibold border ${
                   item.badge === "LIVE"
                     ? "bg-success-soft text-success border-success-border"
                     : "bg-secondary text-muted-foreground border-border"
@@ -47,12 +47,12 @@ export default function CommandPaletteItem({
             )}
           </div>
           {item.subtitle && (
-            <p className="text-[11px] text-muted-foreground truncate mt-0.5">{item.subtitle}</p>
+            <p className="text-xs text-muted-foreground truncate mt-0.5">{item.subtitle}</p>
           )}
         </div>
       </div>
 
-      <div className="flex items-center gap-2 shrink-0 ml-3 text-[10px] text-muted-foreground">
+      <div className="flex items-center gap-2 shrink-0 ml-3 text-xs text-muted-foreground">
         <CornerDownLeft
           size={13}
           className={`transition-opacity ${isSelected ? "text-accent-strong opacity-100" : "opacity-0"}`}

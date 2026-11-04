@@ -16,7 +16,7 @@ export default function AdminNavSection({ unreadCount, onClose }: AdminNavSectio
 
   return (
     <div>
-      <p className="px-3 mb-2 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+      <p className="px-3 mb-2 text-xs font-semibold text-muted-foreground">
         Administration
       </p>
       <div className="space-y-0.5">
@@ -40,7 +40,7 @@ export default function AdminNavSection({ unreadCount, onClose }: AdminNavSectio
                 <span>{link.label}</span>
               </div>
               {isNotif && unreadCount > 0 && (
-                <span className="inline-flex items-center justify-center min-w-4.5 h-4.5 px-1.5 rounded-full text-[10px] font-bold bg-primary text-primary-foreground">
+                <span className="inline-flex items-center justify-center min-w-4.5 h-4.5 px-1.5 rounded-full text-xs font-semibold bg-primary text-primary-foreground">
                   {unreadCount > 99 ? "99+" : unreadCount}
                 </span>
               )}

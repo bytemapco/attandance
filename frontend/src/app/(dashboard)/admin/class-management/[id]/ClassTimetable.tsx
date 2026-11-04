@@ -105,7 +105,7 @@ export default function ClassTimetable({ cls, onUpdated }: ClassTimetableProps):
 
           <div className="relative" style={{ height: hours.length * HOUR_PX }}>
             {hours.map((hour, i) => (
-              <span key={hour} className="absolute right-2 -translate-y-1/2 text-[11px] tabular-nums text-muted-foreground" style={{ top: i * HOUR_PX, display: i === 0 ? "none" : undefined }}>
+              <span key={hour} className="absolute right-2 -translate-y-1/2 text-xs tabular-nums text-muted-foreground" style={{ top: i * HOUR_PX, display: i === 0 ? "none" : undefined }}>
                 {hourLabel(hour)}
               </span>
             ))}

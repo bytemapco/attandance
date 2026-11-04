@@ -45,11 +45,11 @@ export default function CampusBroadcastPreview({ formData }: CampusBroadcastPrev
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Eye size={15} className="text-primary" />
-          <h2 className="text-xs font-bold text-foreground uppercase tracking-wider">
+          <h2 className="text-xs font-semibold text-foreground">
             Live Preview Simulation
           </h2>
         </div>
-        <span className="text-[11px] text-muted-foreground flex items-center gap-1">
+        <span className="text-xs text-muted-foreground flex items-center gap-1">
           <span className="w-1.5 h-1.5 rounded-full bg-success animate-pulse inline-block" />
           <span>Real-time</span>
         </span>
@@ -62,17 +62,17 @@ export default function CampusBroadcastPreview({ formData }: CampusBroadcastPrev
             <Bell size={13} />
             <span>In-App Notification Feed</span>
           </div>
-          <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-sm border uppercase ${priority.style}`}>
+          <span className={`text-xs font-semibold px-2 py-0.5 rounded-sm border ${priority.style}`}>
             {priority.label}
           </span>
         </div>
 
         <div className="p-3.5 rounded-lg border border-border bg-muted/30 space-y-1.5">
           <div className="flex items-center gap-2">
-            <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-sm bg-muted border border-border text-foreground">
+            <span className="text-xs font-medium px-1.5 py-0.5 rounded-sm bg-muted border border-border text-foreground">
               {categoryLabel}
             </span>
-            <span className="text-[10px] text-muted-foreground">Just now</span>
+            <span className="text-xs text-muted-foreground">Just now</span>
           </div>
 
           <h3 className="text-sm font-semibold text-foreground tracking-tight">
@@ -107,14 +107,14 @@ export default function CampusBroadcastPreview({ formData }: CampusBroadcastPrev
             className="w-7 h-7 rounded-md object-contain shrink-0 mt-0.5"
           />
           <div className="flex-1 min-w-0">
-            <div className="flex items-center justify-between text-[11px] text-muted-foreground">
-              <span className="font-semibold text-foreground tracking-wide">SAHAJ</span>
+            <div className="flex items-center justify-between text-xs text-muted-foreground">
+              <span className="font-semibold text-foreground">SAHAJ</span>
               <span>now</span>
             </div>
             <p className="text-xs font-semibold text-foreground truncate mt-0.5">
               {formData.title.trim() || "Campus Notice"}
             </p>
-            <p className="text-[11px] text-muted-foreground line-clamp-2 mt-0.5 leading-snug">
+            <p className="text-xs text-muted-foreground line-clamp-2 mt-0.5 leading-snug">
               {formData.message.trim() || "Push notifications delivered instantaneously to enrolled user devices."}
             </p>
           </div>

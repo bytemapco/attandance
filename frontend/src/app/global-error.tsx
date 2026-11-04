@@ -30,7 +30,7 @@ export default function GlobalError({
             </svg>
           </div>
 
-          <h1 className="text-xl font-bold tracking-tight text-primary mb-2">
+          <h1 className="text-xl font-semibold tracking-tight text-primary mb-2">
             Something went critically wrong
           </h1>
 

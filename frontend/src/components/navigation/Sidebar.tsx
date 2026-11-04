@@ -55,8 +55,8 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps): React.JSX.El
               className="h-9 w-9 rounded-lg transition-transform object-contain shrink-0 self-center"
             />
             <div className="min-w-0 flex-1">
-              <h2 className="text-sm font-bold text-primary tracking-wider leading-tight">SAHAJ</h2>
-              <p className="text-[11px] text-muted-foreground font-medium leading-snug break-words">
+              <h2 className="text-sm font-semibold text-primary leading-tight">SAHAJ</h2>
+              <p className="text-xs text-muted-foreground font-medium leading-snug break-words">
                 {instituteName}
               </p>
             </div>

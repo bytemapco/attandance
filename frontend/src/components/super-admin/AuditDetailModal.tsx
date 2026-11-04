@@ -85,7 +85,7 @@ export default function AuditDetailModal({
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="text-base font-bold text-foreground">{formatEventTitle(log.event_type)}</h3>
+                <h3 className="text-base font-semibold text-foreground">{formatEventTitle(log.event_type)}</h3>
                 <GlassBadge variant={getSeverityVariant(log.severity)}>
                   {log.severity}
                 </GlassBadge>
@@ -110,7 +110,7 @@ export default function AuditDetailModal({
           {/* Metadata Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div className="p-3.5 rounded-lg bg-secondary/50 border border-border space-y-1">
-              <span className="text-[11px] text-muted-foreground font-medium flex items-center gap-1">
+              <span className="text-xs text-muted-foreground font-medium flex items-center gap-1">
                 <Clock size={12} /> Timestamp
               </span>
               <p className="font-semibold text-foreground">
@@ -122,22 +122,22 @@ export default function AuditDetailModal({
             </div>
 
             <div className="p-3.5 rounded-lg bg-secondary/50 border border-border space-y-1">
-              <span className="text-[11px] text-muted-foreground font-medium flex items-center gap-1">
+              <span className="text-xs text-muted-foreground font-medium flex items-center gap-1">
                 <User size={12} /> Actor
               </span>
               <p className="font-semibold text-foreground truncate" title={log.actor}>
                 {formatActorName(log.actor)}
                 {log.actor.includes("@") && (
-                  <span className="font-normal text-muted-foreground text-[11px] ml-1.5 font-mono">({log.actor})</span>
+                  <span className="font-normal text-muted-foreground text-xs ml-1.5 font-mono">({log.actor})</span>
                 )}
               </p>
             </div>
 
             <div className="p-3.5 rounded-lg bg-secondary/50 border border-border space-y-1">
-              <span className="text-[11px] text-muted-foreground font-medium flex items-center gap-1">
+              <span className="text-xs text-muted-foreground font-medium flex items-center gap-1">
                 <Globe size={12} /> Target Resource
               </span>
-              <p className="font-semibold text-foreground truncate font-mono text-[11px]">
+              <p className="font-semibold text-foreground truncate font-mono text-xs">
                 {log.target || "N/A"}
               </p>
             </div>
@@ -158,13 +158,13 @@ export default function AuditDetailModal({
               <button
                 type="button"
                 onClick={() => void handleCopyJson()}
-                className="inline-flex items-center gap-1 text-[11px] text-accent-strong hover:underline cursor-pointer font-medium"
+                className="inline-flex items-center gap-1 text-xs text-accent-strong hover:underline cursor-pointer font-medium"
               >
                 {copied ? <Check size={12} className="text-success" /> : <Copy size={12} />}
                 <span>{copied ? "Copied" : "Copy Payload"}</span>
               </button>
             </div>
-            <pre className="p-3.5 rounded-lg bg-primary text-primary-foreground text-[11px] font-mono overflow-x-auto max-h-44 leading-relaxed border border-foreground">
+            <pre className="p-3.5 rounded-lg bg-primary text-primary-foreground text-xs font-mono overflow-x-auto max-h-44 leading-relaxed border border-foreground">
               {JSON.stringify(
                 {
                   id: log.id,

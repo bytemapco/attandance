@@ -99,7 +99,7 @@ export default function EditTenantPage(): React.ReactElement {
         <GlassCard className="p-6 space-y-6">
           <div className="flex items-center gap-2 border-b border-border pb-3">
             <Building2 size={18} className="text-primary" />
-            <h3 className="text-sm font-bold text-foreground">Institution Profile</h3>
+            <h3 className="text-sm font-semibold text-foreground">Institution Profile</h3>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -133,7 +133,7 @@ export default function EditTenantPage(): React.ReactElement {
 
         <GlassCard className="p-6 space-y-6">
           <div className="border-b border-border pb-3">
-            <h3 className="text-sm font-bold text-foreground">Licensing</h3>
+            <h3 className="text-sm font-semibold text-foreground">Licensing</h3>
           </div>
 
           <div className="max-w-sm">

@@ -16,7 +16,7 @@ export function OnboardingInvalidCard({ message }: OnboardingInvalidCardProps): 
         <AlertCircle size={32} />
       </div>
       <div>
-        <h2 className="text-lg font-bold text-foreground">Invalid Invitation Link</h2>
+        <h2 className="text-lg font-semibold text-foreground">Invalid Invitation Link</h2>
         <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">
           {message || "This invitation link is invalid or has expired."}
         </p>
@@ -35,7 +35,7 @@ export function OnboardingCompletedCard(): React.ReactElement {
         <CheckCircle2 size={32} />
       </div>
       <div>
-        <h2 className="text-lg font-bold text-foreground">Account Activated</h2>
+        <h2 className="text-lg font-semibold text-foreground">Account Activated</h2>
         <p className="text-xs text-muted-foreground mt-1.5">
           Your credentials have been configured. Redirecting to sign in...
         </p>

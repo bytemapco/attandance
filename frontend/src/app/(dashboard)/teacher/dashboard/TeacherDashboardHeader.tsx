@@ -33,18 +33,18 @@ export default function TeacherDashboardHeader({
           <span className="text-xs font-medium text-muted-foreground">{todayStr}</span>
           <span className="text-border text-xs">•</span>
           {user?.tenant_name && (
-            <span className="text-[11px] font-semibold text-muted-foreground">
+            <span className="text-xs font-semibold text-muted-foreground">
               {user.tenant_name}
             </span>
           )}
           {profile?.department && (
-            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-secondary text-foreground border border-border">
+            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-secondary text-foreground border border-border">
               {profile.department}
             </span>
           )}
         </div>
 
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-primary">
+        <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-primary">
           {greeting}, {teacherName}
         </h1>
       </div>

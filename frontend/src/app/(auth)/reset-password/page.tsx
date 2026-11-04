@@ -112,7 +112,7 @@ function ResetPasswordContent(): React.ReactElement {
       className="rounded-lg border border-border bg-card p-6 sm:p-7 space-y-4"
     >
       <div className="space-y-1">
-        <h2 className="text-base font-bold text-foreground">Choose New Password</h2>
+        <h2 className="text-base font-semibold text-foreground">Choose New Password</h2>
         <p className="text-xs text-muted-foreground">
           {tokenData.name
             ? `Resetting password for ${tokenData.name} (${tokenData.email})`
@@ -174,7 +174,7 @@ export default function ResetPasswordPage(): React.ReactElement {
                 className="w-14 h-14 rounded-lg object-contain"
               />
             </div>
-            <h1 className="text-2xl font-bold tracking-tight text-primary">
+            <h1 className="text-2xl font-semibold tracking-tight text-primary">
               SAHAJ
             </h1>
             <p className="text-xs text-muted-foreground mt-0.5 font-medium">Campus, made effortless.</p>

@@ -34,8 +34,8 @@ export default function GlassTableHeader<T>({
               key={col.key}
               onClick={col.sortable ? () => onSort(col.key) : undefined}
               className={cn(
-                "h-10 px-4 text-xs font-semibold tracking-wide select-none whitespace-nowrap",
-                isActive ? "text-primary font-bold" : "text-muted-foreground",
+                "h-10 px-4 text-xs font-semibold select-none whitespace-nowrap",
+                isActive ? "text-primary font-semibold" : "text-muted-foreground",
                 col.sortable && "cursor-pointer hover:text-primary"
               )}
             >

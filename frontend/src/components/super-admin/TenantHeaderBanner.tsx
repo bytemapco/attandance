@@ -29,7 +29,7 @@ export default function TenantHeaderBanner({
         </div>
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-xl font-bold text-foreground">{tenant.name}</h1>
+            <h1 className="text-xl font-semibold text-foreground">{tenant.name}</h1>
             <GlassBadge variant={tenant.status === "ACTIVE" ? "success" : "danger"}>
               {tenant.status}
             </GlassBadge>

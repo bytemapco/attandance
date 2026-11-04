@@ -105,7 +105,7 @@ export default function LoginPage(): React.ReactElement {
             <div className="rounded-lg border border-warning-border bg-warning-soft p-4 text-left flex gap-3 items-start">
               <AlertTriangle className="w-5 h-5 text-warning shrink-0 mt-0.5" />
               <div className="space-y-1">
-                <p className="text-xs font-bold text-warning">Institution Suspended</p>
+                <p className="text-xs font-semibold text-warning">Institution Suspended</p>
                 <p className="text-xs text-muted-foreground leading-relaxed">{suspensionError}</p>
               </div>
             </div>

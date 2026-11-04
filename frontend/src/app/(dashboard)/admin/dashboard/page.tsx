@@ -84,7 +84,7 @@ export default function AdminDashboardPage(): React.ReactElement {
       <div className="relative overflow-hidden rounded-lg border border-border bg-card p-5 sm:p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-5">
         <div className="space-y-1 z-10">
           <p className="text-xs font-medium text-muted-foreground">{todayStr}</p>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-primary">
+          <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-primary">
             {greeting}, {displayName}
           </h1>
         </div>

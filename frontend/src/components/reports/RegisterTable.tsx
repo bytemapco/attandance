@@ -9,7 +9,7 @@ function Mark({ status }: { status: string | null }): React.ReactElement {
   return (
     <span
       title={style?.label ?? status}
-      className={cn("inline-flex h-6 w-6 items-center justify-center rounded-md text-xs font-bold", style?.className)}
+      className={cn("inline-flex h-6 w-6 items-center justify-center rounded-md text-xs font-semibold", style?.className)}
     >
       {style?.code ?? "?"}
     </span>

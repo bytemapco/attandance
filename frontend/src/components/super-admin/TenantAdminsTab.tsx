@@ -81,7 +81,7 @@ export default function TenantAdminsTab({ tenant, onRefresh }: TenantAdminsTabPr
 
       <div className="bg-card border border-border rounded-lg overflow-hidden">
         <table className="w-full text-left text-xs">
-          <thead className="bg-secondary/60 border-b border-border text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+          <thead className="bg-secondary/60 border-b border-border text-xs font-semibold text-muted-foreground">
             <tr>
               <th className="px-4 py-3">Administrator Email</th>
               <th className="px-4 py-3">Role</th>
@@ -98,13 +98,13 @@ export default function TenantAdminsTab({ tenant, onRefresh }: TenantAdminsTabPr
                     <UserCheck size={14} className="text-muted-foreground" />
                     <span>{admin.email}</span>
                   </td>
-                  <td className="px-4 py-3 font-mono text-[11px] text-muted-foreground">{admin.role}</td>
+                  <td className="px-4 py-3 font-mono text-xs text-muted-foreground">{admin.role}</td>
                   <td className="px-4 py-3">
                     <button
                       type="button"
                       onClick={() => void handleToggleStatus(admin.id, isActive)}
                       disabled={togglingId === admin.id}
-                      className={`inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-semibold border cursor-pointer transition-colors ${
+                      className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold border cursor-pointer transition-colors ${
                         isActive
                           ? "bg-success-soft text-success border-success/30 hover:bg-success-soft/70"
                           : "bg-destructive-soft text-destructive border-destructive/30 hover:bg-destructive-soft/70"

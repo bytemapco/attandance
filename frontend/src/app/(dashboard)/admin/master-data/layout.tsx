@@ -15,7 +15,7 @@ export default function MasterDataLayout({ children }: { children: React.ReactNo
       {showTabs && (
         <div className="space-y-3">
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Master Data</p>
+            <p className="text-xs font-semibold text-muted-foreground">Master Data</p>
             <p className="text-xs text-muted-foreground">Reference information used across students, classes and attendance.</p>
           </div>
           <nav aria-label="Master data" className="flex gap-1 overflow-x-auto border-b border-border">

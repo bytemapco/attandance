@@ -35,7 +35,7 @@ export default function SystemMetricsGrid({ health }: SystemMetricsGridProps): R
         </div>
         <div className="min-w-0">
           <p className="text-xs text-muted-foreground font-medium">Uptime</p>
-          <p className="text-lg font-bold text-foreground truncate">
+          <p className="text-lg font-semibold text-foreground truncate">
             {formatUptime(health.server_uptime_seconds)}
           </p>
         </div>
@@ -48,7 +48,7 @@ export default function SystemMetricsGrid({ health }: SystemMetricsGridProps): R
         </div>
         <div className="min-w-0">
           <p className="text-xs text-muted-foreground font-medium">DB Pool</p>
-          <p className="text-lg font-bold text-foreground truncate">
+          <p className="text-lg font-semibold text-foreground truncate">
             {poolActive} <span className="text-xs font-normal text-muted-foreground">/ {poolMax}</span>
           </p>
         </div>
@@ -61,7 +61,7 @@ export default function SystemMetricsGrid({ health }: SystemMetricsGridProps): R
         </div>
         <div className="min-w-0">
           <p className="text-xs text-muted-foreground font-medium">Cache Latency</p>
-          <p className="text-lg font-bold text-foreground truncate">
+          <p className="text-lg font-semibold text-foreground truncate">
             {redisLatency != null ? `${redisLatency} ms` : "0 ms"}
           </p>
         </div>
@@ -74,7 +74,7 @@ export default function SystemMetricsGrid({ health }: SystemMetricsGridProps): R
         </div>
         <div className="min-w-0">
           <p className="text-xs text-muted-foreground font-medium">AI Compute Hardware</p>
-          <p className="text-lg font-bold text-foreground truncate" title={activeDevice}>
+          <p className="text-lg font-semibold text-foreground truncate" title={activeDevice}>
             {activeDevice.replace(/^\/device:/, "")}
           </p>
         </div>

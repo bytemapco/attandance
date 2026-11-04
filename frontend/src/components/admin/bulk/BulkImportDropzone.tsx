@@ -50,45 +50,45 @@ export default function BulkImportDropzone({
     if (entityType === "departments") {
       return (
         <>
-          Required columns: <code className="font-mono bg-secondary px-1.5 py-0.5 rounded-sm text-[11px]">name</code>,{" "}
-          <code className="font-mono bg-secondary px-1.5 py-0.5 rounded-sm text-[11px]">code</code>
-          {" "}(optional: <code className="font-mono bg-secondary px-1.5 py-0.5 rounded-sm text-[11px]">head</code>, <code className="font-mono bg-secondary px-1.5 py-0.5 rounded-sm text-[11px]">description</code>)
+          Required columns: <code className="font-mono bg-secondary px-1.5 py-0.5 rounded-sm text-xs">name</code>,{" "}
+          <code className="font-mono bg-secondary px-1.5 py-0.5 rounded-sm text-xs">code</code>
+          {" "}(optional: <code className="font-mono bg-secondary px-1.5 py-0.5 rounded-sm text-xs">head</code>, <code className="font-mono bg-secondary px-1.5 py-0.5 rounded-sm text-xs">description</code>)
         </>
       );
     }
     if (entityType === "subjects") {
       return (
         <>
-          Required columns: <code className="font-mono bg-secondary px-1.5 py-0.5 rounded-sm text-[11px]">name</code>,{" "}
-          <code className="font-mono bg-secondary px-1.5 py-0.5 rounded-sm text-[11px]">code</code>
-          {" "}(optional: <code className="font-mono bg-secondary px-1.5 py-0.5 rounded-sm text-[11px]">description</code>)
+          Required columns: <code className="font-mono bg-secondary px-1.5 py-0.5 rounded-sm text-xs">name</code>,{" "}
+          <code className="font-mono bg-secondary px-1.5 py-0.5 rounded-sm text-xs">code</code>
+          {" "}(optional: <code className="font-mono bg-secondary px-1.5 py-0.5 rounded-sm text-xs">description</code>)
         </>
       );
     }
     if (entityType === "classrooms") {
       return (
         <>
-          Required column: <code className="font-mono bg-secondary px-1.5 py-0.5 rounded-sm text-[11px]">name</code>
-          {" "}(optional: <code className="font-mono bg-secondary px-1.5 py-0.5 rounded-sm text-[11px]">building</code>)
+          Required column: <code className="font-mono bg-secondary px-1.5 py-0.5 rounded-sm text-xs">name</code>
+          {" "}(optional: <code className="font-mono bg-secondary px-1.5 py-0.5 rounded-sm text-xs">building</code>)
         </>
       );
     }
     if (entityType === "designations") {
       return (
         <>
-          Required columns: <code className="font-mono bg-secondary px-1.5 py-0.5 rounded-sm text-[11px]">name</code>,{" "}
-          <code className="font-mono bg-secondary px-1.5 py-0.5 rounded-sm text-[11px]">code</code>
-          {" "}(optional: <code className="font-mono bg-secondary px-1.5 py-0.5 rounded-sm text-[11px]">description</code>)
+          Required columns: <code className="font-mono bg-secondary px-1.5 py-0.5 rounded-sm text-xs">name</code>,{" "}
+          <code className="font-mono bg-secondary px-1.5 py-0.5 rounded-sm text-xs">code</code>
+          {" "}(optional: <code className="font-mono bg-secondary px-1.5 py-0.5 rounded-sm text-xs">description</code>)
         </>
       );
     }
     return (
       <>
-        Required columns: <code className="font-mono bg-secondary px-1.5 py-0.5 rounded-sm text-[11px]">email</code>,{" "}
-        <code className="font-mono bg-secondary px-1.5 py-0.5 rounded-sm text-[11px]">
+        Required columns: <code className="font-mono bg-secondary px-1.5 py-0.5 rounded-sm text-xs">email</code>,{" "}
+        <code className="font-mono bg-secondary px-1.5 py-0.5 rounded-sm text-xs">
           {entityType === "students" ? "enrollment_number" : "employee_id"}
-        </code>, <code className="font-mono bg-secondary px-1.5 py-0.5 rounded-sm text-[11px]">first_name</code>,{" "}
-        <code className="font-mono bg-secondary px-1.5 py-0.5 rounded-sm text-[11px]">last_name</code>
+        </code>, <code className="font-mono bg-secondary px-1.5 py-0.5 rounded-sm text-xs">first_name</code>,{" "}
+        <code className="font-mono bg-secondary px-1.5 py-0.5 rounded-sm text-xs">last_name</code>
       </>
     );
   })();
@@ -121,7 +121,7 @@ export default function BulkImportDropzone({
         <div className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center mx-auto mb-3 text-primary group-hover:text-accent-strong transition-all">
           <Upload size={20} />
         </div>
-        <p className="text-sm font-bold text-foreground">Click to choose a file or drag and drop your CSV here</p>
+        <p className="text-sm font-semibold text-foreground">Click to choose a file or drag and drop your CSV here</p>
         <p className="text-xs text-muted-foreground mt-1.5">{columnGuide}</p>
         <input
           ref={fileInputRef}

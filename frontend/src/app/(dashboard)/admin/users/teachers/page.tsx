@@ -117,7 +117,7 @@ export default function TeachersPage(): React.ReactElement {
 
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-2 border-b border-border/60">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">
+          <h1 className="text-2xl font-semibold tracking-tight text-foreground">
             Faculty
           </h1>
         </div>

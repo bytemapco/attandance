@@ -85,10 +85,10 @@ export default function TeacherProfilePage(): React.ReactElement {
         {/* Profile Card */}
         <div className="lg:col-span-1 rounded-lg border border-border bg-card p-6 space-y-6">
           <div className="flex flex-col items-center text-center">
-            <div className="w-18 h-18 rounded-full bg-secondary text-primary font-bold text-2xl flex items-center justify-center border-2 border-border mb-3">
+            <div className="w-18 h-18 rounded-full bg-secondary text-primary font-semibold text-2xl flex items-center justify-center border-2 border-border mb-3">
               {initial}
             </div>
-            <h2 className="text-base font-bold text-foreground">
+            <h2 className="text-base font-semibold text-foreground">
               {t ? `${t.first_name} ${t.last_name}` : profile.email}
             </h2>
             <p className="text-xs text-muted-foreground mt-0.5">{profile.email}</p>
@@ -128,7 +128,7 @@ export default function TeacherProfilePage(): React.ReactElement {
               <Shield size={16} className="text-accent-strong" />
             </div>
             <div>
-              <h3 className="text-base font-bold text-foreground">Change Password</h3>
+              <h3 className="text-base font-semibold text-foreground">Change Password</h3>
               <p className="text-xs text-muted-foreground">Choose a strong password with at least 8 characters.</p>
             </div>
           </div>

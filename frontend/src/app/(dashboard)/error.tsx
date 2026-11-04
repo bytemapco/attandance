@@ -22,14 +22,14 @@ export default function DashboardError({
         <div className="p-3 rounded-lg bg-destructive/10 text-destructive inline-flex mb-4">
           <AlertTriangle size={36} aria-hidden="true" />
         </div>
-        <h2 className="text-xl font-bold tracking-tight text-foreground mb-2">
+        <h2 className="text-xl font-semibold tracking-tight text-foreground mb-2">
           Something went wrong
         </h2>
         <p className="text-xs sm:text-sm text-muted-foreground mb-4 leading-relaxed">
           {error.message || "Could not load this page. Please try again."}
         </p>
         {error.digest && (
-          <p className="text-[11px] text-muted-foreground font-mono mb-6 bg-muted/60 py-1 px-2.5 rounded-sm border border-border inline-block">
+          <p className="text-xs text-muted-foreground font-mono mb-6 bg-muted/60 py-1 px-2.5 rounded-sm border border-border inline-block">
             Code: {error.digest}
           </p>
         )}

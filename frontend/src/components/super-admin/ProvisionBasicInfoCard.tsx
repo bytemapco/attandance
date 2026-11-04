@@ -49,7 +49,7 @@ export default function ProvisionBasicInfoCard({
               {...register("slug")}
               error={errors.slug?.message}
             />
-            <span className="text-[11px] text-muted-foreground mt-1 block">
+            <span className="text-xs text-muted-foreground mt-1 block">
               Used in the login URL (e.g. /login?tenant=oxford)
             </span>
           </div>

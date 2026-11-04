@@ -5,7 +5,7 @@ import type { ShortageReport } from "@/types";
 function Stat({ label, value }: { label: string; value: string }): React.ReactElement {
   return (
     <div className="rounded-lg border border-border bg-card px-4 py-3">
-      <dd className="text-2xl font-bold tabular-nums text-foreground">{value}</dd>
+      <dd className="text-2xl font-semibold tabular-nums text-foreground">{value}</dd>
       <dt className="text-xs text-muted-foreground">{label}</dt>
     </div>
   );

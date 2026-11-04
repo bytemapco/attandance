@@ -70,7 +70,7 @@ export default function TenantTable({
     <div className="bg-card border border-border rounded-lg overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full text-left text-xs">
-          <thead className="bg-secondary/80 border-b border-border text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
+          <thead className="bg-secondary/80 border-b border-border text-xs font-semibold text-muted-foreground">
             <tr>
               <th className="px-4 py-3">Institution</th>
               <th className="px-4 py-3">Type</th>
@@ -101,7 +101,7 @@ export default function TenantTable({
                         <Building2 size={16} />
                       </div>
                       <div>
-                        <p className="font-bold text-foreground text-sm group-hover:text-primary transition-colors flex items-center gap-1">
+                        <p className="font-semibold text-foreground text-sm group-hover:text-primary transition-colors flex items-center gap-1">
                           <span>{tenant.name}</span>
                           <ExternalLink size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" />
                         </p>
@@ -123,7 +123,7 @@ export default function TenantTable({
                     {licenseCount ? `${licenseCount.toLocaleString()} licenses` : "Unlimited"}
                   </td>
 
-                  <td className="px-4 py-3.5 text-muted-foreground text-[11px] font-mono">
+                  <td className="px-4 py-3.5 text-muted-foreground text-xs font-mono">
                     {formattedDate}
                   </td>
 

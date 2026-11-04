@@ -32,7 +32,7 @@ export default function TeacherNavSection({ unreadCount, onClose }: TeacherNavSe
   return (
     <>
       <div>
-        <p className="px-3 mb-2 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+        <p className="px-3 mb-2 text-xs font-semibold text-muted-foreground">
           Teaching Operations
         </p>
         <div className="space-y-0.5">
@@ -57,12 +57,12 @@ export default function TeacherNavSection({ unreadCount, onClose }: TeacherNavSe
                   <span>{link.label}</span>
                 </div>
                 {isReviewLink && flaggedCount > 0 && (
-                  <span className="inline-flex items-center justify-center px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-warning-soft text-warning border border-warning-border">
+                  <span className="inline-flex items-center justify-center px-1.5 py-0.5 rounded-full text-xs font-semibold bg-warning-soft text-warning border border-warning-border">
                     {flaggedCount > 99 ? "99+" : flaggedCount}
                   </span>
                 )}
                 {isNotif && unreadCount > 0 && (
-                  <span className="inline-flex items-center justify-center min-w-4.5 h-4.5 px-1.5 rounded-full text-[10px] font-bold bg-primary text-primary-foreground">
+                  <span className="inline-flex items-center justify-center min-w-4.5 h-4.5 px-1.5 rounded-full text-xs font-semibold bg-primary text-primary-foreground">
                     {unreadCount > 99 ? "99+" : unreadCount}
                   </span>
                 )}
@@ -73,7 +73,7 @@ export default function TeacherNavSection({ unreadCount, onClose }: TeacherNavSe
       </div>
 
       <div>
-        <p className="px-3 mb-2 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+        <p className="px-3 mb-2 text-xs font-semibold text-muted-foreground">
           Analytics & Reports
         </p>
         <div className="space-y-0.5">

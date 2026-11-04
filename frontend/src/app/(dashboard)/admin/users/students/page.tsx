@@ -133,7 +133,7 @@ export default function StudentsPage(): React.ReactElement {
       <GlassBreadcrumb items={[{ label: "Admin", href: "/admin/dashboard" }, { label: "Users" }, { label: "Students" }]} />
 
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-2 border-b border-border">
-        <h1 className="text-2xl font-bold tracking-tight text-primary">Students</h1>
+        <h1 className="text-2xl font-semibold tracking-tight text-primary">Students</h1>
         <div className="flex items-center gap-2">
           <button
             onClick={() => setIsBulkImportOpen(true)}

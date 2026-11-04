@@ -76,7 +76,7 @@ export default function GlassStatCard({
         {trend && (
           <span
             className={cn(
-              "text-[11px] font-semibold px-2 py-0.5 rounded-full border flex items-center gap-1 tabular-nums",
+              "text-xs font-semibold px-2 py-0.5 rounded-full border flex items-center gap-1 tabular-nums",
               trendUp
                 ? "bg-success-soft text-success border-success-border"
                 : "bg-destructive-soft text-destructive border-destructive-border"
@@ -88,14 +88,14 @@ export default function GlassStatCard({
         )}
       </div>
       <div className="relative">
-          <p className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground font-sans tabular-nums">
+          <p className="text-2xl sm:text-3xl font-semibold tracking-tight text-foreground font-sans tabular-nums">
           {typeof value === "number" ? value.toLocaleString() : value}
         </p>
-        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mt-1">
+        <p className="text-xs font-semibold text-muted-foreground mt-1">
           {label}
         </p>
         {subtext && (
-          <p className="text-[11px] text-muted-foreground mt-1.5 flex items-center gap-1.5 font-normal">
+          <p className="text-xs text-muted-foreground mt-1.5 flex items-center gap-1.5 font-normal">
             <span className="w-1.5 h-1.5 rounded-full bg-border-strong inline-block" />
             <span>{subtext}</span>
           </p>

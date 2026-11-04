@@ -116,7 +116,7 @@ export default function LeaveReviewDetailPage(): React.ReactElement {
         <div className="lg:col-span-5 space-y-6">
           <GlassCard className="p-6 bg-card border border-border space-y-4">
             <div className="flex items-center gap-3 pb-3 border-b border-border">
-              <div className="w-12 h-12 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold text-lg shrink-0">
+              <div className="w-12 h-12 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-semibold text-lg shrink-0">
                 <User size={22} />
               </div>
               <div className="min-w-0">
@@ -132,13 +132,13 @@ export default function LeaveReviewDetailPage(): React.ReactElement {
               <div className="p-3.5 rounded-lg bg-secondary/40 border border-border flex items-center gap-3">
                 <Calendar size={18} className="text-accent-strong shrink-0" />
                 <div>
-                  <span className="text-[10px] uppercase font-semibold text-muted-foreground block">Leave Duration</span>
+                  <span className="text-xs font-semibold text-muted-foreground block">Leave Duration</span>
                   <span className="font-medium text-primary text-xs">{fromDate} – {toDate}</span>
                 </div>
               </div>
 
               <div>
-                <span className="text-[11px] font-semibold text-muted-foreground block mb-1">
+                <span className="text-xs font-semibold text-muted-foreground block mb-1">
                   Reason Stated by Student
                 </span>
                 <div className="p-3.5 rounded-lg bg-secondary/25 border border-border text-primary text-xs leading-relaxed">

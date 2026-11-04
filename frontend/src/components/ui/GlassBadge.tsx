@@ -29,7 +29,7 @@ export default function GlassBadge({
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-semibold tracking-wide transition-colors select-none",
+        "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors select-none",
         badgeVariantClasses[variant] || badgeVariantClasses.neutral,
         className
       )}

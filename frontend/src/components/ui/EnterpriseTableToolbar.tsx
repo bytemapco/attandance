@@ -168,9 +168,9 @@ export default function EnterpriseTableToolbar({
       {/* Active Filter Chips Row */}
       {hasActiveCriteria && (
         <div className="flex items-center gap-1.5 flex-wrap pt-0.5 text-xs text-muted-foreground">
-          <span className="text-[11px] font-medium text-muted-foreground">Active filters:</span>
+          <span className="text-xs font-medium text-muted-foreground">Active filters:</span>
           {searchValue?.trim() && (
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-secondary border border-border text-[11px] font-medium text-foreground">
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-secondary border border-border text-xs font-medium text-foreground">
               Search: <span className="font-semibold">&ldquo;{searchValue}&rdquo;</span>
               <button type="button" onClick={() => onSearch("")} className="hover:text-destructive">
                 <X size={11} />
@@ -183,7 +183,7 @@ export default function EnterpriseTableToolbar({
             return (
               <span
                 key={f.id}
-                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-secondary border border-border text-[11px] font-medium text-foreground"
+                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-secondary border border-border text-xs font-medium text-foreground"
               >
                 {f.label}: <span className="font-semibold">{displayLabel}</span>
                 <button type="button" onClick={() => f.onChange("all")} className="hover:text-destructive" title={`Remove ${f.label} filter`}>

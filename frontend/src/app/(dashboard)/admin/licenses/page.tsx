@@ -99,26 +99,26 @@ export default function TenantLicensesPage(): React.JSX.Element {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <GlassCard className="p-5">
             <p className="text-xs text-muted-foreground">Total Licenses</p>
-            <p className="text-2xl font-bold text-primary mt-1">
+            <p className="text-2xl font-semibold text-primary mt-1">
               {licenseCount.toLocaleString()}
             </p>
-            <p className="text-[11px] text-muted-foreground mt-2">Allocated seats for students & teachers</p>
+            <p className="text-xs text-muted-foreground mt-2">Allocated seats for students & teachers</p>
           </GlassCard>
           <GlassCard className="p-5">
             <p className="text-xs text-muted-foreground">Seats Used</p>
-            <p className="text-2xl font-bold text-primary mt-1">
+            <p className="text-2xl font-semibold text-primary mt-1">
               {totalUsed.toLocaleString()}
             </p>
-            <p className="text-[11px] text-muted-foreground mt-2">
+            <p className="text-xs text-muted-foreground mt-2">
               {usage ? `${usage.student_count} students · ${usage.teacher_count} teachers` : "—"}
             </p>
           </GlassCard>
           <GlassCard className="p-5">
             <p className="text-xs text-muted-foreground">Remaining Seats</p>
-            <p className="text-2xl font-bold text-primary mt-1">
+            <p className="text-2xl font-semibold text-primary mt-1">
               {(usage?.remaining ?? 0).toLocaleString()}
             </p>
-            <p className="text-[11px] text-muted-foreground mt-2">Available for new users</p>
+            <p className="text-xs text-muted-foreground mt-2">Available for new users</p>
           </GlassCard>
         </div>
       )}
@@ -146,7 +146,7 @@ export default function TenantLicensesPage(): React.JSX.Element {
             </div>
             <div>
               <h3 className="text-sm font-semibold text-primary">Request More Licenses</h3>
-              <p className="text-[11px] text-muted-foreground">
+              <p className="text-xs text-muted-foreground">
                 Submit a request and your platform administrator will review it.
               </p>
             </div>

@@ -75,7 +75,7 @@ export default function AddStudentsPanel({ cls, onUpdated, onClose }: AddStudent
   return (
     <GlassCard className="space-y-3">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-bold text-foreground">
+        <h3 className="text-sm font-semibold text-foreground">
           Add students from {cls.department_name}
         </h3>
         <GlassButton variant="ghost" size="sm" onClick={onClose}>

@@ -24,7 +24,7 @@ export default function RootError({
             <AlertCircle size={32} aria-hidden="true" />
           </div>
 
-          <h1 className="text-xl font-bold tracking-tight text-primary mb-2">
+          <h1 className="text-xl font-semibold tracking-tight text-primary mb-2">
             Something unexpected occurred
           </h1>
 
@@ -33,7 +33,7 @@ export default function RootError({
           </p>
 
           {error.digest && (
-            <p className="text-[11px] text-muted-foreground font-mono mb-6 bg-secondary/70 py-1 px-2.5 rounded-sm border border-border inline-block">
+            <p className="text-xs text-muted-foreground font-mono mb-6 bg-secondary/70 py-1 px-2.5 rounded-sm border border-border inline-block">
               Reference: {error.digest}
             </p>
           )}

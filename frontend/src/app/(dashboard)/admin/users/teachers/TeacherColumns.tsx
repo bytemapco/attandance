@@ -26,12 +26,12 @@ export const teacherColumns: TableColumn<TeacherResponse & Record<string, unknow
       const initial = name.charAt(0).toUpperCase();
       return (
         <div className="flex items-center gap-2.5">
-          <div className="h-8 w-8 rounded-full bg-primary text-primary-foreground font-bold text-xs flex items-center justify-center shrink-0">
+          <div className="h-8 w-8 rounded-full bg-primary text-primary-foreground font-semibold text-xs flex items-center justify-center shrink-0">
             {initial}
           </div>
           <div className="min-w-0">
-            <p className="font-bold text-foreground text-xs leading-tight">{name}</p>
-            <p className="text-[11px] text-muted-foreground truncate">{r.email}</p>
+            <p className="font-semibold text-foreground text-xs leading-tight">{name}</p>
+            <p className="text-xs text-muted-foreground truncate">{r.email}</p>
           </div>
         </div>
       );
@@ -62,7 +62,7 @@ export const teacherColumns: TableColumn<TeacherResponse & Record<string, unknow
         desig = (r.designation as { title: string }).title;
       }
       return (
-        <span className="inline-flex items-center px-2 py-0.5 rounded-md border border-border bg-card text-[11px] font-medium text-foreground">
+        <span className="inline-flex items-center px-2 py-0.5 rounded-md border border-border bg-card text-xs font-medium text-foreground">
           {desig}
         </span>
       );
@@ -92,11 +92,11 @@ export const teacherColumns: TableColumn<TeacherResponse & Record<string, unknow
     render: (r) => {
       const isActive = r.is_active !== false;
       return isActive ? (
-        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-success-soft text-success border border-success-border">
+        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-success-soft text-success border border-success-border">
           Active
         </span>
       ) : (
-        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-secondary text-muted-foreground border border-border">
+        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-secondary text-muted-foreground border border-border">
           Inactive
         </span>
       );

@@ -42,7 +42,7 @@ function Progress({ counts }: { counts: Counts }): React.ReactElement {
   const percent = counts.ALL > 0 ? Math.round((counts.PRESENT / counts.ALL) * 100) : 0;
   return (
     <div>
-      <p className="text-4xl font-bold tabular-nums leading-none text-foreground">
+      <p className="text-4xl font-semibold tabular-nums leading-none text-foreground">
         {counts.PRESENT}
         <span className="ml-1.5 text-base font-medium text-muted-foreground">of {counts.ALL} present</span>
       </p>
@@ -66,15 +66,15 @@ function Stats({ counts }: { counts: Counts }): React.ReactElement {
 function FullscreenView({ qr, failed, counts, onClose }: { qr: OccurrenceQrData | null; failed: boolean; counts: Counts; onClose: () => void }): React.ReactElement {
   return (
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-6 bg-background p-6" role="dialog" aria-label="Attendance QR code, full screen">
-      <p className="text-2xl font-bold text-foreground">Scan to mark your attendance</p>
+      <p className="text-2xl font-semibold text-foreground">Scan to mark your attendance</p>
       <div className="w-full max-w-md">
         <QrCodeTile qr={qr} failed={failed} />
       </div>
-      <p className="text-3xl font-bold tabular-nums text-foreground">
+      <p className="text-3xl font-semibold tabular-nums text-foreground">
         {counts.PRESENT} <span className="text-lg font-medium text-muted-foreground">of {counts.ALL} present</span>
       </p>
       <GlassButton variant="secondary" size="md" icon={<X size={15} />} onClick={onClose}>
-        Close <kbd className="ml-1 rounded-sm border border-border px-1.5 text-[11px] text-muted-foreground">Esc</kbd>
+        Close <kbd className="ml-1 rounded-sm border border-border px-1.5 text-xs text-muted-foreground">Esc</kbd>
       </GlassButton>
     </div>
   );
@@ -101,7 +101,7 @@ export default function SessionPanel({
               className="inline-flex h-8 cursor-pointer items-center gap-1.5 rounded-md px-2 text-xs font-semibold text-muted-foreground hover:bg-secondary hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring outline-none"
             >
               <Maximize2 size={14} /> Full screen
-              <kbd className="rounded-sm border border-border px-1.5 text-[11px] font-medium">F</kbd>
+              <kbd className="rounded-sm border border-border px-1.5 text-xs font-medium">F</kbd>
             </button>
           </div>
           <QrCodeTile qr={qr} failed={failed} />

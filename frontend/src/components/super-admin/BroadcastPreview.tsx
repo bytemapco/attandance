@@ -61,12 +61,12 @@ export default function BroadcastPreview({ broadcast }: BroadcastPreviewProps): 
             <span className="text-xs font-semibold text-primary">
               SAHAJ Notice
             </span>
-            <span className="text-[11px] text-muted-foreground">•</span>
-            <span className="text-[11px] text-muted-foreground font-mono">Now</span>
+            <span className="text-xs text-muted-foreground">•</span>
+            <span className="text-xs text-muted-foreground font-mono">Now</span>
           </div>
 
           <span
-            className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold border ${badge.bg} ${badge.text}`}
+            className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-semibold border ${badge.bg} ${badge.text}`}
           >
             {badge.icon}
             <span className="capitalize">{broadcast.category}</span>
@@ -84,7 +84,7 @@ export default function BroadcastPreview({ broadcast }: BroadcastPreviewProps): 
         </div>
 
         {/* Scope Footer */}
-        <div className="pt-2 border-t border-border text-[11px] text-muted-foreground">
+        <div className="pt-2 border-t border-border text-xs text-muted-foreground">
           Audience: {broadcast.target_role ? broadcast.target_role.replace(/_/g, " ") : "All users"}
         </div>
       </div>

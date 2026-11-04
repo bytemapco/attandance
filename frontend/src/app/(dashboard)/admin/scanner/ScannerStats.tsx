@@ -31,7 +31,7 @@ export default function ScannerStats({
         <GlassCard className="p-4 bg-card border-border flex items-center justify-between">
           <div>
             <span className="text-xs font-medium text-muted-foreground">Flagged Students</span>
-            <p className="text-2xl font-bold tracking-tight text-foreground mt-0.5 font-mono">
+            <p className="text-2xl font-semibold tracking-tight text-foreground mt-0.5 font-mono">
               {totalFlagged}
             </p>
           </div>
@@ -44,7 +44,7 @@ export default function ScannerStats({
         <GlassCard className="p-4 bg-card border-border flex items-center justify-between">
           <div>
             <span className="text-xs font-medium text-muted-foreground">Average Score</span>
-            <p className="text-2xl font-bold tracking-tight text-foreground mt-0.5 font-mono">
+            <p className="text-2xl font-semibold tracking-tight text-foreground mt-0.5 font-mono">
               {avgScore.toFixed(3)}
             </p>
           </div>
@@ -57,7 +57,7 @@ export default function ScannerStats({
         <GlassCard className="p-4 bg-card border-border flex items-center justify-between">
           <div>
             <span className="text-xs font-medium text-muted-foreground">Highest Score</span>
-            <p className="text-2xl font-bold tracking-tight text-foreground mt-0.5 font-mono">
+            <p className="text-2xl font-semibold tracking-tight text-foreground mt-0.5 font-mono">
               {maxScore.toFixed(3)}
             </p>
           </div>

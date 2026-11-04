@@ -27,7 +27,7 @@ export default function PasswordRequirementsChecklist({
 
   return (
     <div className="p-3 rounded-lg bg-secondary/50 border border-border space-y-1.5">
-      <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+      <p className="text-xs font-semibold text-muted-foreground">
         Security Requirements
       </p>
       <div className="grid grid-cols-1 gap-1">

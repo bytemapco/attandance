@@ -37,7 +37,7 @@ export default function SuspendedPage(): React.ReactElement {
         </div>
 
         <div className="space-y-2">
-          <h1 className="text-2xl font-bold tracking-tight text-primary">Account Suspended</h1>
+          <h1 className="text-2xl font-semibold tracking-tight text-primary">Account Suspended</h1>
           <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
             {suspensionReason ? (
               <span>{suspensionReason}</span>
@@ -51,20 +51,20 @@ export default function SuspendedPage(): React.ReactElement {
         </div>
 
         <div className="rounded-lg border border-warning-border bg-warning-soft/60 p-4 text-left space-y-2">
-          <p className="text-xs font-bold uppercase tracking-wider text-warning">
+          <p className="text-xs font-semibold text-warning">
             Status Details
           </p>
           <ul className="text-xs text-muted-foreground space-y-1.5">
             <li className="flex gap-2 items-start">
-              <span className="text-warning font-bold mt-0.5">•</span>
+              <span className="text-warning font-semibold mt-0.5">•</span>
               Administrative and faculty access is temporarily paused
             </li>
             <li className="flex gap-2 items-start">
-              <span className="text-warning font-bold mt-0.5">•</span>
+              <span className="text-warning font-semibold mt-0.5">•</span>
               All attendance records, biometrics, and class history remain securely preserved
             </li>
             <li className="flex gap-2 items-start">
-              <span className="text-warning font-bold mt-0.5">•</span>
+              <span className="text-warning font-semibold mt-0.5">•</span>
               Full platform services will resume immediately upon institutional reactivation
             </li>
           </ul>

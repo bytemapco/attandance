@@ -75,7 +75,7 @@ export function NotificationFilterBar({
               <span>{item.label}</span>
               {item.id === "unread" && unreadCount > 0 && (
                 <span
-                  className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold tabular-nums ${
+                  className={`px-1.5 py-0.2 rounded-full text-xs font-semibold tabular-nums ${
                     isActive ? "bg-card text-primary" : "bg-accent text-primary-foreground"
                   }`}
                 >

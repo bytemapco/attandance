@@ -118,8 +118,8 @@ export default function ScannerControls({
             }
             className="w-full max-w-xs h-1.5 bg-secondary rounded-lg appearance-none cursor-pointer accent-foreground"
           />
-          <span className="font-mono font-bold text-foreground shrink-0">{currentPercent}%</span>
-          <span className="text-muted-foreground text-[11px]">(Flags top {currentPercent}%)</span>
+          <span className="font-mono font-semibold text-foreground shrink-0">{currentPercent}%</span>
+          <span className="text-muted-foreground text-xs">(Flags top {currentPercent}%)</span>
         </div>
       )}
     </GlassCard>

@@ -79,7 +79,7 @@ export default function LicenseRequestsTable({
     <div className="bg-card border border-border rounded-lg overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full text-left text-xs">
-          <thead className="bg-secondary/80 border-b border-border text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
+          <thead className="bg-secondary/80 border-b border-border text-xs font-semibold text-muted-foreground">
             <tr>
               <th className="px-4 py-3">Institution</th>
               <th className="px-4 py-3">Requested By</th>
@@ -94,7 +94,7 @@ export default function LicenseRequestsTable({
             {requests.map((request) => (
               <tr key={request.id} className="hover:bg-secondary/40 transition-colors">
                 <td className="px-4 py-3.5">
-                  <p className="font-bold text-foreground text-sm">{request.tenant_name || "Unknown tenant"}</p>
+                  <p className="font-semibold text-foreground text-sm">{request.tenant_name || "Unknown tenant"}</p>
                 </td>
                 <td className="px-4 py-3.5 text-muted-foreground">
                   {request.requested_by_email || request.requested_by_name || "—"}
@@ -107,8 +107,8 @@ export default function LicenseRequestsTable({
                     {request.status}
                   </GlassBadge>
                 </td>
-                <td className="px-4 py-3.5 text-muted-foreground text-[11px] font-mono">{formatDate(request.created_at)}</td>
-                <td className="px-4 py-3.5 text-muted-foreground text-[11px]">
+                <td className="px-4 py-3.5 text-muted-foreground text-xs font-mono">{formatDate(request.created_at)}</td>
+                <td className="px-4 py-3.5 text-muted-foreground text-xs">
                   {request.status === "PENDING"
                     ? "—"
                     : `${formatDate(request.processed_at)}${request.processed_by_email ? ` · ${request.processed_by_email}` : ""}`}
@@ -136,7 +136,7 @@ export default function LicenseRequestsTable({
                       </button>
                     </div>
                   ) : (
-                    <span className="text-[11px] text-muted-foreground">Resolved</span>
+                    <span className="text-xs text-muted-foreground">Resolved</span>
                   )}
                 </td>
               </tr>

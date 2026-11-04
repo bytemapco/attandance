@@ -54,7 +54,7 @@ export default function LicenseRequestListCard({
                 <p className="text-xs font-semibold text-primary">
                   +{request.requested_count} license(s)
                 </p>
-                <p className="text-[11px] text-muted-foreground">
+                <p className="text-xs text-muted-foreground">
                   Requested {formatDate(request.created_at)}
                 </p>
               </div>

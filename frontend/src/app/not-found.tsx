@@ -12,11 +12,11 @@ export default function NotFoundPage(): React.ReactElement {
             <Compass size={32} />
           </div>
 
-          <h1 className="text-6xl font-extrabold text-primary/15 font-mono tracking-tighter mb-1 select-none">
+          <h1 className="text-6xl font-semibold text-primary/15 font-mono tracking-tighter mb-1 select-none">
             404
           </h1>
 
-          <h2 className="text-xl font-bold tracking-tight text-primary mb-2">
+          <h2 className="text-xl font-semibold tracking-tight text-primary mb-2">
             Page Not Found
           </h2>
 

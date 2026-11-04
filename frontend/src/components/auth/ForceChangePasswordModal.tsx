@@ -90,7 +90,7 @@ export default function ForceChangePasswordModal({
             <ShieldCheck size={22} />
           </div>
           <div>
-            <h2 className="text-lg font-bold text-foreground">Set Permanent Password</h2>
+            <h2 className="text-lg font-semibold text-foreground">Set Permanent Password</h2>
             <p className="text-xs text-muted-foreground">Create a secure password to activate your account</p>
           </div>
         </div>
@@ -107,7 +107,7 @@ export default function ForceChangePasswordModal({
           />
 
           <div className="p-3 rounded-lg bg-secondary/50 border border-border space-y-1.5">
-            <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Security Requirements</p>
+            <p className="text-xs font-semibold text-muted-foreground">Password requirements</p>
             <div className="grid grid-cols-1 gap-1">
               {rules.map((rule) => (
                 <div key={rule.label} className="flex items-center gap-2 text-xs">
