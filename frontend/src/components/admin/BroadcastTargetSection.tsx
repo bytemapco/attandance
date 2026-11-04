@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Users } from "lucide-react";
-import GlassCard from "@/components/ui/GlassCard";
+import Card from "@/components/ui/Card";
 import type { NotificationBroadcastCreate, NotificationCategory, NotificationType } from "@/types/notification";
 import {
   Select,
@@ -10,7 +10,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/components/ui/SelectMenu";
 
 interface BroadcastTargetSectionProps {
   formData: NotificationBroadcastCreate;
@@ -29,20 +29,20 @@ export default function BroadcastTargetSection({
   onChange,
 }: BroadcastTargetSectionProps): React.ReactElement {
   return (
-    <GlassCard className="p-5 bg-card border border-[#e3e1dc] space-y-4 shadow-2xs">
-      <div className="flex items-center gap-2.5 pb-3 border-b border-[#e3e1dc]">
-        <div className="p-1.5 rounded-xl bg-[#306b8a]/10 text-[#306b8a] border border-[#306b8a]/20">
+    <Card className="p-5 bg-card border border-border space-y-4">
+      <div className="flex items-center gap-2.5 pb-3 border-b border-border">
+        <div className="p-1.5 rounded-lg bg-info/10 text-info border border-info/20">
           <Users size={16} />
         </div>
         <div>
-          <h2 className="text-sm font-semibold text-[#28363b]">Target Audience & Delivery Classification</h2>
-          <p className="text-xs text-[#526f78]">Specify recipient group, priority urgency, and category tag.</p>
+          <h2 className="text-sm font-semibold text-primary">Target Audience & Delivery Classification</h2>
+          <p className="text-xs text-muted-foreground">Specify recipient group, priority urgency, and category tag.</p>
         </div>
       </div>
 
       <div>
-        <span className="text-xs font-semibold text-[#28363b] block mb-2">
-          Target Recipient Group <span className="text-[#b54242]">*</span>
+        <span className="text-xs font-semibold text-primary block mb-2">
+          Target Recipient Group <span className="text-destructive">*</span>
         </span>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
           {AUDIENCE_OPTIONS.map((opt) => {
@@ -52,14 +52,14 @@ export default function BroadcastTargetSection({
                 key={opt.id}
                 type="button"
                 onClick={() => onChange({ ...formData, target_role: opt.id })}
-                className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
+                className={`p-2.5 rounded-lg border text-left transition-all cursor-pointer ${
                   isSelected
-                    ? "bg-white text-[#28363b] border-[#c98260] ring-1 ring-[#c98260] shadow-xs"
-                    : "bg-[#f5f2ed] border-[#e3e1dc] text-[#526f78] hover:text-[#28363b] hover:bg-[#eeece7]"
+                    ? "bg-card text-primary border-accent ring-1 ring-accent"
+                    : "bg-background border-border text-muted-foreground hover:text-primary hover:bg-secondary"
                 }`}
               >
                 <p className="text-xs font-semibold leading-tight">{opt.label}</p>
-                <p className="text-[10px] text-[#526f78] mt-0.5 leading-tight">{opt.desc}</p>
+                <p className="text-xs text-muted-foreground mt-0.5 leading-tight">{opt.desc}</p>
               </button>
             );
           })}
@@ -68,14 +68,14 @@ export default function BroadcastTargetSection({
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
         <div>
-          <label className="text-xs font-semibold text-[#28363b] block mb-1">
+          <label className="text-xs font-semibold text-primary block mb-1">
             Priority / Urgency
           </label>
           <Select
             value={formData.type || "info"}
             onValueChange={(val) => onChange({ ...formData, type: val as NotificationType })}
           >
-            <SelectTrigger className="w-full h-9 text-xs border-[#e3e1dc] text-[#28363b]">
+            <SelectTrigger className="w-full h-9 text-xs border-border text-primary">
               <SelectValue placeholder="Select priority" />
             </SelectTrigger>
             <SelectContent>
@@ -88,14 +88,14 @@ export default function BroadcastTargetSection({
         </div>
 
         <div>
-          <label className="text-xs font-semibold text-[#28363b] block mb-1">
+          <label className="text-xs font-semibold text-primary block mb-1">
             Category Tag
           </label>
           <Select
             value={formData.category || "system"}
             onValueChange={(val) => onChange({ ...formData, category: val as NotificationCategory })}
           >
-            <SelectTrigger className="w-full h-9 text-xs border-[#e3e1dc] text-[#28363b]">
+            <SelectTrigger className="w-full h-9 text-xs border-border text-primary">
               <SelectValue placeholder="Select category" />
             </SelectTrigger>
             <SelectContent>
@@ -108,6 +108,6 @@ export default function BroadcastTargetSection({
           </Select>
         </div>
       </div>
-    </GlassCard>
+    </Card>
   );
 }

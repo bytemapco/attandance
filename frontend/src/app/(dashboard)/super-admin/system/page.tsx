@@ -6,11 +6,11 @@ import toast from "react-hot-toast";
 
 import { superAdminService } from "@/services/superAdminService";
 import { getApiErrorMessage } from "@/lib/api";
-import GlassBreadcrumb from "@/components/ui/GlassBreadcrumb";
-import GlassPageHeader from "@/components/ui/GlassPageHeader";
+import Breadcrumb from "@/components/ui/Breadcrumb";
+import PageHeader from "@/components/ui/PageHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
-import GlassButton from "@/components/ui/GlassButton";
-import GlassCard from "@/components/ui/GlassCard";
+import Button from "@/components/ui/Button";
+import Card from "@/components/ui/Card";
 import SystemMetricsGrid from "@/components/super-admin/SystemMetricsGrid";
 import SystemServicesGrid from "@/components/super-admin/SystemServicesGrid";
 import type { PlatformHealth } from "@/types/tenant";
@@ -43,19 +43,19 @@ export default function PlatformHealthPage(): React.ReactElement {
   const isHealthy = health?.status === "healthy";
 
   return (
-    <div className="space-y-5 max-w-5xl animate-fade-in-up">
-      <GlassBreadcrumb
+    <div className="space-y-5 max-w-5xl">
+      <Breadcrumb
         items={[
           { label: "Dashboard", href: "/super-admin/dashboard" },
           { label: "System Status" },
         ]}
       />
 
-      <GlassPageHeader
+      <PageHeader
         title="System Status"
         description="Service health and diagnostics."
         actions={
-          <GlassButton
+          <Button
             variant="secondary"
             onClick={() => void fetchHealth(true)}
             disabled={refreshing}
@@ -63,22 +63,22 @@ export default function PlatformHealthPage(): React.ReactElement {
           >
             <RefreshCw size={13} className={refreshing ? "animate-spin" : ""} />
             <span>Refresh</span>
-          </GlassButton>
+          </Button>
         }
       />
 
       {loading || !health ? (
         <div className="space-y-4" role="status" aria-label="Loading system health" aria-busy="true">
-          <Skeleton className="h-16 rounded-xl" />
+          <Skeleton className="h-16 rounded-lg" />
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="space-y-3 rounded-xl border border-border bg-card p-4">
+              <div key={i} className="space-y-3 rounded-lg border border-border bg-card p-4">
                 <Skeleton className="h-3 w-24" />
                 <Skeleton className="h-6 w-16" />
               </div>
             ))}
           </div>
-          <div className="space-y-4 rounded-xl border border-border bg-card p-4">
+          <div className="space-y-4 rounded-lg border border-border bg-card p-4">
             <Skeleton className="h-5 w-40" />
             <Skeleton className="h-44 w-full rounded-lg" />
           </div>
@@ -86,13 +86,13 @@ export default function PlatformHealthPage(): React.ReactElement {
       ) : (
         <div className="space-y-5">
           {/* Status Header Strip */}
-          <GlassCard className="p-4 flex items-center justify-between gap-3">
+          <Card className="p-4 flex items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               <span
                 className={`h-2.5 w-2.5 rounded-full shrink-0 ${
                   isHealthy
-                    ? "bg-emerald-500 ring-4 ring-emerald-500/20"
-                    : "bg-amber-500 ring-4 ring-amber-500/20"
+                    ? "bg-success ring-4 ring-success/20"
+                    : "bg-warning ring-4 ring-warning/20"
                 }`}
               />
               <div>
@@ -109,7 +109,7 @@ export default function PlatformHealthPage(): React.ReactElement {
                 </p>
               </div>
             </div>
-          </GlassCard>
+          </Card>
 
           {/* Vitals KPI Strip */}
           <SystemMetricsGrid health={health} />

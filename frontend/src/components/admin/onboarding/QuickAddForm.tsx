@@ -5,7 +5,7 @@ import { HelpCircle } from "lucide-react";
 import { useNameSuggestion } from "@/hooks/useNameSuggestion";
 import { suggestCode, type PresetItem } from "@/lib/onboarding/collegePreset";
 import type { NewSetupItem } from "@/services/setupItems";
-import GlassButton from "@/components/ui/GlassButton";
+import Button from "@/components/ui/Button";
 
 const MIN_NAME_LENGTH = 2;
 
@@ -66,8 +66,8 @@ export default function QuickAddForm({
     event.preventDefault();
     const trimmed = name.trim();
     if (trimmed.length < MIN_NAME_LENGTH) return;
-    const finalCode = (code.trim() || suggestion?.code || suggestCode(trimmed)).toUpperCase();
-    const added = await onAdd([{ name: trimmed, code: finalCode }]);
+    const resolvedCode = (code.trim() || suggestion?.code || suggestCode(trimmed)).toUpperCase();
+    const added = await onAdd([{ name: trimmed, code: resolvedCode }]);
     if (added === 0) return;
     setName("");
     setCode("");
@@ -79,17 +79,17 @@ export default function QuickAddForm({
       className={`grid items-end gap-2.5 pt-0.5 ${needsCode ? "sm:grid-cols-[1fr_8.5rem_auto]" : "sm:grid-cols-[1fr_auto]"}`}
     >
       <div className="flex flex-col gap-1.5 w-full">
-        <label htmlFor={nameInputId} className="text-xs sm:text-sm font-semibold text-[#202b30]">
+        <label htmlFor={nameInputId} className="text-xs sm:text-sm font-semibold text-foreground">
           {nameLabel || defaultLabel}
         </label>
-        <div className="relative flex items-center w-full rounded-md border border-[#e3e1dc] bg-card shadow-2xs transition-colors focus-within:ring-2 focus-within:ring-[#526f78] focus-within:border-transparent">
+        <div className="relative flex items-center w-full rounded-md border border-border bg-card transition-colors focus-within:ring-2 focus-within:ring-ring focus-within:border-transparent">
           {ghostSuffix && (
             <div
               className="pointer-events-none absolute inset-0 flex items-center px-3 py-1 text-sm font-sans tracking-normal overflow-hidden whitespace-pre select-none"
               aria-hidden="true"
             >
               <span className="opacity-0">{name}</span>
-              <span className="text-[#8e9fa6]">{ghostSuffix}</span>
+              <span className="text-muted-foreground/50">{ghostSuffix}</span>
             </div>
           )}
 
@@ -100,7 +100,7 @@ export default function QuickAddForm({
             onChange={(event) => setName(event.target.value)}
             onKeyDown={handleNameKeyDown}
             placeholder={placeholder || `Enter ${noun} name`}
-            className={`h-9 sm:h-10 w-full bg-transparent px-3 py-1 text-sm font-sans tracking-normal text-[#202b30] placeholder:text-[#718087] focus:outline-none ${ghostSuffix ? "pr-16" : ""}`}
+            className={`h-9 sm:h-10 w-full bg-transparent px-3 py-1 text-sm font-sans tracking-normal text-foreground placeholder:text-muted-foreground focus:outline-none ${ghostSuffix ? "pr-16" : ""}`}
           />
 
           {ghostSuffix && (
@@ -108,11 +108,11 @@ export default function QuickAddForm({
               type="button"
               tabIndex={-1}
               onClick={applySuggestion}
-              className="absolute right-2 top-1/2 -translate-y-1/2 z-20 flex items-center gap-1 rounded border border-[#e3e1dc] bg-[#faf8f5] px-1.5 py-0.5 text-[10px] font-medium text-[#526f78] shadow-2xs transition-colors hover:bg-[#eeece7] hover:text-[#202b30] cursor-pointer"
+              className="absolute right-2 top-1/2 -translate-y-1/2 z-20 flex items-center gap-1 rounded-sm border border-border bg-surface px-1.5 py-0.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground cursor-pointer"
               title="Press Tab to apply suggestion"
             >
               <span>Tab</span>
-              <span className="text-[11px] leading-none">⇥</span>
+              <span className="text-xs leading-none">⇥</span>
             </button>
           )}
         </div>
@@ -121,21 +121,21 @@ export default function QuickAddForm({
       {needsCode && (
         <div className="flex flex-col gap-1.5 w-full">
           <div className="flex items-center gap-1">
-            <label htmlFor="quick-add-code-input" className="text-xs sm:text-sm font-semibold text-[#202b30]">
+            <label htmlFor="quick-add-code-input" className="text-xs sm:text-sm font-semibold text-foreground">
               {codeLabel || "Code"}
             </label>
             <div className="group relative inline-flex items-center">
               <button
                 type="button"
                 tabIndex={-1}
-                className="rounded-full p-0.5 text-[#718087] transition-colors hover:text-[#202b30] focus:outline-none"
+                className="rounded-full p-0.5 text-muted-foreground transition-colors hover:text-foreground focus:outline-none"
                 aria-label="Code example"
               >
                 <HelpCircle size={13} />
               </button>
-              <div className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden whitespace-nowrap rounded-md border border-[#e3e1dc] bg-white px-2.5 py-1 text-xs font-medium text-[#202b30] shadow-md group-hover:block group-focus-within:block z-[200]">
+              <div className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden whitespace-nowrap rounded-md border border-border bg-card px-2.5 py-1 text-xs font-medium text-foreground shadow-popover group-hover:block group-focus-within:block z-[200]">
                 <span>{codeExample || "e.g. CE, IT, ME"}</span>
-                <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 h-2 w-2 rotate-45 border-b border-r border-[#e3e1dc] bg-white" />
+                <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 h-2 w-2 rotate-45 border-b border-r border-border bg-card" />
               </div>
             </div>
           </div>
@@ -145,11 +145,11 @@ export default function QuickAddForm({
             value={code}
             onChange={(event) => setCode(event.target.value.toUpperCase())}
             placeholder={suggestCode(name) || codePlaceholder || "e.g. CSE"}
-            className="flex h-9 sm:h-10 w-full rounded-md border border-[#e3e1dc] bg-card px-3 py-1 text-sm shadow-2xs transition-colors text-[#202b30] placeholder:text-[#718087] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#526f78] focus-visible:border-transparent uppercase"
+            className="flex h-9 sm:h-10 w-full rounded-md border border-border bg-card px-3 py-1 text-sm transition-colors text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:border-transparent"
           />
         </div>
       )}
-      <GlassButton
+      <Button
         type="submit"
         variant="primary"
         loading={busy}
@@ -157,7 +157,7 @@ export default function QuickAddForm({
         className="h-10"
       >
         Add {noun}
-      </GlassButton>
+      </Button>
     </form>
   );
 }

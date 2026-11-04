@@ -9,8 +9,10 @@ import {
 import api from "@/lib/api";
 import toast from "react-hot-toast";
 import { useAuthStore } from "@/store/authStore";
-import GlassStatCard from "@/components/ui/GlassStatCard";
-import GlassLoader from "@/components/ui/GlassLoader";
+import Button from "@/components/ui/Button";
+import PageHeader from "@/components/ui/PageHeader";
+import StatCard from "@/components/ui/StatCard";
+import PageSkeleton from "@/components/ui/PageSkeleton";
 import AdminQuickActions from "@/components/admin/AdminQuickActions";
 import SetupGate from "@/components/admin/onboarding/SetupGate";
 import type { AdminStatsResponse } from "@/types";
@@ -76,72 +78,70 @@ export default function AdminDashboardPage(): React.ReactElement {
     await fetchDashboardData();
   };
 
-  if (loading) return <GlassLoader />;
+  if (loading) return <PageSkeleton />;
 
   return (
     <div className="space-y-6 pb-6">
-      {/* Top Welcome Banner */}
-      <div className="relative overflow-hidden rounded-2xl border border-[#e3e1dc] bg-card p-5 sm:p-6 shadow-[0_2px_8px_rgba(40,54,59,0.05)] flex flex-col md:flex-row md:items-center md:justify-between gap-5">
-        <div className="space-y-1 z-10">
-          <p className="text-xs font-medium text-[#526f78]">{todayStr}</p>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#28363b]">
-            {greeting}, {displayName}
-          </h1>
-        </div>
-
-        {/* Header Action Buttons */}
-        <div className="flex items-center gap-2.5 z-10 self-start md:self-center">
-          <button
-            onClick={() => router.push("/admin/notifications/broadcast")}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-[#e3e1dc] bg-secondary text-xs font-semibold text-[#202b30] hover:bg-secondary/70 transition-all shadow-2xs cursor-pointer"
-          >
-            <Megaphone size={14} className="text-[#c98260]" />
-            <span>New Announcement</span>
-          </button>
-
-          <button
-            onClick={handleRefresh}
-            disabled={refreshing}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-[#e3e1dc] bg-card text-xs font-semibold text-[#202b30] hover:bg-secondary transition-all shadow-2xs disabled:opacity-50 cursor-pointer"
-          >
-            <RefreshCw size={13} className={refreshing ? "animate-spin text-[#c98260]" : "text-[#526f78]"} />
-            <span>{refreshing ? "Updating..." : "Refresh"}</span>
-          </button>
-        </div>
-      </div>
+      <PageHeader
+        title={`${greeting}, ${displayName}`}
+        description={todayStr}
+        className="mb-0"
+        actions={
+          <>
+            <Button
+              variant="secondary"
+              icon={<Megaphone size={14} />}
+              onClick={() => router.push("/admin/notifications/broadcast")}
+            >
+              New announcement
+            </Button>
+            <Button
+              variant="secondary"
+              icon={<RefreshCw size={14} />}
+              loading={refreshing}
+              onClick={handleRefresh}
+            >
+              Refresh
+            </Button>
+          </>
+        }
+      />
 
       <SetupGate />
 
       {/* KPI Metric Strip */}
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <Link href="/admin/users/students" aria-label="View students" className="rounded-xl focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#526f78]">
-          <GlassStatCard
+        <Link href="/admin/users/students" aria-label="View students" className="rounded-lg focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-muted-foreground">
+          <StatCard
             icon={<GraduationCap size={20} />}
             label="Students"
             value={stats?.studentCount ?? "—"}
             subtext="View student records"
             accentColor="mineral"
+            interactive
           />
         </Link>
-        <Link href="/admin/users/teachers" aria-label="View faculty" className="rounded-xl focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#526f78]">
-          <GlassStatCard
+        <Link href="/admin/users/teachers" aria-label="View faculty" className="rounded-lg focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-muted-foreground">
+          <StatCard
             icon={<Users size={20} />}
             label="Faculty"
             value={stats?.teacherCount ?? "—"}
             subtext="View faculty records"
             accentColor="carbon"
+            interactive
           />
         </Link>
-        <Link href="/admin/class-management" aria-label="View classes" className="rounded-xl focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#526f78]">
-          <GlassStatCard
+        <Link href="/admin/class-management" aria-label="View classes" className="rounded-lg focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-muted-foreground">
+          <StatCard
             icon={<BookOpen size={20} />}
             label="Classes"
             value={stats?.classCount ?? "—"}
             subtext="View classes and schedules"
             accentColor="copper"
+            interactive
           />
         </Link>
-        <GlassStatCard
+        <StatCard
           icon={<ShieldCheck size={20} />}
           label="Attendance Rate"
           value={stats && (stats.attendanceCount ?? 0) > 0 ? `${stats.attendanceRate ?? 0}%` : "—"}
@@ -153,7 +153,7 @@ export default function AdminDashboardPage(): React.ReactElement {
       {/* Administration Controls Hub */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <h2 className="text-base font-semibold text-[#202b30]">
+          <h2 className="text-base font-semibold text-foreground">
             Quick actions
           </h2>
         </div>

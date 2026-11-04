@@ -1,8 +1,8 @@
 "use client";
 
 import React from "react";
-import GlassInput from "@/components/ui/GlassInput";
-import GlassSelect from "@/components/ui/GlassSelect";
+import Input from "@/components/ui/Input";
+import SelectField from "@/components/ui/SelectField";
 import type { ReportClass, ReportSubject } from "@/types";
 
 export const ALL_SUBJECTS = "all";
@@ -29,10 +29,10 @@ export default function ReportFilterBar(props: ReportFilterBarProps): React.Reac
     ...props.subjects.map((s) => ({ value: s.section_id, label: `${s.subject_code} · ${s.subject_name}` })),
   ];
   return (
-    <div className="grid gap-3 rounded-[14px] border border-border bg-card p-4 sm:grid-cols-2 lg:grid-cols-4">
-      <GlassSelect label="Class" options={classOptions} value={props.classId} onChange={props.onClass} placeholder="Choose a class" />
+    <div className="grid gap-3 rounded-lg border border-border bg-card p-4 sm:grid-cols-2 lg:grid-cols-4">
+      <SelectField label="Class" options={classOptions} value={props.classId} onChange={props.onClass} placeholder="Choose a class" />
       {props.showSubject ? (
-        <GlassSelect
+        <SelectField
           label="Subject"
           options={subjectOptions}
           value={props.sectionId || (props.allowAllSubjects ? ALL_SUBJECTS : "")}
@@ -42,8 +42,8 @@ export default function ReportFilterBar(props: ReportFilterBarProps): React.Reac
       ) : (
         <div className="hidden lg:block" />
       )}
-      <GlassInput label="From" type="date" value={props.dateFrom} max={props.dateTo || undefined} onChange={(e) => props.onDateFrom(e.target.value)} />
-      <GlassInput label="To" type="date" value={props.dateTo} min={props.dateFrom || undefined} onChange={(e) => props.onDateTo(e.target.value)} />
+      <Input label="From" type="date" value={props.dateFrom} max={props.dateTo || undefined} onChange={(e) => props.onDateFrom(e.target.value)} />
+      <Input label="To" type="date" value={props.dateTo} min={props.dateFrom || undefined} onChange={(e) => props.onDateTo(e.target.value)} />
     </div>
   );
 }

@@ -2,9 +2,9 @@
 
 import React, { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import GlassBreadcrumb from "@/components/ui/GlassBreadcrumb";
-import GlassPageHeader from "@/components/ui/GlassPageHeader";
-import GlassLoader from "@/components/ui/GlassLoader";
+import Breadcrumb from "@/components/ui/Breadcrumb";
+import PageHeader from "@/components/ui/PageHeader";
+import PageSkeleton from "@/components/ui/PageSkeleton";
 import OnboardingWizard from "@/components/admin/onboarding/OnboardingWizard";
 
 function WizardFromQuery(): React.ReactElement {
@@ -14,10 +14,10 @@ function WizardFromQuery(): React.ReactElement {
 
 export default function AdminSetupPage(): React.ReactElement {
   return (
-    <div className="flex h-full min-h-0 flex-col animate-fade-in-up">
-      <GlassBreadcrumb className="mb-2 shrink-0" items={[{ label: "Admin", href: "/admin/dashboard" }, { label: "Setup" }]} />
-      <GlassPageHeader className="mb-3 shrink-0" title="Set up your institution" />
-      <Suspense fallback={<div className="flex min-h-0 flex-1 items-center justify-center"><GlassLoader /></div>}>
+    <div className="flex h-full min-h-0 flex-col">
+      <Breadcrumb className="mb-2 shrink-0" items={[{ label: "Admin", href: "/admin/dashboard" }, { label: "Setup" }]} />
+      <PageHeader className="mb-3 shrink-0" title="Set up your institution" />
+      <Suspense fallback={<div className="flex min-h-0 flex-1 items-center justify-center"><PageSkeleton /></div>}>
         <WizardFromQuery />
       </Suspense>
     </div>

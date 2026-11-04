@@ -2,6 +2,7 @@
 
 import React from "react";
 import { RefreshCw } from "lucide-react";
+import Button from "@/components/ui/Button";
 import { useAuthStore } from "@/store/authStore";
 
 interface TeacherDashboardHeaderProps {
@@ -27,37 +28,32 @@ export default function TeacherDashboardHeader({
   })();
 
   return (
-    <div className="rounded-2xl border border-[#e3e1dc] bg-card p-5 sm:p-6 shadow-[0_2px_8px_rgba(40,54,59,0.05)] flex flex-col md:flex-row md:items-center justify-between gap-5">
+    <div className="rounded-lg border border-border bg-card p-5 sm:p-6 flex flex-col md:flex-row md:items-center justify-between gap-5">
       <div className="space-y-1.5">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-xs font-medium text-[#526f78]">{todayStr}</span>
-          <span className="text-[#e3e1dc] text-xs">•</span>
+          <span className="text-xs font-medium text-muted-foreground">{todayStr}</span>
+          <span className="text-border text-xs">•</span>
           {user?.tenant_name && (
-            <span className="text-[11px] font-semibold text-[#526f78]">
+            <span className="text-xs font-semibold text-muted-foreground">
               {user.tenant_name}
             </span>
           )}
           {profile?.department && (
-            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-secondary text-[#202b30] border border-[#e3e1dc]">
+            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-secondary text-foreground border border-border">
               {profile.department}
             </span>
           )}
         </div>
 
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#28363b]">
+        <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-primary">
           {greeting}, {teacherName}
         </h1>
       </div>
 
       <div className="flex items-center gap-2.5 self-start md:self-center shrink-0">
-        <button
-          type="button"
-          onClick={onRefresh}
-          className="inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg border border-[#e3e1dc] bg-card text-xs font-semibold text-[#202b30] hover:bg-secondary transition-all shadow-2xs active:scale-95 cursor-pointer"
-        >
-          <RefreshCw size={13} className="text-[#526f78]" />
-          <span>Refresh</span>
-        </button>
+        <Button variant="secondary" icon={<RefreshCw size={14} />} onClick={onRefresh}>
+          Refresh
+        </Button>
       </div>
     </div>
   );

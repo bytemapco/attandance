@@ -2,12 +2,12 @@
 
 import React from "react";
 import { BookOpen, Clock, Lock, Users } from "lucide-react";
-import GlassBadge from "@/components/ui/GlassBadge";
-import GlassButton from "@/components/ui/GlassButton";
-import GlassCard from "@/components/ui/GlassCard";
+import Badge from "@/components/ui/Badge";
+import Button from "@/components/ui/Button";
+import Card from "@/components/ui/Card";
 import type { TeacherClassItem } from "@/types";
 
-interface ClassCardProps {
+interface DashboardClassCardProps {
   item: TeacherClassItem;
   starting: boolean;
   onStart: () => void;
@@ -18,20 +18,20 @@ function closesAt(iso: string): string {
   return new Intl.DateTimeFormat("en-IN", { hour: "numeric", minute: "2-digit" }).format(new Date(iso));
 }
 
-export default function ClassCard({ item, starting, onStart, onOpen }: ClassCardProps): React.ReactElement {
+export default function DashboardClassCard({ item, starting, onStart, onOpen }: DashboardClassCardProps): React.ReactElement {
   const liveId = item.live_occurrence_id;
   const meta = [item.class_code, item.semester ? `Sem ${item.semester}` : null, item.department_name]
     .filter(Boolean)
     .join(" · ");
 
   return (
-    <GlassCard padding="md" className="flex h-full flex-col justify-between bg-card">
+    <Card padding="md" className="flex h-full flex-col justify-between bg-card">
       <div>
         <div className="mb-3 flex items-start justify-between">
           <div className="rounded-lg bg-secondary p-2 text-primary">
             <BookOpen size={18} />
           </div>
-          {liveId && <GlassBadge variant="success">Live</GlassBadge>}
+          {liveId && <Badge variant="success">Live</Badge>}
         </div>
         <h3 className="text-base font-semibold tracking-tight text-foreground">{item.subject_name}</h3>
         <p className="mt-0.5 text-xs text-muted-foreground">{meta}</p>
@@ -51,7 +51,7 @@ export default function ClassCard({ item, starting, onStart, onOpen }: ClassCard
           )}
         </dl>
       </div>
-      <GlassButton
+      <Button
         className="mt-4 w-full text-xs"
         variant={liveId ? "secondary" : "primary"}
         size="sm"
@@ -60,17 +60,17 @@ export default function ClassCard({ item, starting, onStart, onOpen }: ClassCard
         onClick={liveId ? () => onOpen(liveId) : onStart}
       >
         {liveId ? "Continue attendance" : "Take attendance"}
-      </GlassButton>
+      </Button>
       {!liveId && item.closed_occurrence_id && (
-        <GlassButton
+        <Button
           className="mt-2 w-full text-xs"
           variant="ghost"
           size="sm"
           onClick={() => onOpen(item.closed_occurrence_id as string)}
         >
           View today&apos;s register
-        </GlassButton>
+        </Button>
       )}
-    </GlassCard>
+    </Card>
   );
 }

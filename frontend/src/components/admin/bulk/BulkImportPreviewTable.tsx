@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Trash2, Mail, Layers, CheckCircle, AlertTriangle } from "lucide-react";
+import { Trash2, Mail, Layers, CheckCircle, AlertTriangle, Check } from "lucide-react";
 import { ParsedBulkRecord, BulkImportEntityType } from "./bulkTypes";
 
 interface BulkImportPreviewTableProps {
@@ -28,24 +28,24 @@ export default function BulkImportPreviewTable({
     <div className="space-y-4">
       {/* Overview Strip */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-        <div className="p-3 bg-secondary/30 rounded-xl border border-border flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-bold text-xs">
+        <div className="p-3 bg-secondary/30 rounded-lg border border-border flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-semibold text-xs">
             {records.length}
           </div>
           <div>
-            <p className="text-[11px] text-muted-foreground font-medium">Records Found</p>
+            <p className="text-xs text-muted-foreground font-medium">Records Found</p>
             <p className="text-xs font-semibold text-foreground">
               {validCount} ready {invalidCount > 0 && `• ${invalidCount} to review`}
             </p>
           </div>
         </div>
 
-        <div className="p-3 bg-secondary/30 rounded-xl border border-border flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-indigo-500/10 flex items-center justify-center text-indigo-500">
+        <div className="p-3 bg-secondary/30 rounded-lg border border-border flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-info/10 flex items-center justify-center text-info">
             <Layers size={16} />
           </div>
           <div>
-            <p className="text-[11px] text-muted-foreground font-medium">Batch Processing</p>
+            <p className="text-xs text-muted-foreground font-medium">Batch Processing</p>
             <p className="text-xs font-semibold text-foreground">
               {batchCount} {batchCount === 1 ? "batch" : "batches"} (10 per batch)
             </p>
@@ -53,13 +53,13 @@ export default function BulkImportPreviewTable({
         </div>
 
         {showInviteToggle ? (
-          <div className="p-3 bg-secondary/30 rounded-xl border border-border flex items-center justify-between">
+          <div className="p-3 bg-secondary/30 rounded-lg border border-border flex items-center justify-between">
             <div className="flex items-center gap-2.5">
-              <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${sendInvite ? "bg-emerald-500/10 text-emerald-500" : "bg-muted text-muted-foreground"}`}>
+              <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${sendInvite ? "bg-success/10 text-success" : "bg-muted text-muted-foreground"}`}>
                 <Mail size={16} />
               </div>
               <div>
-                <p className="text-[11px] text-muted-foreground font-medium">Send Welcome Emails</p>
+                <p className="text-xs text-muted-foreground font-medium">Send Welcome Emails</p>
                 <p className="text-xs font-semibold text-foreground">{sendInvite ? "Enabled" : "Disabled"}</p>
               </div>
             </div>
@@ -70,16 +70,16 @@ export default function BulkImportPreviewTable({
                 onChange={(e) => onSendInviteChange(e.target.checked)}
                 className="sr-only peer"
               />
-              <div className="w-9 h-5 bg-secondary peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-border after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
+              <div className="w-9 h-5 bg-secondary peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-card after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-card after:border-border after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
             </label>
           </div>
         ) : (
-          <div className="p-3 bg-secondary/30 rounded-xl border border-border flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-500 font-bold text-xs">
-              ✓
+          <div className="p-3 bg-secondary/30 rounded-lg border border-border flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-success/10 flex items-center justify-center text-success">
+              <Check size={16} aria-hidden />
             </div>
             <div>
-              <p className="text-[11px] text-muted-foreground font-medium">Import Status</p>
+              <p className="text-xs text-muted-foreground font-medium">Import Status</p>
               <p className="text-xs font-semibold text-foreground">Ready to Import</p>
             </div>
           </div>
@@ -87,10 +87,10 @@ export default function BulkImportPreviewTable({
       </div>
 
       {/* Table Container */}
-      <div className="rounded-xl border border-border overflow-hidden">
+      <div className="rounded-lg border border-border overflow-hidden">
         <div className="max-h-[260px] overflow-y-auto">
           <table className="w-full text-xs text-left border-collapse">
-            <thead className="bg-secondary/60 sticky top-0 z-10 border-b border-border backdrop-blur-xs">
+            <thead className="bg-secondary/60 sticky top-0 z-10 border-b border-border">
               <tr className="text-muted-foreground font-semibold">
                 <th className="py-2 px-3 w-10 text-center">#</th>
                 <th className="py-2 px-3">Name</th>
@@ -119,10 +119,10 @@ export default function BulkImportPreviewTable({
                 <tr
                   key={r.id}
                   className={`hover:bg-secondary/20 transition-colors ${
-                    !r.isValid ? "bg-rose-500/5 text-rose-600 dark:text-rose-400" : ""
+                    !r.isValid ? "bg-destructive/5 text-destructive" : ""
                   }`}
                 >
-                  <td className="py-2 px-3 text-center text-muted-foreground font-mono text-[11px]">
+                  <td className="py-2 px-3 text-center text-muted-foreground font-mono text-xs">
                     {idx + 1}
                   </td>
                   <td className="py-2 px-3 font-medium text-foreground">
@@ -130,7 +130,7 @@ export default function BulkImportPreviewTable({
                       ? r.first_name
                       : `${r.first_name} ${r.last_name}`}
                   </td>
-                  <td className="py-2 px-3 font-mono text-[11px] text-muted-foreground">
+                  <td className="py-2 px-3 font-mono text-xs text-muted-foreground">
                     {r.identifier || "—"}
                   </td>
                   <td className="py-2 px-3 text-muted-foreground truncate max-w-[160px]">
@@ -138,13 +138,13 @@ export default function BulkImportPreviewTable({
                   </td>
                   <td className="py-2 px-3 text-center">
                     {r.isValid ? (
-                      <span className="inline-flex items-center gap-1 text-[11px] text-emerald-600 dark:text-emerald-400 font-medium">
+                      <span className="inline-flex items-center gap-1 text-xs text-success font-medium">
                         <CheckCircle size={12} /> Ready
                       </span>
                     ) : (
                       <span
                         title={r.validationError}
-                        className="inline-flex items-center gap-1 text-[11px] text-rose-600 dark:text-rose-400 font-medium cursor-help"
+                        className="inline-flex items-center gap-1 text-xs text-destructive font-medium cursor-help"
                       >
                         <AlertTriangle size={12} /> Review
                       </span>
@@ -154,7 +154,7 @@ export default function BulkImportPreviewTable({
                     <button
                       type="button"
                       onClick={() => onRemoveRecord(r.id)}
-                      className="p-1 rounded text-muted-foreground hover:text-rose-500 transition-colors cursor-pointer"
+                      className="p-1 rounded-sm text-muted-foreground hover:text-destructive transition-colors cursor-pointer"
                       title="Remove row"
                     >
                       <Trash2 size={13} />

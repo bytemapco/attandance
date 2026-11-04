@@ -8,10 +8,10 @@ export default function StructureStep({ refresh }: StepProps): React.ReactElemen
   const onChanged = (): void => void refresh();
   return (
     <div className="space-y-4">
-      <section className="space-y-3 rounded-xl border border-[#e3e1dc] bg-[#faf8f5]/60 p-4 sm:p-5">
+      <section className="space-y-3 rounded-lg border border-border bg-surface/60 p-4 sm:p-5">
         <div>
-          <h3 className="text-sm font-semibold text-[#202b30]">Departments</h3>
-          <p className="text-xs text-[#526f78]">Academic divisions for students, teachers, and classrooms.</p>
+          <h3 className="text-sm font-semibold text-foreground">Departments</h3>
+          <p className="text-xs text-muted-foreground">Academic divisions for students, teachers, and classrooms.</p>
         </div>
         <QuickAddList
           endpoint="/admin/departments"
@@ -26,10 +26,10 @@ export default function StructureStep({ refresh }: StepProps): React.ReactElemen
         />
       </section>
 
-      <section className="space-y-3 rounded-xl border border-[#e3e1dc] bg-[#faf8f5]/60 p-4 sm:p-5">
+      <section className="space-y-3 rounded-lg border border-border bg-surface/60 p-4 sm:p-5">
         <div>
-          <h3 className="text-sm font-semibold text-[#202b30]">Teacher</h3>
-          <p className="text-xs text-[#526f78]">Faculty designations and academic ranks.</p>
+          <h3 className="text-sm font-semibold text-foreground">Teacher</h3>
+          <p className="text-xs text-muted-foreground">Faculty designations and academic ranks.</p>
         </div>
         <QuickAddList
           endpoint="/admin/designations"

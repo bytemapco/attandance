@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { Eye, Pencil } from "lucide-react";
-import type { TableColumn } from "@/components/ui/GlassTable";
+import type { TableColumn } from "@/components/ui/DataTable";
 import type { StudentResponse } from "@/types";
 
 export const studentColumns: TableColumn<StudentResponse & Record<string, unknown>>[] = [
@@ -18,12 +18,12 @@ export const studentColumns: TableColumn<StudentResponse & Record<string, unknow
       const initial = name.charAt(0).toUpperCase();
       return (
         <div className="flex items-center gap-2.5">
-          <div className="h-8 w-8 rounded-full bg-[#28363b] text-white font-bold text-xs flex items-center justify-center shrink-0 shadow-2xs">
+          <div className="h-8 w-8 rounded-full bg-primary text-primary-foreground font-semibold text-xs flex items-center justify-center shrink-0">
             {initial}
           </div>
           <div className="min-w-0">
-            <p className="font-bold text-foreground text-xs leading-tight">{name}</p>
-            <p className="text-[11px] text-muted-foreground truncate">{r.email}</p>
+            <p className="font-semibold text-foreground text-xs leading-tight">{name}</p>
+            <p className="text-xs text-muted-foreground truncate">{r.email}</p>
           </div>
         </div>
       );
@@ -34,7 +34,7 @@ export const studentColumns: TableColumn<StudentResponse & Record<string, unknow
     header: "Login / ID",
     sortable: true,
     render: (r) => (
-      <span className="font-mono text-xs text-foreground bg-secondary/80 px-2 py-0.5 rounded border border-border">
+      <span className="font-mono text-xs text-foreground bg-secondary/80 px-2 py-0.5 rounded-sm border border-border">
         {String(r.enrollment_number || (r as { enrollmentNumber?: string }).enrollmentNumber || "stu-000")}
       </span>
     ),
@@ -61,11 +61,11 @@ export const studentColumns: TableColumn<StudentResponse & Record<string, unknow
     sortable: true,
     render: (r) =>
       r.batch ? (
-        <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold bg-primary/10 text-primary border border-primary/20">
+        <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold bg-primary/10 text-primary border border-primary/20">
           {r.batch}
         </span>
       ) : (
-        <span className="text-xs text-amber-700">Not assigned</span>
+        <span className="text-xs text-warning">Not assigned</span>
       ),
   },
   {
@@ -74,11 +74,11 @@ export const studentColumns: TableColumn<StudentResponse & Record<string, unknow
     render: (r) => {
       const isActive = r.is_active !== false;
       return isActive ? (
-        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-[#e8f3ed] text-[#247653] border border-[#c6e2d3]">
+        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-success-soft text-success border border-success-border">
           Active
         </span>
       ) : (
-        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-[#eeece7] text-[#526f78] border border-[#e3e1dc]">
+        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-secondary text-muted-foreground border border-border">
           Inactive
         </span>
       );
@@ -91,14 +91,14 @@ export const studentColumns: TableColumn<StudentResponse & Record<string, unknow
       <div className="flex items-center gap-1.5">
         <Link
           href={`/admin/users/students/${row.id}`}
-          className="inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-secondary border border-border transition-colors shadow-2xs"
+          className="inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-secondary border border-border transition-colors"
           title="View Details"
         >
           <Eye size={12} /> View
         </Link>
         <Link
           href={`/admin/users/students/${row.id}/edit`}
-          className="inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-secondary border border-border transition-colors shadow-2xs"
+          className="inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-secondary border border-border transition-colors"
           title="Edit Student"
         >
           <Pencil size={12} /> Edit

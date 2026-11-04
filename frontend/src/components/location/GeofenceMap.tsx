@@ -5,7 +5,8 @@ import dynamic from "next/dynamic";
 import { useMapEvents, useMap } from "react-leaflet";
 import { Navigation } from "lucide-react";
 import toast from "react-hot-toast";
-import GlassButton from "@/components/ui/GlassButton";
+import Button from "@/components/ui/Button";
+import { BRAND_COLORS } from "@/lib/brandColors";
 
 const MapContainer = dynamic(
   () => import("react-leaflet").then((m) => m.MapContainer),
@@ -94,9 +95,9 @@ export default function GeofenceMap({
           <div style="display:flex;flex-direction:column;align-items:center;cursor:grab;">
             <div style="filter: drop-shadow(0 4px 8px rgba(32,43,48,0.35));">
               <svg width="34" height="42" viewBox="0 0 34 42" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M17 0C7.611 0 0 7.611 0 17C0 29.5 17 42 17 42C17 42 34 29.5 34 17C34 7.611 26.389 0 17 0Z" fill="#28363B"/>
-                <circle cx="17" cy="17" r="7" fill="#C98260"/>
-                <circle cx="17" cy="17" r="3" fill="#FFFFFF"/>
+                <path d="M17 0C7.611 0 0 7.611 0 17C0 29.5 17 42 17 42C17 42 34 29.5 34 17C34 7.611 26.389 0 17 0Z" fill="${BRAND_COLORS.primary}"/>
+                <circle cx="17" cy="17" r="7" fill="${BRAND_COLORS.accent}"/>
+                <circle cx="17" cy="17" r="3" fill="${BRAND_COLORS.card}"/>
               </svg>
             </div>
           </div>
@@ -128,7 +129,7 @@ export default function GeofenceMap({
   }, [onLocationChange]);
 
   return (
-    <div className="relative h-full w-full overflow-hidden rounded-xl border border-[#e3e1dc] bg-[#faf8f5]">
+    <div className="relative h-full w-full overflow-hidden rounded-lg border border-border bg-surface">
       <style>{`
         .custom-campus-pin {
           background: transparent !important;
@@ -167,8 +168,8 @@ export default function GeofenceMap({
               center={[lat, lng]}
               radius={radius}
               pathOptions={{
-                color: "#28363B",
-                fillColor: "#28363B",
+                color: BRAND_COLORS.primary,
+                fillColor: BRAND_COLORS.primary,
                 fillOpacity: 0.12,
                 weight: 2,
                 dashArray: "5, 5",
@@ -178,19 +179,18 @@ export default function GeofenceMap({
 
           {/* Current Location button */}
           <div className="absolute right-3 top-3 z-[400]">
-            <GlassButton
+            <Button
               variant="secondary"
               size="sm"
-              icon={<Navigation size={13} className="text-[#28363b]" />}
+              icon={<Navigation size={13} className="text-primary" />}
               onClick={handleGetCurrentLocation}
-              className="border border-[#e3e1dc] bg-white/95 text-xs font-medium text-[#202b30] shadow-sm backdrop-blur-sm hover:bg-white"
             >
               Current Location
-            </GlassButton>
+            </Button>
           </div>
         </>
       ) : (
-        <div className="flex h-full items-center justify-center text-xs text-[#526f78]">
+        <div className="flex h-full items-center justify-center text-xs text-muted-foreground">
           Loading interactive map...
         </div>
       )}

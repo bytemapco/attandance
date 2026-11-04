@@ -5,9 +5,9 @@ import toast from "react-hot-toast";
 import { superAdminService } from "@/services/superAdminService";
 import { useDebounce } from "@/hooks/useDebounce";
 import { getApiErrorMessage } from "@/lib/api";
-import GlassBreadcrumb from "@/components/ui/GlassBreadcrumb";
-import GlassPageHeader from "@/components/ui/GlassPageHeader";
-import EnterprisePagination from "@/components/ui/EnterprisePagination";
+import Breadcrumb from "@/components/ui/Breadcrumb";
+import PageHeader from "@/components/ui/PageHeader";
+import Pagination from "@/components/ui/Pagination";
 import AuditFilterBar from "@/components/super-admin/AuditFilterBar";
 import AuditLogTable from "@/components/super-admin/AuditLogTable";
 import AuditDetailModal from "@/components/super-admin/AuditDetailModal";
@@ -70,15 +70,15 @@ export default function SecurityAuditPage(): React.JSX.Element {
   };
 
   return (
-    <div className="space-y-6 max-w-7xl animate-fade-in-up">
-      <GlassBreadcrumb
+    <div className="space-y-6 max-w-7xl">
+      <Breadcrumb
         items={[
           { label: "Dashboard", href: "/super-admin/dashboard" },
           { label: "Audit Logs" },
         ]}
       />
 
-      <GlassPageHeader
+      <PageHeader
         title="Audit Logs"
       />
 
@@ -111,8 +111,8 @@ export default function SecurityAuditPage(): React.JSX.Element {
         />
 
         {!loading && total > 0 && (
-          <div className="mt-3 bg-card border border-border rounded-xl">
-            <EnterprisePagination
+          <div className="mt-3 bg-card border border-border rounded-lg">
+            <Pagination
               currentPage={page}
               totalItems={total}
               pageSize={pageSize}

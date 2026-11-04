@@ -1,7 +1,7 @@
 import React from "react";
 import { UseFormRegister, Control, FieldErrors, Controller } from "react-hook-form";
-import GlassInput from "@/components/ui/GlassInput";
-import GlassSelect from "@/components/ui/GlassSelect";
+import Input from "@/components/ui/Input";
+import SelectField from "@/components/ui/SelectField";
 import type { TeacherUpdateFormData } from "@/lib/validations/teacher";
 
 interface EditTeacherFormFieldsProps {
@@ -21,12 +21,12 @@ export default function EditTeacherFormFields({
 }: EditTeacherFormFieldsProps): React.ReactElement {
   return (
     <div className="p-5 grid grid-cols-1 sm:grid-cols-2 gap-5">
-      <GlassInput
+      <Input
         label="First Name *"
         {...register("first_name")}
         error={errors.first_name?.message}
       />
-      <GlassInput
+      <Input
         label="Last Name *"
         {...register("last_name")}
         error={errors.last_name?.message}
@@ -35,7 +35,7 @@ export default function EditTeacherFormFields({
         control={control}
         name="department_id"
         render={({ field }) => (
-          <GlassSelect
+          <SelectField
             label="Department *"
             options={[{ value: "", label: "— Select Department —" }, ...deptOptions]}
             value={field.value}
@@ -48,7 +48,7 @@ export default function EditTeacherFormFields({
         control={control}
         name="designation_id"
         render={({ field }) => (
-          <GlassSelect
+          <SelectField
             label="Designation *"
             options={[{ value: "", label: "— Select Designation —" }, ...desigOptions]}
             value={field.value}
@@ -58,7 +58,7 @@ export default function EditTeacherFormFields({
         )}
       />
       <div className="sm:col-span-2">
-        <GlassInput
+        <Input
           label="Phone (optional)"
           type="tel"
           {...register("phone")}

@@ -1,9 +1,11 @@
 "use client";
 
 import React, { useState } from "react";
-import { Mail, X } from "lucide-react";
+import { X } from "lucide-react";
 import toast from "react-hot-toast";
-import GlassButton from "@/components/ui/GlassButton";
+import Button from "@/components/ui/Button";
+import Input from "@/components/ui/Input";
+import ModalFrame from "@/components/ui/ModalFrame";
 import { superAdminService } from "@/services/superAdminService";
 import { getApiErrorMessage } from "@/lib/api";
 
@@ -61,66 +63,48 @@ export default function TenantAdminEditModal({
   };
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#28363b]/40 backdrop-blur-xs"
-      onClick={onClose}
-    >
-      <div
-        className="w-full max-w-md bg-card border border-[#e3e1dc] rounded-2xl shadow-xl p-6 space-y-5 animate-scale-in"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="flex items-center justify-between pb-3 border-b border-[#e3e1dc]">
-          <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-lg bg-[#eeece7] text-[#28363b] border border-[#e3e1dc]">
-              <Mail size={16} />
-            </div>
-            <h3 className="text-sm font-semibold text-[#28363b]">Edit Administrator Email</h3>
-          </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="p-1.5 rounded-lg text-[#718087] hover:text-[#202b30] hover:bg-[#eeece7] transition-colors cursor-pointer"
-            aria-label="Close dialog"
-          >
-            <X size={16} />
-          </button>
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-[#526f78]">Email Address</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              placeholder="e.g. administrator@institution.edu"
-              className="w-full px-3.5 py-2.5 bg-card border border-[#e3e1dc] rounded-lg text-xs text-[#202b30] placeholder:text-[#718087] focus:outline-none focus:ring-1 focus:ring-[#28363b] focus:border-[#28363b] transition-colors"
-            />
-          </div>
-
-          <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#e3e1dc]">
-            <GlassButton
-              type="button"
-              variant="secondary"
-              onClick={onClose}
-              disabled={submitting}
-              className="text-xs"
-            >
-              Cancel
-            </GlassButton>
-            <GlassButton
-              type="submit"
-              variant="primary"
-              loading={submitting}
-              disabled={submitting || !email.trim() || email.trim().toLowerCase() === admin.email.toLowerCase()}
-              className="text-xs font-semibold"
-            >
-              Save Changes
-            </GlassButton>
-          </div>
-        </form>
+    <ModalFrame label="Edit administrator email" onClose={onClose} className="space-y-5 p-6">
+      <div className="flex items-center justify-between pb-3 border-b border-border">
+        <h3 className="text-base font-semibold text-foreground">Edit administrator email</h3>
+        <button
+          type="button"
+          onClick={onClose}
+          className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors cursor-pointer"
+          aria-label="Close dialog"
+        >
+          <X size={16} />
+        </button>
       </div>
-    </div>
+
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <Input
+          label="Email address"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          placeholder="e.g. administrator@institution.edu"
+        />
+
+        <div className="flex items-center justify-end gap-2 pt-2 border-t border-border">
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={onClose}
+            disabled={submitting}
+          >
+            Cancel
+          </Button>
+          <Button
+            type="submit"
+            variant="primary"
+            loading={submitting}
+            disabled={submitting || !email.trim() || email.trim().toLowerCase() === admin.email.toLowerCase()}
+          >
+            Save changes
+          </Button>
+        </div>
+      </form>
+    </ModalFrame>
   );
 }

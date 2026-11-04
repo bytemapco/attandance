@@ -5,13 +5,13 @@ import { useRouter } from "next/navigation";
 import { ArrowRight, FileText, Image as ImageIcon, Eye } from "lucide-react";
 import api from "@/lib/api";
 import { useDebounce } from "@/hooks/useDebounce";
-import GlassPageHeader from "@/components/ui/GlassPageHeader";
-import GlassTable, { type TableColumn } from "@/components/ui/GlassTable";
-import GlassLoader from "@/components/ui/GlassLoader";
-import GlassEmptyState from "@/components/ui/GlassEmptyState";
-import GlassCard from "@/components/ui/GlassCard";
-import GlassSearch from "@/components/ui/GlassSearch";
-import EnterprisePagination from "@/components/ui/EnterprisePagination";
+import PageHeader from "@/components/ui/PageHeader";
+import DataTable, { type TableColumn } from "@/components/ui/DataTable";
+import PageSkeleton from "@/components/ui/PageSkeleton";
+import EmptyState from "@/components/ui/EmptyState";
+import Card from "@/components/ui/Card";
+import SearchInput from "@/components/ui/SearchInput";
+import Pagination from "@/components/ui/Pagination";
 import type { PendingLeaveItem } from "@/types";
 
 export default function LeavesPage(): React.JSX.Element {
@@ -44,7 +44,7 @@ export default function LeavesPage(): React.JSX.Element {
       key: "enrollment_number", 
       header: "Enrollment #",
       render: (r) => (
-        <span className="font-mono text-xs text-foreground bg-secondary/80 px-2 py-0.5 rounded border border-border">
+        <span className="font-mono text-xs text-foreground bg-secondary/80 px-2 py-0.5 rounded-sm border border-border">
           {r.enrollment_number}
         </span>
       )
@@ -76,7 +76,7 @@ export default function LeavesPage(): React.JSX.Element {
       key: "document_url",
       header: "Proof Attached",
       render: (r) => r.document_url ? (
-        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 text-[11px] font-semibold">
+        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-success/10 text-success border border-success/20 text-xs font-semibold">
           {r.document_url.toLowerCase().split("?")[0].endsWith(".pdf") ? <FileText size={12} /> : <ImageIcon size={12} />}
           <span>Attached</span>
         </span>
@@ -89,7 +89,7 @@ export default function LeavesPage(): React.JSX.Element {
         <button
           type="button"
           onClick={() => router.push(`/teacher/leaves/${row.id}`)}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-card hover:bg-secondary text-foreground active:scale-95 transition-all text-xs font-semibold cursor-pointer shadow-2xs"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-card hover:bg-secondary text-foreground transition-all text-xs font-semibold cursor-pointer"
           title="Review Leave Application"
         >
           <Eye size={13} className="text-primary" />
@@ -115,37 +115,37 @@ export default function LeavesPage(): React.JSX.Element {
     return filtered.slice(start, start + pageSize);
   }, [filtered, page, pageSize]);
 
-  if (loading) return <GlassLoader text="Loading leave requests..." />;
+  if (loading) return <PageSkeleton text="Loading leave requests..." />;
 
   return (
-    <div className="animate-fade-in-up space-y-6">
-      <GlassPageHeader 
+    <div className="space-y-6">
+      <PageHeader 
         title="Leave Requests" 
       />
 
-      <GlassCard padding="sm">
+      <Card padding="sm">
         <div className="flex flex-col sm:flex-row gap-4">
           <div className="flex-1">
-            <GlassSearch
+            <SearchInput
               placeholder="Search by student name, enrollment, or reason..."
               value={searchTerm}
               onSearch={(val) => { setSearchTerm(val); setPage(1); }}
             />
           </div>
         </div>
-      </GlassCard>
+      </Card>
 
       {leaves.length === 0 ? (
-        <GlassEmptyState title="All Clear" message="No pending leave requests found." />
+        <EmptyState title="All Clear" message="No pending leave requests found." />
       ) : (
-        <div className="rounded-xl border border-border bg-card shadow-2xs overflow-hidden">
-          <GlassTable
+        <div className="rounded-lg border border-border bg-card overflow-hidden">
+          <DataTable
             columns={columns}
             data={paginated as (PendingLeaveItem & Record<string, unknown>)[]}
             emptyMessage="No pending leaves match your search."
           />
           {filtered.length > 0 && (
-            <EnterprisePagination
+            <Pagination
               totalItems={filtered.length}
               currentPage={page}
               pageSize={pageSize}

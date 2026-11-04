@@ -2,8 +2,8 @@
 
 import React, { useState } from "react";
 import { ScanSearch, SlidersHorizontal } from "lucide-react";
-import GlassCard from "@/components/ui/GlassCard";
-import GlassButton from "@/components/ui/GlassButton";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
 
 interface ScannerControlsProps {
   contamination: number;
@@ -45,12 +45,12 @@ export default function ScannerControls({
   }
 
   return (
-    <GlassCard className="bg-card border-border/80 p-3 sm:p-4 shadow-xs">
+    <Card className="bg-card border-border/80 p-3 sm:p-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         {/* Left: Sensitivity Segmented Control */}
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-xs font-medium text-muted-foreground mr-1">Sensitivity:</span>
-          <div className="inline-flex rounded-xl bg-secondary/80 p-0.5 border border-border/40">
+          <div className="inline-flex rounded-lg bg-secondary/80 p-0.5 border border-border/40">
             {PRESETS.map((preset) => {
               const isSelected = !showSlider && activePreset?.id === preset.id;
               return (
@@ -60,7 +60,7 @@ export default function ScannerControls({
                   onClick={() => handleSelect(preset)}
                   className={`px-3 py-1.5 text-xs rounded-lg transition-all text-center ${
                     isSelected
-                      ? "bg-card text-foreground font-semibold shadow-xs"
+                      ? "bg-card text-foreground font-semibold"
                       : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
@@ -90,7 +90,7 @@ export default function ScannerControls({
 
         {/* Right: Primary Scan Button */}
         <div className="shrink-0">
-          <GlassButton
+          <Button
             variant="primary"
             size="md"
             loading={loading}
@@ -99,7 +99,7 @@ export default function ScannerControls({
             className="w-full sm:w-auto font-medium"
           >
             {loading ? "Scanning..." : "Run Scan"}
-          </GlassButton>
+          </Button>
         </div>
       </div>
 
@@ -118,10 +118,10 @@ export default function ScannerControls({
             }
             className="w-full max-w-xs h-1.5 bg-secondary rounded-lg appearance-none cursor-pointer accent-foreground"
           />
-          <span className="font-mono font-bold text-foreground shrink-0">{currentPercent}%</span>
-          <span className="text-muted-foreground text-[11px]">(Flags top {currentPercent}%)</span>
+          <span className="font-mono font-semibold text-foreground shrink-0">{currentPercent}%</span>
+          <span className="text-muted-foreground text-xs">(Flags top {currentPercent}%)</span>
         </div>
       )}
-    </GlassCard>
+    </Card>
   );
 }

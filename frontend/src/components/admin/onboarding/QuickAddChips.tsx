@@ -22,12 +22,12 @@ export default function QuickAddChips({
       {items.map((item) => (
         <span
           key={item.id}
-          className="inline-flex items-center gap-1.5 rounded-lg border border-[#c6e2d3] bg-[#e8f3ed] py-1 pl-2.5 pr-1.5 text-xs font-medium text-[#247653] shadow-2xs transition-colors"
+          className="inline-flex items-center gap-1.5 rounded-lg border border-success-border bg-success-soft py-1 pl-2.5 pr-1.5 text-xs font-medium text-success transition-colors"
         >
           <Check size={12} className="stroke-[2.5]" aria-hidden />
-          <span className="font-semibold text-[#202b30]">{item.name}</span>
+          <span className="font-semibold text-foreground">{item.name}</span>
           {item.code && showCodes && (
-            <span className="rounded border border-[#c6e2d3] bg-white px-1.5 py-0.5 text-[10px] font-semibold tracking-wider text-[#526f78]">
+            <span className="rounded-sm border border-success-border bg-card px-1.5 py-0.5 text-xs font-semibold text-muted-foreground">
               {item.code}
             </span>
           )}
@@ -35,7 +35,7 @@ export default function QuickAddChips({
             type="button"
             disabled={removingId === item.id}
             onClick={() => onRemove(item.id, item.name)}
-            className="ml-0.5 rounded p-0.5 text-[#526f78] transition-colors hover:bg-black/5 hover:text-[#b54242] focus:outline-none focus:ring-1 focus:ring-[#247653]"
+            className="ml-0.5 rounded-sm p-0.5 text-muted-foreground transition-colors hover:bg-secondary hover:text-destructive focus:outline-none focus:ring-1 focus:ring-success"
             title={`Remove ${item.name}`}
             aria-label={`Remove ${item.name}`}
           >
@@ -43,7 +43,7 @@ export default function QuickAddChips({
           </button>
         </span>
       ))}
-      {items.length === 0 && <span className="text-xs italic text-[#718087]">No {noun}s added yet.</span>}
+      {items.length === 0 && <span className="text-xs italic text-muted-foreground">No {noun}s added yet.</span>}
     </div>
   );
 }

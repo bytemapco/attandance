@@ -7,14 +7,14 @@ const plusJakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
   variable: "--font-plus-jakarta",
   display: "swap",
-  weight: ["300", "400", "500", "600", "700", "800"],
+  weight: ["400", "500", "600"],
 });
 
 const geistMono = Geist_Mono({
   subsets: ["latin"],
   variable: "--font-geist-mono",
   display: "swap",
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "500", "600"],
 });
 
 export const metadata: Metadata = {
@@ -41,24 +41,24 @@ export default function RootLayout({ children }: { children: React.ReactNode }):
             duration: 4000,
             className: "text-xs font-medium font-sans",
             style: {
-              background: "#ffffff",
-              color: "#202b30",
-              border: "1px solid #e3e1dc",
-              borderRadius: "0.625rem",
-              fontSize: "13px",
+              background: "var(--card)",
+              color: "var(--foreground)",
+              border: "1px solid var(--border)",
+              borderRadius: "8px",
+              fontSize: "14px",
               padding: "10px 14px",
-              boxShadow: "0 4px 16px -2px rgba(40, 54, 59, 0.08)",
+              boxShadow: "none",
             },
             success: {
               iconTheme: {
-                primary: "#247653",
-                secondary: "#ffffff",
+                primary: "var(--success)",
+                secondary: "var(--card)",
               },
             },
             error: {
               iconTheme: {
-                primary: "#b54242",
-                secondary: "#ffffff",
+                primary: "var(--destructive)",
+                secondary: "var(--card)",
               },
             },
           }}

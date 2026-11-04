@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import GlassBadge from "@/components/ui/GlassBadge";
+import Badge from "@/components/ui/Badge";
 import type { HistoryItem } from "@/types";
 
 export default function SessionRow({ item }: { item: HistoryItem }): React.ReactElement {
@@ -18,7 +18,7 @@ export default function SessionRow({ item }: { item: HistoryItem }): React.React
         </span>
         <span className="col-start-2 row-start-1 flex items-center gap-2 justify-self-end sm:col-start-auto sm:row-start-auto sm:justify-self-stretch">
           <span className="hidden h-1.5 flex-1 overflow-hidden rounded-full bg-secondary sm:block" role="presentation">
-            <span className="block h-full rounded-full bg-[#526f78]" style={{ width: `${rate}%` }} />
+            <span className="block h-full rounded-full bg-muted-foreground" style={{ width: `${rate}%` }} />
           </span>
           <span className="text-sm tabular-nums text-foreground">
             <span className="font-semibold">{item.present}</span>
@@ -26,8 +26,8 @@ export default function SessionRow({ item }: { item: HistoryItem }): React.React
           </span>
         </span>
         <span className="col-span-2 flex flex-wrap items-center gap-1.5 sm:col-span-1 sm:justify-end">
-          {item.locked ? <GlassBadge variant="neutral">Submitted</GlassBadge> : <GlassBadge variant="success">In progress</GlassBadge>}
-          {item.flagged > 0 && <GlassBadge variant="warning">{item.flagged} to verify</GlassBadge>}
+          {item.locked ? <Badge variant="neutral">Submitted</Badge> : <Badge variant="success">In progress</Badge>}
+          {item.flagged > 0 && <Badge variant="warning">{item.flagged} to verify</Badge>}
         </span>
       </Link>
     </li>

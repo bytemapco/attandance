@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Server, Database, Zap, Cpu } from "lucide-react";
-import GlassCard from "@/components/ui/GlassCard";
+import Card from "@/components/ui/Card";
 import type { PlatformHealth } from "@/types/tenant";
 
 interface SystemMetricsGridProps {
@@ -29,56 +29,56 @@ export default function SystemMetricsGrid({ health }: SystemMetricsGridProps): R
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
       {/* Uptime */}
-      <GlassCard className="p-4 flex items-center gap-3.5">
-        <div className="p-2.5 rounded-xl bg-[#eeece7] text-[#526f78] border border-[#e3e1dc] shrink-0">
+      <Card className="p-4 flex items-center gap-3.5">
+        <div className="p-2.5 rounded-lg bg-secondary text-muted-foreground border border-border shrink-0">
           <Server size={18} />
         </div>
         <div className="min-w-0">
           <p className="text-xs text-muted-foreground font-medium">Uptime</p>
-          <p className="text-lg font-bold text-foreground truncate">
+          <p className="text-lg font-semibold text-foreground truncate">
             {formatUptime(health.server_uptime_seconds)}
           </p>
         </div>
-      </GlassCard>
+      </Card>
 
       {/* DB Connections */}
-      <GlassCard className="p-4 flex items-center gap-3.5">
-        <div className="p-2.5 rounded-xl bg-[#eeece7] text-[#28363b] border border-[#e3e1dc] shrink-0">
+      <Card className="p-4 flex items-center gap-3.5">
+        <div className="p-2.5 rounded-lg bg-secondary text-primary border border-border shrink-0">
           <Database size={18} />
         </div>
         <div className="min-w-0">
           <p className="text-xs text-muted-foreground font-medium">DB Pool</p>
-          <p className="text-lg font-bold text-foreground truncate">
+          <p className="text-lg font-semibold text-foreground truncate">
             {poolActive} <span className="text-xs font-normal text-muted-foreground">/ {poolMax}</span>
           </p>
         </div>
-      </GlassCard>
+      </Card>
 
       {/* Cache Ping */}
-      <GlassCard className="p-4 flex items-center gap-3.5">
-        <div className="p-2.5 rounded-xl bg-[#e8f3ed] text-[#247653] border border-[#c6e2d3] shrink-0">
+      <Card className="p-4 flex items-center gap-3.5">
+        <div className="p-2.5 rounded-lg bg-success-soft text-success border border-success-border shrink-0">
           <Zap size={18} />
         </div>
         <div className="min-w-0">
           <p className="text-xs text-muted-foreground font-medium">Cache Latency</p>
-          <p className="text-lg font-bold text-foreground truncate">
+          <p className="text-lg font-semibold text-foreground truncate">
             {redisLatency != null ? `${redisLatency} ms` : "0 ms"}
           </p>
         </div>
-      </GlassCard>
+      </Card>
 
       {/* Biometric Compute */}
-      <GlassCard className="p-4 flex items-center gap-3.5">
-        <div className="p-2.5 rounded-xl bg-[#f7efea] text-[#c98260] border border-[#f0ded4] shrink-0">
+      <Card className="p-4 flex items-center gap-3.5">
+        <div className="p-2.5 rounded-lg bg-accent-soft text-accent-strong border border-accent-border shrink-0">
           <Cpu size={18} />
         </div>
         <div className="min-w-0">
           <p className="text-xs text-muted-foreground font-medium">AI Compute Hardware</p>
-          <p className="text-lg font-bold text-foreground truncate" title={activeDevice}>
+          <p className="text-lg font-semibold text-foreground truncate" title={activeDevice}>
             {activeDevice.replace(/^\/device:/, "")}
           </p>
         </div>
-      </GlassCard>
+      </Card>
     </div>
   );
 }

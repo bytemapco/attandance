@@ -6,7 +6,7 @@ import { CheckCircle2, Circle } from "lucide-react";
 import toast from "react-hot-toast";
 import api, { getApiErrorMessage } from "@/lib/api";
 import type { SetupIncompleteDetail } from "@/types/setupStatus";
-import GlassButton from "@/components/ui/GlassButton";
+import Button from "@/components/ui/Button";
 import type { StepProps } from "./stepProps";
 
 function missingFrom(err: unknown): SetupIncompleteDetail | null {
@@ -49,25 +49,25 @@ export default function FinishStep({ status, refresh }: StepProps): React.ReactE
 
   return (
     <div className="space-y-5">
-      <div className="flex items-start gap-3 rounded-xl bg-[#f5f2ed] p-4">
+      <div className="flex items-start gap-3 rounded-lg bg-background p-4">
         {canFinish ? (
-          <CheckCircle2 size={20} className="mt-0.5 shrink-0 text-[#247653]" aria-hidden />
+          <CheckCircle2 size={20} className="mt-0.5 shrink-0 text-success" aria-hidden />
         ) : (
-          <Circle size={20} className="mt-0.5 shrink-0 text-[#8a5b12]" aria-hidden />
+          <Circle size={20} className="mt-0.5 shrink-0 text-warning" aria-hidden />
         )}
         <div>
-          <p className="font-semibold text-[#202b30]">{summaryTitle}</p>
-          <p className="mt-1 text-sm leading-5 text-[#526f78]">{summaryMessage}</p>
+          <p className="font-semibold text-foreground">{summaryTitle}</p>
+          <p className="mt-1 text-sm leading-5 text-muted-foreground">{summaryMessage}</p>
         </div>
       </div>
 
       {(!canFinish || missing.length > 0) && (
-        <div role={missing.length > 0 ? "alert" : undefined} className={missing.length > 0 ? "rounded-lg border border-amber-200 bg-amber-50 p-4" : undefined}>
-          {missing.length > 0 && <p className="mb-2 text-sm font-medium text-amber-800">{issueTitle}</p>}
+        <div role={missing.length > 0 ? "alert" : undefined} className={missing.length > 0 ? "rounded-lg border border-warning-border bg-warning-soft p-4" : undefined}>
+          {missing.length > 0 && <p className="mb-2 text-sm font-medium text-warning">{issueTitle}</p>}
           <ul className="space-y-2" aria-label="Required items to complete">
             {issueIds.map((id) => (
-              <li key={id} className="flex items-center gap-2 text-sm text-[#526f78]">
-                <Circle size={14} className="text-[#c98260]" aria-hidden />
+              <li key={id} className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Circle size={14} className="text-accent-strong" aria-hidden />
                 {status.checks.find((check) => check.id === id)?.label ?? id}
               </li>
             ))}
@@ -75,9 +75,9 @@ export default function FinishStep({ status, refresh }: StepProps): React.ReactE
         </div>
       )}
 
-      <GlassButton variant="primary" loading={busy} disabled={!canFinish} onClick={() => void finish()}>
+      <Button variant="primary" loading={busy} disabled={!canFinish} onClick={() => void finish()}>
         Finish setup
-      </GlassButton>
+      </Button>
     </div>
   );
 }

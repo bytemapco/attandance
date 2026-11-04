@@ -61,10 +61,7 @@ export function usePlatformWebSocket(): void {
         const title = (notifData.title as string) || "System Announcement";
         const message = (notifData.message as string) || "";
         if (title || message) {
-          toast(message ? `${title}: ${message}` : title, {
-            icon: "📢",
-            duration: 6000,
-          });
+          toast(message ? `${title}: ${message}` : title, { duration: 6000 });
         }
         if (typeof window !== "undefined") {
           window.dispatchEvent(

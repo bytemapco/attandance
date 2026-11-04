@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export interface GlassSearchProps {
+export interface SearchInputProps {
   placeholder?: string;
   value?: string;
   onSearch: (query: string) => void;
@@ -12,13 +12,13 @@ export interface GlassSearchProps {
   className?: string;
 }
 
-export default function GlassSearch({
+export default function SearchInput({
   placeholder = "Search...",
   value: externalValue,
   onSearch,
   debounceMs = 300,
   className = "",
-}: GlassSearchProps): React.ReactElement {
+}: SearchInputProps): React.ReactElement {
   const [query, setQuery] = useState(externalValue || "");
 
   useEffect(() => {
@@ -34,7 +34,7 @@ export default function GlassSearch({
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder={placeholder}
-        className="flex h-9 w-full rounded-md border border-input bg-card pl-9 pr-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        className="flex h-9 w-full rounded-md border border-input bg-card pl-9 pr-3 py-1 text-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       />
     </div>
   );

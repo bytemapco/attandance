@@ -4,11 +4,11 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Plus, Trash2, Archive, RotateCcw } from "lucide-react";
 import toast from "react-hot-toast";
 import api, { getApiErrorMessage } from "@/lib/api";
-import GlassButton from "@/components/ui/GlassButton";
-import GlassBadge from "@/components/ui/GlassBadge";
-import GlassSelect from "@/components/ui/GlassSelect";
-import GlassTable, { type TableColumn } from "@/components/ui/GlassTable";
-import GlassConfirmDialog from "@/components/ui/GlassConfirmDialog";
+import Button from "@/components/ui/Button";
+import Badge from "@/components/ui/Badge";
+import SelectField from "@/components/ui/SelectField";
+import DataTable, { type TableColumn } from "@/components/ui/DataTable";
+import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import type { BatchResponse, DepartmentResponse } from "@/types";
 
 const SECTIONS = Array.from({ length: 26 }, (_, i) => {
@@ -87,15 +87,15 @@ export default function DepartmentBatchesPanel({ department }: { department: Dep
   }
 
   const columns: TableColumn<BatchRow>[] = [
-    { key: "code", header: "Batch", sortable: true, render: (r) => <span className="font-semibold text-[#202b30]">{r.code}</span> },
+    { key: "code", header: "Batch", sortable: true, render: (r) => <span className="font-semibold text-foreground">{r.code}</span> },
     { key: "student_count", header: "Students", render: (r) => <span>{r.student_count}</span> },
     {
       key: "status",
       header: "Status",
       render: (r) => (
-        <GlassBadge variant={r.status === "ACTIVE" ? "success" : "neutral"}>
+        <Badge variant={r.status === "ACTIVE" ? "success" : "neutral"}>
           {r.status === "ACTIVE" ? "Active" : "Archived"}
-        </GlassBadge>
+        </Badge>
       ),
     },
     {
@@ -103,20 +103,20 @@ export default function DepartmentBatchesPanel({ department }: { department: Dep
       header: "Actions",
       render: (r) => (
         <div className="flex items-center gap-2">
-          <GlassButton
+          <Button
             variant="ghost"
             size="sm"
             onClick={() => void handleToggleArchive(r)}
             icon={r.status === "ACTIVE" ? <Archive size={13} /> : <RotateCcw size={13} />}
           >
             {r.status === "ACTIVE" ? "Archive" : "Reactivate"}
-          </GlassButton>
-          <GlassButton
+          </Button>
+          <Button
             variant="ghost"
             size="sm"
             disabled={r.student_count > 0 || r.class_count > 0}
             onClick={() => setDeleteTarget(r)}
-            className="text-muted-foreground hover:text-[#b54242] hover:bg-[#f9eaea]"
+            className="text-muted-foreground hover:text-destructive hover:bg-destructive-soft"
             icon={<Trash2 size={13} />}
           />
         </div>
@@ -127,15 +127,15 @@ export default function DepartmentBatchesPanel({ department }: { department: Dep
   return (
     <div className="space-y-3">
       <div>
-        <h2 className="text-base font-semibold text-[#202b30]">Batches</h2>
-        <p className="text-xs text-[#526f78]">Pick a section and add a batch. The number is assigned automatically.</p>
+        <h2 className="text-base font-semibold text-foreground">Batches</h2>
+        <p className="text-xs text-muted-foreground">Pick a section and add a batch. The number is assigned automatically.</p>
       </div>
 
       <div className="flex flex-wrap items-end gap-3">
         <div className="w-40">
-          <GlassSelect label="Section" options={SECTIONS} value={section} onChange={setSection} />
+          <SelectField label="Section" options={SECTIONS} value={section} onChange={setSection} />
         </div>
-        <GlassButton
+        <Button
           variant="primary"
           icon={<Plus size={14} />}
           loading={saving}
@@ -143,17 +143,17 @@ export default function DepartmentBatchesPanel({ department }: { department: Dep
           onClick={() => void handleAdd()}
         >
           {nextCode ? `Add ${nextCode}` : "Section is full"}
-        </GlassButton>
+        </Button>
       </div>
 
-      <GlassTable
+      <DataTable
         columns={columns}
         data={batches as BatchRow[]}
         loading={loading}
         emptyMessage="No batches yet. Add batches so students and classes can be placed in them."
       />
 
-      <GlassConfirmDialog
+      <ConfirmDialog
         isOpen={!!deleteTarget}
         title="Delete Batch"
         message={`Delete ${deleteTarget?.code ?? "this batch"}? This cannot be undone.`}

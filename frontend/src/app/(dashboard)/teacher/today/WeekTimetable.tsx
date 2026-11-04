@@ -7,8 +7,8 @@ import api, { getApiErrorMessage } from "@/lib/api";
 import { classAction, classStatus, countByStatus } from "@/lib/teacher/classStatus";
 import { buildTimetable } from "@/lib/teacher/timetableGrid";
 import { isValidDay, shiftDays, todayIso, weekDays, weekStart } from "@/lib/teacher/weekDates";
-import GlassErrorState from "@/components/ui/GlassErrorState";
-import GlassLoader from "@/components/ui/GlassLoader";
+import ErrorState from "@/components/ui/ErrorState";
+import PageSkeleton from "@/components/ui/PageSkeleton";
 import type { DailyOccurrenceItem } from "@/types";
 import StatusSummary from "./StatusSummary";
 import TimetableGrid from "./TimetableGrid";
@@ -99,11 +99,11 @@ export default function WeekTimetable(): React.ReactElement {
         onToday={() => setSelected(today)}
       />
 
-      {loading && <GlassLoader />}
-      {!loading && failed && <GlassErrorState message="Your timetable could not be loaded." onRetry={() => void load(false)} />}
+      {loading && <PageSkeleton />}
+      {!loading && failed && <ErrorState message="Your timetable could not be loaded." onRetry={() => void load(false)} />}
 
       {!loading && !failed && classes.length === 0 && (
-        <p className="rounded-xl border border-dashed border-[#d9d5cd] px-4 py-10 text-center text-sm text-[#526f78]">
+        <p className="rounded-lg border border-dashed border-border-strong px-4 py-10 text-center text-sm text-muted-foreground">
           No classes this week.
         </p>
       )}

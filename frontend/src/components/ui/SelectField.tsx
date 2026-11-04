@@ -2,21 +2,21 @@
 
 import React from "react";
 import { cn } from "@/lib/utils";
-import GlassCombobox from "@/components/ui/GlassCombobox";
+import Combobox from "@/components/ui/Combobox";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/components/ui/SelectMenu";
 
 export interface SelectOption {
   value: string;
   label: string;
 }
 
-export interface GlassSelectProps {
+export interface SelectFieldProps {
   label?: string;
   options: SelectOption[];
   value: string;
@@ -30,7 +30,7 @@ export interface GlassSelectProps {
   className?: string;
 }
 
-export default function GlassSelect({
+export default function SelectField({
   label,
   options,
   value,
@@ -42,12 +42,12 @@ export default function GlassSelect({
   disabled = false,
   searchable,
   className = "",
-}: GlassSelectProps): React.ReactElement {
+}: SelectFieldProps): React.ReactElement {
   const isSearchable = searchable === true || (searchable !== false && options.length > 9);
 
   if (isSearchable) {
     return (
-      <GlassCombobox
+      <Combobox
         label={label}
         options={options}
         value={value}
@@ -80,7 +80,7 @@ export default function GlassSelect({
         <SelectTrigger
           id={selectId}
           className={cn(
-            "flex h-9 w-full rounded-md border border-input bg-card px-3 py-1 text-sm shadow-2xs transition-colors cursor-pointer",
+            "flex h-9 w-full rounded-md border border-input bg-card px-3 py-1 text-sm transition-colors cursor-pointer",
             error && "border-destructive focus:ring-destructive",
             className
           )}

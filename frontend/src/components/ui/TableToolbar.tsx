@@ -8,7 +8,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-} from "@/components/ui/select";
+} from "@/components/ui/SelectMenu";
 import { cn } from "@/lib/utils";
 
 export interface FilterOption {
@@ -25,7 +25,7 @@ export interface ToolbarFilterConfig {
   icon?: React.ReactNode;
 }
 
-export interface EnterpriseTableToolbarProps {
+export interface TableToolbarProps {
   searchPlaceholder?: string;
   searchValue?: string;
   onSearch: (value: string) => void;
@@ -41,7 +41,7 @@ export interface EnterpriseTableToolbarProps {
   onStatusChange?: (value: string) => void;
 }
 
-export default function EnterpriseTableToolbar({
+export default function TableToolbar({
   searchPlaceholder = "Search by name, email, ID...",
   searchValue = "",
   onSearch,
@@ -54,7 +54,7 @@ export default function EnterpriseTableToolbar({
   statusOptions = [],
   selectedStatus = "all",
   onStatusChange,
-}: EnterpriseTableToolbarProps): React.ReactElement {
+}: TableToolbarProps): React.ReactElement {
   // Merge legacy filters into unified list if filters array not directly provided
   const resolvedFilters: ToolbarFilterConfig[] = filters ?? [
     ...(filterOptions.length > 0 && onFilterChange
@@ -89,13 +89,13 @@ export default function EnterpriseTableToolbar({
             value={searchValue}
             placeholder={searchPlaceholder}
             onChange={(e) => onSearch(e.target.value)}
-            className="w-full h-9 pl-9 pr-8 rounded-lg border border-border bg-card text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-slate-400 focus:border-slate-400 transition-colors shadow-2xs"
+            className="w-full h-9 pl-9 pr-8 rounded-lg border border-border bg-card text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-border-strong focus:border-border-strong transition-colors"
           />
           {searchValue && (
             <button
               type="button"
               onClick={() => onSearch("")}
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-0.5 rounded transition-colors"
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-0.5 rounded-sm transition-colors"
               title="Clear search"
             >
               <X size={13} />
@@ -118,9 +118,9 @@ export default function EnterpriseTableToolbar({
                 >
                   <SelectTrigger
                     className={cn(
-                      "h-9 w-auto min-w-[130px] gap-2 px-3 rounded-lg border text-xs shadow-2xs",
+                      "h-9 w-auto min-w-[130px] gap-2 px-3 rounded-lg border text-xs",
                       filter.value && filter.value !== "all"
-                        ? "border-slate-400/80 bg-secondary/80 font-semibold text-foreground"
+                        ? "border-border-strong/80 bg-secondary/80 font-semibold text-foreground"
                         : "border-border bg-card text-muted-foreground hover:bg-secondary/60"
                     )}
                   >
@@ -155,7 +155,7 @@ export default function EnterpriseTableToolbar({
               <button
                 type="button"
                 onClick={handleReset}
-                className="inline-flex items-center gap-1 h-9 px-2.5 rounded-lg border border-border/80 bg-card text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors shadow-2xs cursor-pointer"
+                className="inline-flex items-center gap-1 h-9 px-2.5 rounded-lg border border-border/80 bg-card text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors cursor-pointer"
                 title="Reset all active filters"
               >
                 <RotateCcw size={12} /> Reset
@@ -168,9 +168,9 @@ export default function EnterpriseTableToolbar({
       {/* Active Filter Chips Row */}
       {hasActiveCriteria && (
         <div className="flex items-center gap-1.5 flex-wrap pt-0.5 text-xs text-muted-foreground">
-          <span className="text-[11px] font-medium text-muted-foreground">Active filters:</span>
+          <span className="text-xs font-medium text-muted-foreground">Active filters:</span>
           {searchValue?.trim() && (
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-secondary border border-border text-[11px] font-medium text-foreground">
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-secondary border border-border text-xs font-medium text-foreground">
               Search: <span className="font-semibold">&ldquo;{searchValue}&rdquo;</span>
               <button type="button" onClick={() => onSearch("")} className="hover:text-destructive">
                 <X size={11} />
@@ -183,7 +183,7 @@ export default function EnterpriseTableToolbar({
             return (
               <span
                 key={f.id}
-                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-secondary border border-border text-[11px] font-medium text-foreground"
+                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-secondary border border-border text-xs font-medium text-foreground"
               >
                 {f.label}: <span className="font-semibold">{displayLabel}</span>
                 <button type="button" onClick={() => f.onChange("all")} className="hover:text-destructive" title={`Remove ${f.label} filter`}>

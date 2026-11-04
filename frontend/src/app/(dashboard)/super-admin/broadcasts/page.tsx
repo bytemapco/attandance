@@ -5,8 +5,8 @@ import toast from "react-hot-toast";
 
 import { superAdminService } from "@/services/superAdminService";
 import { getApiErrorMessage } from "@/lib/api";
-import GlassBreadcrumb from "@/components/ui/GlassBreadcrumb";
-import GlassPageHeader from "@/components/ui/GlassPageHeader";
+import Breadcrumb from "@/components/ui/Breadcrumb";
+import PageHeader from "@/components/ui/PageHeader";
 import BroadcastForm from "@/components/super-admin/BroadcastForm";
 import BroadcastPreview from "@/components/super-admin/BroadcastPreview";
 import BroadcastHistoryTable from "@/components/super-admin/BroadcastHistoryTable";
@@ -96,25 +96,25 @@ export default function SuperAdminBroadcastsPage(): React.ReactElement {
   };
 
   return (
-    <div className="space-y-6 max-w-7xl animate-fade-in-up">
-      <GlassBreadcrumb
+    <div className="space-y-6 max-w-7xl">
+      <Breadcrumb
         items={[
           { label: "Dashboard", href: "/super-admin/dashboard" },
           { label: "Announcements" },
         ]}
       />
 
-      <GlassPageHeader
+      <PageHeader
         title="Announcements"
         actions={
           <div className="flex items-center gap-2">
-            <span className="text-xs text-[#526f78] font-medium hidden sm:inline">Templates:</span>
+            <span className="text-xs text-muted-foreground font-medium hidden sm:inline">Templates:</span>
             {TEMPLATES.map((tpl) => (
               <button
                 key={tpl.label}
                 type="button"
                 onClick={() => handleApplyTemplate(tpl)}
-                className="px-2.5 py-1 rounded-lg bg-card hover:bg-secondary border border-[#e3e1dc] text-xs text-[#202b30] font-semibold transition-colors cursor-pointer"
+                className="px-2.5 py-1 rounded-lg bg-card hover:bg-secondary border border-border text-xs text-foreground font-semibold transition-colors cursor-pointer"
               >
                 {tpl.label}
               </button>

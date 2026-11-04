@@ -4,9 +4,9 @@ import React, { useState, useMemo } from "react";
 import { CheckCircle2, SearchX } from "lucide-react";
 import api, { getApiErrorMessage } from "@/lib/api";
 import toast from "react-hot-toast";
-import GlassBreadcrumb from "@/components/ui/GlassBreadcrumb";
-import GlassPageHeader from "@/components/ui/GlassPageHeader";
-import GlassCard from "@/components/ui/GlassCard";
+import Breadcrumb from "@/components/ui/Breadcrumb";
+import PageHeader from "@/components/ui/PageHeader";
+import Card from "@/components/ui/Card";
 import ScannerControls from "./ScannerControls";
 import ScannerStats from "./ScannerStats";
 import ScannerEmptyState from "./ScannerEmptyState";
@@ -75,14 +75,14 @@ export default function ScannerPage(): React.ReactElement {
 
   return (
     <div className="space-y-6">
-      <GlassBreadcrumb
+      <Breadcrumb
         items={[
           { label: "Admin", href: "/admin/dashboard" },
           { label: "Attendance Scanner" },
         ]}
       />
 
-      <GlassPageHeader
+      <PageHeader
         title="Attendance Scanner"
         description="Find irregular absences and attendance patterns."
       />
@@ -103,15 +103,15 @@ export default function ScannerPage(): React.ReactElement {
       )}
 
       {!loading && hasRun && results.length === 0 && (
-        <GlassCard className="flex flex-col items-center justify-center py-16 text-center bg-card border-border/80">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-500/10 text-emerald-600 mb-3 border border-emerald-500/20">
+        <Card className="flex flex-col items-center justify-center py-16 text-center bg-card border-border/80">
+          <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-success/10 text-success mb-3 border border-success/20">
             <CheckCircle2 size={24} />
           </div>
           <h4 className="text-sm font-semibold text-foreground">No Anomalies Found</h4>
           <p className="text-xs text-muted-foreground max-w-sm mt-1">
             All student attendance patterns are within normal thresholds.
           </p>
-        </GlassCard>
+        </Card>
       )}
 
       {!loading && hasRun && results.length > 0 && (
@@ -133,13 +133,13 @@ export default function ScannerPage(): React.ReactElement {
               ))}
             </div>
           ) : (
-            <GlassCard className="flex flex-col items-center justify-center py-12 text-center bg-card">
+            <Card className="flex flex-col items-center justify-center py-12 text-center bg-card">
               <SearchX size={22} className="text-muted-foreground mb-2" />
               <p className="text-xs font-medium text-foreground">No matching students</p>
               <p className="text-xs text-muted-foreground mt-0.5">
                 Try a different search term.
               </p>
-            </GlassCard>
+            </Card>
           )}
         </div>
       )}

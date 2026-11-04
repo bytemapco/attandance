@@ -27,14 +27,14 @@ export default function PasswordRequirementsChecklist({
 
   return (
     <div className="p-3 rounded-lg bg-secondary/50 border border-border space-y-1.5">
-      <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+      <p className="text-xs font-semibold text-muted-foreground">
         Security Requirements
       </p>
       <div className="grid grid-cols-1 gap-1">
         {rules.map((rule) => (
           <div key={rule.label} className="flex items-center gap-1.5 text-xs">
             {rule.valid ? (
-              <Check size={13} className="text-emerald-500 shrink-0" />
+              <Check size={13} className="text-success shrink-0" />
             ) : (
               <X size={13} className="text-muted-foreground/50 shrink-0" />
             )}

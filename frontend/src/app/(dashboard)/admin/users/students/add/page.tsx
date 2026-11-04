@@ -4,14 +4,14 @@ import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { User, GraduationCap, PlusCircle, X } from "lucide-react";
+import { User, GraduationCap, PlusCircle, X, Lock } from "lucide-react";
 import toast from "react-hot-toast";
 import api, { getApiErrorMessage, applyValidationErrorsToForm } from "@/lib/api";
-import GlassBreadcrumb from "@/components/ui/GlassBreadcrumb";
-import GlassPageHeader from "@/components/ui/GlassPageHeader";
-import GlassCard from "@/components/ui/GlassCard";
-import GlassInput from "@/components/ui/GlassInput";
-import GlassButton from "@/components/ui/GlassButton";
+import Breadcrumb from "@/components/ui/Breadcrumb";
+import PageHeader from "@/components/ui/PageHeader";
+import Card from "@/components/ui/Card";
+import Input from "@/components/ui/Input";
+import Button from "@/components/ui/Button";
 import StudentFormFields from "./StudentFormFields";
 import { studentFormSchema, StudentFormData } from "@/lib/validations/student";
 import type { DepartmentResponse, StudentResponse } from "@/types";
@@ -95,20 +95,20 @@ export default function AddStudentPage(): React.ReactElement {
   ];
 
   return (
-    <div className="animate-fade-in-up">
-      <GlassBreadcrumb
+    <div>
+      <Breadcrumb
         items={[
           { label: "Admin", href: "/admin/dashboard" },
           { label: "Students", href: "/admin/users/students" },
           { label: "Add New" },
         ]}
       />
-      <GlassPageHeader title="Add Student" description="Create a new student account and profile" />
+      <PageHeader title="Add Student" description="Create a new student account and profile" />
 
       <form noValidate onSubmit={handleSubmit(onSubmit)} className="max-w-4xl space-y-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-1 space-y-6">
-            <GlassCard className="!p-0 overflow-hidden">
+            <Card className="!p-0 overflow-hidden">
               <div className="p-5 border-b border-border bg-muted/40">
                 <h3 className="text-base font-semibold text-foreground flex items-center gap-2">
                   <User size={18} className="text-primary" />
@@ -117,28 +117,29 @@ export default function AddStudentPage(): React.ReactElement {
                 <p className="text-xs text-muted-foreground mt-0.5">Core system credentials.</p>
               </div>
               <div className="p-5 space-y-4">
-                <GlassInput
+                <Input
                   label="Email Address"
                   type="email"
                   placeholder="student@university.edu"
                   {...register("email")}
                   error={errors.email?.message}
                 />
-                <GlassInput
+                <Input
                   label="Enrollment Number"
                   placeholder="e.g. EN2024001"
                   {...register("enrollment_number")}
                   error={errors.enrollment_number?.message}
                 />
-                <div className="p-3.5 rounded-xl bg-[#eaf2f6] border border-[#c5dce8] text-xs text-[#306b8a] leading-relaxed">
-                  🔒 A secure temporary password will be automatically generated and emailed to this student. They will be prompted to choose a new password upon first login.
+                <div className="flex items-start gap-2.5 rounded-lg border border-info-border bg-info-soft p-3.5 text-sm text-info">
+                  <Lock size={14} className="mt-0.5 shrink-0" aria-hidden />
+                  <span>A temporary password is generated and emailed to this student. They choose a new one on first sign-in.</span>
                 </div>
               </div>
-            </GlassCard>
+            </Card>
           </div>
 
           <div className="lg:col-span-2">
-            <GlassCard className="!p-0 h-full">
+            <Card className="!p-0 h-full">
               <div className="p-5 border-b border-border bg-muted/40 rounded-t-[inherit]">
                 <h3 className="text-base font-semibold text-foreground flex items-center gap-2">
                   <GraduationCap size={18} className="text-primary" />
@@ -153,17 +154,17 @@ export default function AddStudentPage(): React.ReactElement {
                 deptOptions={deptOptions}
                 departmentId={departmentId}
               />
-            </GlassCard>
+            </Card>
           </div>
         </div>
 
         <div className="flex justify-end gap-4 pt-4 pb-12">
-          <GlassButton variant="ghost" type="button" onClick={() => router.back()} icon={<X size={16} />}>
+          <Button variant="ghost" type="button" onClick={() => router.back()} icon={<X size={16} />}>
             Cancel
-          </GlassButton>
-          <GlassButton variant="primary" type="submit" loading={loading} icon={<PlusCircle size={16} />}>
+          </Button>
+          <Button variant="primary" type="submit" loading={loading} icon={<PlusCircle size={16} />}>
             Create Student
-          </GlassButton>
+          </Button>
         </div>
       </form>
     </div>

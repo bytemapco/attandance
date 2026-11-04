@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { AlertCircle, CheckCircle2 } from "lucide-react";
-import GlassButton from "@/components/ui/GlassButton";
+import Button from "@/components/ui/Button";
 
 interface ResetPasswordStatusCardProps {
   status: "invalid" | "completed";
@@ -16,8 +16,8 @@ export default function ResetPasswordStatusCard({
 }: ResetPasswordStatusCardProps): React.ReactElement {
   if (status === "invalid") {
     return (
-      <div className="rounded-2xl border border-border bg-card p-7 text-center space-y-5 shadow-sm">
-        <div className="inline-flex p-3 rounded-full bg-red-500/10 border border-red-500/20 text-red-500">
+      <div className="rounded-lg border border-border bg-card p-7 text-center space-y-5">
+        <div className="inline-flex p-3 rounded-full bg-destructive/10 border border-destructive/20 text-destructive">
           <AlertCircle size={32} />
         </div>
         <div>
@@ -27,15 +27,15 @@ export default function ResetPasswordStatusCard({
           </p>
         </div>
         <Link href="/forgot-password" className="inline-block">
-          <GlassButton variant="secondary" size="sm">Request New Link</GlassButton>
+          <Button variant="secondary" size="sm">Request New Link</Button>
         </Link>
       </div>
     );
   }
 
   return (
-    <div className="rounded-2xl border border-border bg-card p-7 text-center space-y-5 shadow-sm">
-      <div className="inline-flex p-3 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-500">
+    <div className="rounded-lg border border-border bg-card p-7 text-center space-y-5">
+      <div className="inline-flex p-3 rounded-full bg-success/10 border border-success/20 text-success">
         <CheckCircle2 size={32} />
       </div>
       <div>
@@ -45,7 +45,7 @@ export default function ResetPasswordStatusCard({
         </p>
       </div>
       <Link href="/login" className="inline-block">
-        <GlassButton variant="primary" size="sm">Go to Login</GlassButton>
+        <Button variant="primary" size="sm">Go to Login</Button>
       </Link>
     </div>
   );

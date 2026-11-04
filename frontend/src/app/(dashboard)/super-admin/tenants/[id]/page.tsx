@@ -7,7 +7,7 @@ import toast from "react-hot-toast";
 
 import { superAdminService } from "@/services/superAdminService";
 import { getApiErrorMessage } from "@/lib/api";
-import GlassBreadcrumb from "@/components/ui/GlassBreadcrumb";
+import Breadcrumb from "@/components/ui/Breadcrumb";
 import { ContentSkeleton } from "@/components/ui/Skeleton";
 import TenantHeaderBanner from "@/components/super-admin/TenantHeaderBanner";
 import TenantOverviewTab from "@/components/super-admin/TenantOverviewTab";
@@ -88,8 +88,8 @@ export default function TenantDetailPage(): React.ReactElement {
   }
 
   return (
-    <div className="space-y-6 max-w-6xl animate-fade-in-up">
-      <GlassBreadcrumb
+    <div className="space-y-6 max-w-6xl">
+      <Breadcrumb
         items={[
           { label: "Dashboard", href: "/super-admin/dashboard" },
           { label: "Institutions", href: "/super-admin/tenants" },
@@ -112,7 +112,7 @@ export default function TenantDetailPage(): React.ReactElement {
           onClick={() => setActiveTab("overview")}
           className={`px-4 py-2 text-xs font-semibold rounded-lg transition-colors flex items-center gap-2 cursor-pointer ${
             activeTab === "overview"
-              ? "bg-secondary text-foreground shadow-2xs font-bold"
+              ? "bg-secondary text-foreground font-semibold"
               : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
           }`}
         >
@@ -124,7 +124,7 @@ export default function TenantDetailPage(): React.ReactElement {
           onClick={() => setActiveTab("config")}
           className={`px-4 py-2 text-xs font-semibold rounded-lg transition-colors flex items-center gap-2 cursor-pointer ${
             activeTab === "config"
-              ? "bg-secondary text-foreground shadow-2xs font-bold"
+              ? "bg-secondary text-foreground font-semibold"
               : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
           }`}
         >
@@ -136,7 +136,7 @@ export default function TenantDetailPage(): React.ReactElement {
           onClick={() => setActiveTab("admins")}
           className={`px-4 py-2 text-xs font-semibold rounded-lg transition-colors flex items-center gap-2 cursor-pointer ${
             activeTab === "admins"
-              ? "bg-secondary text-foreground shadow-2xs font-bold"
+              ? "bg-secondary text-foreground font-semibold"
               : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
           }`}
         >

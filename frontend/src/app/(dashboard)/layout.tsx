@@ -5,7 +5,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { useAuthStore } from "@/store/authStore";
 import Sidebar from "@/components/navigation/Sidebar";
 import Header from "@/components/navigation/Header";
-import GlassLoader from "@/components/ui/GlassLoader";
+import PageSkeleton from "@/components/ui/PageSkeleton";
 import { usePlatformWebSocket } from "@/hooks/usePlatformWebSocket";
 import { cn } from "@/lib/utils";
 
@@ -58,7 +58,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   if (!isHydrated || !isAuthenticated) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
-        <GlassLoader text="Authenticating..." />
+        <PageSkeleton text="Authenticating..." />
       </div>
     );
   }

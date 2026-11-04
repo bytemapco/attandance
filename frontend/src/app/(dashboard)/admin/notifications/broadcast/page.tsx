@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import api, { getApiErrorMessage } from "@/lib/api";
 import toast from "react-hot-toast";
-import GlassBreadcrumb from "@/components/ui/GlassBreadcrumb";
-import GlassPageHeader from "@/components/ui/GlassPageHeader";
+import Breadcrumb from "@/components/ui/Breadcrumb";
+import PageHeader from "@/components/ui/PageHeader";
 import CampusBroadcastForm from "@/components/admin/CampusBroadcastForm";
 import CampusBroadcastPreview from "@/components/admin/CampusBroadcastPreview";
 import type { NotificationBroadcastCreate } from "@/types/notification";
@@ -54,7 +54,7 @@ export default function BroadcastNotificationPage(): React.JSX.Element {
 
   return (
     <div className="space-y-6 pb-12 max-w-6xl mx-auto">
-      <GlassBreadcrumb
+      <Breadcrumb
         items={[
           { label: "Admin", href: "/admin/dashboard" },
           { label: "Notifications", href: "/admin/notifications" },
@@ -63,7 +63,7 @@ export default function BroadcastNotificationPage(): React.JSX.Element {
       />
 
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-border pb-4">
-        <GlassPageHeader
+        <PageHeader
           title="Send Announcement"
         />
         <button

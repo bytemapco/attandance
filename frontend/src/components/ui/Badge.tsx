@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 
 export type BadgeVariant = "success" | "warning" | "danger" | "info" | "neutral";
 
-export interface GlassBadgeProps {
+export interface BadgeProps {
   variant: BadgeVariant;
   children: React.ReactNode;
   className?: string;
@@ -13,23 +13,23 @@ export interface GlassBadgeProps {
 }
 
 const badgeVariantClasses: Record<BadgeVariant, string> = {
-  success: "bg-[#e8f3ed] text-[#247653] border-[#c6e2d3]",
-  warning: "bg-[#fbf1df] text-[#8a5b12] border-[#f2deba]",
-  danger: "bg-[#f9eaea] text-[#b54242] border-[#f0c9c9]",
-  info: "bg-[#eaf2f6] text-[#306b8a] border-[#c5dce8]",
-  neutral: "bg-[#eeece7] text-[#526f78] border-[#e3e1dc]",
+  success: "bg-success-soft text-success border-success-border",
+  warning: "bg-warning-soft text-warning border-warning-border",
+  danger: "bg-destructive-soft text-destructive border-destructive-border",
+  info: "bg-info-soft text-info border-info-border",
+  neutral: "bg-secondary text-muted-foreground border-border",
 };
 
-export default function GlassBadge({
+export default function Badge({
   variant,
   children,
   className = "",
   icon,
-}: GlassBadgeProps): React.ReactElement {
+}: BadgeProps): React.ReactElement {
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-semibold tracking-wide transition-colors select-none",
+        "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors select-none",
         badgeVariantClasses[variant] || badgeVariantClasses.neutral,
         className
       )}

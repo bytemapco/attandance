@@ -27,37 +27,37 @@ interface NotificationFeedItemProps {
 const CATEGORY_MAP: Record<NotificationCategory, { icon: React.ReactNode; badgeClass: string; label: string }> = {
   attendance: {
     icon: <CalendarCheck size={16} />,
-    badgeClass: "bg-[#e8f3ed] text-[#247653] border-[#247653]/30",
+    badgeClass: "bg-success-soft text-success border-success/30",
     label: "Attendance",
   },
   leave: {
     icon: <FileText size={16} />,
-    badgeClass: "bg-[#fbf1df] text-[#8a5b12] border-[#8a5b12]/30",
+    badgeClass: "bg-warning-soft text-warning border-warning/30",
     label: "Leave",
   },
   device: {
     icon: <Smartphone size={16} />,
-    badgeClass: "bg-[#eaf2f6] text-[#306b8a] border-[#306b8a]/30",
+    badgeClass: "bg-info-soft text-info border-info/30",
     label: "Hardware",
   },
   security: {
     icon: <ShieldAlert size={16} />,
-    badgeClass: "bg-[#f9eaea] text-[#b54242] border-[#b54242]/30",
+    badgeClass: "bg-destructive-soft text-destructive border-destructive/30",
     label: "Security",
   },
   maintenance: {
     icon: <Wrench size={16} />,
-    badgeClass: "bg-[#fbf1df] text-[#8a5b12] border-[#8a5b12]/30",
+    badgeClass: "bg-warning-soft text-warning border-warning/30",
     label: "Maintenance",
   },
   update: {
     icon: <Sparkles size={16} />,
-    badgeClass: "bg-[#eeece7] text-[#28363b] border-[#e3e1dc]",
+    badgeClass: "bg-secondary text-primary border-border",
     label: "Update",
   },
   system: {
     icon: <Radio size={16} />,
-    badgeClass: "bg-[#eeece7] text-[#526f78] border-[#e3e1dc]",
+    badgeClass: "bg-secondary text-muted-foreground border-border",
     label: "System",
   },
 };
@@ -92,12 +92,12 @@ export function NotificationFeedItem({
 
   return (
     <div
-      className={`group relative p-4 rounded-xl border transition-all duration-150 ${
+      className={`group relative p-4 rounded-lg border transition-all duration-150 ${
         isSelected
-          ? "bg-[#eeece7]/40 border-[#28363b]/40 ring-1 ring-[#28363b]/20"
+          ? "bg-secondary/40 border-primary/40 ring-1 ring-primary/20"
           : isUnread
-          ? "bg-card border-[#e3e1dc] shadow-xs hover:border-[#28363b]/30"
-          : "bg-card/60 border-[#e3e1dc]/70 opacity-85 hover:opacity-100 hover:bg-card hover:border-[#e3e1dc]"
+          ? "bg-card border-border hover:border-primary/30"
+          : "bg-card/60 border-border/70 opacity-85 hover:opacity-100 hover:bg-card hover:border-border"
       }`}
     >
       <div className="flex items-start gap-3.5">
@@ -107,7 +107,7 @@ export function NotificationFeedItem({
               type="checkbox"
               checked={isSelected}
               onChange={() => onToggleSelect(notification.id)}
-              className="h-4 w-4 rounded border-[#e3e1dc] text-[#28363b] focus:ring-[#28363b] cursor-pointer accent-[#28363b]"
+              className="h-4 w-4 rounded-sm border-border text-primary focus:ring-primary cursor-pointer accent-primary"
               aria-label={`Select ${notification.title}`}
             />
           </div>
@@ -122,28 +122,28 @@ export function NotificationFeedItem({
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2 min-w-0">
-              {isUnread && <span className="h-2 w-2 rounded-full bg-[#c98260] shrink-0" />}
+              {isUnread && <span className="h-2 w-2 rounded-full bg-accent shrink-0" />}
               <h3
                 className={`text-sm tracking-tight truncate ${
-                  isUnread ? "font-semibold text-[#202b30]" : "font-medium text-[#202b30]/85"
+                  isUnread ? "font-semibold text-foreground" : "font-medium text-foreground/85"
                 }`}
               >
                 {notification.title}
               </h3>
-              <span className="text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded-md bg-[#eeece7] border border-[#e3e1dc] text-[#526f78] shrink-0">
+              <span className="text-xs font-semibold px-1.5 py-0.5 rounded-md bg-secondary border border-border text-muted-foreground shrink-0">
                 {categoryConfig.label}
               </span>
             </div>
 
             <time
               dateTime={notification.created_at}
-              className="font-mono text-xs tabular-nums text-[#718087] shrink-0"
+              className="font-mono text-xs tabular-nums text-muted-foreground shrink-0"
             >
               {formatRelativeTime(notification.created_at)}
             </time>
           </div>
 
-          <p className="text-xs sm:text-sm mt-1.5 leading-relaxed text-[#526f78] break-words whitespace-pre-line font-normal">
+          <p className="text-xs sm:text-sm mt-1.5 leading-relaxed text-muted-foreground break-words whitespace-pre-line font-normal">
             {notification.message}
           </p>
 
@@ -154,7 +154,7 @@ export function NotificationFeedItem({
                 onClick={() => {
                   if (isUnread) void onMarkAsRead(notification.id);
                 }}
-                className="inline-flex items-center gap-1 text-xs font-semibold text-[#28363b] hover:text-[#c98260] transition-colors"
+                className="inline-flex items-center gap-1 text-xs font-semibold text-primary hover:text-accent-strong transition-colors"
               >
                 <span>View details</span>
                 <ArrowUpRight size={13} />
@@ -168,7 +168,7 @@ export function NotificationFeedItem({
             <button
               type="button"
               onClick={() => void onMarkAsRead(notification.id)}
-              className="p-1.5 rounded-lg text-[#718087] hover:text-[#247653] hover:bg-[#e8f3ed] transition-colors cursor-pointer"
+              className="p-1.5 rounded-lg text-muted-foreground hover:text-success hover:bg-success-soft transition-colors cursor-pointer"
               title="Mark as read"
               aria-label="Mark as read"
             >
@@ -180,7 +180,7 @@ export function NotificationFeedItem({
             <button
               type="button"
               onClick={() => void onDelete(notification.id)}
-              className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg text-[#718087] hover:text-[#b54242] hover:bg-[#f9eaea] transition-all cursor-pointer"
+              className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive-soft transition-all cursor-pointer"
               title="Delete notification"
               aria-label="Delete notification"
             >

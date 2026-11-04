@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import GlassButton from "@/components/ui/GlassButton";
+import Button from "@/components/ui/Button";
 
 export interface SectionStatus {
   label: string;
@@ -20,8 +20,8 @@ interface SettingsSectionProps {
 }
 
 const TONE: Record<SectionStatus["tone"], string> = {
-  success: "text-[#247653]",
-  neutral: "text-[#526f78]",
+  success: "text-success",
+  neutral: "text-muted-foreground",
 };
 
 /** One settings group. Save and Discard appear only when the section has unsaved changes. */
@@ -36,22 +36,22 @@ export default function SettingsSection({
   children,
 }: SettingsSectionProps): React.ReactElement {
   return (
-    <section id={id} aria-labelledby={`${id}-title`} className="scroll-mt-6 rounded-xl border border-[#d9d5cd] bg-white">
-      <header className="flex items-center justify-between gap-4 border-b border-[#e6e2da] px-5 py-3.5">
-        <h2 id={`${id}-title`} className="text-sm font-semibold text-[#202b30]">{title}</h2>
+    <section id={id} aria-labelledby={`${id}-title`} className="scroll-mt-6 rounded-lg border border-border-strong bg-card">
+      <header className="flex items-center justify-between gap-4 border-b border-border px-5 py-3.5">
+        <h2 id={`${id}-title`} className="text-sm font-semibold text-foreground">{title}</h2>
         {status && <span className={`text-xs font-medium ${TONE[status.tone]}`}>{status.label}</span>}
       </header>
 
       <div className="p-5">{children}</div>
 
       {dirty && (
-        <footer className="flex justify-end gap-2 border-t border-[#e6e2da] px-5 py-3">
-          <GlassButton variant="ghost" size="sm" disabled={saving} onClick={onDiscard}>
+        <footer className="flex justify-end gap-2 border-t border-border px-5 py-3">
+          <Button variant="ghost" size="sm" disabled={saving} onClick={onDiscard}>
             Discard
-          </GlassButton>
-          <GlassButton variant="primary" size="sm" loading={saving} onClick={onSave}>
+          </Button>
+          <Button variant="primary" size="sm" loading={saving} onClick={onSave}>
             Save
-          </GlassButton>
+          </Button>
         </footer>
       )}
     </section>

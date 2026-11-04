@@ -3,8 +3,8 @@
 import React from "react";
 import { Eye, AlertTriangle, AlertCircle, Info, Building2 } from "lucide-react";
 import type { SuperAdminAuditLog } from "@/types/tenant";
-import GlassBadge from "@/components/ui/GlassBadge";
-import GlassEmptyState from "@/components/ui/GlassEmptyState";
+import Badge from "@/components/ui/Badge";
+import EmptyState from "@/components/ui/EmptyState";
 import { Skeleton } from "@/components/ui/Skeleton";
 
 function formatEventType(type: string): string {
@@ -61,7 +61,7 @@ export default function AuditLogTable({
 }: AuditLogTableProps): React.ReactElement {
   if (loading) {
     return (
-      <div className="space-y-4 rounded-xl border border-border bg-card p-4" role="status" aria-label="Loading audit log" aria-busy="true">
+      <div className="space-y-4 rounded-lg border border-border bg-card p-4" role="status" aria-label="Loading audit log" aria-busy="true">
         {Array.from({ length: 6 }).map((_, i) => (
           <div key={i} className="flex items-center gap-3 border-b border-border pb-3 last:border-0 last:pb-0">
             <Skeleton className="size-8 shrink-0 rounded-full" />
@@ -78,7 +78,7 @@ export default function AuditLogTable({
 
   if (logs.length === 0) {
     return (
-      <GlassEmptyState
+      <EmptyState
         title="No audit events found"
         message="No security actions or system audit logs match your filter criteria."
       />
@@ -90,31 +90,31 @@ export default function AuditLogTable({
       case "CRITICAL":
       case "ERROR":
         return (
-          <GlassBadge variant="danger" className="gap-1 text-[11px]">
+          <Badge variant="danger" className="gap-1 text-xs">
             <AlertCircle size={11} /> {sev}
-          </GlassBadge>
+          </Badge>
         );
       case "WARNING":
         return (
-          <GlassBadge variant="warning" className="gap-1 text-[11px]">
+          <Badge variant="warning" className="gap-1 text-xs">
             <AlertTriangle size={11} /> {sev}
-          </GlassBadge>
+          </Badge>
         );
       case "INFO":
       default:
         return (
-          <GlassBadge variant="info" className="gap-1 text-[11px]">
+          <Badge variant="info" className="gap-1 text-xs">
             <Info size={11} /> {sev}
-          </GlassBadge>
+          </Badge>
         );
     }
   };
 
   return (
-    <div className="bg-card border border-border rounded-xl overflow-hidden shadow-2xs">
+    <div className="bg-card border border-border rounded-lg overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full text-left text-xs">
-          <thead className="bg-muted/50 border-b border-border text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
+          <thead className="bg-muted/50 border-b border-border text-xs font-semibold text-muted-foreground">
             <tr>
               <th className="px-4 py-3">Timestamp</th>
               <th className="px-4 py-3">Severity</th>
@@ -129,7 +129,7 @@ export default function AuditLogTable({
               const actorInfo = formatActor(log.actor);
               return (
                 <tr key={log.id} className="hover:bg-muted/30 transition-colors">
-                  <td className="px-4 py-3.5 whitespace-nowrap text-muted-foreground text-[11px] font-mono">
+                  <td className="px-4 py-3.5 whitespace-nowrap text-muted-foreground text-xs font-mono">
                     {new Date(log.timestamp).toLocaleString(undefined, {
                       month: "short",
                       day: "numeric",
@@ -148,8 +148,8 @@ export default function AuditLogTable({
                       {formatEventType(log.event_type)}
                     </div>
                     {log.tenant_name && log.tenant_name !== "Platform Global" && (
-                      <div className="flex items-center gap-1 text-[11px] text-muted-foreground mt-0.5">
-                        <Building2 size={11} className="text-[#C98260] shrink-0" />
+                      <div className="flex items-center gap-1 text-xs text-muted-foreground mt-0.5">
+                        <Building2 size={11} className="text-accent-strong shrink-0" />
                         <span className="truncate max-w-[200px]">{log.tenant_name}</span>
                       </div>
                     )}

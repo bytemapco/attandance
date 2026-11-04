@@ -10,7 +10,7 @@ export interface ComboboxOption {
   label: string;
 }
 
-export interface GlassComboboxProps {
+export interface ComboboxProps {
   label?: string;
   options: ComboboxOption[];
   value: string;
@@ -23,7 +23,7 @@ export interface GlassComboboxProps {
   className?: string;
 }
 
-export default function GlassCombobox({
+export default function Combobox({
   label,
   options,
   value,
@@ -34,7 +34,7 @@ export default function GlassCombobox({
   id,
   disabled = false,
   className = "",
-}: GlassComboboxProps): React.ReactElement {
+}: ComboboxProps): React.ReactElement {
   const generatedId = useId();
   const comboboxId = id || generatedId;
   const [isOpen, setIsOpen] = useState(false);
@@ -109,7 +109,7 @@ export default function GlassCombobox({
   return (
     <div className="flex flex-col gap-1.5 w-full relative" ref={containerRef} onKeyDown={handleKeyDown}>
       {label && (
-        <label htmlFor={comboboxId} className="text-sm font-semibold text-[#202b30]">
+        <label htmlFor={comboboxId} className="text-sm font-semibold text-foreground">
           {label}
         </label>
       )}
@@ -137,20 +137,20 @@ export default function GlassCombobox({
           aria-haspopup="listbox"
           aria-expanded={isOpen}
           className={cn(
-            "flex h-9 w-full items-center justify-between rounded-md border border-[#e3e1dc] bg-card px-3 py-1 text-sm shadow-xs transition-colors text-left cursor-pointer",
-            "text-[#202b30] hover:border-[#c98260]/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#526f78]",
+            "flex h-9 w-full items-center justify-between rounded-md border border-border bg-card px-3 py-1 text-sm transition-colors text-left cursor-pointer",
+            "text-foreground hover:border-accent/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
             "disabled:cursor-not-allowed disabled:opacity-50",
-            error && "border-[#b54242] focus-visible:ring-[#b54242]",
+            error && "border-destructive focus-visible:ring-destructive",
             className
           )}
         >
-          <span className={cn("truncate", !selectedOption && "text-[#526f78]")}>
+          <span className={cn("truncate", !selectedOption && "text-muted-foreground")}>
             {selectedOption ? selectedOption.label : placeholder}
           </span>
           <ChevronDown
             size={16}
             className={cn(
-              "text-[#526f78] shrink-0 transition-transform duration-200 ml-2",
+              "text-muted-foreground shrink-0 transition-transform duration-200 ml-2",
               isOpen && "rotate-180"
             )}
           />
@@ -172,7 +172,7 @@ export default function GlassCombobox({
         )}
       </div>
 
-      {error && <p className="text-xs font-medium text-[#b54242] mt-0.5">{error}</p>}
+      {error && <p className="text-xs font-medium text-destructive mt-0.5">{error}</p>}
     </div>
   );
 }

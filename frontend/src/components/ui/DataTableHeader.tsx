@@ -11,21 +11,21 @@ export interface TableColumnHeader<T> {
   sortable?: boolean;
 }
 
-interface GlassTableHeaderProps<T> {
+interface DataTableHeaderProps<T> {
   columns: TableColumnHeader<T>[];
   activeSortKey: string | null;
   isAsc: boolean;
   onSort: (key: string) => void;
 }
 
-export default function GlassTableHeader<T>({
+export default function DataTableHeader<T>({
   columns,
   activeSortKey,
   isAsc,
   onSort,
-}: GlassTableHeaderProps<T>): React.ReactElement {
+}: DataTableHeaderProps<T>): React.ReactElement {
   return (
-    <thead className="border-b border-[#e3e1dc] bg-[#eeece7]/80">
+    <thead className="border-b border-border bg-surface">
       <tr>
         {columns.map((col) => {
           const isActive = activeSortKey === col.key;
@@ -34,9 +34,9 @@ export default function GlassTableHeader<T>({
               key={col.key}
               onClick={col.sortable ? () => onSort(col.key) : undefined}
               className={cn(
-                "h-10 px-4 text-xs font-semibold tracking-wide select-none whitespace-nowrap",
-                isActive ? "text-[#28363b] font-bold" : "text-[#526f78]",
-                col.sortable && "cursor-pointer hover:text-[#28363b]"
+                "h-10 px-4 text-xs font-medium select-none whitespace-nowrap",
+                isActive ? "text-primary" : "text-muted-foreground",
+                col.sortable && "cursor-pointer hover:text-primary"
               )}
             >
               <span className="inline-flex items-center gap-1.5">
@@ -44,9 +44,9 @@ export default function GlassTableHeader<T>({
                 {col.sortable && (
                   isActive ? (
                     isAsc ? (
-                      <ArrowUp size={12} className="text-[#c98260]" />
+                      <ArrowUp size={12} className="text-accent-strong" />
                     ) : (
-                      <ArrowDown size={12} className="text-[#c98260]" />
+                      <ArrowDown size={12} className="text-accent-strong" />
                     )
                   ) : (
                     <ArrowUpDown size={12} className="opacity-40" />

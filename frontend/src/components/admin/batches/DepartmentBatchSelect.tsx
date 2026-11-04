@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import GlassSelect from "@/components/ui/GlassSelect";
+import SelectField from "@/components/ui/SelectField";
 import { useDepartmentBatches } from "./useDepartmentBatches";
 
 interface DepartmentBatchSelectProps {
@@ -29,7 +29,7 @@ export default function DepartmentBatchSelect({
         : "Select batch";
 
   return (
-    <GlassSelect
+    <SelectField
       label={label}
       placeholder={placeholder}
       value={value}

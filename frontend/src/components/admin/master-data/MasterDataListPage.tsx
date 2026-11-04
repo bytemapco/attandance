@@ -6,13 +6,13 @@ import { Pencil, Plus, Trash2, Upload } from "lucide-react";
 import { useMasterDataList } from "@/hooks/useMasterDataList";
 import { entityRoute, type MasterDataEntity, type MasterDataRecord } from "@/lib/masterData/entities";
 import BulkImportModal from "@/components/admin/BulkImportModal";
-import EnterprisePagination from "@/components/ui/EnterprisePagination";
-import GlassButton from "@/components/ui/GlassButton";
-import GlassConfirmDialog from "@/components/ui/GlassConfirmDialog";
-import GlassLoader from "@/components/ui/GlassLoader";
-import GlassPageHeader from "@/components/ui/GlassPageHeader";
-import GlassSearch from "@/components/ui/GlassSearch";
-import GlassTable, { type TableColumn } from "@/components/ui/GlassTable";
+import Pagination from "@/components/ui/Pagination";
+import Button from "@/components/ui/Button";
+import ConfirmDialog from "@/components/ui/ConfirmDialog";
+import PageSkeleton from "@/components/ui/PageSkeleton";
+import PageHeader from "@/components/ui/PageHeader";
+import SearchInput from "@/components/ui/SearchInput";
+import DataTable, { type TableColumn } from "@/components/ui/DataTable";
 
 type Row = MasterDataRecord & Record<string, unknown>;
 
@@ -37,7 +37,7 @@ export default function MasterDataListPage({ entity }: MasterDataListPageProps):
           <button
             type="button"
             onClick={() => router.push(`${route}/${row.id}`)}
-            className="font-semibold text-[#202b30] hover:text-primary hover:underline text-left cursor-pointer"
+            className="font-semibold text-foreground hover:text-primary hover:underline text-left cursor-pointer"
           >
             {row.name}
           </button>
@@ -53,19 +53,19 @@ export default function MasterDataListPage({ entity }: MasterDataListPageProps):
       header: "Actions",
       render: (row) => (
         <div className="flex items-center gap-2">
-          <GlassButton
+          <Button
             variant="ghost"
             size="sm"
             onClick={() => router.push(`${route}/${row.id}/edit`)}
             icon={<Pencil size={13} />}
           >
             Edit
-          </GlassButton>
-          <GlassButton
+          </Button>
+          <Button
             variant="ghost"
             size="sm"
             onClick={() => list.askToDelete(String(row.id))}
-            className="text-muted-foreground hover:text-[#b54242] hover:bg-[#f9eaea]"
+            className="text-muted-foreground hover:text-destructive hover:bg-destructive-soft"
             icon={<Trash2 size={13} />}
           />
         </div>
@@ -73,36 +73,36 @@ export default function MasterDataListPage({ entity }: MasterDataListPageProps):
     },
   ];
 
-  if (list.loading) return <GlassLoader />;
+  if (list.loading) return <PageSkeleton />;
 
   return (
-    <div className="animate-fade-in-up space-y-4">
-      <GlassPageHeader
+    <div className="space-y-4">
+      <PageHeader
         title={entity.list.title}
         description={entity.list.description}
         actions={
           <div className="flex items-center gap-3">
-            <GlassButton variant="secondary" icon={<Upload size={16} />} onClick={() => setIsBulkImportOpen(true)}>
+            <Button variant="secondary" icon={<Upload size={16} />} onClick={() => setIsBulkImportOpen(true)}>
               Import CSV
-            </GlassButton>
-            <GlassButton variant="primary" icon={<Plus size={16} />} onClick={() => router.push(`${route}/create`)}>
+            </Button>
+            <Button variant="primary" icon={<Plus size={16} />} onClick={() => router.push(`${route}/create`)}>
               Add {entity.singular}
-            </GlassButton>
+            </Button>
           </div>
         }
       />
       <div>
-        <GlassSearch placeholder={`Search ${plural}...`} onSearch={list.search} />
+        <SearchInput placeholder={`Search ${plural}...`} onSearch={list.search} />
       </div>
       <div className="space-y-3">
-        <GlassTable
+        <DataTable
           columns={columns}
           data={list.rows as Row[]}
           error={list.error}
           onRetry={list.reload}
           emptyMessage={`No ${plural} found`}
         />
-        <EnterprisePagination
+        <Pagination
           currentPage={list.page}
           pageSize={list.pageSize}
           totalItems={list.totalItems}
@@ -110,7 +110,7 @@ export default function MasterDataListPage({ entity }: MasterDataListPageProps):
           onPageSizeChange={list.changePageSize}
         />
       </div>
-      <GlassConfirmDialog
+      <ConfirmDialog
         isOpen={!!list.deleteTargetId}
         title={`Delete ${entity.singular}`}
         message={`Are you sure you want to delete this ${noun}? This action cannot be undone.`}

@@ -10,25 +10,25 @@ export interface BreadcrumbItem {
   href?: string;
 }
 
-export interface GlassBreadcrumbProps {
+export interface BreadcrumbProps {
   items: BreadcrumbItem[];
   className?: string;
 }
 
-export default function GlassBreadcrumb({ items, className = "" }: GlassBreadcrumbProps): React.ReactElement {
+export default function Breadcrumb({ items, className = "" }: BreadcrumbProps): React.ReactElement {
   return (
-    <nav aria-label="Breadcrumb" className={cn("mb-4 flex items-center text-xs text-[#526f78]", className)}>
+    <nav aria-label="Breadcrumb" className={cn("mb-4 flex items-center text-xs text-muted-foreground", className)}>
       <ol className="flex items-center gap-1.5 flex-wrap">
         {items.map((item, i) => (
           <React.Fragment key={i}>
-            {i > 0 && <ChevronRight size={12} className="text-[#718087] shrink-0" />}
+            {i > 0 && <ChevronRight size={12} className="text-muted-foreground shrink-0" />}
             <li>
               {item.href ? (
-                <Link href={item.href} className="hover:text-[#28363b] font-medium transition-colors">
+                <Link href={item.href} className="hover:text-primary font-medium transition-colors">
                   {item.label}
                 </Link>
               ) : (
-                <span className="font-semibold text-[#202b30]">{item.label}</span>
+                <span className="font-semibold text-foreground">{item.label}</span>
               )}
             </li>
           </React.Fragment>

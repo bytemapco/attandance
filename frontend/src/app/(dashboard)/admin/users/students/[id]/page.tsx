@@ -8,8 +8,8 @@ import DetailCard from "@/components/admin/user-detail/DetailCard";
 import InfoRow from "@/components/admin/user-detail/InfoRow";
 import MetaChip from "@/components/admin/user-detail/MetaChip";
 import UserDetailView from "@/components/admin/user-detail/UserDetailView";
-import GlassBadge from "@/components/ui/GlassBadge";
-import GlassLoader from "@/components/ui/GlassLoader";
+import Badge from "@/components/ui/Badge";
+import PageSkeleton from "@/components/ui/PageSkeleton";
 import type { StudentResponse } from "@/types";
 
 const GENDER_LABELS: Record<string, string> = { M: "Male", F: "Female", O: "Other" };
@@ -28,12 +28,12 @@ function formatBirthDate(value: string | null | undefined): string {
 
 function StatusBadge({ active }: { active: boolean }): React.ReactElement {
   return (
-    <GlassBadge
+    <Badge
       variant={active ? "success" : "neutral"}
-      icon={<span className={`w-1.5 h-1.5 rounded-full ${active ? "bg-[#247653]" : "bg-muted-foreground"}`} />}
+      icon={<span className={`w-1.5 h-1.5 rounded-full ${active ? "bg-success" : "bg-muted-foreground"}`} />}
     >
       {active ? "Enrolled" : "Inactive"}
-    </GlassBadge>
+    </Badge>
   );
 }
 
@@ -41,7 +41,7 @@ export default function StudentDetailPage(): React.ReactElement {
   const { id } = useParams<{ id: string }>();
   const { account: student, loading } = useAccountDetail<StudentResponse>("students", id, "Failed to load student");
 
-  if (loading) return <GlassLoader text="Loading student details..." />;
+  if (loading) return <PageSkeleton text="Loading student details..." />;
   if (!student) return <div className="text-center py-20 text-muted-foreground">Student not found</div>;
 
   const fullName = fullNameOf(student);

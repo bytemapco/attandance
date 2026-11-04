@@ -12,12 +12,12 @@ export interface StatusView {
 
 /** The one place where a status gets its look, so a card and the summary strip always agree. */
 export const STATUS_VIEW: Record<ClassStatus, StatusView> = {
-  DONE: { label: "Done", card: "border-[#cfe5d8] bg-[#eef6f1]", tone: "text-[#1f5c42]" },
-  LIVE: { label: "Live", card: "border-[#247653] bg-[#e3f1e9]", tone: "text-[#1f5c42]" },
-  PENDING: { label: "Pending", card: "border-[#ecd39a] bg-[#fff6e5]", tone: "text-[#7a4f0c]" },
-  UPCOMING: { label: "Upcoming", card: "border-[#e6e2da] bg-white", tone: "text-[#526f78]" },
-  MISSED: { label: "Not taken", card: "border-[#efc4c4] bg-[#fbeeee]", tone: "text-[#a23838]" },
-  CANCELLED: { label: "Cancelled", card: "border-[#e6e2da] bg-[#f5f3ee]", tone: "text-[#6b7479]" },
+  DONE: { label: "Done", card: "border-success-border bg-success-soft", tone: "text-success" },
+  LIVE: { label: "Live", card: "border-success bg-success-soft", tone: "text-success" },
+  PENDING: { label: "Pending", card: "border-warning-border bg-warning-soft", tone: "text-warning" },
+  UPCOMING: { label: "Upcoming", card: "border-border bg-card", tone: "text-muted-foreground" },
+  MISSED: { label: "Not taken", card: "border-destructive-border bg-destructive-soft", tone: "text-destructive-hover" },
+  CANCELLED: { label: "Cancelled", card: "border-border bg-secondary", tone: "text-muted-foreground" },
 };
 
 /** A drawn mark for a status. Decorative: the label next to it carries the meaning. */
@@ -26,7 +26,7 @@ export function StatusMark({ status }: { status: ClassStatus }): React.ReactElem
     case "DONE":
       return <CheckCircle2 size={14} aria-hidden />;
     case "LIVE":
-      return <span aria-hidden className="mx-0.5 h-2.5 w-2.5 rounded-full bg-[#247653] motion-safe:animate-pulse" />;
+      return <span aria-hidden className="mx-0.5 h-2.5 w-2.5 rounded-full bg-success" />;
     case "PENDING":
       return <Clock size={14} aria-hidden />;
     case "MISSED":

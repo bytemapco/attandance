@@ -49,12 +49,12 @@ frontend/
 │   │   ├── app.css                  → Global styles
 │   │   └── layout.tsx               → Root layout
 │   │
-│   ├── components/                  # ✅ Reusable UI Components (Glass Design System)
+│   ├── components/                  # ✅ Reusable UI Components (Design System)
 │   │   ├── ui/
-│   │   │   ├── button.tsx           → GlassButton, variants
-│   │   │   ├── input.tsx            → GlassInput, textarea
-│   │   │   ├── card.tsx             → GlassCard
-│   │   │   ├── modal.tsx            → GlassModal
+│   │   │   ├── button.tsx           → Button, variants
+│   │   │   ├── input.tsx            → Input, textarea
+│   │   │   ├── card.tsx             → Card
+│   │   │   ├── modal.tsx            → ModalFrame
 │   │   │   ├── sheet.tsx            → Bottom sheet
 │   │   │   ├── table.tsx            → Data table with sorting
 │   │   │   ├── select.tsx           → Dropdown
@@ -220,20 +220,20 @@ export default function Page() {
 import React from "react";
 import { cn } from "@/lib/utils";
 
-interface GlassButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "primary" | "secondary" | "ghost";
   size?: "sm" | "md" | "lg";
   isLoading?: boolean;
 }
 
-export function GlassButton({
+export function Button({
   variant = "primary",
   size = "md",
   isLoading = false,
   children,
   className,
   ...props
-}: GlassButtonProps) {
+}: ButtonProps) {
   return (
     <button
       className={cn(
@@ -496,15 +496,14 @@ describe("useDebounce", () => {
 
 ---
 
-## 🎨 Glass Design System
+## 🎨 Design System
 
-The frontend uses the **Glass Design System** with:
+The frontend uses the **Design System** with:
 
 **Colors:**
-- Primary: `#F95721` (warm orange)
-- Dark Canvas: `#0F172A`
-- Surfaces: `#1E293B`
-- Text: `#F8FAFC` (light)
+- Tokens are defined once in `src/app/globals.css` and used as Tailwind classes (`bg-card`, `text-muted-foreground`, `border-border`)
+- Primary (Carbon): `#28363B`; accent (Copper): `#C98260`; background (Warm Ivory): `#F5F2ED`
+- Status colors come in pairs: `success`, `warning`, `destructive`, `info` with `-soft` and `-border` variants
 
 **Typography:**
 - Font: `Plus Jakarta Sans` (Google Fonts)
@@ -512,7 +511,7 @@ The frontend uses the **Glass Design System** with:
 - Body: `font-weight: 400-500` (w400/w500)
 
 **Components:**
-- Glass effect: `backdrop-blur` + `bg-white/10`
+- Flat surfaces: a 1px border, 8px radius, no blur or shadow (except floating layers)
 - Rounded: `rounded-lg` (8px)
 - Spacing: 8px grid (`px-2`, `py-1`, etc.)
 
@@ -540,16 +539,16 @@ npm test -- --coverage
 
 ```typescript
 import { render, screen, fireEvent } from "@testing-library/react";
-import { GlassButton } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 
-describe("GlassButton", () => {
+describe("Button", () => {
   it("should render button with text", () => {
-    render(<GlassButton>Click me</GlassButton>);
+    render(<Button>Click me</Button>);
     expect(screen.getByRole("button", { name: /click me/i })).toBeInTheDocument();
   });
 
   it("should be disabled while loading", () => {
-    render(<GlassButton isLoading>Loading</GlassButton>);
+    render(<Button isLoading>Loading</Button>);
     expect(screen.getByRole("button")).toBeDisabled();
   });
 });

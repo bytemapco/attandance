@@ -14,7 +14,7 @@ export default function DayPicker({ value, onChange }: DayPickerProps): React.Re
   }
   return (
     <fieldset className="space-y-1.5">
-      <legend className="text-xs font-semibold text-[#202b30] sm:text-sm">Days</legend>
+      <legend className="text-xs font-semibold text-foreground sm:text-sm">Days</legend>
       <div className="flex flex-wrap gap-1.5">
         {WEEKDAYS.map((label, index) => {
           const day = index + 1;
@@ -25,8 +25,8 @@ export default function DayPicker({ value, onChange }: DayPickerProps): React.Re
               type="button"
               aria-pressed={on}
               onClick={() => toggle(day)}
-              className={`h-9 min-w-12 rounded-lg border px-3 text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8a4d30] ${
-                on ? "border-[#28363b] bg-[#28363b] text-white" : "border-[#d9d5cd] bg-white text-[#202b30] hover:bg-[#f5f3ee]"
+              className={`h-9 min-w-12 rounded-lg border px-3 text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-strong ${
+                on ? "border-primary bg-primary text-primary-foreground" : "border-border-strong bg-card text-foreground hover:bg-secondary"
               }`}
             >
               {label}

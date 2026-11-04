@@ -1,8 +1,8 @@
 import React from "react";
 import { UseFormRegister, Control, FieldErrors, Controller } from "react-hook-form";
-import GlassInput from "@/components/ui/GlassInput";
-import GlassSelect from "@/components/ui/GlassSelect";
-import GlassCard from "@/components/ui/GlassCard";
+import Input from "@/components/ui/Input";
+import SelectField from "@/components/ui/SelectField";
+import Card from "@/components/ui/Card";
 import { Briefcase } from "lucide-react";
 import type { TeacherFormData } from "@/lib/validations/teacher";
 
@@ -23,7 +23,7 @@ export default function TeacherFormProfile({
 }: TeacherFormProfileProps): React.ReactElement {
   return (
     <div className="space-y-6">
-      <GlassCard className="!p-0 overflow-hidden">
+      <Card className="!p-0 overflow-hidden">
         <div className="p-5 border-b border-border bg-muted/40">
           <h3 className="text-base font-semibold text-foreground flex items-center gap-2">
             <Briefcase size={18} className="text-primary" />
@@ -32,20 +32,20 @@ export default function TeacherFormProfile({
           <p className="text-xs text-muted-foreground mt-0.5">Faculty identity and contact records.</p>
         </div>
         <div className="p-5 grid grid-cols-1 sm:grid-cols-2 gap-5">
-          <GlassInput
+          <Input
             label="First Name"
             placeholder="e.g. Ravi"
             {...register("first_name")}
             error={errors.first_name?.message}
           />
-          <GlassInput
+          <Input
             label="Last Name"
             placeholder="e.g. Shankar"
             {...register("last_name")}
             error={errors.last_name?.message}
           />
           <div className="sm:col-span-2">
-            <GlassInput
+            <Input
               label="Phone (optional)"
               type="tel"
               placeholder="+91 98765 43210"
@@ -54,9 +54,9 @@ export default function TeacherFormProfile({
             />
           </div>
         </div>
-      </GlassCard>
+      </Card>
 
-      <GlassCard className="!p-0">
+      <Card className="!p-0">
         <div className="p-5 border-b border-border bg-muted/40 rounded-t-[inherit]">
           <h3 className="text-base font-semibold text-foreground flex items-center gap-2">
             <Briefcase size={18} className="text-primary" />
@@ -69,7 +69,7 @@ export default function TeacherFormProfile({
             control={control}
             name="department_id"
             render={({ field }) => (
-              <GlassSelect
+              <SelectField
                 label="Department"
                 options={deptOptions}
                 value={field.value}
@@ -82,7 +82,7 @@ export default function TeacherFormProfile({
             control={control}
             name="designation_id"
             render={({ field }) => (
-              <GlassSelect
+              <SelectField
                 label="Designation"
                 options={desigOptions}
                 value={field.value}
@@ -92,7 +92,7 @@ export default function TeacherFormProfile({
             )}
           />
         </div>
-      </GlassCard>
+      </Card>
     </div>
   );
 }

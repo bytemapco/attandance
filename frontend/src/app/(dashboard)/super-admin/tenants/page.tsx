@@ -3,9 +3,9 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Plus } from "lucide-react";
-import GlassPageHeader from "@/components/ui/GlassPageHeader";
-import GlassButton from "@/components/ui/GlassButton";
-import EnterprisePagination from "@/components/ui/EnterprisePagination";
+import PageHeader from "@/components/ui/PageHeader";
+import Button from "@/components/ui/Button";
+import Pagination from "@/components/ui/Pagination";
 import TenantFilterBar from "@/components/super-admin/TenantFilterBar";
 import TenantTable from "@/components/super-admin/TenantTable";
 import DeleteTenantModal from "@/components/super-admin/DeleteTenantModal";
@@ -78,13 +78,13 @@ export default function SuperAdminTenantsPage(): React.JSX.Element {
 
   return (
     <div>
-      <GlassPageHeader
+      <PageHeader
         title="Institutions"
         actions={
-          <GlassButton onClick={() => router.push("/super-admin/tenants/provision")} className="gap-2">
+          <Button onClick={() => router.push("/super-admin/tenants/provision")} className="gap-2">
             <Plus size={15} />
             <span>Add Institution</span>
-          </GlassButton>
+          </Button>
         }
       />
 
@@ -96,7 +96,7 @@ export default function SuperAdminTenantsPage(): React.JSX.Element {
         onReset={handleResetFilters}
       />
 
-      <div className="rounded-xl overflow-hidden border border-border">
+      <div className="rounded-lg overflow-hidden border border-border">
         <TenantTable
           tenants={tenants}
           loading={loading}
@@ -106,7 +106,7 @@ export default function SuperAdminTenantsPage(): React.JSX.Element {
           statusUpdatingId={updatingId}
         />
         {!loading && total > 0 && (
-          <EnterprisePagination
+          <Pagination
             totalItems={total}
             currentPage={page}
             pageSize={pageSize}

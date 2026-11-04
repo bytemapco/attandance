@@ -7,10 +7,10 @@ import toast from "react-hot-toast";
 import { getApiErrorMessage } from "@/lib/api";
 import { DEPARTMENTS } from "@/lib/masterData/entities";
 import { getRecord } from "@/services/masterData";
-import GlassBreadcrumb from "@/components/ui/GlassBreadcrumb";
-import GlassPageHeader from "@/components/ui/GlassPageHeader";
-import GlassButton from "@/components/ui/GlassButton";
-import GlassLoader from "@/components/ui/GlassLoader";
+import Breadcrumb from "@/components/ui/Breadcrumb";
+import PageHeader from "@/components/ui/PageHeader";
+import Button from "@/components/ui/Button";
+import PageSkeleton from "@/components/ui/PageSkeleton";
 import DepartmentBatchesPanel from "@/components/admin/batches/DepartmentBatchesPanel";
 import type { DepartmentResponse } from "@/types";
 
@@ -27,12 +27,12 @@ export default function DepartmentDetailPage(): React.ReactElement {
       .finally(() => setLoading(false));
   }, [id]);
 
-  if (loading) return <GlassLoader />;
-  if (!department) return <div className="text-center py-20 text-slate-500">Department not found</div>;
+  if (loading) return <PageSkeleton />;
+  if (!department) return <div className="text-center py-20 text-muted-foreground">Department not found</div>;
 
   return (
-    <div className="animate-fade-in-up space-y-6">
-      <GlassBreadcrumb
+    <div className="space-y-6">
+      <Breadcrumb
         items={[
           { label: "Admin", href: "/admin/dashboard" },
           { label: "Master Data", href: "/admin/master-data/departments" },
@@ -40,17 +40,17 @@ export default function DepartmentDetailPage(): React.ReactElement {
           { label: department.name },
         ]}
       />
-      <GlassPageHeader
+      <PageHeader
         title={department.name}
         description={`Code ${department.code}`}
         actions={
-          <GlassButton
+          <Button
             variant="secondary"
             icon={<Pencil size={15} />}
             onClick={() => router.push(`/admin/master-data/departments/${id}/edit`)}
           >
             Edit
-          </GlassButton>
+          </Button>
         }
       />
       <DepartmentBatchesPanel department={department} />

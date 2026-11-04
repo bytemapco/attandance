@@ -3,8 +3,8 @@
 import React from "react";
 import Link from "next/link";
 import { ArrowLeft, CheckCheck, Clock, DoorOpen, Lock, Pencil, Save } from "lucide-react";
-import GlassBadge from "@/components/ui/GlassBadge";
-import GlassButton from "@/components/ui/GlassButton";
+import Badge from "@/components/ui/Badge";
+import Button from "@/components/ui/Button";
 import type { OccurrenceRegisterData } from "@/types";
 import { STATE_BADGE, STATE_LABEL, type OccurrenceState } from "../occurrenceState";
 
@@ -23,7 +23,7 @@ interface SessionHeaderProps {
 }
 
 function Kbd({ children }: { children: React.ReactNode }): React.ReactElement {
-  return <kbd aria-hidden className="ml-1 hidden rounded border border-current/25 px-1 text-[10px] font-medium opacity-70 xl:inline">{children}</kbd>;
+  return <kbd aria-hidden className="ml-1 hidden rounded-sm border border-current/25 px-1 text-xs font-medium opacity-70 xl:inline">{children}</kbd>;
 }
 
 export default function SessionHeader({
@@ -36,8 +36,8 @@ export default function SessionHeader({
           <ArrowLeft size={14} /> My classes
         </Link>
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-          <h1 className="text-[28px] font-bold leading-tight tracking-tight text-foreground">{register.course_name}</h1>
-          <GlassBadge variant={STATE_BADGE[state]}>{STATE_LABEL[state]}</GlassBadge>
+          <h1 className="text-2xl font-semibold leading-tight tracking-tight text-foreground">{register.course_name}</h1>
+          <Badge variant={STATE_BADGE[state]}>{STATE_LABEL[state]}</Badge>
         </div>
         <p className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground">
           <span className="font-semibold text-foreground">{register.class_code}</span>
@@ -47,31 +47,31 @@ export default function SessionHeader({
       </div>
       {state === "LIVE" && (
         <div className="flex flex-wrap items-center gap-2">
-          <GlassButton variant="secondary" size="md" icon={<CheckCheck size={15} />} disabled={waitingCount === 0} onClick={onMarkRemaining}>
+          <Button variant="secondary" size="md" icon={<CheckCheck size={15} />} disabled={waitingCount === 0} onClick={onMarkRemaining}>
             Mark remaining present<Kbd>⇧P</Kbd>
-          </GlassButton>
-          <GlassButton variant="secondary" size="md" icon={<Save size={15} />} disabled={changedCount === 0} loading={saving} onClick={onSave}>
+          </Button>
+          <Button variant="secondary" size="md" icon={<Save size={15} />} disabled={changedCount === 0} loading={saving} onClick={onSave}>
             Save{changedCount ? ` ${changedCount} change${changedCount === 1 ? "" : "s"}` : ""}<Kbd>Ctrl S</Kbd>
-          </GlassButton>
-          <GlassButton variant="danger" size="md" icon={<Lock size={15} />} onClick={onStop}>
+          </Button>
+          <Button variant="danger" size="md" icon={<Lock size={15} />} onClick={onStop}>
             Stop &amp; lock<Kbd>Ctrl ↵</Kbd>
-          </GlassButton>
+          </Button>
         </div>
       )}
       {state === "COMPLETED" && !correcting && (
-        <GlassButton variant="secondary" size="md" icon={<Pencil size={15} />} onClick={onCorrect}>
+        <Button variant="secondary" size="md" icon={<Pencil size={15} />} onClick={onCorrect}>
           Correct attendance
-        </GlassButton>
+        </Button>
       )}
       {correcting && (
         <div className="flex flex-wrap items-center gap-2">
           <p className="text-xs text-muted-foreground">Corrections need a reason and are kept in the class history.</p>
-          <GlassButton variant="ghost" size="md" disabled={saving} onClick={onCancelCorrection}>
+          <Button variant="ghost" size="md" disabled={saving} onClick={onCancelCorrection}>
             Cancel
-          </GlassButton>
-          <GlassButton variant="primary" size="md" icon={<Save size={15} />} disabled={changedCount === 0} loading={saving} onClick={onSave}>
+          </Button>
+          <Button variant="primary" size="md" icon={<Save size={15} />} disabled={changedCount === 0} loading={saving} onClick={onSave}>
             Save{changedCount ? ` ${changedCount} correction${changedCount === 1 ? "" : "s"}` : ""}
-          </GlassButton>
+          </Button>
         </div>
       )}
     </header>

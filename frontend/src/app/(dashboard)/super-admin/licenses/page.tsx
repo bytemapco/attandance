@@ -5,10 +5,10 @@ import toast from "react-hot-toast";
 import { RefreshCw } from "lucide-react";
 import { superAdminService } from "@/services/superAdminService";
 import { getApiErrorMessage } from "@/lib/api";
-import GlassBreadcrumb from "@/components/ui/GlassBreadcrumb";
-import GlassPageHeader from "@/components/ui/GlassPageHeader";
-import GlassButton from "@/components/ui/GlassButton";
-import EnterprisePagination from "@/components/ui/EnterprisePagination";
+import Breadcrumb from "@/components/ui/Breadcrumb";
+import PageHeader from "@/components/ui/PageHeader";
+import Button from "@/components/ui/Button";
+import Pagination from "@/components/ui/Pagination";
 import LicenseRequestsTable from "@/components/super-admin/LicenseRequestsTable";
 import {
   Select,
@@ -16,7 +16,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/components/ui/SelectMenu";
 import type { LicenseRequestItem } from "@/types/tenant";
 
 const STATUS_OPTIONS: Array<{ value: string; label: string }> = [
@@ -75,27 +75,27 @@ export default function LicenseRequestsPage(): React.JSX.Element {
   }
 
   return (
-    <div className="space-y-6 max-w-7xl animate-fade-in">
-      <GlassBreadcrumb
+    <div className="space-y-6 max-w-7xl">
+      <Breadcrumb
         items={[
           { label: "Dashboard", href: "/super-admin/dashboard" },
           { label: "License Requests" },
         ]}
       />
 
-      <GlassPageHeader
+      <PageHeader
         title="License Requests"
         actions={
-          <GlassButton variant="ghost" onClick={() => void fetchRequests()} className="gap-2">
+          <Button variant="ghost" onClick={() => void fetchRequests()} className="gap-2">
             <RefreshCw size={14} />
             <span>Refresh</span>
-          </GlassButton>
+          </Button>
         }
       />
 
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-2.5">
-          <label className="text-xs font-semibold text-[#526f78]">
+          <label className="text-xs font-semibold text-muted-foreground">
             Status
           </label>
           <Select
@@ -105,7 +105,7 @@ export default function LicenseRequestsPage(): React.JSX.Element {
               setPage(1);
             }}
           >
-            <SelectTrigger className="h-9 w-[150px] bg-card border-[#e3e1dc] text-xs font-medium text-[#202b30]">
+            <SelectTrigger className="h-9 w-[150px] bg-card border-border text-xs font-medium text-foreground">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
@@ -117,12 +117,12 @@ export default function LicenseRequestsPage(): React.JSX.Element {
             </SelectContent>
           </Select>
         </div>
-        <p className="text-xs font-medium text-[#526f78] tabular-nums">
+        <p className="text-xs font-medium text-muted-foreground tabular-nums">
           {total} {total === 1 ? "request" : "requests"}
         </p>
       </div>
 
-      <div className="rounded-xl overflow-hidden border border-border">
+      <div className="rounded-lg overflow-hidden border border-border">
         <LicenseRequestsTable
           requests={requests}
           loading={loading}
@@ -131,7 +131,7 @@ export default function LicenseRequestsPage(): React.JSX.Element {
           onProcess={handleProcess}
         />
         {!loading && total > 0 && (
-          <EnterprisePagination
+          <Pagination
             totalItems={total}
             currentPage={page}
             pageSize={pageSize}

@@ -8,9 +8,9 @@ interface RateBarProps {
 }
 
 function tone(value: number, threshold: number): string {
-  if (value < threshold) return "bg-[#b54242]";
-  if (value < threshold + 10) return "bg-[#c98a1e]";
-  return "bg-[#247653]";
+  if (value < threshold) return "bg-destructive";
+  if (value < threshold + 10) return "bg-warning";
+  return "bg-success";
 }
 
 export default function RateBar({ value, threshold, className }: RateBarProps): React.ReactElement {

@@ -14,12 +14,12 @@ import {
   type MasterDataRecord,
 } from "@/lib/masterData/entities";
 import { createRecord, getRecord, updateRecord } from "@/services/masterData";
-import GlassBreadcrumb from "@/components/ui/GlassBreadcrumb";
-import GlassButton from "@/components/ui/GlassButton";
-import GlassCard from "@/components/ui/GlassCard";
-import GlassInput from "@/components/ui/GlassInput";
-import GlassLoader from "@/components/ui/GlassLoader";
-import GlassPageHeader from "@/components/ui/GlassPageHeader";
+import Breadcrumb from "@/components/ui/Breadcrumb";
+import Button from "@/components/ui/Button";
+import Card from "@/components/ui/Card";
+import Input from "@/components/ui/Input";
+import PageSkeleton from "@/components/ui/PageSkeleton";
+import PageHeader from "@/components/ui/PageHeader";
 
 interface MasterDataFormPageProps {
   entity: MasterDataEntity;
@@ -73,33 +73,33 @@ export default function MasterDataFormPage({ entity, mode }: MasterDataFormPageP
     }
   }
 
-  if (loading) return <GlassLoader />;
+  if (loading) return <PageSkeleton />;
   if (editing && !record) {
-    return <div className="text-center py-20 text-slate-500">{entity.singular} not found</div>;
+    return <div className="text-center py-20 text-muted-foreground">{entity.singular} not found</div>;
   }
 
   const placeholder = (text: string): string | undefined => (editing ? undefined : text);
 
   return (
-    <div className="animate-fade-in-up">
-      <GlassBreadcrumb
+    <div>
+      <Breadcrumb
         items={[
           ...entityBreadcrumb(entity),
           ...(record ? [{ label: record.name }] : []),
           { label: editing ? "Edit" : "Create" },
         ]}
       />
-      <GlassPageHeader title={`${editing ? "Edit" : "Create"} ${entity.singular}`} />
-      <GlassCard className="max-w-xl">
+      <PageHeader title={`${editing ? "Edit" : "Create"} ${entity.singular}`} />
+      <Card className="max-w-xl">
         <form noValidate onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-          <GlassInput
+          <Input
             label={entity.form.name.label}
             placeholder={placeholder(entity.form.name.placeholder)}
             {...register("name")}
             error={errors.name?.message}
           />
           {entity.form.code && (
-            <GlassInput
+            <Input
               label={entity.form.code.label}
               placeholder={placeholder(entity.form.code.placeholder)}
               {...register("code")}
@@ -107,15 +107,15 @@ export default function MasterDataFormPage({ entity, mode }: MasterDataFormPageP
             />
           )}
           <div className="flex justify-end gap-3 pt-4">
-            <GlassButton variant="ghost" type="button" onClick={() => router.back()}>
+            <Button variant="ghost" type="button" onClick={() => router.back()}>
               Cancel
-            </GlassButton>
-            <GlassButton variant="primary" type="submit" loading={isSubmitting}>
+            </Button>
+            <Button variant="primary" type="submit" loading={isSubmitting}>
               {editing ? "Save Changes" : `Create ${entity.singular}`}
-            </GlassButton>
+            </Button>
           </div>
         </form>
-      </GlassCard>
+      </Card>
     </div>
   );
 }

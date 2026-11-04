@@ -14,7 +14,7 @@ export default function SettingsNav({ items }: { items: SettingsNavItem[] }): Re
           <li key={item.id} className="shrink-0">
             <a
               href={`#${item.id}`}
-              className="block whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium text-[#526f78] transition-colors hover:bg-[#eeece7] hover:text-[#202b30] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#526f78]"
+              className="block whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-muted-foreground"
             >
               {item.label}
             </a>
