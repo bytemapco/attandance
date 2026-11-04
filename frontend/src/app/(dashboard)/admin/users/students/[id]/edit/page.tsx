@@ -131,7 +131,7 @@ export default function EditStudentPage(): React.ReactElement {
           { label: "Edit" },
         ]}
       />
-      <PageHeader title="Edit Student Profile" description="Update student personal and academic details." />
+      <PageHeader title="Edit student profile" description="Update student personal and academic details." />
 
       <form onSubmit={handleSubmit(onSubmit)} className="max-w-4xl space-y-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

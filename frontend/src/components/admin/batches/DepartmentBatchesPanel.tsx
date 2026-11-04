@@ -155,7 +155,7 @@ export default function DepartmentBatchesPanel({ department }: { department: Dep
 
       <ConfirmDialog
         isOpen={!!deleteTarget}
-        title="Delete Batch"
+        title="Delete batch"
         message={`Delete ${deleteTarget?.code ?? "this batch"}? This cannot be undone.`}
         confirmLabel="Delete"
         onConfirm={handleDelete}

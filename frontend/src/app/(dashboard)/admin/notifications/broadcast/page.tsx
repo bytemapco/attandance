@@ -64,7 +64,7 @@ export default function BroadcastNotificationPage(): React.JSX.Element {
 
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-border pb-4">
         <PageHeader
-          title="Send Announcement"
+          title="Send announcement"
         />
         <button
           type="button"

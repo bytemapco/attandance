@@ -92,14 +92,14 @@ export const studentColumns: TableColumn<StudentResponse & Record<string, unknow
         <Link
           href={`/admin/users/students/${row.id}`}
           className="inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-secondary border border-border transition-colors"
-          title="View Details"
+          title="View details"
         >
           <Eye size={12} /> View
         </Link>
         <Link
           href={`/admin/users/students/${row.id}/edit`}
           className="inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-secondary border border-border transition-colors"
-          title="Edit Student"
+          title="Edit student"
         >
           <Pencil size={12} /> Edit
         </Link>

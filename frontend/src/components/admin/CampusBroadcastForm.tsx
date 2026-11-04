@@ -47,7 +47,7 @@ export default function CampusBroadcastForm({
             value={formData.title}
             onChange={(e) => onChange({ ...formData, title: e.target.value })}
             maxLength={120}
-            className="w-full px-3 py-2 rounded-lg border border-border bg-card text-xs sm:text-sm text-primary placeholder:text-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent transition-all"
+            className="w-full px-3 py-2 rounded-lg border border-border bg-card text-sm text-primary placeholder:text-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent transition-all"
           />
         </div>
 
@@ -63,7 +63,7 @@ export default function CampusBroadcastForm({
             value={formData.message}
             onChange={(e) => onChange({ ...formData, message: e.target.value })}
             maxLength={500}
-            className="w-full px-3 py-2 rounded-lg border border-border bg-card text-xs sm:text-sm text-primary placeholder:text-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent transition-all resize-y"
+            className="w-full px-3 py-2 rounded-lg border border-border bg-card text-sm text-primary placeholder:text-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent transition-all resize-y"
           />
           <div className="flex justify-end mt-1 text-xs text-muted-foreground">
             {formData.message.length}/500 characters

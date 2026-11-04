@@ -128,7 +128,7 @@ export default function AnomalyCard({ result }: AnomalyCardProps): React.ReactEl
           type="button"
           onClick={() => handleCopyId(result.student_id)}
           className="flex items-center gap-1 py-1 px-2 text-xs font-medium rounded-lg hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors"
-          title="Copy Student ID"
+          title="Copy student ID"
         >
           {copied ? (
             <>

@@ -83,7 +83,7 @@ export default function ScannerPage(): React.ReactElement {
       />
 
       <PageHeader
-        title="Attendance Scanner"
+        title="Attendance scanner"
         description="Find irregular absences and attendance patterns."
       />
 

@@ -44,7 +44,7 @@ export default function TeacherDetailPage(): React.ReactElement {
       }
       editHref={`/admin/users/teachers/${id}/edit`}
     >
-      <DetailCard icon={Briefcase} title="Institutional Assignment" subtitle="Department & Role">
+      <DetailCard icon={Briefcase} title="Institutional assignment" subtitle="Department & role">
         <InfoRow
           icon={Hash}
           label="Employee ID"
@@ -56,7 +56,7 @@ export default function TeacherDetailPage(): React.ReactElement {
         <InfoRow icon={Briefcase} label="Designation" value={teacher.designation || NOT_ASSIGNED} />
       </DetailCard>
 
-      <DetailCard icon={User} title="Personal Information" subtitle="Contact & Identity">
+      <DetailCard icon={User} title="Personal information" subtitle="Contact & identity">
         <InfoRow icon={Mail} label="Email Address" value={teacher.email} copyValue={teacher.email} copyKey="Email" />
         <InfoRow
           icon={Phone}

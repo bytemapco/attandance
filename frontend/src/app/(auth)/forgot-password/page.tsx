@@ -44,7 +44,7 @@ export default function ForgotPasswordPage(): React.ReactElement {
       await api.post("/auth/forgot-password", { email: cleanEmail });
       setSubmitted(true);
       setResendCooldown(30);
-      toast.success("Password reset instructions dispatched!");
+      toast.success("Reset link sent");
     } catch (err: unknown) {
       const handled = applyValidationErrorsToForm(err, setError);
       if (!handled) {
@@ -60,7 +60,7 @@ export default function ForgotPasswordPage(): React.ReactElement {
     try {
       await api.post("/auth/forgot-password", { email: cleanEmail });
       setResendCooldown(30);
-      toast.success("A fresh reset link has been dispatched!");
+      toast.success("Reset link sent again");
     } catch (err: unknown) {
       toast.error(getApiErrorMessage(err, "Failed to resend reset link."));
     } finally {

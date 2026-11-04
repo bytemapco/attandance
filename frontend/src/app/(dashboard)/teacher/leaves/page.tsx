@@ -90,7 +90,7 @@ export default function LeavesPage(): React.JSX.Element {
           type="button"
           onClick={() => router.push(`/teacher/leaves/${row.id}`)}
           className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-card hover:bg-secondary text-foreground transition-all text-xs font-semibold cursor-pointer"
-          title="Review Leave Application"
+          title="Review leave application"
         >
           <Eye size={13} className="text-primary" />
           <span>Review</span>
@@ -120,7 +120,7 @@ export default function LeavesPage(): React.JSX.Element {
   return (
     <div className="space-y-6">
       <PageHeader 
-        title="Leave Requests" 
+        title="Leave requests" 
       />
 
       <Card padding="sm">
@@ -136,7 +136,7 @@ export default function LeavesPage(): React.JSX.Element {
       </Card>
 
       {leaves.length === 0 ? (
-        <EmptyState title="All Clear" message="No pending leave requests found." />
+        <EmptyState title="All clear" message="No pending leave requests found." />
       ) : (
         <div className="rounded-lg border border-border bg-card overflow-hidden">
           <DataTable

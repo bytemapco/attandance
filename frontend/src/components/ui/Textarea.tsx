@@ -21,7 +21,7 @@ export default function Textarea({
   return (
     <div className="flex flex-col gap-1.5 w-full">
       {label && (
-        <label htmlFor={textareaId} className="text-xs sm:text-sm font-semibold text-foreground">
+        <label htmlFor={textareaId} className="text-sm font-semibold text-foreground">
           {label}
         </label>
       )}

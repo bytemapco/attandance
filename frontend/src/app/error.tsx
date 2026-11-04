@@ -28,7 +28,7 @@ export default function RootError({
             This page failed to load
           </h1>
 
-          <p className="text-xs sm:text-sm text-muted-foreground mb-6 max-w-sm mx-auto leading-relaxed">
+          <p className="text-sm text-muted-foreground mb-6 max-w-sm mx-auto leading-relaxed">
             {error.message || "An unexpected error interrupted this session. Please try reloading."}
           </p>
 

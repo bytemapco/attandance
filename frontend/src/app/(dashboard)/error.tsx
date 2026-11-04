@@ -25,7 +25,7 @@ export default function DashboardError({
         <h2 className="text-xl font-semibold tracking-tight text-foreground mb-2">
           Something went wrong
         </h2>
-        <p className="text-xs sm:text-sm text-muted-foreground mb-4 leading-relaxed">
+        <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
           {error.message || "Could not load this page. Please try again."}
         </p>
         {error.digest && (

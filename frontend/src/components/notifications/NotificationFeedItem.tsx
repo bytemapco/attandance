@@ -143,7 +143,7 @@ export function NotificationFeedItem({
             </time>
           </div>
 
-          <p className="text-xs sm:text-sm mt-1.5 leading-relaxed text-muted-foreground break-words whitespace-pre-line font-normal">
+          <p className="text-sm mt-1.5 leading-relaxed text-muted-foreground break-words whitespace-pre-line font-normal">
             {notification.message}
           </p>
 

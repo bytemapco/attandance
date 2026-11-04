@@ -77,7 +77,7 @@ export default function TeacherProfilePage(): React.ReactElement {
       />
 
       <PageHeader
-        title="Profile & Security"
+        title="Profile & security"
         description="View your faculty details and update your account password."
       />
 

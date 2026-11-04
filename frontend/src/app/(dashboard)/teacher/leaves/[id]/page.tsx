@@ -100,7 +100,7 @@ export default function LeaveReviewDetailPage(): React.ReactElement {
 
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-border pb-4">
         <PageHeader
-          title="Leave Application Adjudication"
+          title="Leave application adjudication"
           description={`Formal faculty review and verification of student leave application #${leave.id.slice(0, 8)}`}
         />
         <Button

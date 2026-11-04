@@ -20,7 +20,7 @@ export default function NotFoundPage(): React.ReactElement {
             Page Not Found
           </h2>
 
-          <p className="text-xs sm:text-sm text-muted-foreground mb-7 max-w-xs mx-auto leading-relaxed">
+          <p className="text-sm text-muted-foreground mb-7 max-w-xs mx-auto leading-relaxed">
             The page you requested does not exist or may have been relocated.
           </p>
 

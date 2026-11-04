@@ -41,7 +41,7 @@ export function NotificationFilterBar({
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
           placeholder="Search notifications..."
-          className="w-full pl-9 pr-9 py-2 text-xs sm:text-sm bg-card border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all"
+          className="w-full pl-9 pr-9 py-2 text-sm bg-card border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all"
         />
         {searchQuery && (
           <button

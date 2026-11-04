@@ -92,7 +92,7 @@ export default function EditTenantPage(): React.ReactElement {
       />
 
       <PageHeader
-        title="Edit Institution"
+        title="Edit institution"
       />
 
       <form onSubmit={handleSubmit} className="space-y-6">

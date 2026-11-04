@@ -102,7 +102,7 @@ export default function AddTeacherPage(): React.ReactElement {
         ]}
       />
       <PageHeader
-        title="Add Teacher"
+        title="Add teacher"
         description="Create a new teacher account with FK-linked department and designation"
       />
 
