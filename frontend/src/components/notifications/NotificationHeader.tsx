@@ -46,7 +46,7 @@ export function NotificationHeader({
           type="button"
           onClick={onRefresh}
           disabled={loading}
-          className="inline-flex items-center justify-center h-9 w-9 text-xs text-muted-foreground hover:text-foreground bg-card hover:bg-secondary border border-border rounded-lg transition-colors active:scale-95 disabled:opacity-50 cursor-pointer"
+          className="inline-flex items-center justify-center h-9 w-9 text-xs text-muted-foreground hover:text-foreground bg-card hover:bg-secondary border border-border rounded-lg transition-colors disabled:opacity-50 cursor-pointer"
           title="Refresh notifications"
           aria-label="Refresh notifications"
         >
@@ -58,7 +58,7 @@ export function NotificationHeader({
             type="button"
             onClick={onMarkAllRead}
             disabled={loading}
-            className="inline-flex items-center gap-1.5 h-9 px-3.5 text-xs font-semibold text-foreground bg-card hover:bg-secondary border border-border rounded-lg transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
+            className="inline-flex items-center gap-1.5 h-9 px-3.5 text-xs font-semibold text-foreground bg-card hover:bg-secondary border border-border rounded-lg transition-all disabled:opacity-50 cursor-pointer"
           >
             <CheckCheck size={14} className="text-success" />
             <span>Mark all read</span>
@@ -68,7 +68,7 @@ export function NotificationHeader({
         {actionButton && (
           <Link
             href={actionButton.href}
-            className="inline-flex items-center gap-1.5 h-9 px-4 text-xs font-semibold text-primary-foreground bg-primary hover:bg-foreground rounded-lg transition-all active:scale-95 shadow-sm"
+            className="inline-flex items-center gap-1.5 h-9 px-4 text-xs font-semibold text-primary-foreground bg-primary hover:bg-foreground rounded-lg transition-all shadow-sm"
           >
             {actionButton.icon || <Plus size={14} />}
             <span>{actionButton.label}</span>

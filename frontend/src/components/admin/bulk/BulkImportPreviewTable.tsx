@@ -90,7 +90,7 @@ export default function BulkImportPreviewTable({
       <div className="rounded-xl border border-border overflow-hidden">
         <div className="max-h-[260px] overflow-y-auto">
           <table className="w-full text-xs text-left border-collapse">
-            <thead className="bg-secondary/60 sticky top-0 z-10 border-b border-border backdrop-blur-xs">
+            <thead className="bg-secondary/60 sticky top-0 z-10 border-b border-border">
               <tr className="text-muted-foreground font-semibold">
                 <th className="py-2 px-3 w-10 text-center">#</th>
                 <th className="py-2 px-3">Name</th>

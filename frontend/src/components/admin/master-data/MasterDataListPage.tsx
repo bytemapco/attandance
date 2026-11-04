@@ -76,7 +76,7 @@ export default function MasterDataListPage({ entity }: MasterDataListPageProps):
   if (list.loading) return <GlassLoader />;
 
   return (
-    <div className="animate-fade-in-up space-y-4">
+    <div className="space-y-4">
       <GlassPageHeader
         title={entity.list.title}
         description={entity.list.description}

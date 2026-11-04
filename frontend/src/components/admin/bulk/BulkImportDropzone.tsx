@@ -118,7 +118,7 @@ export default function BulkImportDropzone({
         }}
         className="group border-2 border-dashed border-border hover:border-accent/60 bg-card hover:bg-secondary/40 rounded-xl p-8 text-center cursor-pointer transition-all duration-200"
       >
-        <div className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center mx-auto mb-3 text-primary group-hover:scale-105 group-hover:text-accent-strong transition-all">
+        <div className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center mx-auto mb-3 text-primary group-hover:text-accent-strong transition-all">
           <Upload size={20} />
         </div>
         <p className="text-sm font-bold text-foreground">Click to choose a file or drag and drop your CSV here</p>

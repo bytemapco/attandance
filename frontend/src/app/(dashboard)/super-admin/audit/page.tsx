@@ -70,7 +70,7 @@ export default function SecurityAuditPage(): React.JSX.Element {
   };
 
   return (
-    <div className="space-y-6 max-w-7xl animate-fade-in-up">
+    <div className="space-y-6 max-w-7xl">
       <GlassBreadcrumb
         items={[
           { label: "Dashboard", href: "/super-admin/dashboard" },

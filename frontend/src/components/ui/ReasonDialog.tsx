@@ -33,7 +33,7 @@ export default function ReasonDialog({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-primary/40 p-4 backdrop-blur-xs" onClick={onCancel}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-primary/40 p-4" onClick={onCancel}>
       <div
         className="w-full max-w-md rounded-2xl border border-border bg-card p-6 shadow-[0_8px_24px_rgba(40,54,59,0.12)]"
         onClick={(e) => e.stopPropagation()}

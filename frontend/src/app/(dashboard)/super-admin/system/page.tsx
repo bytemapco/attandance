@@ -43,7 +43,7 @@ export default function PlatformHealthPage(): React.ReactElement {
   const isHealthy = health?.status === "healthy";
 
   return (
-    <div className="space-y-5 max-w-5xl animate-fade-in-up">
+    <div className="space-y-5 max-w-5xl">
       <GlassBreadcrumb
         items={[
           { label: "Dashboard", href: "/super-admin/dashboard" },

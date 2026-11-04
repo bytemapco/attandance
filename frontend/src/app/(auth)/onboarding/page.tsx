@@ -156,7 +156,7 @@ export default function OnboardingPage(): React.ReactElement {
       <div className="w-full">
         <div className="text-center mb-6">
           <Link href="/login" className="inline-block group cursor-pointer hover:opacity-95 transition-opacity">
-            <div className="inline-flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
+            <div className="inline-flex items-center justify-center mb-3">
               <img
                 src="/sahaj-app-icon.png"
                 alt="SAHAJ Logo"

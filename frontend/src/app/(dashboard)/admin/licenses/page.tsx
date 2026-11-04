@@ -66,7 +66,7 @@ export default function TenantLicensesPage(): React.JSX.Element {
   const pct = licenseCount > 0 ? Math.min(100, Math.round((totalUsed / licenseCount) * 100)) : 0;
 
   return (
-    <div className="space-y-6 max-w-5xl animate-fade-in">
+    <div className="space-y-6 max-w-5xl">
       <GlassBreadcrumb
         items={[
           { label: "Dashboard", href: "/admin/dashboard" },

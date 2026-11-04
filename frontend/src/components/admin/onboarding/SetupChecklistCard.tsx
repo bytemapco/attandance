@@ -41,7 +41,7 @@ export default function SetupChecklistCard({ status }: SetupChecklistCardProps):
         </div>
         <Link
           href={`/admin/onboarding?step=${next.id}`}
-          className="inline-flex min-h-10 shrink-0 items-center justify-center gap-2 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground shadow-xs transition-colors hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-muted-foreground active:scale-[0.99]"
+          className="inline-flex min-h-10 shrink-0 items-center justify-center gap-2 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground shadow-xs transition-colors hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-muted-foreground"
         >
           {readyToGoLive ? "Review and activate" : "Continue setup"}
           <ArrowRight size={15} aria-hidden />

@@ -81,12 +81,12 @@ export default function LoginPage(): React.ReactElement {
 
   return (
     <div className="w-full max-w-[420px] mx-auto my-auto py-8 px-4">
-      <div className="rounded-2xl border border-border/90 bg-white/95 backdrop-blur-md p-7 sm:p-8 shadow-[0_10px_30px_rgba(40,54,59,0.08),0_1px_3px_rgba(40,54,59,0.04)]">
+      <div className="rounded-2xl border border-border/90 bg-white/95 p-7 sm:p-8 shadow-[0_10px_30px_rgba(40,54,59,0.08),0_1px_3px_rgba(40,54,59,0.04)]">
         {/* Brand Header */}
         <div className="flex flex-col items-center text-center mb-6">
           <Link
             href="/login"
-            className="group inline-flex items-center justify-center cursor-pointer transition-transform duration-200 hover:scale-[1.02]"
+            className="group inline-flex items-center justify-center cursor-pointer transition-transform duration-200"
           >
             <img
               src="/sahaj-logo-transparent.png"
@@ -102,7 +102,7 @@ export default function LoginPage(): React.ReactElement {
           className="space-y-5"
         >
           {suspensionError && (
-            <div className="rounded-xl border border-warning-border bg-warning-soft p-4 text-left flex gap-3 items-start animate-in fade-in duration-200">
+            <div className="rounded-xl border border-warning-border bg-warning-soft p-4 text-left flex gap-3 items-start">
               <AlertTriangle className="w-5 h-5 text-warning shrink-0 mt-0.5" />
               <div className="space-y-1">
                 <p className="text-xs font-bold text-warning">Institution Suspended</p>

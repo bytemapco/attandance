@@ -47,7 +47,7 @@ export default function AdminQuickActions(): React.ReactElement {
           <div className="min-w-0 flex-1">
             <h3 className="flex items-center justify-between gap-2 text-sm font-semibold text-foreground">
               {action.label}
-              <ArrowUpRight size={15} aria-hidden className="shrink-0 text-muted-foreground transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-accent-strong" />
+              <ArrowUpRight size={15} aria-hidden className="shrink-0 text-muted-foreground transition-colors group-hover:text-accent-strong" />
             </h3>
             <p className="mt-1 text-sm leading-5 text-muted-foreground">{action.description}</p>
           </div>

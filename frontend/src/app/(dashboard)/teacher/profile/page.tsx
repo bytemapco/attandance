@@ -68,7 +68,7 @@ export default function TeacherProfilePage(): React.ReactElement {
   const initial = t?.first_name ? t.first_name[0].toUpperCase() : (profile.email ? profile.email[0].toUpperCase() : "U");
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-6">
       <GlassBreadcrumb
         items={[
           { label: "Teacher", href: "/teacher/dashboard" },

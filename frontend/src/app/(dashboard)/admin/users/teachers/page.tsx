@@ -112,7 +112,7 @@ export default function TeachersPage(): React.ReactElement {
   ];
 
   return (
-    <div className="space-y-4 animate-fade-in-up">
+    <div className="space-y-4">
       <GlassBreadcrumb items={[{ label: "Admin", href: "/admin/dashboard" }, { label: "Users" }, { label: "Teachers" }]} />
 
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-2 border-b border-border/60">

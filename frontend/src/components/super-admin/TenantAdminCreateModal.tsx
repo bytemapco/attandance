@@ -58,11 +58,11 @@ export default function TenantAdminCreateModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-primary/40 backdrop-blur-xs"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-primary/40"
       onClick={onClose}
     >
       <div
-        className="w-full max-w-md bg-card border border-border rounded-2xl shadow-xl p-6 space-y-5 animate-scale-in"
+        className="w-full max-w-md bg-card border border-border rounded-2xl shadow-xl p-6 space-y-5"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between pb-3 border-b border-border">

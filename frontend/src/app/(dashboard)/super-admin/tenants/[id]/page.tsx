@@ -88,7 +88,7 @@ export default function TenantDetailPage(): React.ReactElement {
   }
 
   return (
-    <div className="space-y-6 max-w-6xl animate-fade-in-up">
+    <div className="space-y-6 max-w-6xl">
       <GlassBreadcrumb
         items={[
           { label: "Dashboard", href: "/super-admin/dashboard" },

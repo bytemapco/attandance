@@ -99,7 +99,7 @@ export default function CreateClassPage(): React.ReactElement {
   }
 
   return (
-    <div className="animate-fade-in-up">
+    <div>
       <GlassBreadcrumb
         items={[
           { label: "Admin", href: "/admin/dashboard" },

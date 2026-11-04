@@ -43,7 +43,7 @@ export default function GlassButton({
       className={cn(
         "inline-flex items-center justify-center gap-2 border font-medium transition-all duration-150 outline-none select-none cursor-pointer",
         "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-        "active:scale-[0.99] disabled:pointer-events-none disabled:opacity-50",
+        "disabled:pointer-events-none disabled:opacity-50",
         variantStyles[variant],
         sizeStyles[size],
         className

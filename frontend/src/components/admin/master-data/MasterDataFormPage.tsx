@@ -81,7 +81,7 @@ export default function MasterDataFormPage({ entity, mode }: MasterDataFormPageP
   const placeholder = (text: string): string | undefined => (editing ? undefined : text);
 
   return (
-    <div className="animate-fade-in-up">
+    <div>
       <GlassBreadcrumb
         items={[
           ...entityBreadcrumb(entity),

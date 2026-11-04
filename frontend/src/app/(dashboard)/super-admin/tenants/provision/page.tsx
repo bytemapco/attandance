@@ -87,7 +87,7 @@ export default function ProvisionTenantPage(): React.ReactElement {
   };
 
   return (
-    <div className="space-y-6 max-w-4xl mx-auto pb-12 animate-fade-in-up">
+    <div className="space-y-6 max-w-4xl mx-auto pb-12">
       <GlassBreadcrumb
         items={[
           { label: "Super Admin", href: "/super-admin/dashboard" },

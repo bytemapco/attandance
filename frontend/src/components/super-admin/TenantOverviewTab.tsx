@@ -22,7 +22,7 @@ export default function TenantOverviewTab({ tenant }: TenantOverviewTabProps): R
   const admins = tenant.admin_users || [];
 
   return (
-    <div className="space-y-6 animate-fade-in-up">
+    <div className="space-y-6">
       {/* Quick Metrics Grid */}
       <TenantMetricsRow
         tenant={tenant}

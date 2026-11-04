@@ -81,7 +81,7 @@ export default function EditTenantPage(): React.ReactElement {
   if (loading || !tenant) return <GlassLoader text="Loading institution details..." />;
 
   return (
-    <div className="space-y-6 max-w-4xl mx-auto pb-12 animate-fade-in-up">
+    <div className="space-y-6 max-w-4xl mx-auto pb-12">
       <GlassBreadcrumb
         items={[
           { label: "Super Admin", href: "/super-admin/dashboard" },

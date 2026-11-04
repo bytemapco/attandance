@@ -26,7 +26,7 @@ export function StatusMark({ status }: { status: ClassStatus }): React.ReactElem
     case "DONE":
       return <CheckCircle2 size={14} aria-hidden />;
     case "LIVE":
-      return <span aria-hidden className="mx-0.5 h-2.5 w-2.5 rounded-full bg-success motion-safe:animate-pulse" />;
+      return <span aria-hidden className="mx-0.5 h-2.5 w-2.5 rounded-full bg-success" />;
     case "PENDING":
       return <Clock size={14} aria-hidden />;
     case "MISSED":

@@ -74,7 +74,7 @@ export default function ClassDetailPage(): React.ReactElement {
       : `${incompleteSubjects} of ${cls.subject_count} subjects still need a teacher or class times. Teachers cannot see them in their timetable until then.`;
 
   return (
-    <div className="animate-fade-in-up space-y-5">
+    <div className="space-y-5">
       {/* Breadcrumb Navigation */}
       <GlassBreadcrumb
         items={[

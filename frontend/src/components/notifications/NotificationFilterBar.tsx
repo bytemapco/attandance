@@ -65,7 +65,7 @@ export function NotificationFilterBar({
               key={item.id}
               type="button"
               onClick={() => onFilterChange(item.id)}
-              className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-lg transition-all shrink-0 cursor-pointer select-none active:scale-95 ${
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-lg transition-all shrink-0 cursor-pointer select-none ${
                 isActive
                   ? "bg-primary text-primary-foreground font-semibold shadow-xs"
                   : "bg-card text-muted-foreground hover:text-foreground hover:bg-secondary border border-border font-medium"

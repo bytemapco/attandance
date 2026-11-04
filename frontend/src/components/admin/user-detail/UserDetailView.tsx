@@ -59,7 +59,7 @@ export default function UserDetailView({
 
   return (
     <ClipboardProvider value={clipboard}>
-      <div className="animate-fade-in-up space-y-6">
+      <div className="space-y-6">
         <GlassBreadcrumb items={breadcrumb} />
 
         <div className="rounded-2xl border border-border bg-card p-6 sm:p-7 shadow-[0_2px_8px_rgba(40,54,59,0.04)]">

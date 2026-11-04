@@ -53,7 +53,7 @@ export default function TeacherDashboardHeader({
         <button
           type="button"
           onClick={onRefresh}
-          className="inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg border border-border bg-card text-xs font-semibold text-foreground hover:bg-secondary transition-all shadow-2xs active:scale-95 cursor-pointer"
+          className="inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg border border-border bg-card text-xs font-semibold text-foreground hover:bg-secondary transition-all shadow-2xs cursor-pointer"
         >
           <RefreshCw size={13} className="text-muted-foreground" />
           <span>Refresh</span>

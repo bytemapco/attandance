@@ -93,7 +93,7 @@ export default function AddTeacherPage(): React.ReactElement {
   ];
 
   return (
-    <div className="animate-fade-in-up">
+    <div>
       <GlassBreadcrumb
         items={[
           { label: "Admin", href: "/admin/dashboard" },

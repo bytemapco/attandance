@@ -163,7 +163,7 @@ export default function ClassManagementPage(): React.ReactElement {
   ], [router]);
 
   return (
-    <div className="animate-fade-in-up space-y-4">
+    <div className="space-y-4">
       <GlassBreadcrumb items={[{ label: "Admin", href: "/admin/dashboard" }, { label: "Classes" }]} />
 
       {/* Header */}

@@ -46,7 +46,7 @@ export function GlassErrorState({
             variant="secondary"
             size="sm"
             onClick={onRetry}
-            icon={<RefreshCw size={13} className="transition-transform active:rotate-180" />}
+            icon={<RefreshCw size={13} />}
           >
             {retryLabel}
           </GlassButton>

@@ -89,7 +89,7 @@ export default function LeavesPage(): React.JSX.Element {
         <button
           type="button"
           onClick={() => router.push(`/teacher/leaves/${row.id}`)}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-card hover:bg-secondary text-foreground active:scale-95 transition-all text-xs font-semibold cursor-pointer shadow-2xs"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-card hover:bg-secondary text-foreground transition-all text-xs font-semibold cursor-pointer shadow-2xs"
           title="Review Leave Application"
         >
           <Eye size={13} className="text-primary" />
@@ -118,7 +118,7 @@ export default function LeavesPage(): React.JSX.Element {
   if (loading) return <GlassLoader text="Loading leave requests..." />;
 
   return (
-    <div className="animate-fade-in-up space-y-6">
+    <div className="space-y-6">
       <GlassPageHeader 
         title="Leave Requests" 
       />

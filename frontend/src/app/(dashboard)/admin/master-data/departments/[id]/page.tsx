@@ -31,7 +31,7 @@ export default function DepartmentDetailPage(): React.ReactElement {
   if (!department) return <div className="text-center py-20 text-muted-foreground">Department not found</div>;
 
   return (
-    <div className="animate-fade-in-up space-y-6">
+    <div className="space-y-6">
       <GlassBreadcrumb
         items={[
           { label: "Admin", href: "/admin/dashboard" },

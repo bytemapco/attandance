@@ -67,7 +67,7 @@ export function NotificationFeedList({
         <button
           type="button"
           onClick={onRetry}
-          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-primary-foreground bg-destructive hover:bg-destructive-hover rounded-lg transition-all active:scale-95 cursor-pointer shadow-xs"
+          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-primary-foreground bg-destructive hover:bg-destructive-hover rounded-lg transition-all cursor-pointer shadow-xs"
         >
           <RotateCw size={13} />
           <span>Retry</span>
@@ -138,7 +138,7 @@ export function NotificationFeedList({
             <button
               type="button"
               onClick={() => setConfirmDeleteSelectedOpen(true)}
-              className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold text-destructive bg-destructive-soft hover:bg-destructive-soft/80 rounded-md transition-all active:scale-95 cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold text-destructive bg-destructive-soft hover:bg-destructive-soft/80 rounded-md transition-all cursor-pointer"
             >
               <Trash2 size={13} />
               <span>Delete ({selectedCount})</span>
