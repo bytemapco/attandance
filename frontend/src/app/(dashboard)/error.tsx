@@ -18,18 +18,18 @@ export default function DashboardError({
 
   return (
     <div className="min-h-[60vh] flex items-center justify-center p-6 sm:p-8">
-      <div className="text-center max-w-md w-full rounded-2xl border border-border bg-card p-6 sm:p-8 shadow-sm">
-        <div className="p-3 rounded-2xl bg-destructive/10 text-destructive inline-flex mb-4">
+      <div className="text-center max-w-md w-full rounded-lg border border-border bg-card p-6 sm:p-8">
+        <div className="p-3 rounded-lg bg-destructive/10 text-destructive inline-flex mb-4">
           <AlertTriangle size={36} aria-hidden="true" />
         </div>
-        <h2 className="text-xl font-bold tracking-tight text-foreground mb-2">
+        <h2 className="text-xl font-semibold tracking-tight text-foreground mb-2">
           Something went wrong
         </h2>
         <p className="text-xs sm:text-sm text-muted-foreground mb-4 leading-relaxed">
           {error.message || "Could not load this page. Please try again."}
         </p>
         {error.digest && (
-          <p className="text-[11px] text-muted-foreground font-mono mb-6 bg-muted/60 py-1 px-2.5 rounded border border-border inline-block">
+          <p className="text-xs text-muted-foreground font-mono mb-6 bg-muted/60 py-1 px-2.5 rounded-sm border border-border inline-block">
             Code: {error.digest}
           </p>
         )}

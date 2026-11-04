@@ -52,7 +52,7 @@ export default function EnterprisePagination({
   const pageNumbers = getPageNumbers(validPage, totalPages);
 
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-4 py-3 border-t border-border bg-card rounded-b-xl text-xs text-muted-foreground">
+    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-4 py-3 border-t border-border bg-card rounded-b-lg text-xs text-muted-foreground">
       <p className="select-none">
         Showing <span className="font-semibold text-foreground">{startItem.toLocaleString()}</span> to{" "}
         <span className="font-semibold text-foreground">{endItem.toLocaleString()}</span> of{" "}
@@ -65,7 +65,7 @@ export default function EnterprisePagination({
           type="button"
           onClick={() => onPageChange(1)}
           disabled={validPage <= 1}
-          className="inline-flex items-center justify-center h-7 w-7 rounded-md border border-border bg-card text-foreground hover:bg-muted disabled:opacity-40 disabled:pointer-events-none transition-colors shadow-2xs cursor-pointer"
+          className="inline-flex items-center justify-center h-7 w-7 rounded-md border border-border bg-card text-foreground hover:bg-muted disabled:opacity-40 disabled:pointer-events-none transition-colors cursor-pointer"
           title="First Page"
           aria-label="First page"
         >
@@ -76,7 +76,7 @@ export default function EnterprisePagination({
           type="button"
           onClick={() => onPageChange(validPage - 1)}
           disabled={validPage <= 1}
-          className="inline-flex items-center justify-center h-7 w-7 rounded-md border border-border bg-card text-foreground hover:bg-muted disabled:opacity-40 disabled:pointer-events-none transition-colors shadow-2xs cursor-pointer"
+          className="inline-flex items-center justify-center h-7 w-7 rounded-md border border-border bg-card text-foreground hover:bg-muted disabled:opacity-40 disabled:pointer-events-none transition-colors cursor-pointer"
           title="Previous Page"
           aria-label="Previous page"
         >
@@ -100,7 +100,7 @@ export default function EnterprisePagination({
               onClick={() => onPageChange(page)}
               className={`h-7 min-w-7 px-2 rounded-md text-xs font-medium transition-colors cursor-pointer ${
                 isActive
-                  ? "bg-primary text-primary-foreground font-semibold shadow-2xs"
+                  ? "bg-primary text-primary-foreground font-semibold"
                   : "border border-border bg-card text-foreground hover:bg-muted"
               }`}
               aria-current={isActive ? "page" : undefined}
@@ -114,7 +114,7 @@ export default function EnterprisePagination({
           type="button"
           onClick={() => onPageChange(validPage + 1)}
           disabled={validPage >= totalPages}
-          className="inline-flex items-center justify-center h-7 w-7 rounded-md border border-border bg-card text-foreground hover:bg-muted disabled:opacity-40 disabled:pointer-events-none transition-colors shadow-2xs cursor-pointer"
+          className="inline-flex items-center justify-center h-7 w-7 rounded-md border border-border bg-card text-foreground hover:bg-muted disabled:opacity-40 disabled:pointer-events-none transition-colors cursor-pointer"
           title="Next Page"
           aria-label="Next page"
         >
@@ -125,7 +125,7 @@ export default function EnterprisePagination({
           type="button"
           onClick={() => onPageChange(totalPages)}
           disabled={validPage >= totalPages}
-          className="inline-flex items-center justify-center h-7 w-7 rounded-md border border-border bg-card text-foreground hover:bg-muted disabled:opacity-40 disabled:pointer-events-none transition-colors shadow-2xs cursor-pointer"
+          className="inline-flex items-center justify-center h-7 w-7 rounded-md border border-border bg-card text-foreground hover:bg-muted disabled:opacity-40 disabled:pointer-events-none transition-colors cursor-pointer"
           title="Last Page"
           aria-label="Last page"
         >
@@ -134,12 +134,12 @@ export default function EnterprisePagination({
 
         {onPageSizeChange && (
           <div className="flex items-center gap-1.5 ml-2 pl-2 border-l border-border">
-            <span className="text-[11px] text-muted-foreground">Rows:</span>
+            <span className="text-xs text-muted-foreground">Rows:</span>
             <Select
               value={String(pageSize)}
               onValueChange={(val) => onPageSizeChange(Number(val))}
             >
-              <SelectTrigger className="h-7 w-[68px] px-2 text-xs border-border bg-card text-foreground shadow-2xs font-medium">
+              <SelectTrigger className="h-7 w-[68px] px-2 text-xs border-border bg-card text-foreground font-medium">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent align="end" className="min-w-[70px]">

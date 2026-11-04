@@ -103,7 +103,7 @@ export default function WeekTimetable(): React.ReactElement {
       {!loading && failed && <GlassErrorState message="Your timetable could not be loaded." onRetry={() => void load(false)} />}
 
       {!loading && !failed && classes.length === 0 && (
-        <p className="rounded-xl border border-dashed border-[#d9d5cd] px-4 py-10 text-center text-sm text-[#526f78]">
+        <p className="rounded-lg border border-dashed border-border-strong px-4 py-10 text-center text-sm text-muted-foreground">
           No classes this week.
         </p>
       )}

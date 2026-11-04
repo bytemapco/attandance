@@ -111,9 +111,9 @@ export default function LocationSearchBar({
   return (
     <div ref={containerRef} className={`relative ${className}`}>
       <div className="relative flex items-center">
-        <span className="pointer-events-none absolute left-3 text-[#526f78]">
+        <span className="pointer-events-none absolute left-3 text-muted-foreground">
           {loading ? (
-            <Loader2 size={15} className="animate-spin text-[#28363b]" />
+            <Loader2 size={15} className="animate-spin text-primary" />
           ) : (
             <Search size={15} />
           )}
@@ -126,13 +126,13 @@ export default function LocationSearchBar({
             if (results.length > 0) setIsOpen(true);
           }}
           placeholder={placeholder}
-          className="h-9.5 w-full rounded-lg border border-[#e3e1dc] bg-white pl-9 pr-8 text-sm text-[#202b30] shadow-xs transition-colors placeholder:text-[#718087] focus:border-[#526f78] focus:outline-none focus:ring-2 focus:ring-[#526f78]/20"
+          className="h-9.5 w-full rounded-lg border border-border bg-card pl-9 pr-8 text-sm text-foreground transition-colors placeholder:text-muted-foreground focus:border-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/20"
         />
         {query && (
           <button
             type="button"
             onClick={handleClear}
-            className="absolute right-2.5 rounded p-1 text-[#718087] transition-colors hover:bg-[#eeece7] hover:text-[#202b30]"
+            className="absolute right-2.5 rounded-sm p-1 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
             title="Clear search"
           >
             <X size={14} />
@@ -141,7 +141,7 @@ export default function LocationSearchBar({
       </div>
 
       {isOpen && results.length > 0 && (
-        <ul className="absolute left-0 right-0 z-[1000] mt-1.5 max-h-60 divide-y divide-[#e3e1dc] overflow-y-auto rounded-xl border border-[#e3e1dc] bg-white py-1 shadow-lg">
+        <ul className="absolute left-0 right-0 z-[1000] mt-1.5 max-h-60 divide-y divide-border overflow-y-auto rounded-lg border border-border bg-card py-1 shadow-popover">
           {results.map((item) => {
             const parts = item.display_name.split(",");
             const title = parts[0];
@@ -152,18 +152,18 @@ export default function LocationSearchBar({
                 <button
                   type="button"
                   onClick={() => handleSelect(item)}
-                  className="flex w-full items-start gap-2.5 px-3.5 py-2.5 text-left transition-colors hover:bg-[#f5f2ed] focus:bg-[#f5f2ed] focus:outline-none"
+                  className="flex w-full items-start gap-2.5 px-3.5 py-2.5 text-left transition-colors hover:bg-background focus:bg-background focus:outline-none"
                 >
                   <MapPin
                     size={15}
-                    className="mt-0.5 shrink-0 text-[#c98260]"
+                    className="mt-0.5 shrink-0 text-accent-strong"
                   />
                   <div className="min-w-0 flex-1 overflow-hidden">
-                    <p className="truncate text-xs font-semibold text-[#202b30]">
+                    <p className="truncate text-xs font-semibold text-foreground">
                       {title}
                     </p>
                     {subtitle && (
-                      <p className="truncate text-[11px] text-[#526f78]">
+                      <p className="truncate text-xs text-muted-foreground">
                         {subtitle}
                       </p>
                     )}

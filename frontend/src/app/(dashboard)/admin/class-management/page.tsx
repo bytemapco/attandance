@@ -97,11 +97,11 @@ export default function ClassManagementPage(): React.ReactElement {
       render: (row) => (
         <div className="flex items-center gap-2">
           <span className="font-semibold text-foreground text-sm">{row.code}</span>
-          <span className="inline-block text-[11px] font-medium text-muted-foreground bg-muted/60 px-1.5 py-0.5 rounded border border-border/60">
+          <span className="inline-block text-xs font-medium text-muted-foreground bg-muted/60 px-1.5 py-0.5 rounded-sm border border-border/60">
             Sem {row.semester_number}
           </span>
           {row.status !== "ACTIVE" && (
-            <span className="text-[11px] font-medium text-muted-foreground bg-muted px-1.5 py-0.5 rounded border border-border">
+            <span className="text-xs font-medium text-muted-foreground bg-muted px-1.5 py-0.5 rounded-sm border border-border">
               {row.status}
             </span>
           )}
@@ -135,7 +135,7 @@ export default function ClassManagementPage(): React.ReactElement {
           );
         }
         return (
-          <span className="inline-flex items-center gap-1 text-xs font-medium text-amber-700 bg-amber-50 border border-amber-200/80 px-2 py-0.5 rounded-full">
+          <span className="inline-flex items-center gap-1 text-xs font-medium text-warning bg-warning-soft border border-warning-border/80 px-2 py-0.5 rounded-full">
             <AlertCircle size={11} /> Needs setup
           </span>
         );
@@ -152,10 +152,10 @@ export default function ClassManagementPage(): React.ReactElement {
               e.stopPropagation();
               router.push(`/admin/class-management/${row.id}`);
             }}
-            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-border hover:border-[#526f78] bg-card hover:bg-muted text-xs font-semibold text-foreground transition-all cursor-pointer shadow-2xs"
+            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-border hover:border-muted-foreground bg-card hover:bg-muted text-xs font-semibold text-foreground transition-all cursor-pointer"
           >
             Manage
-            <ChevronRight size={13} className="text-[#526f78]" />
+            <ChevronRight size={13} className="text-muted-foreground" />
           </button>
         </div>
       ),
@@ -163,13 +163,13 @@ export default function ClassManagementPage(): React.ReactElement {
   ], [router]);
 
   return (
-    <div className="animate-fade-in-up space-y-4">
+    <div className="space-y-4">
       <GlassBreadcrumb items={[{ label: "Admin", href: "/admin/dashboard" }, { label: "Classes" }]} />
 
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-2 border-b border-border">
         <div className="flex items-center gap-2.5">
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">Classes</h1>
+          <h1 className="text-2xl font-semibold tracking-tight text-foreground">Classes</h1>
           <span className="text-xs font-medium text-muted-foreground">({classes.length} total)</span>
         </div>
         <GlassButton 
@@ -192,7 +192,7 @@ export default function ClassManagementPage(): React.ReactElement {
       />
 
       {/* Clean Structured Table */}
-      <div className="rounded-2xl border border-border bg-card shadow-[0_2px_8px_rgba(40,54,59,0.04)] overflow-hidden">
+      <div className="rounded-lg border border-border bg-card overflow-hidden">
         <GlassTable
           columns={columns}
           data={classes}

@@ -43,7 +43,7 @@ export default function PlatformHealthPage(): React.ReactElement {
   const isHealthy = health?.status === "healthy";
 
   return (
-    <div className="space-y-5 max-w-5xl animate-fade-in-up">
+    <div className="space-y-5 max-w-5xl">
       <GlassBreadcrumb
         items={[
           { label: "Dashboard", href: "/super-admin/dashboard" },
@@ -69,16 +69,16 @@ export default function PlatformHealthPage(): React.ReactElement {
 
       {loading || !health ? (
         <div className="space-y-4" role="status" aria-label="Loading system health" aria-busy="true">
-          <Skeleton className="h-16 rounded-xl" />
+          <Skeleton className="h-16 rounded-lg" />
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="space-y-3 rounded-xl border border-border bg-card p-4">
+              <div key={i} className="space-y-3 rounded-lg border border-border bg-card p-4">
                 <Skeleton className="h-3 w-24" />
                 <Skeleton className="h-6 w-16" />
               </div>
             ))}
           </div>
-          <div className="space-y-4 rounded-xl border border-border bg-card p-4">
+          <div className="space-y-4 rounded-lg border border-border bg-card p-4">
             <Skeleton className="h-5 w-40" />
             <Skeleton className="h-44 w-full rounded-lg" />
           </div>
@@ -91,8 +91,8 @@ export default function PlatformHealthPage(): React.ReactElement {
               <span
                 className={`h-2.5 w-2.5 rounded-full shrink-0 ${
                   isHealthy
-                    ? "bg-emerald-500 ring-4 ring-emerald-500/20"
-                    : "bg-amber-500 ring-4 ring-amber-500/20"
+                    ? "bg-success ring-4 ring-success/20"
+                    : "bg-warning ring-4 ring-warning/20"
                 }`}
               />
               <div>

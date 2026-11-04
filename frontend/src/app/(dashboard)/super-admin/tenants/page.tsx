@@ -96,7 +96,7 @@ export default function SuperAdminTenantsPage(): React.JSX.Element {
         onReset={handleResetFilters}
       />
 
-      <div className="rounded-xl overflow-hidden border border-border">
+      <div className="rounded-lg overflow-hidden border border-border">
         <TenantTable
           tenants={tenants}
           loading={loading}

@@ -2,6 +2,7 @@
 
 import React from "react";
 import { QRCodeSVG } from "qrcode.react";
+import { BRAND_COLORS } from "@/lib/brandColors";
 import type { OccurrenceQrData } from "@/types";
 
 interface QrCodeTileProps {
@@ -13,9 +14,9 @@ export default function QrCodeTile({ qr, failed }: QrCodeTileProps): React.React
   const rotation = qr?.refresh_interval_seconds ?? 5;
   return (
     <div>
-      <div className="mx-auto w-full max-w-[260px] rounded-[14px] border border-border bg-white p-3">
+      <div className="mx-auto w-full max-w-[260px] rounded-lg border border-border bg-card p-3">
         {qr ? (
-          <QRCodeSVG value={qr.qr_token} className="h-auto w-full" size={512} level="M" fgColor="#28363B" aria-label="Attendance QR code" />
+          <QRCodeSVG value={qr.qr_token} className="h-auto w-full" size={512} level="M" fgColor={BRAND_COLORS.primary} aria-label="Attendance QR code" />
         ) : (
           <div className="flex aspect-square items-center justify-center text-xs text-muted-foreground">
             {failed ? "Reconnecting…" : "Preparing code…"}
@@ -26,7 +27,7 @@ export default function QrCodeTile({ qr, failed }: QrCodeTileProps): React.React
         {qr && (
           <div
             key={qr.qr_token}
-            className="qr-countdown-bar h-full origin-left rounded-full bg-[#c98260]"
+            className="qr-countdown-bar h-full origin-left rounded-full bg-accent"
             style={{ animation: `qr-countdown ${rotation}s linear forwards` }}
           />
         )}

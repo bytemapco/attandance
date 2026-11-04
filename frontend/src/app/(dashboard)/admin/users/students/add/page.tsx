@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { User, GraduationCap, PlusCircle, X } from "lucide-react";
+import { User, GraduationCap, PlusCircle, X, Lock } from "lucide-react";
 import toast from "react-hot-toast";
 import api, { getApiErrorMessage, applyValidationErrorsToForm } from "@/lib/api";
 import GlassBreadcrumb from "@/components/ui/GlassBreadcrumb";
@@ -95,7 +95,7 @@ export default function AddStudentPage(): React.ReactElement {
   ];
 
   return (
-    <div className="animate-fade-in-up">
+    <div>
       <GlassBreadcrumb
         items={[
           { label: "Admin", href: "/admin/dashboard" },
@@ -130,8 +130,9 @@ export default function AddStudentPage(): React.ReactElement {
                   {...register("enrollment_number")}
                   error={errors.enrollment_number?.message}
                 />
-                <div className="p-3.5 rounded-xl bg-[#eaf2f6] border border-[#c5dce8] text-xs text-[#306b8a] leading-relaxed">
-                  🔒 A secure temporary password will be automatically generated and emailed to this student. They will be prompted to choose a new password upon first login.
+                <div className="flex items-start gap-2.5 rounded-lg border border-info-border bg-info-soft p-3.5 text-sm text-info">
+                  <Lock size={14} className="mt-0.5 shrink-0" aria-hidden />
+                  <span>A temporary password is generated and emailed to this student. They choose a new one on first sign-in.</span>
                 </div>
               </div>
             </GlassCard>

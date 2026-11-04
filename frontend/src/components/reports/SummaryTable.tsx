@@ -7,7 +7,7 @@ import type { SummaryReport } from "@/types";
 export default function SummaryTable({ report }: { report: SummaryReport }): React.ReactElement {
   const { subjects, rows, meta } = report;
   return (
-    <div className="overflow-hidden rounded-[14px] border border-border bg-card">
+    <div className="overflow-hidden rounded-lg border border-border bg-card">
       <div className="overflow-x-auto">
         <table className="w-full text-left text-sm">
           <thead className="bg-secondary/60 text-xs text-muted-foreground">
@@ -34,7 +34,7 @@ export default function SummaryTable({ report }: { report: SummaryReport }): Rea
                     className={cn(
                       "px-3 py-3 text-center tabular-nums",
                       cell?.percentage !== null && cell?.percentage !== undefined && cell.percentage < meta.threshold
-                        ? "font-semibold text-[#b54242]"
+                        ? "font-semibold text-destructive"
                         : "text-foreground"
                     )}
                     title={cell ? `${cell.attended} of ${cell.held} classes` : "Not in this subject"}

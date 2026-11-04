@@ -38,7 +38,7 @@ export default function AnomalyCard({ result }: AnomalyCardProps): React.ReactEl
   }
 
   return (
-    <GlassCard className="bg-card border-border/80 p-4 rounded-2xl flex flex-col justify-between hover:border-slate-300 transition-all duration-200 shadow-xs">
+    <GlassCard className="bg-card border-border/80 p-4 rounded-lg flex flex-col justify-between hover:border-border-strong transition-all duration-200">
       <div className="space-y-3.5">
         {/* Top Header */}
         <div className="flex items-start justify-between gap-2">
@@ -46,7 +46,7 @@ export default function AnomalyCard({ result }: AnomalyCardProps): React.ReactEl
             <h4 className="text-sm font-semibold text-foreground truncate">
               {result.student_name || "Unknown Student"}
             </h4>
-            <span className="inline-block text-[11px] font-mono text-muted-foreground mt-0.5">
+            <span className="inline-block text-xs font-mono text-muted-foreground mt-0.5">
               PRN: {result.enrollment_number || "N/A"}
             </span>
           </div>
@@ -55,7 +55,7 @@ export default function AnomalyCard({ result }: AnomalyCardProps): React.ReactEl
 
         {/* Pattern Notice */}
         {result.primary_pattern && (
-          <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[#fbf1df] text-[#8a5b12] border border-[#f2deba] text-xs font-medium">
+          <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-warning-soft text-warning border border-warning-border text-xs font-medium">
             <AlertCircle size={13} className="shrink-0" />
             <span className="truncate">{result.primary_pattern}</span>
           </div>
@@ -63,19 +63,19 @@ export default function AnomalyCard({ result }: AnomalyCardProps): React.ReactEl
 
         {/* Key Metrics Strip */}
         <div className="grid grid-cols-2 gap-2 text-xs">
-          <div className="p-2 rounded-xl bg-secondary/60 border border-border/40">
-            <span className="text-[10px] text-muted-foreground block font-medium">
+          <div className="p-2 rounded-lg bg-secondary/60 border border-border/40">
+            <span className="text-xs text-muted-foreground block font-medium">
               Total Absences
             </span>
-            <span className="text-sm font-bold font-mono text-foreground mt-0.5 block">
+            <span className="text-sm font-semibold font-mono text-foreground mt-0.5 block">
               {result.total_absences ?? "—"}
             </span>
           </div>
-          <div className="p-2 rounded-xl bg-secondary/60 border border-border/40">
-            <span className="text-[10px] text-muted-foreground block font-medium">
+          <div className="p-2 rounded-lg bg-secondary/60 border border-border/40">
+            <span className="text-xs text-muted-foreground block font-medium">
               Risk Score
             </span>
-            <span className="text-sm font-bold font-mono text-foreground mt-0.5 block">
+            <span className="text-sm font-semibold font-mono text-foreground mt-0.5 block">
               {score.toFixed(3)}
             </span>
           </div>
@@ -84,7 +84,7 @@ export default function AnomalyCard({ result }: AnomalyCardProps): React.ReactEl
         {/* Weekday Distribution Bar Chart */}
         {breakdown && Object.keys(breakdown).length > 0 && (
           <div className="pt-1">
-            <div className="flex items-center justify-between text-[10px] text-muted-foreground mb-1.5">
+            <div className="flex items-center justify-between text-xs text-muted-foreground mb-1.5">
               <span className="font-medium">Absence by Weekday</span>
               <span>Peak: {maxAbsenceOnAnyDay}d</span>
             </div>
@@ -99,15 +99,15 @@ export default function AnomalyCard({ result }: AnomalyCardProps): React.ReactEl
                     key={day}
                     className={`flex flex-col items-center justify-between py-1.5 px-0.5 rounded-lg border text-center transition-colors ${
                       isPeak
-                        ? "bg-[#fbf1df] border-[#f2deba] text-[#8a5b12]"
+                        ? "bg-warning-soft border-warning-border text-warning"
                         : "bg-secondary/40 border-border/30 text-muted-foreground"
                     }`}
                   >
-                    <span className="text-[9px] font-semibold">{day}</span>
-                    <span className="text-[10px] font-mono font-bold my-0.5">{count}</span>
+                    <span className="text-xs font-semibold">{day}</span>
+                    <span className="text-xs font-mono font-semibold my-0.5">{count}</span>
                     <div className="w-full h-1 bg-secondary rounded-full overflow-hidden px-0.5">
                       <div
-                        className={`h-full rounded-full ${isPeak ? "bg-[#8a5b12]" : "bg-muted-foreground/40"}`}
+                        className={`h-full rounded-full ${isPeak ? "bg-warning" : "bg-muted-foreground/40"}`}
                         style={{ width: `${ratio}%` }}
                       />
                     </div>
@@ -120,7 +120,7 @@ export default function AnomalyCard({ result }: AnomalyCardProps): React.ReactEl
       </div>
 
       {/* Footer Details & Action */}
-      <div className="pt-3 border-t border-border/60 mt-3 flex items-center justify-between text-[11px] text-muted-foreground">
+      <div className="pt-3 border-t border-border/60 mt-3 flex items-center justify-between text-xs text-muted-foreground">
         <span className="font-mono truncate max-w-[170px]" title={result.student_id}>
           ID: {result.student_id}
         </span>
@@ -132,13 +132,13 @@ export default function AnomalyCard({ result }: AnomalyCardProps): React.ReactEl
         >
           {copied ? (
             <>
-              <Check size={12} className="text-emerald-500" />
-              <span className="text-[11px] text-emerald-600 font-medium">Copied</span>
+              <Check size={12} className="text-success" />
+              <span className="text-xs text-success font-medium">Copied</span>
             </>
           ) : (
             <>
               <Copy size={12} />
-              <span className="text-[11px]">Copy ID</span>
+              <span className="text-xs">Copy ID</span>
             </>
           )}
         </button>

@@ -12,7 +12,7 @@ interface TimetableToolbarProps {
 }
 
 const BUTTON =
-  "h-9 rounded-lg border border-[#d9d5cd] bg-white text-sm text-[#202b30] transition-colors hover:bg-[#f5f3ee] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8a4d30]";
+  "h-9 rounded-lg border border-border-strong bg-card text-sm text-foreground transition-colors hover:bg-secondary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-strong";
 
 /** Date filter and week controls. Picking a date shows the week that holds it. */
 export default function TimetableToolbar({ monday, selected, onSelect, onPreviousWeek, onNextWeek, onToday }: TimetableToolbarProps): React.ReactElement {
@@ -34,7 +34,7 @@ export default function TimetableToolbar({ monday, selected, onSelect, onPreviou
       <button type="button" onClick={onToday} className={`${BUTTON} px-3 font-medium`}>
         Today
       </button>
-      <p className="ml-auto text-sm font-semibold tabular-nums text-[#202b30]">{formatWeekRange(monday)}</p>
+      <p className="ml-auto text-sm font-semibold tabular-nums text-foreground">{formatWeekRange(monday)}</p>
     </div>
   );
 }

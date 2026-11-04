@@ -29,7 +29,7 @@ export default function TenantFilterBar({
   const hasActiveFilters = Boolean(searchQuery || statusFilter);
 
   return (
-    <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-3 bg-card rounded-xl border border-border mb-4">
+    <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-3 bg-card rounded-lg border border-border mb-4">
       <div className="flex-1 max-w-md">
         <GlassSearch
           placeholder="Search by institution name or slug..."

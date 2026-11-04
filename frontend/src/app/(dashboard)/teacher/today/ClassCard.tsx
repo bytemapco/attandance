@@ -29,10 +29,10 @@ export default function ClassCard({ item, status, busy, onActivate }: ClassCardP
   const cancelled = status === "CANCELLED";
   const body = (
     <>
-      <span className={`block truncate text-sm font-semibold ${cancelled ? "text-[#6b7479] line-through" : "text-[#202b30]"}`}>
+      <span className={`block truncate text-sm font-semibold ${cancelled ? "text-muted-foreground line-through" : "text-foreground"}`}>
         {item.subject_code || item.course_name}
       </span>
-      <span className="mt-0.5 block truncate text-xs text-[#526f78]">
+      <span className="mt-0.5 block truncate text-xs text-muted-foreground">
         {item.section_name} · {item.classroom_name}
       </span>
       <span className={`mt-2 flex items-center gap-1.5 text-xs font-semibold tabular-nums ${view.tone}`}>
@@ -58,7 +58,7 @@ export default function ClassCard({ item, status, busy, onActivate }: ClassCardP
       title={item.course_name}
       aria-label={accessibleName(item, status)}
       onClick={() => onActivate(item)}
-      className={`${shape} transition-colors hover:border-[#8a4d30] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8a4d30] disabled:cursor-wait`}
+      className={`${shape} transition-colors hover:border-accent-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-strong disabled:cursor-wait`}
     >
       {body}
     </button>

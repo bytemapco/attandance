@@ -66,7 +66,7 @@ export default function TenantLicensesPage(): React.JSX.Element {
   const pct = licenseCount > 0 ? Math.min(100, Math.round((totalUsed / licenseCount) * 100)) : 0;
 
   return (
-    <div className="space-y-6 max-w-5xl animate-fade-in">
+    <div className="space-y-6 max-w-5xl">
       <GlassBreadcrumb
         items={[
           { label: "Dashboard", href: "/admin/dashboard" },
@@ -88,7 +88,7 @@ export default function TenantLicensesPage(): React.JSX.Element {
       {loading && !usage ? (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3" role="status" aria-label="Loading license usage" aria-busy="true">
           {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="space-y-3 rounded-xl border border-border bg-card p-5">
+            <div key={i} className="space-y-3 rounded-lg border border-border bg-card p-5">
               <Skeleton className="h-3 w-28" />
               <Skeleton className="h-7 w-20" />
               <Skeleton className="h-3 w-36 max-w-full" />
@@ -98,40 +98,40 @@ export default function TenantLicensesPage(): React.JSX.Element {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <GlassCard className="p-5">
-            <p className="text-xs text-[#526f78]">Total Licenses</p>
-            <p className="text-2xl font-bold text-[#28363b] mt-1">
+            <p className="text-xs text-muted-foreground">Total Licenses</p>
+            <p className="text-2xl font-semibold text-primary mt-1">
               {licenseCount.toLocaleString()}
             </p>
-            <p className="text-[11px] text-[#526f78] mt-2">Allocated seats for students & teachers</p>
+            <p className="text-xs text-muted-foreground mt-2">Allocated seats for students & teachers</p>
           </GlassCard>
           <GlassCard className="p-5">
-            <p className="text-xs text-[#526f78]">Seats Used</p>
-            <p className="text-2xl font-bold text-[#28363b] mt-1">
+            <p className="text-xs text-muted-foreground">Seats Used</p>
+            <p className="text-2xl font-semibold text-primary mt-1">
               {totalUsed.toLocaleString()}
             </p>
-            <p className="text-[11px] text-[#526f78] mt-2">
+            <p className="text-xs text-muted-foreground mt-2">
               {usage ? `${usage.student_count} students · ${usage.teacher_count} teachers` : "—"}
             </p>
           </GlassCard>
           <GlassCard className="p-5">
-            <p className="text-xs text-[#526f78]">Remaining Seats</p>
-            <p className="text-2xl font-bold text-[#28363b] mt-1">
+            <p className="text-xs text-muted-foreground">Remaining Seats</p>
+            <p className="text-2xl font-semibold text-primary mt-1">
               {(usage?.remaining ?? 0).toLocaleString()}
             </p>
-            <p className="text-[11px] text-[#526f78] mt-2">Available for new users</p>
+            <p className="text-xs text-muted-foreground mt-2">Available for new users</p>
           </GlassCard>
         </div>
       )}
 
       <GlassCard className="p-5">
         <div className="flex items-center justify-between mb-3">
-          <p className="text-xs font-semibold text-[#28363b]">Capacity</p>
-          <p className="text-xs text-[#526f78]">{pct}% used</p>
+          <p className="text-xs font-semibold text-primary">Capacity</p>
+          <p className="text-xs text-muted-foreground">{pct}% used</p>
         </div>
-        <div className="w-full h-2 bg-[#eeece7] rounded-full overflow-hidden">
+        <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
           <div
             className={`h-full rounded-full transition-all ${
-              pct > 90 ? "bg-[#b54242]" : pct > 70 ? "bg-[#8a5b12]" : "bg-[#28363b]"
+              pct > 90 ? "bg-destructive" : pct > 70 ? "bg-warning" : "bg-primary"
             }`}
             style={{ width: `${pct}%` }}
           />
@@ -141,12 +141,12 @@ export default function TenantLicensesPage(): React.JSX.Element {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <GlassCard className="p-5 space-y-4">
           <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-xl bg-[#28363b]/10 text-[#28363b]">
+            <div className="p-2 rounded-lg bg-primary/10 text-primary">
               <KeyRound size={16} />
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-[#28363b]">Request More Licenses</h3>
-              <p className="text-[11px] text-[#526f78]">
+              <h3 className="text-sm font-semibold text-primary">Request More Licenses</h3>
+              <p className="text-xs text-muted-foreground">
                 Submit a request and your platform administrator will review it.
               </p>
             </div>

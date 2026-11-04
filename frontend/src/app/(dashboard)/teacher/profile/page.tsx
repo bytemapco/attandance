@@ -62,13 +62,13 @@ export default function TeacherProfilePage(): React.ReactElement {
   };
 
   if (loading) return <GlassLoader text="Loading profile..." />;
-  if (!profile) return <div className="text-center py-20 text-[#526f78] text-xs">Profile unavailable</div>;
+  if (!profile) return <div className="text-center py-20 text-muted-foreground text-xs">Profile unavailable</div>;
 
   const t = profile.teacher_profile;
   const initial = t?.first_name ? t.first_name[0].toUpperCase() : (profile.email ? profile.email[0].toUpperCase() : "U");
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-6">
       <GlassBreadcrumb
         items={[
           { label: "Teacher", href: "/teacher/dashboard" },
@@ -83,53 +83,53 @@ export default function TeacherProfilePage(): React.ReactElement {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
         {/* Profile Card */}
-        <div className="lg:col-span-1 rounded-2xl border border-[#e3e1dc] bg-white p-6 shadow-2xs space-y-6">
+        <div className="lg:col-span-1 rounded-lg border border-border bg-card p-6 space-y-6">
           <div className="flex flex-col items-center text-center">
-            <div className="w-18 h-18 rounded-full bg-[#f0ede6] text-[#28363b] font-bold text-2xl flex items-center justify-center border-2 border-[#e3e1dc] mb-3 shadow-2xs">
+            <div className="w-18 h-18 rounded-full bg-secondary text-primary font-semibold text-2xl flex items-center justify-center border-2 border-border mb-3">
               {initial}
             </div>
-            <h2 className="text-base font-bold text-[#202b30]">
+            <h2 className="text-base font-semibold text-foreground">
               {t ? `${t.first_name} ${t.last_name}` : profile.email}
             </h2>
-            <p className="text-xs text-[#526f78] mt-0.5">{profile.email}</p>
+            <p className="text-xs text-muted-foreground mt-0.5">{profile.email}</p>
             <div className="mt-2.5">
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#e8f3ed] text-[#247653] border border-[#c6e2d3]">
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-success-soft text-success border border-success-border">
                 Faculty Member
               </span>
             </div>
           </div>
 
-          <div className="pt-4 border-t border-[#e3e1dc] space-y-2.5 text-xs">
+          <div className="pt-4 border-t border-border space-y-2.5 text-xs">
             <div className="flex items-center justify-between py-1">
-              <span className="flex items-center gap-2 text-[#526f78] font-medium">
-                <Briefcase size={14} className="text-[#718087]" /> Employee ID
+              <span className="flex items-center gap-2 text-muted-foreground font-medium">
+                <Briefcase size={14} className="text-muted-foreground" /> Employee ID
               </span>
-              <span className="font-mono text-[#202b30] font-semibold">{t?.employee_id || "—"}</span>
+              <span className="font-mono text-foreground font-semibold">{t?.employee_id || "—"}</span>
             </div>
             <div className="flex items-center justify-between py-1">
-              <span className="flex items-center gap-2 text-[#526f78] font-medium">
-                <Building size={14} className="text-[#718087]" /> Department
+              <span className="flex items-center gap-2 text-muted-foreground font-medium">
+                <Building size={14} className="text-muted-foreground" /> Department
               </span>
-              <span className="text-[#202b30] font-semibold">{t?.department || "—"}</span>
+              <span className="text-foreground font-semibold">{t?.department || "—"}</span>
             </div>
             <div className="flex items-center justify-between py-1">
-              <span className="flex items-center gap-2 text-[#526f78] font-medium">
-                <Award size={14} className="text-[#718087]" /> Designation
+              <span className="flex items-center gap-2 text-muted-foreground font-medium">
+                <Award size={14} className="text-muted-foreground" /> Designation
               </span>
-              <span className="text-[#202b30] font-semibold">{t?.designation || "—"}</span>
+              <span className="text-foreground font-semibold">{t?.designation || "—"}</span>
             </div>
           </div>
         </div>
 
         {/* Security / Password Card */}
-        <div className="lg:col-span-2 rounded-2xl border border-[#e3e1dc] bg-white p-6 shadow-2xs space-y-5">
-          <div className="flex items-center gap-2.5 pb-4 border-b border-[#e3e1dc]">
-            <div className="w-8 h-8 rounded-lg bg-[#eeece7] text-[#28363b] flex items-center justify-center border border-[#e3e1dc]">
-              <Shield size={16} className="text-[#c98260]" />
+        <div className="lg:col-span-2 rounded-lg border border-border bg-card p-6 space-y-5">
+          <div className="flex items-center gap-2.5 pb-4 border-b border-border">
+            <div className="w-8 h-8 rounded-lg bg-secondary text-primary flex items-center justify-center border border-border">
+              <Shield size={16} className="text-accent-strong" />
             </div>
             <div>
-              <h3 className="text-base font-bold text-[#202b30]">Change Password</h3>
-              <p className="text-xs text-[#526f78]">Choose a strong password with at least 8 characters.</p>
+              <h3 className="text-base font-semibold text-foreground">Change Password</h3>
+              <p className="text-xs text-muted-foreground">Choose a strong password with at least 8 characters.</p>
             </div>
           </div>
 

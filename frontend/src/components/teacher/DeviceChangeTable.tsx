@@ -80,7 +80,7 @@ export default function DeviceChangeTable({ requests, onActionComplete }: Device
             <span className="text-xs font-mono text-foreground">{req.new_device_uuid.substring(0, 8)}...</span>
           </div>
           {req.reason && (
-            <div className="flex items-center gap-1 mt-1 text-xs text-amber-700 dark:text-amber-300 bg-amber-500/10 border border-amber-500/20 w-fit px-2 py-0.5 rounded">
+            <div className="flex items-center gap-1 mt-1 text-xs text-warning bg-warning/10 border border-warning/20 w-fit px-2 py-0.5 rounded-sm">
               <AlertCircle size={10} />
               <span className="truncate max-w-[200px]">{req.reason}</span>
             </div>
@@ -104,7 +104,7 @@ export default function DeviceChangeTable({ requests, onActionComplete }: Device
               type="button"
               onClick={() => void handleAction(req.id, "REJECTED")}
               disabled={isProcessing}
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border border-destructive/20 bg-destructive/10 text-destructive hover:bg-destructive/20 active:scale-95 disabled:opacity-50 transition-all text-xs font-medium cursor-pointer"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border border-destructive/20 bg-destructive/10 text-destructive hover:bg-destructive/20 disabled:opacity-50 transition-all text-xs font-medium cursor-pointer"
             >
               {isProcessing && processing?.action === "REJECTED" ? <Loader2 size={13} className="animate-spin" /> : <XCircle size={13} />}
               <span>Reject</span>
@@ -113,7 +113,7 @@ export default function DeviceChangeTable({ requests, onActionComplete }: Device
               type="button"
               onClick={() => void handleAction(req.id, "APPROVED")}
               disabled={isProcessing}
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border border-emerald-500/20 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20 active:scale-95 disabled:opacity-50 transition-all text-xs font-medium cursor-pointer"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border border-success/20 bg-success/10 text-success hover:bg-success/20 disabled:opacity-50 transition-all text-xs font-medium cursor-pointer"
             >
               {isProcessing && processing?.action === "APPROVED" ? <Loader2 size={13} className="animate-spin" /> : <CheckCircle2 size={13} />}
               <span>Approve</span>
@@ -126,7 +126,7 @@ export default function DeviceChangeTable({ requests, onActionComplete }: Device
 
   if (localRequests.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center p-12 text-center border border-border rounded-xl bg-card">
+      <div className="flex flex-col items-center justify-center p-12 text-center border border-border rounded-lg bg-card">
         <div className="w-12 h-12 rounded-full bg-secondary text-muted-foreground flex items-center justify-center mb-3">
           <Smartphone size={24} />
         </div>
@@ -156,7 +156,7 @@ export default function DeviceChangeTable({ requests, onActionComplete }: Device
         )}
       </div>
 
-      <div className="rounded-xl border border-border bg-card shadow-2xs overflow-hidden">
+      <div className="rounded-lg border border-border bg-card overflow-hidden">
         <GlassTable
           columns={columns}
           data={paginatedRequests as (DeviceChangeRequest & Record<string, unknown>)[]}

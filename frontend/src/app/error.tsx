@@ -19,21 +19,21 @@ export default function RootError({
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 bg-background text-foreground relative overflow-hidden">
       <div className="w-full max-w-md text-center z-10">
-        <div className="rounded-2xl border border-[#e3e1dc] bg-card p-8 sm:p-10 shadow-[0_8px_24px_rgba(40,54,59,0.08)]">
-          <div className="inline-flex p-3 rounded-2xl bg-[#f9eaea] text-[#b54242] border border-[#f0c9c9] mb-5">
+        <div className="rounded-lg border border-border bg-card p-8 sm:p-10">
+          <div className="inline-flex p-3 rounded-lg bg-destructive-soft text-destructive border border-destructive-border mb-5">
             <AlertCircle size={32} aria-hidden="true" />
           </div>
 
-          <h1 className="text-xl font-bold tracking-tight text-[#28363b] mb-2">
-            Something unexpected occurred
+          <h1 className="text-xl font-semibold tracking-tight text-primary mb-2">
+            This page failed to load
           </h1>
 
-          <p className="text-xs sm:text-sm text-[#526f78] mb-6 max-w-sm mx-auto leading-relaxed">
+          <p className="text-xs sm:text-sm text-muted-foreground mb-6 max-w-sm mx-auto leading-relaxed">
             {error.message || "An unexpected error interrupted this session. Please try reloading."}
           </p>
 
           {error.digest && (
-            <p className="text-[11px] text-[#718087] font-mono mb-6 bg-secondary/70 py-1 px-2.5 rounded border border-[#e3e1dc] inline-block">
+            <p className="text-xs text-muted-foreground font-mono mb-6 bg-secondary/70 py-1 px-2.5 rounded-sm border border-border inline-block">
               Reference: {error.digest}
             </p>
           )}

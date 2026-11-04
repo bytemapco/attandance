@@ -59,10 +59,10 @@ export default function AttendanceRulesFields({ value, onChange }: AttendanceRul
         maxLabel="2 h"
         onChange={(next) => onChange({ ...value, verificationWindowMin: next })}
       />
-      <label className="flex items-center gap-2 text-sm text-[#202b30]">
+      <label className="flex items-center gap-2 text-sm text-foreground">
         <input
           type="checkbox"
-          className="h-4 w-4 rounded border-[#d6d2ca]"
+          className="h-4 w-4 rounded-sm border-border-strong"
           checked={value.saturdayEnabled}
           onChange={(event) => onChange({ ...value, saturdayEnabled: event.target.checked })}
         />

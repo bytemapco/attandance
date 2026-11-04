@@ -87,7 +87,7 @@ export default function DepartmentBatchesPanel({ department }: { department: Dep
   }
 
   const columns: TableColumn<BatchRow>[] = [
-    { key: "code", header: "Batch", sortable: true, render: (r) => <span className="font-semibold text-[#202b30]">{r.code}</span> },
+    { key: "code", header: "Batch", sortable: true, render: (r) => <span className="font-semibold text-foreground">{r.code}</span> },
     { key: "student_count", header: "Students", render: (r) => <span>{r.student_count}</span> },
     {
       key: "status",
@@ -116,7 +116,7 @@ export default function DepartmentBatchesPanel({ department }: { department: Dep
             size="sm"
             disabled={r.student_count > 0 || r.class_count > 0}
             onClick={() => setDeleteTarget(r)}
-            className="text-muted-foreground hover:text-[#b54242] hover:bg-[#f9eaea]"
+            className="text-muted-foreground hover:text-destructive hover:bg-destructive-soft"
             icon={<Trash2 size={13} />}
           />
         </div>
@@ -127,8 +127,8 @@ export default function DepartmentBatchesPanel({ department }: { department: Dep
   return (
     <div className="space-y-3">
       <div>
-        <h2 className="text-base font-semibold text-[#202b30]">Batches</h2>
-        <p className="text-xs text-[#526f78]">Pick a section and add a batch. The number is assigned automatically.</p>
+        <h2 className="text-base font-semibold text-foreground">Batches</h2>
+        <p className="text-xs text-muted-foreground">Pick a section and add a batch. The number is assigned automatically.</p>
       </div>
 
       <div className="flex flex-wrap items-end gap-3">

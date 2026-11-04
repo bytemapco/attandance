@@ -106,7 +106,7 @@ export default function EditTeacherPage(): React.ReactElement {
   if (!teacher) return <div className="text-center py-20 text-muted-foreground">Teacher not found</div>;
 
   return (
-    <div className="animate-fade-in-up">
+    <div>
       <GlassBreadcrumb
         items={[
           { label: "Admin", href: "/admin/dashboard" },

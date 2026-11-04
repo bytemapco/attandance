@@ -70,8 +70,8 @@ export default function TenantAdminsTab({ tenant, onRefresh }: TenantAdminsTabPr
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-sm font-semibold text-[#28363b]">Administrators</h3>
-          <p className="text-xs text-[#526f78]">Manage administrators for this institution. Setup links are sent by email.</p>
+          <h3 className="text-sm font-semibold text-primary">Administrators</h3>
+          <p className="text-xs text-muted-foreground">Manage administrators for this institution. Setup links are sent by email.</p>
         </div>
         <GlassButton variant="primary" onClick={() => setShowAddAdmin(true)} className="gap-1.5 text-xs">
           <UserPlus size={14} />
@@ -79,9 +79,9 @@ export default function TenantAdminsTab({ tenant, onRefresh }: TenantAdminsTabPr
         </GlassButton>
       </div>
 
-      <div className="bg-card border border-[#e3e1dc] rounded-xl overflow-hidden shadow-2xs">
+      <div className="bg-card border border-border rounded-lg overflow-hidden">
         <table className="w-full text-left text-xs">
-          <thead className="bg-[#eeece7]/60 border-b border-[#e3e1dc] text-[11px] font-semibold text-[#526f78] uppercase tracking-wider">
+          <thead className="bg-secondary/60 border-b border-border text-xs font-semibold text-muted-foreground">
             <tr>
               <th className="px-4 py-3">Administrator Email</th>
               <th className="px-4 py-3">Role</th>
@@ -89,25 +89,25 @@ export default function TenantAdminsTab({ tenant, onRefresh }: TenantAdminsTabPr
               <th className="px-4 py-3 text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-[#e3e1dc]">
+          <tbody className="divide-y divide-border">
             {admins.map((admin) => {
               const isActive = admin.is_active !== false;
               return (
-                <tr key={admin.id} className="hover:bg-[#eeece7]/40 transition-colors">
-                  <td className="px-4 py-3 font-semibold text-[#202b30] flex items-center gap-2">
-                    <UserCheck size={14} className="text-[#526f78]" />
+                <tr key={admin.id} className="hover:bg-secondary/40 transition-colors">
+                  <td className="px-4 py-3 font-semibold text-foreground flex items-center gap-2">
+                    <UserCheck size={14} className="text-muted-foreground" />
                     <span>{admin.email}</span>
                   </td>
-                  <td className="px-4 py-3 font-mono text-[11px] text-[#526f78]">{admin.role}</td>
+                  <td className="px-4 py-3 font-mono text-xs text-muted-foreground">{admin.role}</td>
                   <td className="px-4 py-3">
                     <button
                       type="button"
                       onClick={() => void handleToggleStatus(admin.id, isActive)}
                       disabled={togglingId === admin.id}
-                      className={`inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-semibold border cursor-pointer transition-colors ${
+                      className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold border cursor-pointer transition-colors ${
                         isActive
-                          ? "bg-[#e8f3ed] text-[#247653] border-[#247653]/30 hover:bg-[#e8f3ed]/70"
-                          : "bg-[#f9eaea] text-[#b54242] border-[#b54242]/30 hover:bg-[#f9eaea]/70"
+                          ? "bg-success-soft text-success border-success/30 hover:bg-success-soft/70"
+                          : "bg-destructive-soft text-destructive border-destructive/30 hover:bg-destructive-soft/70"
                       }`}
                       title={isActive ? "Click to deactivate" : "Click to activate"}
                     >
@@ -119,7 +119,7 @@ export default function TenantAdminsTab({ tenant, onRefresh }: TenantAdminsTabPr
                       <button
                         type="button"
                         onClick={() => setAdminToEdit({ id: admin.id, email: admin.email })}
-                        className="inline-flex items-center gap-1 text-xs text-[#526f78] hover:text-[#202b30] font-medium px-1.5 py-1 rounded hover:bg-[#eeece7] transition-colors cursor-pointer"
+                        className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground font-medium px-1.5 py-1 rounded-sm hover:bg-secondary transition-colors cursor-pointer"
                         title="Edit email"
                       >
                         <Pencil size={13} />
@@ -128,7 +128,7 @@ export default function TenantAdminsTab({ tenant, onRefresh }: TenantAdminsTabPr
                       <button
                         type="button"
                         onClick={() => setAdminToReset({ id: admin.id, email: admin.email })}
-                        className="inline-flex items-center gap-1 text-xs text-[#526f78] hover:text-[#202b30] font-medium px-1.5 py-1 rounded hover:bg-[#eeece7] transition-colors cursor-pointer"
+                        className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground font-medium px-1.5 py-1 rounded-sm hover:bg-secondary transition-colors cursor-pointer"
                         title="Send reset password email"
                       >
                         <KeyRound size={13} />
@@ -137,7 +137,7 @@ export default function TenantAdminsTab({ tenant, onRefresh }: TenantAdminsTabPr
                       <button
                         type="button"
                         onClick={() => setAdminToDelete({ id: admin.id, email: admin.email })}
-                        className="inline-flex items-center gap-1 text-xs text-[#b54242] hover:bg-[#f9eaea] font-medium px-1.5 py-1 rounded transition-colors cursor-pointer"
+                        className="inline-flex items-center gap-1 text-xs text-destructive hover:bg-destructive-soft font-medium px-1.5 py-1 rounded-sm transition-colors cursor-pointer"
                         title="Delete administrator"
                       >
                         <Trash2 size={13} />

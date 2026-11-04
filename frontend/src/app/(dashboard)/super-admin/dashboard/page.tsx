@@ -61,7 +61,7 @@ export default function SuperAdminDashboardPage(): React.ReactElement {
 
       <div className="mt-8">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-base font-bold text-foreground">Recent Institutions</h2>
+          <h2 className="text-base font-semibold text-foreground">Recent Institutions</h2>
           <Link
             href="/super-admin/tenants"
             className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline"

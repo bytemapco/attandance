@@ -34,29 +34,29 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps): React.JSX.El
   return (
     <>
       {isOpen && (
-        <div className="fixed inset-0 bg-[#28363b]/40 backdrop-blur-xs z-30 md:hidden" onClick={onClose} />
+        <div className="fixed inset-0 bg-overlay z-30 md:hidden" onClick={onClose} aria-hidden />
       )}
 
       <aside
         className={cn(
-          "fixed top-0 bottom-0 left-0 z-40 flex flex-col w-[260px] bg-card border-r border-[#e3e1dc] shadow-[0_2px_8px_rgba(40,54,59,0.04)] transition-transform duration-200",
+          "fixed top-0 bottom-0 left-0 z-40 flex flex-col w-[260px] bg-card border-r border-border transition-transform duration-200",
           isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         )}
       >
-        <div className="min-h-16 py-3 px-4 sm:px-5 border-b border-[#e3e1dc] flex items-center justify-between bg-card shrink-0">
+        <div className="min-h-16 py-3 px-4 sm:px-5 border-b border-border flex items-center justify-between bg-card shrink-0">
           <Link
             href={homeHref}
             onClick={onClose}
-            className="flex items-center gap-3 group hover:opacity-95 transition-opacity cursor-pointer min-w-0 w-full"
+            className="flex items-center gap-3 min-w-0 w-full"
           >
             <img
               src="/sahaj-app-icon.png"
               alt="SAHAJ Logo"
-              className="h-9 w-9 rounded-xl shadow-xs group-hover:scale-105 transition-transform object-contain shrink-0 self-center"
+              className="h-9 w-9 rounded-lg object-contain shrink-0 self-center"
             />
             <div className="min-w-0 flex-1">
-              <h2 className="text-sm font-bold text-[#28363b] tracking-wider leading-tight">SAHAJ</h2>
-              <p className="text-[11px] text-[#526f78] font-medium leading-snug break-words">
+              <h2 className="text-sm font-semibold text-primary leading-tight">SAHAJ</h2>
+              <p className="text-xs text-muted-foreground font-medium leading-snug break-words">
                 {instituteName}
               </p>
             </div>

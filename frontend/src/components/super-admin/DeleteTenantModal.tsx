@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
-import { X, AlertTriangle, Trash2, Loader2 } from "lucide-react";
+import { X, AlertTriangle, Trash2 } from "lucide-react";
 import GlassButton from "@/components/ui/GlassButton";
+import ModalFrame from "@/components/ui/ModalFrame";
 import type { Tenant } from "@/types/tenant";
 
 interface DeleteTenantModalProps {
@@ -46,69 +47,68 @@ export default function DeleteTenantModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 animate-in fade-in duration-200">
-      <div className="bg-card border border-destructive/30 w-full max-w-md rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-border bg-destructive/10">
-          <div className="flex items-center gap-3">
-            <div className="h-9 w-9 rounded-xl bg-destructive/20 text-destructive flex items-center justify-center">
-              <AlertTriangle size={20} />
-            </div>
-            <div>
-              <h2 className="text-base font-bold text-destructive">Delete Institution</h2>
-              <p className="text-xs text-muted-foreground font-mono">{tenant.name}</p>
-            </div>
+    <ModalFrame label="Delete institution" onClose={onClose}>
+      <div className="flex items-start justify-between gap-3 border-b border-border px-6 py-4">
+        <div className="flex items-start gap-3">
+          <AlertTriangle size={20} className="mt-0.5 shrink-0 text-destructive" aria-hidden />
+          <div>
+            <h2 className="text-base font-semibold text-destructive">Delete institution</h2>
+            <p className="text-sm text-muted-foreground">{tenant.name}</p>
           </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="text-muted-foreground hover:text-foreground p-1 rounded-lg hover:bg-muted transition-colors"
-          >
-            <X size={18} />
-          </button>
+        </div>
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Close"
+          className="rounded-md p-1 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+        >
+          <X size={18} />
+        </button>
+      </div>
+
+      <div className="space-y-4 p-6">
+        <p className="text-sm text-muted-foreground">
+          This cannot be undone. All classes, user accounts, and attendance records for{" "}
+          <strong className="text-foreground">{tenant.name}</strong> will be permanently removed.
+        </p>
+
+        {error && (
+          <div className="rounded-lg border border-destructive-border bg-destructive-soft p-3 text-sm font-medium text-destructive">
+            {error}
+          </div>
+        )}
+
+        <div className="space-y-2 rounded-lg border border-border bg-surface p-3.5">
+          <label htmlFor="confirm-delete-slug" className="block text-sm font-medium text-foreground">
+            To confirm, type <span className="select-all font-mono font-semibold text-destructive">{expectedText}</span> below:
+          </label>
+          <input
+            id="confirm-delete-slug"
+            type="text"
+            value={confirmInput}
+            onChange={(e) => setConfirmInput(e.target.value)}
+            className="h-10 w-full rounded-md border border-input bg-card px-3 font-mono text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-destructive/40"
+            placeholder={expectedText}
+            autoFocus
+          />
         </div>
 
-        <div className="p-6 space-y-4">
-          <p className="text-xs text-muted-foreground leading-relaxed">
-            This action cannot be undone. All classes, user accounts, and attendance records for <strong className="text-foreground">{tenant.name}</strong> will be permanently removed.
-          </p>
-
-          {error && (
-            <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-xs font-medium">
-              {error}
-            </div>
-          )}
-
-          <div className="space-y-2 bg-muted/30 p-3.5 rounded-xl border border-border">
-            <label className="text-xs font-medium text-foreground block">
-              To confirm, type <span className="font-mono font-bold text-destructive select-all">{expectedText}</span> below:
-            </label>
-            <input
-              type="text"
-              value={confirmInput}
-              onChange={(e) => setConfirmInput(e.target.value)}
-              className="w-full h-10 px-3 text-xs font-mono rounded-lg border border-input bg-background focus:outline-hidden focus:ring-2 focus:ring-destructive/30"
-              placeholder={expectedText}
-              autoFocus
-            />
-          </div>
-
-          <div className="flex items-center justify-end gap-2 pt-2 border-t border-border">
-            <GlassButton type="button" variant="secondary" onClick={onClose} disabled={loading}>
-              Cancel
-            </GlassButton>
-            <GlassButton
-              type="button"
-              variant="danger"
-              disabled={!isMatch || loading}
-              onClick={() => void handleDelete()}
-              className="gap-2"
-            >
-              {loading ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
-              <span>Delete Institution</span>
-            </GlassButton>
-          </div>
+        <div className="flex items-center justify-end gap-2 border-t border-border pt-4">
+          <GlassButton type="button" variant="secondary" onClick={onClose} disabled={loading}>
+            Cancel
+          </GlassButton>
+          <GlassButton
+            type="button"
+            variant="danger"
+            disabled={!isMatch}
+            loading={loading}
+            icon={<Trash2 size={14} />}
+            onClick={() => void handleDelete()}
+          >
+            Delete institution
+          </GlassButton>
         </div>
       </div>
-    </div>
+    </ModalFrame>
   );
 }

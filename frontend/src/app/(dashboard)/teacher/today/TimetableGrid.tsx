@@ -18,13 +18,13 @@ interface TimetableGridProps {
 function DayHead({ day, today, selected }: { day: string; today: string; selected: string }): React.ReactElement {
   const isToday = day === today;
   const mark = isToday
-    ? "bg-[#8a4d30] text-white"
+    ? "bg-accent-strong text-primary-foreground"
     : day === selected
-      ? "ring-1 ring-[#8a4d30] text-[#8a4d30]"
-      : "text-[#202b30]";
+      ? "ring-1 ring-accent-strong text-accent-strong"
+      : "text-foreground";
   return (
     <span className="flex items-center gap-1.5">
-      <span className="text-xs font-medium text-[#526f78]">{weekdayName(day)}</span>
+      <span className="text-xs font-medium text-muted-foreground">{weekdayName(day)}</span>
       <span className={`flex h-6 min-w-6 items-center justify-center rounded-full px-1 text-xs font-semibold tabular-nums ${mark}`}>
         {dayNumber(day)}
         {isToday && <span className="sr-only"> (today)</span>}
@@ -36,11 +36,11 @@ function DayHead({ day, today, selected }: { day: string; today: string; selecte
 /** Time slots down the side, weekdays across the top. The time column stays put while the grid scrolls. */
 export default function TimetableGrid({ grid, today, selected, statusOf, openingId, onActivate }: TimetableGridProps): React.ReactElement {
   return (
-    <div className="overflow-x-auto rounded-xl border border-[#d9d5cd] bg-white">
+    <div className="overflow-x-auto rounded-lg border border-border-strong bg-card">
       <table className="w-full min-w-[44rem] border-collapse">
         <thead>
-          <tr className="border-b border-[#e6e2da] bg-[#faf8f5]">
-            <th scope="col" className="sticky left-0 z-10 w-24 bg-[#faf8f5] px-3 py-3 text-left text-xs font-medium text-[#526f78]">
+          <tr className="border-b border-border bg-surface">
+            <th scope="col" className="sticky left-0 z-10 w-24 bg-surface px-3 py-3 text-left text-xs font-medium text-muted-foreground">
               Time
             </th>
             {grid.days.map((day) => (
@@ -52,13 +52,13 @@ export default function TimetableGrid({ grid, today, selected, statusOf, opening
         </thead>
         <tbody>
           {grid.rows.map((row) => (
-            <tr key={`${row.start}-${row.end}`} className="border-b border-[#e6e2da] last:border-b-0">
-              <th scope="row" className="sticky left-0 z-10 bg-white px-3 py-3 text-left align-top text-xs font-semibold tabular-nums text-[#202b30]">
+            <tr key={`${row.start}-${row.end}`} className="border-b border-border last:border-b-0">
+              <th scope="row" className="sticky left-0 z-10 bg-card px-3 py-3 text-left align-top text-xs font-semibold tabular-nums text-foreground">
                 {row.start}
-                <span className="block font-normal text-[#718087]">{row.end}</span>
+                <span className="block font-normal text-muted-foreground">{row.end}</span>
               </th>
               {grid.days.map((day) => (
-                <td key={day} className={`px-2 pb-0 pt-2 align-top ${day === today ? "bg-[#fdf9f5]" : ""}`}>
+                <td key={day} className={`px-2 pb-0 pt-2 align-top ${day === today ? "bg-surface" : ""}`}>
                   {(row.byDay[day] ?? []).map((item) => (
                     <ClassCard
                       key={item.id}

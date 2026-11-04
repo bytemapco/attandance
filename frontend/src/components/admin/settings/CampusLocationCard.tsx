@@ -175,7 +175,7 @@ export default function CampusLocationCard({
       </div>
 
       {/* Map canvas with a fixed height, so it renders inside any parent */}
-      <div className="h-[22rem] overflow-hidden rounded-xl border border-[#e3e1dc] bg-[#faf8f5] sm:h-[26rem]">
+      <div className="h-[22rem] overflow-hidden rounded-lg border border-border bg-surface sm:h-[26rem]">
         {hasPin ? (
           <div className="h-full w-full">
             <GeofenceMap
@@ -187,10 +187,10 @@ export default function CampusLocationCard({
           </div>
         ) : (
           <div className="flex h-full min-h-[180px] flex-col items-center justify-center gap-2 px-6 text-center">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#f2ede7] text-[#c98260]">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary text-accent-strong">
               <MapPin size={20} aria-hidden />
             </div>
-            <p className="text-xs text-[#526f78]">Search or click the map to set the campus.</p>
+            <p className="text-xs text-muted-foreground">Search or click the map to set the campus.</p>
           </div>
         )}
       </div>
@@ -215,10 +215,10 @@ export default function CampusLocationCard({
 
       {/* Validation Errors */}
       {(errors.campusLatitude || errors.campusLongitude) && (
-        <p className="shrink-0 text-xs text-red-600">Search for the campus or click the map to place the pin.</p>
+        <p className="shrink-0 text-xs text-destructive">Search for the campus or click the map to place the pin.</p>
       )}
       {errors.geofenceRadiusMeters && (
-        <p className="shrink-0 text-xs text-red-600">{errors.geofenceRadiusMeters.message}</p>
+        <p className="shrink-0 text-xs text-destructive">{errors.geofenceRadiusMeters.message}</p>
       )}
 
     </div>

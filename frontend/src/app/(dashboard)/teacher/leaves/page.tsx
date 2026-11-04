@@ -44,7 +44,7 @@ export default function LeavesPage(): React.JSX.Element {
       key: "enrollment_number", 
       header: "Enrollment #",
       render: (r) => (
-        <span className="font-mono text-xs text-foreground bg-secondary/80 px-2 py-0.5 rounded border border-border">
+        <span className="font-mono text-xs text-foreground bg-secondary/80 px-2 py-0.5 rounded-sm border border-border">
           {r.enrollment_number}
         </span>
       )
@@ -76,7 +76,7 @@ export default function LeavesPage(): React.JSX.Element {
       key: "document_url",
       header: "Proof Attached",
       render: (r) => r.document_url ? (
-        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 text-[11px] font-semibold">
+        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-success/10 text-success border border-success/20 text-xs font-semibold">
           {r.document_url.toLowerCase().split("?")[0].endsWith(".pdf") ? <FileText size={12} /> : <ImageIcon size={12} />}
           <span>Attached</span>
         </span>
@@ -89,7 +89,7 @@ export default function LeavesPage(): React.JSX.Element {
         <button
           type="button"
           onClick={() => router.push(`/teacher/leaves/${row.id}`)}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-card hover:bg-secondary text-foreground active:scale-95 transition-all text-xs font-semibold cursor-pointer shadow-2xs"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-card hover:bg-secondary text-foreground transition-all text-xs font-semibold cursor-pointer"
           title="Review Leave Application"
         >
           <Eye size={13} className="text-primary" />
@@ -118,7 +118,7 @@ export default function LeavesPage(): React.JSX.Element {
   if (loading) return <GlassLoader text="Loading leave requests..." />;
 
   return (
-    <div className="animate-fade-in-up space-y-6">
+    <div className="space-y-6">
       <GlassPageHeader 
         title="Leave Requests" 
       />
@@ -138,7 +138,7 @@ export default function LeavesPage(): React.JSX.Element {
       {leaves.length === 0 ? (
         <GlassEmptyState title="All Clear" message="No pending leave requests found." />
       ) : (
-        <div className="rounded-xl border border-border bg-card shadow-2xs overflow-hidden">
+        <div className="rounded-lg border border-border bg-card overflow-hidden">
           <GlassTable
             columns={columns}
             data={paginated as (PendingLeaveItem & Record<string, unknown>)[]}

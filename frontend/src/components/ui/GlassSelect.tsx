@@ -80,7 +80,7 @@ export default function GlassSelect({
         <SelectTrigger
           id={selectId}
           className={cn(
-            "flex h-9 w-full rounded-md border border-input bg-card px-3 py-1 text-sm shadow-2xs transition-colors cursor-pointer",
+            "flex h-9 w-full rounded-md border border-input bg-card px-3 py-1 text-sm transition-colors cursor-pointer",
             error && "border-destructive focus:ring-destructive",
             className
           )}

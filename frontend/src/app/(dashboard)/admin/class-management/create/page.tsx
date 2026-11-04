@@ -99,7 +99,7 @@ export default function CreateClassPage(): React.ReactElement {
   }
 
   return (
-    <div className="animate-fade-in-up">
+    <div>
       <GlassBreadcrumb
         items={[
           { label: "Admin", href: "/admin/dashboard" },
@@ -157,12 +157,12 @@ export default function CreateClassPage(): React.ReactElement {
             )}
           />
           {departmentId && batches.length === 0 && (
-            <p className="text-xs text-[#8a5b12]">
+            <p className="text-xs text-warning">
               This department has no active batches yet. Add them under Setup → Departments.
             </p>
           )}
           {batchId && matching.length === 0 && (
-            <p className="text-xs text-[#8a5b12]">No students in this batch for the selected semester.</p>
+            <p className="text-xs text-warning">No students in this batch for the selected semester.</p>
           )}
           {matching.length > 0 && (
             <StudentSelectionList students={matching} selected={selected} onToggle={toggle} onToggleAll={toggleAll} />

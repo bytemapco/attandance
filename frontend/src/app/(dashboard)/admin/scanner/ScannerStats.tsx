@@ -28,40 +28,40 @@ export default function ScannerStats({
       {/* 3 Metric Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         {/* Flagged Count */}
-        <GlassCard className="p-4 bg-card border-border shadow-xs flex items-center justify-between">
+        <GlassCard className="p-4 bg-card border-border flex items-center justify-between">
           <div>
             <span className="text-xs font-medium text-muted-foreground">Flagged Students</span>
-            <p className="text-2xl font-bold tracking-tight text-foreground mt-0.5 font-mono">
+            <p className="text-2xl font-semibold tracking-tight text-foreground mt-0.5 font-mono">
               {totalFlagged}
             </p>
           </div>
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#f9eaea] text-[#b54242] border border-[#f0c9c9]">
+          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-destructive-soft text-destructive border border-destructive-border">
             <Users size={18} />
           </span>
         </GlassCard>
 
         {/* Avg Score */}
-        <GlassCard className="p-4 bg-card border-border shadow-xs flex items-center justify-between">
+        <GlassCard className="p-4 bg-card border-border flex items-center justify-between">
           <div>
             <span className="text-xs font-medium text-muted-foreground">Average Score</span>
-            <p className="text-2xl font-bold tracking-tight text-foreground mt-0.5 font-mono">
+            <p className="text-2xl font-semibold tracking-tight text-foreground mt-0.5 font-mono">
               {avgScore.toFixed(3)}
             </p>
           </div>
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#fbf1df] text-[#8a5b12] border border-[#f2deba]">
+          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-warning-soft text-warning border border-warning-border">
             <Activity size={18} />
           </span>
         </GlassCard>
 
         {/* Max Score */}
-        <GlassCard className="p-4 bg-card border-border shadow-xs flex items-center justify-between">
+        <GlassCard className="p-4 bg-card border-border flex items-center justify-between">
           <div>
             <span className="text-xs font-medium text-muted-foreground">Highest Score</span>
-            <p className="text-2xl font-bold tracking-tight text-foreground mt-0.5 font-mono">
+            <p className="text-2xl font-semibold tracking-tight text-foreground mt-0.5 font-mono">
               {maxScore.toFixed(3)}
             </p>
           </div>
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#f7efea] text-[#c98260] border border-[#f0ded4]">
+          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent-soft text-accent-strong border border-accent-border">
             <AlertTriangle size={18} />
           </span>
         </GlassCard>
@@ -79,7 +79,7 @@ export default function ScannerStats({
             placeholder="Search by name or ID..."
             value={searchTerm}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => onSearchChange(e.target.value)}
-            className="w-full h-9 pl-9 pr-8 text-xs bg-card border border-border/80 rounded-xl placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-shadow"
+            className="w-full h-9 pl-9 pr-8 text-xs bg-card border border-border/80 rounded-lg placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-shadow"
           />
           {searchTerm && (
             <button
@@ -101,7 +101,7 @@ export default function ScannerStats({
             onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
               onSortChange(e.target.value as "score" | "absences" | "name")
             }
-            className="h-9 text-xs bg-card border border-border/80 rounded-xl px-2.5 text-foreground focus:outline-none focus:ring-2 focus:ring-ring cursor-pointer"
+            className="h-9 text-xs bg-card border border-border/80 rounded-lg px-2.5 text-foreground focus:outline-none focus:ring-2 focus:ring-ring cursor-pointer"
           >
             <option value="score">Highest Risk</option>
             <option value="absences">Most Absences</option>

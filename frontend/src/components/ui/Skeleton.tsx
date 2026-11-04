@@ -19,14 +19,14 @@ export function ContentSkeleton(): React.ReactElement {
       </div>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         {[0, 1, 2].map((item) => (
-          <div key={item} className="space-y-3 rounded-xl border border-border bg-card p-4">
+          <div key={item} className="space-y-3 rounded-lg border border-border bg-card p-4">
             <Skeleton className="h-3 w-24" />
             <Skeleton className="h-7 w-16" />
             <Skeleton className="h-3 w-32 max-w-full" />
           </div>
         ))}
       </div>
-      <div className="overflow-hidden rounded-xl border border-border bg-card p-4">
+      <div className="overflow-hidden rounded-lg border border-border bg-card p-4">
         <Skeleton className="mb-4 h-5 w-40" />
         <div className="space-y-4">
           {[0, 1, 2, 3, 4].map((item) => (

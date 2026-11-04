@@ -14,7 +14,7 @@ function WizardFromQuery(): React.ReactElement {
 
 export default function AdminSetupPage(): React.ReactElement {
   return (
-    <div className="flex h-full min-h-0 flex-col animate-fade-in-up">
+    <div className="flex h-full min-h-0 flex-col">
       <GlassBreadcrumb className="mb-2 shrink-0" items={[{ label: "Admin", href: "/admin/dashboard" }, { label: "Setup" }]} />
       <GlassPageHeader className="mb-3 shrink-0" title="Set up your institution" />
       <Suspense fallback={<div className="flex min-h-0 flex-1 items-center justify-center"><GlassLoader /></div>}>

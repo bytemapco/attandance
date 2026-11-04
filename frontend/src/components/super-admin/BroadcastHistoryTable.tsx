@@ -45,14 +45,14 @@ export default function BroadcastHistoryTable({
     switch (severity.toUpperCase()) {
       case "CRITICAL":
       case "ERROR":
-        return { variant: "danger", icon: <AlertCircle size={11} className="text-[#b54242]" /> };
+        return { variant: "danger", icon: <AlertCircle size={11} className="text-destructive" /> };
       case "WARNING":
-        return { variant: "warning", icon: <AlertTriangle size={11} className="text-[#8a5b12]" /> };
+        return { variant: "warning", icon: <AlertTriangle size={11} className="text-warning" /> };
       case "SUCCESS":
-        return { variant: "success", icon: <CheckCircle2 size={11} className="text-[#247653]" /> };
+        return { variant: "success", icon: <CheckCircle2 size={11} className="text-success" /> };
       case "INFO":
       default:
-        return { variant: "info", icon: <Info size={11} className="text-[#306b8a]" /> };
+        return { variant: "info", icon: <Info size={11} className="text-info" /> };
     }
   };
 
@@ -67,14 +67,14 @@ export default function BroadcastHistoryTable({
 
   return (
     <GlassCard className="p-6">
-      <div className="flex items-center justify-between pb-4 mb-4 border-b border-[#e3e1dc]">
+      <div className="flex items-center justify-between pb-4 mb-4 border-b border-border">
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-[#eeece7] text-[#526f78] border border-[#e3e1dc] shrink-0">
+          <div className="p-2 rounded-lg bg-secondary text-muted-foreground border border-border shrink-0">
             <History size={18} />
           </div>
           <div>
-            <h3 className="text-base font-semibold text-[#28363b]">Announcement History</h3>
-            <p className="text-xs text-[#526f78]">{items.length} recorded</p>
+            <h3 className="text-base font-semibold text-primary">Announcement History</h3>
+            <p className="text-xs text-muted-foreground">{items.length} recorded</p>
           </div>
         </div>
 
@@ -82,39 +82,39 @@ export default function BroadcastHistoryTable({
           type="button"
           onClick={() => void fetchHistory()}
           disabled={loading}
-          className="p-2 rounded-lg border border-[#e3e1dc] bg-card hover:bg-[#eeece7] text-[#526f78] hover:text-[#202b30] transition-colors cursor-pointer disabled:opacity-50"
+          className="p-2 rounded-lg border border-border bg-card hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors cursor-pointer disabled:opacity-50"
           aria-label="Refresh history"
         >
-          <RefreshCw size={13} className={loading ? "animate-spin text-[#c98260]" : ""} />
+          <RefreshCw size={13} className={loading ? "animate-spin text-accent-strong" : ""} />
         </button>
       </div>
 
       {loading && items.length === 0 ? (
-        <div className="py-10 flex flex-col items-center justify-center gap-2 text-[#718087] text-xs">
-          <RefreshCw size={15} className="animate-spin text-[#c98260]" />
+        <div className="py-10 flex flex-col items-center justify-center gap-2 text-muted-foreground text-xs">
+          <RefreshCw size={15} className="animate-spin text-accent-strong" />
           <span>Loading...</span>
         </div>
       ) : error ? (
-        <div className="p-6 text-center text-xs text-[#b54242]">
+        <div className="p-6 text-center text-xs text-destructive">
           <p>{error}</p>
           <button
             type="button"
             onClick={() => void fetchHistory()}
-            className="mt-2 text-xs font-semibold text-[#202b30] underline cursor-pointer"
+            className="mt-2 text-xs font-semibold text-foreground underline cursor-pointer"
           >
             Retry
           </button>
         </div>
       ) : items.length === 0 ? (
-        <div className="py-10 text-center text-xs text-[#718087] flex flex-col items-center gap-1.5">
-          <Radio size={18} className="text-[#718087]/50" />
-          <p className="font-semibold text-[#202b30]">No announcements sent yet</p>
+        <div className="py-10 text-center text-xs text-muted-foreground flex flex-col items-center gap-1.5">
+          <Radio size={18} className="text-muted-foreground/50" />
+          <p className="font-semibold text-foreground">No announcements sent yet</p>
         </div>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs border-collapse">
             <thead>
-              <tr className="border-b border-[#e3e1dc] text-[11px] font-semibold text-[#526f78] uppercase tracking-wider bg-[#eeece7]/40">
+              <tr className="border-b border-border text-xs font-semibold text-muted-foreground bg-secondary/40">
                 <th className="py-2.5 px-3">Title</th>
                 <th className="py-2.5 px-3">Audience</th>
                 <th className="py-2.5 px-3">Severity</th>
@@ -123,36 +123,36 @@ export default function BroadcastHistoryTable({
                 <th className="py-2.5 px-3 text-right">Date</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#e3e1dc]/60 text-[11px]">
+            <tbody className="divide-y divide-border/60 text-xs">
               {items.map((item) => {
                 const badge = getSeverityBadge(item.severity);
                 return (
-                  <tr key={item.id} className="hover:bg-[#eeece7]/30 transition-colors">
+                  <tr key={item.id} className="hover:bg-secondary/30 transition-colors">
                     <td className="py-3 px-3 max-w-[280px]">
-                      <div className="font-semibold text-[#202b30] truncate">{item.title}</div>
-                      <div className="text-[11px] text-[#526f78] truncate mt-0.5">
+                      <div className="font-semibold text-foreground truncate">{item.title}</div>
+                      <div className="text-xs text-muted-foreground truncate mt-0.5">
                         {item.description}
                       </div>
                     </td>
                     <td className="py-3 px-3 whitespace-nowrap">
-                      <span className="inline-flex items-center gap-1 text-[11px] text-[#526f78]">
-                        <Users size={11} className="text-[#718087]" />
+                      <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
+                        <Users size={11} className="text-muted-foreground" />
                         <span>{item.target ? item.target.replace(/_/g, " ") : "All users"}</span>
                       </span>
                     </td>
                     <td className="py-3 px-3 whitespace-nowrap">
-                      <GlassBadge variant={badge.variant} className="gap-1 text-[10px]">
+                      <GlassBadge variant={badge.variant} className="gap-1 text-xs">
                         {badge.icon}
                         <span>{item.severity}</span>
                       </GlassBadge>
                     </td>
-                    <td className="py-3 px-3 whitespace-nowrap text-[#202b30] text-xs">
+                    <td className="py-3 px-3 whitespace-nowrap text-foreground text-xs">
                       {item.delivered_count > 0 ? `${item.delivered_count} users` : "—"}
                     </td>
-                    <td className="py-3 px-3 whitespace-nowrap text-[#526f78] text-xs truncate max-w-[140px]">
+                    <td className="py-3 px-3 whitespace-nowrap text-muted-foreground text-xs truncate max-w-[140px]">
                       {formatActor(item.actor)}
                     </td>
-                    <td className="py-3 px-3 whitespace-nowrap text-right text-[#718087] text-xs font-mono">
+                    <td className="py-3 px-3 whitespace-nowrap text-right text-muted-foreground text-xs font-mono">
                       {new Date(item.timestamp).toLocaleString(undefined, {
                         month: "short",
                         day: "numeric",

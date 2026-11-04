@@ -59,21 +59,21 @@ export default function UserDetailView({
 
   return (
     <ClipboardProvider value={clipboard}>
-      <div className="animate-fade-in-up space-y-6">
+      <div className="space-y-6">
         <GlassBreadcrumb items={breadcrumb} />
 
-        <div className="rounded-2xl border border-border bg-card p-6 sm:p-7 shadow-[0_2px_8px_rgba(40,54,59,0.04)]">
+        <div className="rounded-lg border border-border bg-card p-6 sm:p-7">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
             <div className="flex flex-col sm:flex-row items-center sm:items-center gap-5 text-center sm:text-left">
               <div className="relative">
-                <div className="w-20 h-20 sm:w-22 sm:h-22 rounded-2xl bg-[#28363b]/5 border border-[#28363b]/10 flex items-center justify-center text-[#28363b] font-bold text-2xl sm:text-3xl shadow-xs select-none">
+                <div className="w-20 h-20 sm:w-22 sm:h-22 rounded-lg bg-primary/5 border border-primary/10 flex items-center justify-center text-primary font-semibold text-2xl sm:text-3xl select-none">
                   {initials || <User size={32} className="text-muted-foreground" />}
                 </div>
               </div>
 
               <div className="space-y-1.5">
                 <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
-                  <h1 className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight">{fullName}</h1>
+                  <h1 className="text-2xl sm:text-3xl font-semibold text-foreground tracking-tight">{fullName}</h1>
                   {badge}
                 </div>
 
@@ -84,10 +84,10 @@ export default function UserDetailView({
                     className="inline-flex items-center gap-1.5 font-mono px-2.5 py-1 rounded-md bg-muted/60 hover:bg-muted text-foreground border border-border transition-colors cursor-pointer"
                     title={identifier.hint}
                   >
-                    <Hash size={12} className="text-[#526f78]" />
+                    <Hash size={12} className="text-muted-foreground" />
                     <span>{identifier.value}</span>
                     {clipboard.copiedKey === identifier.label ? (
-                      <Check size={12} className="text-[#247653]" />
+                      <Check size={12} className="text-success" />
                     ) : (
                       <Copy size={12} className="text-muted-foreground opacity-60" />
                     )}
@@ -104,7 +104,7 @@ export default function UserDetailView({
               <GlassButton
                 variant="secondary"
                 size="md"
-                icon={<KeyRound size={15} className="text-[#526f78]" />}
+                icon={<KeyRound size={15} className="text-muted-foreground" />}
                 onClick={() => setIsResetDialogOpen(true)}
               >
                 Reset Password

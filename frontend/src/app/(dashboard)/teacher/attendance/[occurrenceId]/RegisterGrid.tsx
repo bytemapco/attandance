@@ -69,7 +69,7 @@ export default function RegisterGrid({ students, edits, counts, locked, editable
   });
 
   return (
-    <section className="flex min-h-[360px] flex-col overflow-hidden rounded-[14px] border border-border bg-card shadow-[0_2px_8px_rgba(40,54,59,0.05)] lg:min-h-0">
+    <section className="flex min-h-[360px] flex-col overflow-hidden rounded-lg border border-border bg-card lg:min-h-0">
       <div className="flex shrink-0 flex-col gap-3 border-b border-border p-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-wrap gap-1.5" role="tablist" aria-label="Filter students">
           {visibleFilters.map(({ key, label }) => (
@@ -79,8 +79,8 @@ export default function RegisterGrid({ students, edits, counts, locked, editable
               role="tab"
               aria-selected={filter === key}
               onClick={() => setFilter(key)}
-              className={`inline-flex h-8 cursor-pointer items-center gap-1.5 rounded-full px-3 text-xs font-semibold outline-none transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-[#526f78] ${
-                filter === key ? "bg-[#28363b] text-white" : "bg-secondary text-[#526f78] hover:bg-[#e3e1dc]"
+              className={`inline-flex h-8 cursor-pointer items-center gap-1.5 rounded-full px-3 text-xs font-semibold outline-none transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-ring ${
+                filter === key ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground hover:bg-border"
               }`}
             >
               {label}
@@ -107,9 +107,9 @@ export default function RegisterGrid({ students, edits, counts, locked, editable
               }
             }}
             placeholder="Search name or enrollment"
-            className="h-9 w-full rounded-[10px] border border-input bg-background pl-9 pr-9 text-sm outline-none focus-visible:ring-2 focus-visible:ring-[#526f78]"
+            className="h-9 w-full rounded-lg border border-input bg-background pl-9 pr-9 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
           />
-          <kbd className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 rounded border border-border px-1.5 text-[11px] text-muted-foreground">/</kbd>
+          <kbd className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 rounded-sm border border-border px-1.5 text-xs text-muted-foreground">/</kbd>
         </label>
       </div>
       <div className="max-h-[70dvh] flex-1 overflow-y-auto p-4 lg:max-h-none">

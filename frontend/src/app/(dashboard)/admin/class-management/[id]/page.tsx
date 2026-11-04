@@ -74,7 +74,7 @@ export default function ClassDetailPage(): React.ReactElement {
       : `${incompleteSubjects} of ${cls.subject_count} subjects still need a teacher or class times. Teachers cannot see them in their timetable until then.`;
 
   return (
-    <div className="animate-fade-in-up space-y-5">
+    <div className="space-y-5">
       {/* Breadcrumb Navigation */}
       <GlassBreadcrumb
         items={[
@@ -98,7 +98,7 @@ export default function ClassDetailPage(): React.ReactElement {
               Classes
             </GlassButton>
             <span className="text-muted-foreground/50">|</span>
-            <h1 className="text-2xl font-bold tracking-tight text-foreground">
+            <h1 className="text-2xl font-semibold tracking-tight text-foreground">
               {cls.code}
             </h1>
             <label htmlFor="class-semester" className="sr-only">Semester</label>
@@ -106,7 +106,7 @@ export default function ClassDetailPage(): React.ReactElement {
               id="class-semester"
               value={cls.semester_number}
               onChange={(event) => void changeSemester(Number(event.target.value))}
-              className="cursor-pointer rounded-full border border-[#c5dce8] bg-[#eaf2f6] px-2 py-0.5 text-xs font-bold text-[#306b8a] focus-visible:outline-2 focus-visible:outline-[#526f78]"
+              className="cursor-pointer rounded-full border border-info-border bg-info-soft px-2 py-0.5 text-xs font-semibold text-info focus-visible:outline-2 focus-visible:outline-muted-foreground"
             >
               {SEMESTER_NUMBERS.map((number) => (
                 <option key={number} value={number}>Semester {number}</option>
@@ -119,7 +119,7 @@ export default function ClassDetailPage(): React.ReactElement {
 
           <div className="flex flex-wrap items-center gap-3 mt-2 text-xs text-muted-foreground">
             <span className="inline-flex items-center gap-1 font-medium text-foreground">
-              <Building2 size={13} className="text-[#526f78]" />
+              <Building2 size={13} className="text-muted-foreground" />
               {cls.department_name}
             </span>
             <span>•</span>
@@ -132,31 +132,31 @@ export default function ClassDetailPage(): React.ReactElement {
 
         {/* Quick Metrics */}
         <div className="flex items-center gap-3 self-start sm:self-auto">
-          <div className="px-3.5 py-1.5 rounded-xl border border-border bg-card shadow-2xs text-center">
+          <div className="px-3.5 py-1.5 rounded-lg border border-border bg-card text-center">
             <div className="text-xs text-muted-foreground font-medium flex items-center gap-1 justify-center">
-              <Users size={12} className="text-[#306b8a]" /> Students
+              <Users size={12} className="text-info" /> Students
             </div>
-            <div className="text-lg font-bold text-foreground font-mono">{cls.member_count}</div>
+            <div className="text-lg font-semibold text-foreground font-mono">{cls.member_count}</div>
           </div>
-          <div className="px-3.5 py-1.5 rounded-xl border border-border bg-card shadow-2xs text-center">
+          <div className="px-3.5 py-1.5 rounded-lg border border-border bg-card text-center">
             <div className="text-xs text-muted-foreground font-medium flex items-center gap-1 justify-center">
-              <BookOpen size={12} className="text-[#247653]" /> Subjects
+              <BookOpen size={12} className="text-success" /> Subjects
             </div>
-            <div className="text-lg font-bold text-foreground font-mono">{cls.subject_count}</div>
+            <div className="text-lg font-semibold text-foreground font-mono">{cls.subject_count}</div>
           </div>
         </div>
       </div>
 
       {/* Helpful Setup Reminder Banner if 0 subjects */}
       {isNeedsSetup && (
-        <div className="p-3.5 rounded-xl border border-[#f2deba] bg-[#fbf1df] text-xs text-[#8a5b12] flex items-center justify-between gap-3 shadow-2xs">
+        <div className="p-3.5 rounded-lg border border-warning-border bg-warning-soft text-xs text-warning flex items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <AlertCircle size={16} className="shrink-0 text-[#8a5b12]" />
+            <AlertCircle size={16} className="shrink-0 text-warning" />
             <span>{setupMessage}</span>
           </div>
           <button
             onClick={() => setTab("timetable")}
-            className="px-2.5 py-1 rounded-lg bg-[#8a5b12] text-white font-semibold text-xs shrink-0 hover:bg-[#734c0f] transition-colors"
+            className="px-2.5 py-1 rounded-lg bg-warning text-primary-foreground font-semibold text-xs shrink-0 hover:bg-warning transition-colors"
           >
             Open timetable
           </button>
@@ -172,13 +172,13 @@ export default function ClassDetailPage(): React.ReactElement {
           className={cn(
             "flex items-center gap-2 px-4 py-2.5 text-xs font-semibold rounded-t-lg transition-all border-b-2 -mb-[2px]",
             tab === "students"
-              ? "border-[#28363b] text-[#202b30] bg-card/60"
+              ? "border-primary text-foreground bg-card/60"
               : "border-transparent text-muted-foreground hover:text-foreground"
           )}
         >
-          <Users size={14} className={tab === "students" ? "text-[#306b8a]" : "text-muted-foreground"} />
+          <Users size={14} className={tab === "students" ? "text-info" : "text-muted-foreground"} />
           <span>Students</span>
-          <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-secondary text-secondary-foreground font-mono">
+          <span className="px-1.5 py-0.2 rounded-full text-xs bg-secondary text-secondary-foreground font-mono">
             {cls.member_count}
           </span>
         </button>
@@ -190,15 +190,15 @@ export default function ClassDetailPage(): React.ReactElement {
           className={cn(
             "flex items-center gap-2 px-4 py-2.5 text-xs font-semibold rounded-t-lg transition-all border-b-2 -mb-[2px]",
             tab === "timetable"
-              ? "border-[#28363b] text-[#202b30] bg-card/60"
+              ? "border-primary text-foreground bg-card/60"
               : "border-transparent text-muted-foreground hover:text-foreground"
           )}
         >
-          <CalendarDays size={14} className={tab === "timetable" ? "text-[#8a4d30]" : "text-muted-foreground"} />
+          <CalendarDays size={14} className={tab === "timetable" ? "text-accent-strong" : "text-muted-foreground"} />
           <span>Timetable</span>
           <span className={cn(
-            "px-1.5 py-0.2 rounded-full text-[10px] font-mono",
-            isNeedsSetup ? "bg-[#8a5b12] text-white" : "bg-secondary text-secondary-foreground"
+            "px-1.5 py-0.2 rounded-full text-xs font-mono",
+            isNeedsSetup ? "bg-warning text-primary-foreground" : "bg-secondary text-secondary-foreground"
           )}>
             {cls.subject_count}
           </span>

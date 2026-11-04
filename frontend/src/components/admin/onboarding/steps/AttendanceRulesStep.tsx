@@ -60,7 +60,7 @@ export default function AttendanceRulesStep({ registerContinueAction }: StepProp
     return () => registerContinueAction(null);
   }, [loading, loadFailed, saveStep, registerContinueAction]);
 
-  if (loading) return <p role="status" className="text-sm text-[#526f78]">Loading…</p>;
+  if (loading) return <p role="status" className="text-sm text-muted-foreground">Loading…</p>;
   if (loadFailed || !rules) {
     return <GlassErrorState title="Could not load the attendance rules" message="Nothing has been changed." retryLabel="Reload" className="p-5 sm:p-8" onRetry={() => void load()} />;
   }

@@ -59,72 +59,71 @@ export default function Header({ onMenuToggle }: HeaderProps): React.JSX.Element
     .toUpperCase() || "SA";
   const displayRole =
     user?.role === "SUPER_ADMIN"
-      ? "Super Administrator"
+      ? "Super administrator"
       : user?.role === "ADMIN" || user?.role === "TENANT_ADMIN"
       ? "Administrator"
       : user?.role === "TEACHER"
-      ? "Faculty Professor"
+      ? "Faculty"
       : "User";
+  const searchPlaceholder =
+    user?.role === "SUPER_ADMIN"
+      ? "Search institutions, licenses, or actions"
+      : user?.role === "ADMIN" || user?.role === "TENANT_ADMIN"
+      ? "Search students, faculty, classes, or actions"
+      : "Search students, classes, or quick actions";
 
   return (
     <>
-      <header className="sticky top-0 z-20 h-16 bg-card border-b border-[#e3e1dc] px-4 sm:px-6 flex items-center justify-between gap-4 shadow-[0_1px_3px_rgba(40,54,59,0.03)]">
+      <header className="sticky top-0 z-20 h-16 bg-card border-b border-border px-4 sm:px-6 flex items-center justify-between gap-4">
         <div className="flex items-center gap-3 flex-1 max-w-lg">
           <button
             type="button"
             onClick={onMenuToggle}
-            className="p-1.5 rounded-lg text-[#526f78] hover:text-[#202b30] hover:bg-secondary md:hidden transition-colors shrink-0 cursor-pointer"
+            className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary md:hidden transition-colors shrink-0 cursor-pointer"
             aria-label="Toggle navigation menu"
           >
             <Menu size={20} />
           </button>
 
-          <Link href={homeHref} className="md:hidden flex items-center gap-2 font-bold text-xs text-[#28363b] shrink-0 hover:opacity-85 transition-opacity">
+          <Link href={homeHref} className="md:hidden flex items-center gap-2 font-semibold text-xs text-primary shrink-0 hover:opacity-85 transition-opacity">
             <img
               src="/sahaj-app-icon.png"
               alt="SAHAJ Logo"
-              className="h-7 w-7 rounded-lg shadow-2xs object-contain"
+              className="h-7 w-7 rounded-lg object-contain"
             />
-            <span className="hidden sm:inline tracking-wider font-bold">SAHAJ</span>
+            <span className="hidden sm:inline font-semibold">SAHAJ</span>
           </Link>
 
-          <div
+          <button
+            type="button"
             onClick={() => setIsCommandOpen(true)}
-            className="relative w-full max-w-md hidden sm:flex items-center cursor-pointer group"
+            aria-label="Open search"
+            aria-keyshortcuts="Control+K Meta+K"
+            className="relative hidden h-9 w-full max-w-md cursor-pointer items-center rounded-md border border-border bg-surface pl-9 pr-16 text-left text-sm text-muted-foreground transition-colors hover:border-border-strong sm:flex"
           >
-            <Search size={14} className="absolute left-3 text-[#526f78] group-hover:text-[#202b30] pointer-events-none transition-colors" />
-            <input
-              type="text"
-              readOnly
-              placeholder={
-                user?.role === "SUPER_ADMIN"
-                  ? "Search institutions, licenses, or actions..."
-                  : user?.role === "ADMIN" || user?.role === "TENANT_ADMIN"
-                  ? "Search students, faculty, classes, or actions..."
-                  : "Search students, classes, or quick actions..."
-              }
-              className="w-full h-9 pl-9 pr-16 rounded-lg border border-[#e3e1dc] bg-[#eeece7]/50 text-xs text-[#202b30] placeholder:text-[#718087] group-hover:bg-[#f5f2ed] group-hover:border-[#c98260]/60 cursor-pointer transition-all outline-none"
-            />
-            <kbd className="absolute right-2.5 px-1.5 py-0.5 rounded border border-[#e3e1dc] bg-card text-[10px] font-mono text-[#526f78] font-semibold shadow-2xs pointer-events-none">
+            <Search size={14} className="absolute left-3" aria-hidden />
+            <span className="truncate">{searchPlaceholder}</span>
+            <kbd className="absolute right-2.5 rounded-sm border border-border bg-card px-1.5 py-0.5 font-mono text-xs text-muted-foreground">
               Ctrl K
             </kbd>
-          </div>
+          </button>
         </div>
 
         <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
           <div className="flex items-center gap-2.5 pl-1 sm:pl-2">
-            <div className="h-8 w-8 rounded-full bg-[#28363b] text-white font-bold text-xs flex items-center justify-center shadow-xs select-none">
+            <div className="h-8 w-8 rounded-full bg-primary text-primary-foreground font-semibold text-xs flex items-center justify-center select-none">
               {initials}
             </div>
             <div className="hidden lg:block text-left">
-              <p className="text-xs font-bold text-[#202b30] leading-tight">{displayName}</p>
-              <p className="text-[10px] text-[#526f78] font-medium mt-0.5">{displayRole}</p>
+              <p className="text-xs font-semibold text-foreground leading-tight">{displayName}</p>
+              <p className="text-xs text-muted-foreground font-medium mt-0.5">{displayRole}</p>
             </div>
             <button
               type="button"
               onClick={handleLogout}
-              className="p-1.5 rounded-lg text-[#526f78] hover:text-[#b54242] hover:bg-[#f9eaea] transition-colors cursor-pointer"
+              className="p-1.5 rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive-soft transition-colors cursor-pointer"
               title="Sign out"
+              aria-label="Sign out"
             >
               <LogOut size={16} />
             </button>

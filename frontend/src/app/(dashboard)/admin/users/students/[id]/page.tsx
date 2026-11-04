@@ -30,7 +30,7 @@ function StatusBadge({ active }: { active: boolean }): React.ReactElement {
   return (
     <GlassBadge
       variant={active ? "success" : "neutral"}
-      icon={<span className={`w-1.5 h-1.5 rounded-full ${active ? "bg-[#247653]" : "bg-muted-foreground"}`} />}
+      icon={<span className={`w-1.5 h-1.5 rounded-full ${active ? "bg-success" : "bg-muted-foreground"}`} />}
     >
       {active ? "Enrolled" : "Inactive"}
     </GlassBadge>

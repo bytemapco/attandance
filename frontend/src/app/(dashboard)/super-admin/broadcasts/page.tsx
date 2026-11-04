@@ -96,7 +96,7 @@ export default function SuperAdminBroadcastsPage(): React.ReactElement {
   };
 
   return (
-    <div className="space-y-6 max-w-7xl animate-fade-in-up">
+    <div className="space-y-6 max-w-7xl">
       <GlassBreadcrumb
         items={[
           { label: "Dashboard", href: "/super-admin/dashboard" },
@@ -108,13 +108,13 @@ export default function SuperAdminBroadcastsPage(): React.ReactElement {
         title="Announcements"
         actions={
           <div className="flex items-center gap-2">
-            <span className="text-xs text-[#526f78] font-medium hidden sm:inline">Templates:</span>
+            <span className="text-xs text-muted-foreground font-medium hidden sm:inline">Templates:</span>
             {TEMPLATES.map((tpl) => (
               <button
                 key={tpl.label}
                 type="button"
                 onClick={() => handleApplyTemplate(tpl)}
-                className="px-2.5 py-1 rounded-lg bg-card hover:bg-secondary border border-[#e3e1dc] text-xs text-[#202b30] font-semibold transition-colors cursor-pointer"
+                className="px-2.5 py-1 rounded-lg bg-card hover:bg-secondary border border-border text-xs text-foreground font-semibold transition-colors cursor-pointer"
               >
                 {tpl.label}
               </button>

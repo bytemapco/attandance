@@ -70,7 +70,7 @@ export default function SecurityAuditPage(): React.JSX.Element {
   };
 
   return (
-    <div className="space-y-6 max-w-7xl animate-fade-in-up">
+    <div className="space-y-6 max-w-7xl">
       <GlassBreadcrumb
         items={[
           { label: "Dashboard", href: "/super-admin/dashboard" },
@@ -111,7 +111,7 @@ export default function SecurityAuditPage(): React.JSX.Element {
         />
 
         {!loading && total > 0 && (
-          <div className="mt-3 bg-card border border-border rounded-xl">
+          <div className="mt-3 bg-card border border-border rounded-lg">
             <EnterprisePagination
               currentPage={page}
               totalItems={total}

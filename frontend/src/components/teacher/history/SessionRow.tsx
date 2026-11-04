@@ -18,7 +18,7 @@ export default function SessionRow({ item }: { item: HistoryItem }): React.React
         </span>
         <span className="col-start-2 row-start-1 flex items-center gap-2 justify-self-end sm:col-start-auto sm:row-start-auto sm:justify-self-stretch">
           <span className="hidden h-1.5 flex-1 overflow-hidden rounded-full bg-secondary sm:block" role="presentation">
-            <span className="block h-full rounded-full bg-[#526f78]" style={{ width: `${rate}%` }} />
+            <span className="block h-full rounded-full bg-muted-foreground" style={{ width: `${rate}%` }} />
           </span>
           <span className="text-sm tabular-nums text-foreground">
             <span className="font-semibold">{item.present}</span>

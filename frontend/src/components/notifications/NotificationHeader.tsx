@@ -3,6 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { CheckCheck, RotateCw, Plus } from "lucide-react";
+import GlassButton from "@/components/ui/GlassButton";
 
 interface ActionButtonProps {
   label: string;
@@ -29,13 +30,13 @@ export function NotificationHeader({
   actionButton,
 }: NotificationHeaderProps): React.JSX.Element {
   return (
-    <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#e3e1dc]">
+    <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border">
       <div className="flex items-center gap-3">
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#28363b]">
+        <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-primary">
           {title}
         </h1>
         {unreadCount > 0 && (
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold tabular-nums bg-[#c98260] text-white">
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold tabular-nums bg-accent text-primary-foreground">
             {unreadCount} unread
           </span>
         )}
@@ -46,29 +47,23 @@ export function NotificationHeader({
           type="button"
           onClick={onRefresh}
           disabled={loading}
-          className="inline-flex items-center justify-center h-9 w-9 text-xs text-[#526f78] hover:text-[#202b30] bg-card hover:bg-[#eeece7] border border-[#e3e1dc] rounded-lg transition-colors active:scale-95 disabled:opacity-50 cursor-pointer"
+          className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-border bg-card text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground disabled:opacity-50 cursor-pointer"
           title="Refresh notifications"
           aria-label="Refresh notifications"
         >
-          <RotateCw size={14} className={loading ? "animate-spin text-[#c98260]" : ""} />
+          <RotateCw size={14} className={loading ? "animate-spin" : ""} />
         </button>
 
         {unreadCount > 0 && (
-          <button
-            type="button"
-            onClick={onMarkAllRead}
-            disabled={loading}
-            className="inline-flex items-center gap-1.5 h-9 px-3.5 text-xs font-semibold text-[#202b30] bg-card hover:bg-[#eeece7] border border-[#e3e1dc] rounded-lg transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
-          >
-            <CheckCheck size={14} className="text-[#247653]" />
-            <span>Mark all read</span>
-          </button>
+          <GlassButton variant="secondary" icon={<CheckCheck size={14} />} onClick={onMarkAllRead} disabled={loading}>
+            Mark all read
+          </GlassButton>
         )}
 
         {actionButton && (
           <Link
             href={actionButton.href}
-            className="inline-flex items-center gap-1.5 h-9 px-4 text-xs font-semibold text-white bg-[#28363b] hover:bg-[#202b30] rounded-lg transition-all active:scale-95 shadow-sm"
+            className="inline-flex h-9 items-center gap-2 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary-hover"
           >
             {actionButton.icon || <Plus size={14} />}
             <span>{actionButton.label}</span>

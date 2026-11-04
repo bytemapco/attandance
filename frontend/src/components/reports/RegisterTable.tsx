@@ -9,7 +9,7 @@ function Mark({ status }: { status: string | null }): React.ReactElement {
   return (
     <span
       title={style?.label ?? status}
-      className={cn("inline-flex h-6 w-6 items-center justify-center rounded-md text-xs font-bold", style?.className)}
+      className={cn("inline-flex h-6 w-6 items-center justify-center rounded-md text-xs font-semibold", style?.className)}
     >
       {style?.code ?? "?"}
     </span>
@@ -20,7 +20,7 @@ export default function RegisterTable({ report }: { report: RegisterReport }): R
   const { lectures, rows, meta } = report;
   if (lectures.length === 0) {
     return (
-      <p className="rounded-[14px] border border-border bg-card px-4 py-10 text-center text-sm text-muted-foreground">
+      <p className="rounded-lg border border-border bg-card px-4 py-10 text-center text-sm text-muted-foreground">
         No class has been closed in this date range.
       </p>
     );
@@ -30,7 +30,7 @@ export default function RegisterTable({ report }: { report: RegisterReport }): R
       <p className="text-xs text-muted-foreground">
         P present · L late · A absent · E excused · F flagged · – not yet enrolled · ? nothing recorded
       </p>
-      <div className="overflow-x-auto rounded-[14px] border border-border bg-card">
+      <div className="overflow-x-auto rounded-lg border border-border bg-card">
         <table className="w-full border-collapse text-left text-sm">
           <thead className="bg-secondary/60 text-xs text-muted-foreground">
             <tr>
@@ -64,7 +64,7 @@ export default function RegisterTable({ report }: { report: RegisterReport }): R
                   className={cn(
                     "px-3 py-2 text-right font-semibold tabular-nums",
                     row.percentage !== null && row.percentage !== undefined && row.percentage < meta.threshold
-                      ? "text-[#b54242]"
+                      ? "text-destructive"
                       : "text-foreground"
                   )}
                 >

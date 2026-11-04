@@ -69,12 +69,12 @@ export default function OnboardingWizard({ initialStepId = null }: OnboardingWiz
   if (status.completed) {
     return (
       <GlassCard className="flex flex-col items-center gap-3 p-10 text-center">
-        <CheckCircle2 size={40} className="text-[#2f7d5b]" aria-hidden />
-        <h2 className="text-xl font-semibold text-[#202b30]">Setup is complete</h2>
-        <p className="max-w-md text-sm text-[#526f78]">Everything required for attendance is in place. You can change any of it from Master Data or Settings.</p>
+        <CheckCircle2 size={40} className="text-success" aria-hidden />
+        <h2 className="text-xl font-semibold text-foreground">Setup is complete</h2>
+        <p className="max-w-md text-sm text-muted-foreground">Everything required for attendance is in place. You can change any of it from Master Data or Settings.</p>
         <Link
           href="/admin/dashboard"
-          className="inline-flex min-h-10 items-center justify-center rounded-md bg-[#28363b] px-5 text-sm font-semibold text-white shadow-xs transition-colors hover:bg-[#1f2b2f] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#526f78]"
+          className="inline-flex min-h-10 items-center justify-center rounded-md bg-primary px-5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-muted-foreground"
         >
           Go to dashboard
         </Link>
@@ -116,7 +116,7 @@ export default function OnboardingWizard({ initialStepId = null }: OnboardingWiz
           <Current status={status} refresh={refresh} registerContinueAction={registerContinueAction} />
         </StepFrame>
 
-        <div className="flex shrink-0 flex-col gap-2 border-t border-[#e3e1dc] pt-2 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex shrink-0 flex-col gap-2 border-t border-border pt-2 sm:flex-row sm:items-center sm:justify-between">
           {index > 0 ? (
             <GlassButton variant="ghost" icon={<ArrowLeft size={15} />} onClick={() => setIndex(index - 1)}>
               Back
