@@ -62,11 +62,11 @@ export default function UserDetailView({
       <div className="space-y-6">
         <GlassBreadcrumb items={breadcrumb} />
 
-        <div className="rounded-lg border border-border bg-card p-6 sm:p-7 shadow-[0_2px_8px_rgba(40,54,59,0.04)]">
+        <div className="rounded-lg border border-border bg-card p-6 sm:p-7">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
             <div className="flex flex-col sm:flex-row items-center sm:items-center gap-5 text-center sm:text-left">
               <div className="relative">
-                <div className="w-20 h-20 sm:w-22 sm:h-22 rounded-lg bg-primary/5 border border-primary/10 flex items-center justify-center text-primary font-bold text-2xl sm:text-3xl shadow-xs select-none">
+                <div className="w-20 h-20 sm:w-22 sm:h-22 rounded-lg bg-primary/5 border border-primary/10 flex items-center justify-center text-primary font-bold text-2xl sm:text-3xl select-none">
                   {initials || <User size={32} className="text-muted-foreground" />}
                 </div>
               </div>

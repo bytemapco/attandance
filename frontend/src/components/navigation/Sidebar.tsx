@@ -39,7 +39,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps): React.JSX.El
 
       <aside
         className={cn(
-          "fixed top-0 bottom-0 left-0 z-40 flex flex-col w-[260px] bg-card border-r border-border shadow-[0_2px_8px_rgba(40,54,59,0.04)] transition-transform duration-200",
+          "fixed top-0 bottom-0 left-0 z-40 flex flex-col w-[260px] bg-card border-r border-border transition-transform duration-200",
           isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         )}
       >
@@ -52,7 +52,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps): React.JSX.El
             <img
               src="/sahaj-app-icon.png"
               alt="SAHAJ Logo"
-              className="h-9 w-9 rounded-lg shadow-xs transition-transform object-contain shrink-0 self-center"
+              className="h-9 w-9 rounded-lg transition-transform object-contain shrink-0 self-center"
             />
             <div className="min-w-0 flex-1">
               <h2 className="text-sm font-bold text-primary tracking-wider leading-tight">SAHAJ</h2>

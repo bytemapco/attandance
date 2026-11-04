@@ -156,7 +156,7 @@ export default function DeviceChangeTable({ requests, onActionComplete }: Device
         )}
       </div>
 
-      <div className="rounded-lg border border-border bg-card shadow-2xs overflow-hidden">
+      <div className="rounded-lg border border-border bg-card overflow-hidden">
         <GlassTable
           columns={columns}
           data={paginatedRequests as (DeviceChangeRequest & Record<string, unknown>)[]}

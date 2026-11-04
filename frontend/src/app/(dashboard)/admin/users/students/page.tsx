@@ -137,13 +137,13 @@ export default function StudentsPage(): React.ReactElement {
         <div className="flex items-center gap-2">
           <button
             onClick={() => setIsBulkImportOpen(true)}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-card text-xs font-semibold text-primary hover:bg-secondary transition-colors shadow-2xs cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-card text-xs font-semibold text-primary hover:bg-secondary transition-colors cursor-pointer"
           >
             <Upload size={13} /> Bulk Import
           </button>
           <button
             onClick={() => router.push("/admin/users/students/add")}
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:bg-foreground transition-colors shadow-2xs cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:bg-foreground transition-colors cursor-pointer"
           >
             <Plus size={14} /> Add Student
           </button>
@@ -158,7 +158,7 @@ export default function StudentsPage(): React.ReactElement {
         onResetAll={handleResetAll}
       />
 
-      <div className="rounded-lg border border-border bg-card shadow-2xs overflow-hidden">
+      <div className="rounded-lg border border-border bg-card overflow-hidden">
         <GlassTable
           columns={studentColumns}
           data={students as (StudentResponse & Record<string, unknown>)[]}

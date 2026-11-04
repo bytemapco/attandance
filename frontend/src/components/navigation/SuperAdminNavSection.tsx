@@ -32,7 +32,7 @@ export default function SuperAdminNavSection({ onClose }: SuperAdminNavSectionPr
               className={cn(
                 "flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition-all",
                 isActive
-                  ? "bg-accent-soft text-primary font-semibold border-l-[3px] border-accent shadow-2xs"
+                  ? "bg-accent-soft text-primary font-semibold border-l-[3px] border-accent"
                   : "text-muted-foreground hover:bg-secondary/70 hover:text-foreground"
               )}
             >
@@ -41,7 +41,7 @@ export default function SuperAdminNavSection({ onClose }: SuperAdminNavSectionPr
                 <span>{link.label}</span>
               </div>
               {isNotifLink && unreadCount > 0 && (
-                <span className="inline-flex items-center justify-center min-w-4.5 h-4.5 px-1.5 rounded-full text-[10px] font-bold bg-primary text-primary-foreground shadow-2xs">
+                <span className="inline-flex items-center justify-center min-w-4.5 h-4.5 px-1.5 rounded-full text-[10px] font-bold bg-primary text-primary-foreground">
                   {unreadCount > 99 ? "99+" : unreadCount}
                 </span>
               )}

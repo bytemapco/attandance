@@ -84,7 +84,7 @@ export default function ForceChangePasswordModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/40">
-      <div className="w-full max-w-md rounded-lg border border-border bg-card p-6 shadow-xl relative z-10">
+      <div className="w-full max-w-md rounded-lg border border-border bg-card p-6 shadow-popover relative z-10">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-2.5 rounded-lg bg-success-soft border border-success-border text-success">
             <ShieldCheck size={22} />

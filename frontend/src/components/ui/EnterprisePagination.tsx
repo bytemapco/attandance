@@ -65,7 +65,7 @@ export default function EnterprisePagination({
           type="button"
           onClick={() => onPageChange(1)}
           disabled={validPage <= 1}
-          className="inline-flex items-center justify-center h-7 w-7 rounded-md border border-border bg-card text-foreground hover:bg-muted disabled:opacity-40 disabled:pointer-events-none transition-colors shadow-2xs cursor-pointer"
+          className="inline-flex items-center justify-center h-7 w-7 rounded-md border border-border bg-card text-foreground hover:bg-muted disabled:opacity-40 disabled:pointer-events-none transition-colors cursor-pointer"
           title="First Page"
           aria-label="First page"
         >
@@ -76,7 +76,7 @@ export default function EnterprisePagination({
           type="button"
           onClick={() => onPageChange(validPage - 1)}
           disabled={validPage <= 1}
-          className="inline-flex items-center justify-center h-7 w-7 rounded-md border border-border bg-card text-foreground hover:bg-muted disabled:opacity-40 disabled:pointer-events-none transition-colors shadow-2xs cursor-pointer"
+          className="inline-flex items-center justify-center h-7 w-7 rounded-md border border-border bg-card text-foreground hover:bg-muted disabled:opacity-40 disabled:pointer-events-none transition-colors cursor-pointer"
           title="Previous Page"
           aria-label="Previous page"
         >
@@ -100,7 +100,7 @@ export default function EnterprisePagination({
               onClick={() => onPageChange(page)}
               className={`h-7 min-w-7 px-2 rounded-md text-xs font-medium transition-colors cursor-pointer ${
                 isActive
-                  ? "bg-primary text-primary-foreground font-semibold shadow-2xs"
+                  ? "bg-primary text-primary-foreground font-semibold"
                   : "border border-border bg-card text-foreground hover:bg-muted"
               }`}
               aria-current={isActive ? "page" : undefined}
@@ -114,7 +114,7 @@ export default function EnterprisePagination({
           type="button"
           onClick={() => onPageChange(validPage + 1)}
           disabled={validPage >= totalPages}
-          className="inline-flex items-center justify-center h-7 w-7 rounded-md border border-border bg-card text-foreground hover:bg-muted disabled:opacity-40 disabled:pointer-events-none transition-colors shadow-2xs cursor-pointer"
+          className="inline-flex items-center justify-center h-7 w-7 rounded-md border border-border bg-card text-foreground hover:bg-muted disabled:opacity-40 disabled:pointer-events-none transition-colors cursor-pointer"
           title="Next Page"
           aria-label="Next page"
         >
@@ -125,7 +125,7 @@ export default function EnterprisePagination({
           type="button"
           onClick={() => onPageChange(totalPages)}
           disabled={validPage >= totalPages}
-          className="inline-flex items-center justify-center h-7 w-7 rounded-md border border-border bg-card text-foreground hover:bg-muted disabled:opacity-40 disabled:pointer-events-none transition-colors shadow-2xs cursor-pointer"
+          className="inline-flex items-center justify-center h-7 w-7 rounded-md border border-border bg-card text-foreground hover:bg-muted disabled:opacity-40 disabled:pointer-events-none transition-colors cursor-pointer"
           title="Last Page"
           aria-label="Last page"
         >
@@ -139,7 +139,7 @@ export default function EnterprisePagination({
               value={String(pageSize)}
               onValueChange={(val) => onPageSizeChange(Number(val))}
             >
-              <SelectTrigger className="h-7 w-[68px] px-2 text-xs border-border bg-card text-foreground shadow-2xs font-medium">
+              <SelectTrigger className="h-7 w-[68px] px-2 text-xs border-border bg-card text-foreground font-medium">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent align="end" className="min-w-[70px]">

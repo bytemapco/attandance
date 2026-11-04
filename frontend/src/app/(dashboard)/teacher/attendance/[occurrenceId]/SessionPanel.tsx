@@ -90,7 +90,7 @@ export default function SessionPanel({
   if (live && fullscreen) return <FullscreenView qr={qr} failed={failed} counts={counts} onClose={() => onFullscreenChange(false)} />;
 
   return (
-    <aside className="flex flex-col gap-5 rounded-lg border border-border bg-card p-5 shadow-[0_2px_8px_rgba(40,54,59,0.05)] lg:min-h-0 lg:overflow-y-auto">
+    <aside className="flex flex-col gap-5 rounded-lg border border-border bg-card p-5 lg:min-h-0 lg:overflow-y-auto">
       {live && (
         <>
           <div className="flex items-center justify-between gap-2">

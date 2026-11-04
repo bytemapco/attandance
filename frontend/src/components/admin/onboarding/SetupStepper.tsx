@@ -76,14 +76,14 @@ export default function SetupStepper({ checks, activeIndex, onSelect }: SetupSte
                   onClick={() => onSelect(index)}
                   className={`group flex w-full items-center gap-3 rounded-lg border px-3 py-2.5 text-left transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
                     active
-                      ? "border-accent/50 bg-surface shadow-xs"
+                      ? "border-accent/50 bg-surface"
                       : reachable
                       ? "border-transparent hover:border-border hover:bg-surface"
                       : "border-transparent opacity-45 cursor-not-allowed"
                   }`}
                 >
                   <span
-                    className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold shadow-xs transition-colors ${markerClass}`}
+                    className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold transition-colors ${markerClass}`}
                   >
                     {done ? (
                       <>

@@ -59,6 +59,10 @@
   --radius-md: 6px;
   --radius-lg: 8px;
 
+  /* Elevation is a border. Only floating layers (menus, dialogs) get a shadow. */
+  --shadow-*: initial;
+  --shadow-popover: 0 4px 12px rgb(32 43 48 / 0.1);
+
   --font-sans: var(--font-plus-jakarta), "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: var(--font-geist-mono), "Geist Mono", ui-monospace, Menlo, Monaco, Consolas, monospace;
 }

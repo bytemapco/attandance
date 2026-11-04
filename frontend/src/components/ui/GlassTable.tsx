@@ -82,7 +82,7 @@ export default function GlassTable<T extends Record<string, unknown>>({
 
   if (loading) {
     return (
-      <div className={cn("rounded-lg border border-border bg-card shadow-xs overflow-hidden", className)}>
+      <div className={cn("rounded-lg border border-border bg-card overflow-hidden", className)}>
         <div className="space-y-4 p-4" role="status" aria-label="Loading table data" aria-busy="true">
           <span className="sr-only">Loading table data</span>
           {Array.from({ length: 5 }).map((_, i) => (
@@ -102,7 +102,7 @@ export default function GlassTable<T extends Record<string, unknown>>({
 
   if (error) {
     return (
-      <div className={cn("rounded-lg border border-border bg-card shadow-xs overflow-hidden", className)}>
+      <div className={cn("rounded-lg border border-border bg-card overflow-hidden", className)}>
         <GlassErrorState message={error} onRetry={onRetry} />
       </div>
     );
@@ -111,7 +111,7 @@ export default function GlassTable<T extends Record<string, unknown>>({
   const isEmpty = data.length === 0;
 
   return (
-    <div className={cn("rounded-lg border border-border bg-card shadow-xs overflow-hidden", className)}>
+    <div className={cn("rounded-lg border border-border bg-card overflow-hidden", className)}>
       <div className="overflow-x-auto">
         <table className="w-full text-left text-sm border-collapse">
           <GlassTableHeader

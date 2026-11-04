@@ -23,7 +23,7 @@ export default function CampusBroadcastForm({
 }: CampusBroadcastFormProps): React.JSX.Element {
   return (
     <form onSubmit={onSubmit} className="space-y-5">
-      <GlassCard className="p-5 bg-card border border-border space-y-4 shadow-2xs">
+      <GlassCard className="p-5 bg-card border border-border space-y-4">
         <div className="flex items-center gap-2.5 pb-3 border-b border-border">
           <div className="p-1.5 rounded-lg bg-primary/10 text-primary border border-primary/20">
             <Megaphone size={16} />
@@ -100,7 +100,7 @@ export default function CampusBroadcastForm({
         <button
           type="submit"
           disabled={submitting}
-          className="inline-flex items-center gap-2 px-5 py-2 text-xs font-semibold text-primary-foreground bg-primary hover:bg-foreground rounded-lg shadow-xs transition-colors disabled:opacity-50 cursor-pointer"
+          className="inline-flex items-center gap-2 px-5 py-2 text-xs font-semibold text-primary-foreground bg-primary hover:bg-foreground rounded-lg transition-colors disabled:opacity-50 cursor-pointer"
         >
           <Send size={13} />
           <span>{submitting ? "Dispatching..." : "Dispatch Broadcast Announcement"}</span>

@@ -74,7 +74,7 @@ export default function AuditDetailModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-primary/40" onClick={onClose}>
       <div
-        className="bg-card border border-border rounded-lg w-full max-w-2xl shadow-[0_12px_36px_rgba(40,54,59,0.14)] overflow-hidden flex flex-col max-h-[90vh]"
+        className="bg-card border border-border rounded-lg w-full max-w-2xl shadow-popover overflow-hidden flex flex-col max-h-[90vh]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Modal Header */}

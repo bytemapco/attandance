@@ -68,7 +68,7 @@ export function NotificationHeader({
         {actionButton && (
           <Link
             href={actionButton.href}
-            className="inline-flex items-center gap-1.5 h-9 px-4 text-xs font-semibold text-primary-foreground bg-primary hover:bg-foreground rounded-lg transition-all shadow-sm"
+            className="inline-flex items-center gap-1.5 h-9 px-4 text-xs font-semibold text-primary-foreground bg-primary hover:bg-foreground rounded-lg transition-all"
           >
             {actionButton.icon || <Plus size={14} />}
             <span>{actionButton.label}</span>

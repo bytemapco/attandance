@@ -133,7 +133,7 @@ export default function ClassTimetable({ cls, onUpdated }: ClassTimetableProps):
                       aria-label={`${entry.section.subject_name}, ${WEEKDAYS[day - 1]} ${entry.start_time} to ${entry.end_time}. Change`}
                       onClick={() => change(entry)}
                       style={{ top: top + 1, height: height - 2 }}
-                      className={`absolute inset-x-1 overflow-hidden rounded-lg border px-2 py-1 text-left text-xs transition-shadow hover:shadow-sm focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-accent-strong ${entry.tint}`}
+                      className={`absolute inset-x-1 overflow-hidden rounded-lg border px-2 py-1 text-left text-xs transition-shadow focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-accent-strong ${entry.tint}`}
                     >
                       <span className="block truncate font-semibold">{entry.section.subject_code || entry.section.subject_name}</span>
                       <span className="block truncate tabular-nums opacity-80">

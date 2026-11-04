@@ -152,7 +152,7 @@ export default function ClassManagementPage(): React.ReactElement {
               e.stopPropagation();
               router.push(`/admin/class-management/${row.id}`);
             }}
-            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-border hover:border-muted-foreground bg-card hover:bg-muted text-xs font-semibold text-foreground transition-all cursor-pointer shadow-2xs"
+            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-border hover:border-muted-foreground bg-card hover:bg-muted text-xs font-semibold text-foreground transition-all cursor-pointer"
           >
             Manage
             <ChevronRight size={13} className="text-muted-foreground" />
@@ -192,7 +192,7 @@ export default function ClassManagementPage(): React.ReactElement {
       />
 
       {/* Clean Structured Table */}
-      <div className="rounded-lg border border-border bg-card shadow-[0_2px_8px_rgba(40,54,59,0.04)] overflow-hidden">
+      <div className="rounded-lg border border-border bg-card overflow-hidden">
         <GlassTable
           columns={columns}
           data={classes}

@@ -29,7 +29,7 @@ export default function BroadcastTargetSection({
   onChange,
 }: BroadcastTargetSectionProps): React.ReactElement {
   return (
-    <GlassCard className="p-5 bg-card border border-border space-y-4 shadow-2xs">
+    <GlassCard className="p-5 bg-card border border-border space-y-4">
       <div className="flex items-center gap-2.5 pb-3 border-b border-border">
         <div className="p-1.5 rounded-lg bg-info/10 text-info border border-info/20">
           <Users size={16} />
@@ -54,7 +54,7 @@ export default function BroadcastTargetSection({
                 onClick={() => onChange({ ...formData, target_role: opt.id })}
                 className={`p-2.5 rounded-lg border text-left transition-all cursor-pointer ${
                   isSelected
-                    ? "bg-card text-primary border-accent ring-1 ring-accent shadow-xs"
+                    ? "bg-card text-primary border-accent ring-1 ring-accent"
                     : "bg-background border-border text-muted-foreground hover:text-primary hover:bg-secondary"
                 }`}
               >

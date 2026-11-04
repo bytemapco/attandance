@@ -67,7 +67,7 @@ export default function TenantTable({
   }
 
   return (
-    <div className="bg-card border border-border rounded-lg overflow-hidden shadow-[0_2px_8px_rgba(40,54,59,0.04)]">
+    <div className="bg-card border border-border rounded-lg overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full text-left text-xs">
           <thead className="bg-secondary/80 border-b border-border text-[11px] font-bold text-muted-foreground uppercase tracking-wider">

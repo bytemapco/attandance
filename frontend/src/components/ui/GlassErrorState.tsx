@@ -26,7 +26,7 @@ export function GlassErrorState({
     <div
       role="alert"
       className={cn(
-        "rounded-lg border border-destructive-border bg-destructive-soft/60 p-8 text-center shadow-xs",
+        "rounded-lg border border-destructive-border bg-destructive-soft/60 p-8 text-center",
         className
       )}
     >

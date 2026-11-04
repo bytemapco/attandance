@@ -45,7 +45,7 @@ export default function ScannerControls({
   }
 
   return (
-    <GlassCard className="bg-card border-border/80 p-3 sm:p-4 shadow-xs">
+    <GlassCard className="bg-card border-border/80 p-3 sm:p-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         {/* Left: Sensitivity Segmented Control */}
         <div className="flex flex-wrap items-center gap-2">
@@ -60,7 +60,7 @@ export default function ScannerControls({
                   onClick={() => handleSelect(preset)}
                   className={`px-3 py-1.5 text-xs rounded-lg transition-all text-center ${
                     isSelected
-                      ? "bg-card text-foreground font-semibold shadow-xs"
+                      ? "bg-card text-foreground font-semibold"
                       : "text-muted-foreground hover:text-foreground"
                   }`}
                 >

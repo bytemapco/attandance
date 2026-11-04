@@ -52,7 +52,7 @@ export default function DeviceChangesPage(): React.ReactElement {
           type="button"
           onClick={() => void fetchRequests(true)}
           disabled={loading || refreshing}
-          className="flex items-center gap-2 px-4 py-2 bg-card hover:bg-muted text-foreground rounded-lg transition-colors border border-border shadow-xs cursor-pointer disabled:opacity-50"
+          className="flex items-center gap-2 px-4 py-2 bg-card hover:bg-muted text-foreground rounded-lg transition-colors border border-border cursor-pointer disabled:opacity-50"
         >
           <RefreshCw size={16} className={refreshing || loading ? "animate-spin text-primary" : "text-primary"} />
           <span className="text-sm font-medium">Refresh</span>

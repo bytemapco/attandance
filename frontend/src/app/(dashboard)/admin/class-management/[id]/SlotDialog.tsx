@@ -100,7 +100,7 @@ export default function SlotDialog({ cls, draft, onUpdated, onClose }: SlotDialo
       <div
         role="dialog"
         aria-label={editing ? "Change class time" : "Add class time"}
-        className="max-h-full w-full max-w-md space-y-4 overflow-y-auto rounded-lg border border-border bg-card p-6 shadow-[0_8px_24px_rgba(40,54,59,0.12)]"
+        className="max-h-full w-full max-w-md space-y-4 overflow-y-auto rounded-lg border border-border bg-card p-6 shadow-popover"
         onClick={(e) => e.stopPropagation()}
       >
         <h3 className="text-base font-bold text-foreground">{editing ? "Change class time" : "Add class time"}</h3>

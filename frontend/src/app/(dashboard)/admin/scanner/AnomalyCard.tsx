@@ -38,7 +38,7 @@ export default function AnomalyCard({ result }: AnomalyCardProps): React.ReactEl
   }
 
   return (
-    <GlassCard className="bg-card border-border/80 p-4 rounded-lg flex flex-col justify-between hover:border-border-strong transition-all duration-200 shadow-xs">
+    <GlassCard className="bg-card border-border/80 p-4 rounded-lg flex flex-col justify-between hover:border-border-strong transition-all duration-200">
       <div className="space-y-3.5">
         {/* Top Header */}
         <div className="flex items-start justify-between gap-2">

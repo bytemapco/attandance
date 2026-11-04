@@ -23,7 +23,7 @@ export default function GlassEmptyState({
   className = "",
 }: GlassEmptyStateProps): React.ReactElement {
   return (
-    <div className={cn("rounded-lg border border-border bg-card p-10 sm:p-14 text-center shadow-xs", className)}>
+    <div className={cn("rounded-lg border border-border bg-card p-10 sm:p-14 text-center", className)}>
       <div className="mx-auto mb-3.5 flex h-12 w-12 items-center justify-center rounded-lg bg-secondary text-muted-foreground border border-border">
         {icon || <FolderOpen size={22} />}
       </div>

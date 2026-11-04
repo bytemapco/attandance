@@ -75,7 +75,7 @@ export default function BulkImportModal({
   return (
     <div role="dialog" aria-modal="true" className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
       <div className="fixed inset-0" onClick={stage !== "importing" ? handleClose : undefined} />
-      <div className="relative w-full max-w-2xl rounded-lg border border-border bg-card shadow-2xl p-6 z-10 space-y-4">
+      <div className="relative w-full max-w-2xl rounded-lg border border-border bg-card shadow-popover p-6 z-10 space-y-4">
         {/* Modal Header */}
         <div className="flex items-center justify-between border-b border-border pb-3">
           <div className="flex items-center gap-2.5">
@@ -131,7 +131,7 @@ export default function BulkImportModal({
                 type="button"
                 onClick={executeBulkImport}
                 disabled={records.length === 0}
-                className="px-4 py-1.5 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary/90 disabled:opacity-50 transition-colors shadow-2xs cursor-pointer"
+                className="px-4 py-1.5 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary/90 disabled:opacity-50 transition-colors cursor-pointer"
               >
                 Import {records.length} Records
               </button>

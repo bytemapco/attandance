@@ -82,7 +82,7 @@ export default function QuickAddForm({
         <label htmlFor={nameInputId} className="text-xs sm:text-sm font-semibold text-foreground">
           {nameLabel || defaultLabel}
         </label>
-        <div className="relative flex items-center w-full rounded-md border border-border bg-card shadow-2xs transition-colors focus-within:ring-2 focus-within:ring-ring focus-within:border-transparent">
+        <div className="relative flex items-center w-full rounded-md border border-border bg-card transition-colors focus-within:ring-2 focus-within:ring-ring focus-within:border-transparent">
           {ghostSuffix && (
             <div
               className="pointer-events-none absolute inset-0 flex items-center px-3 py-1 text-sm font-sans tracking-normal overflow-hidden whitespace-pre select-none"
@@ -108,7 +108,7 @@ export default function QuickAddForm({
               type="button"
               tabIndex={-1}
               onClick={applySuggestion}
-              className="absolute right-2 top-1/2 -translate-y-1/2 z-20 flex items-center gap-1 rounded-sm border border-border bg-surface px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground shadow-2xs transition-colors hover:bg-secondary hover:text-foreground cursor-pointer"
+              className="absolute right-2 top-1/2 -translate-y-1/2 z-20 flex items-center gap-1 rounded-sm border border-border bg-surface px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground cursor-pointer"
               title="Press Tab to apply suggestion"
             >
               <span>Tab</span>
@@ -133,7 +133,7 @@ export default function QuickAddForm({
               >
                 <HelpCircle size={13} />
               </button>
-              <div className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden whitespace-nowrap rounded-md border border-border bg-card px-2.5 py-1 text-xs font-medium text-foreground shadow-md group-hover:block group-focus-within:block z-[200]">
+              <div className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden whitespace-nowrap rounded-md border border-border bg-card px-2.5 py-1 text-xs font-medium text-foreground shadow-popover group-hover:block group-focus-within:block z-[200]">
                 <span>{codeExample || "e.g. CE, IT, ME"}</span>
                 <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 h-2 w-2 rotate-45 border-b border-r border-border bg-card" />
               </div>
@@ -145,7 +145,7 @@ export default function QuickAddForm({
             value={code}
             onChange={(event) => setCode(event.target.value.toUpperCase())}
             placeholder={suggestCode(name) || codePlaceholder || "e.g. CSE"}
-            className="flex h-9 sm:h-10 w-full rounded-md border border-border bg-card px-3 py-1 text-sm shadow-2xs transition-colors text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:border-transparent uppercase"
+            className="flex h-9 sm:h-10 w-full rounded-md border border-border bg-card px-3 py-1 text-sm transition-colors text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:border-transparent uppercase"
           />
         </div>
       )}

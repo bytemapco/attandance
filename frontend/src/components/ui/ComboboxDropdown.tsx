@@ -31,7 +31,7 @@ export default function ComboboxDropdown({
   onSelectOption,
 }: ComboboxDropdownProps): React.ReactElement {
   return (
-    <div className="absolute left-0 top-full z-50 mt-1 w-full rounded-md border border-border bg-card text-card-foreground shadow-[0_8px_24px_rgba(40,54,59,0.12)]">
+    <div className="absolute left-0 top-full z-50 mt-1 w-full rounded-md border border-border bg-card text-card-foreground shadow-popover">
       <div className="flex items-center border-b border-border px-2.5 py-2">
         <Search size={14} className="text-muted-foreground mr-2 shrink-0" />
         <input

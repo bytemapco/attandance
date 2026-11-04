@@ -69,7 +69,7 @@ export default function RegisterGrid({ students, edits, counts, locked, editable
   });
 
   return (
-    <section className="flex min-h-[360px] flex-col overflow-hidden rounded-lg border border-border bg-card shadow-[0_2px_8px_rgba(40,54,59,0.05)] lg:min-h-0">
+    <section className="flex min-h-[360px] flex-col overflow-hidden rounded-lg border border-border bg-card lg:min-h-0">
       <div className="flex shrink-0 flex-col gap-3 border-b border-border p-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-wrap gap-1.5" role="tablist" aria-label="Filter students">
           {visibleFilters.map(({ key, label }) => (

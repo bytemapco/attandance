@@ -22,7 +22,7 @@ export default function QuickAddChips({
       {items.map((item) => (
         <span
           key={item.id}
-          className="inline-flex items-center gap-1.5 rounded-lg border border-success-border bg-success-soft py-1 pl-2.5 pr-1.5 text-xs font-medium text-success shadow-2xs transition-colors"
+          className="inline-flex items-center gap-1.5 rounded-lg border border-success-border bg-success-soft py-1 pl-2.5 pr-1.5 text-xs font-medium text-success transition-colors"
         >
           <Check size={12} className="stroke-[2.5]" aria-hidden />
           <span className="font-semibold text-foreground">{item.name}</span>

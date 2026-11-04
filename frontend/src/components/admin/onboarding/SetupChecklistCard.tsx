@@ -26,7 +26,7 @@ export default function SetupChecklistCard({ status }: SetupChecklistCardProps):
   const nextBlocker = stepBlockers(next, status.checks)[0];
 
   return (
-    <section aria-labelledby="setup-progress-title" className="space-y-5 rounded-lg border border-border bg-card p-5 shadow-[0_2px_8px_rgba(40,54,59,0.04)] sm:p-6">
+    <section aria-labelledby="setup-progress-title" className="space-y-5 rounded-lg border border-border bg-card p-5 sm:p-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0 space-y-1">
           <p className="text-xs font-semibold uppercase tracking-wider text-accent-strong">Campus setup</p>
@@ -41,7 +41,7 @@ export default function SetupChecklistCard({ status }: SetupChecklistCardProps):
         </div>
         <Link
           href={`/admin/onboarding?step=${next.id}`}
-          className="inline-flex min-h-10 shrink-0 items-center justify-center gap-2 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground shadow-xs transition-colors hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-muted-foreground"
+          className="inline-flex min-h-10 shrink-0 items-center justify-center gap-2 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-muted-foreground"
         >
           {readyToGoLive ? "Review and activate" : "Continue setup"}
           <ArrowRight size={15} aria-hidden />

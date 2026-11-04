@@ -43,7 +43,7 @@ export default function GlassInput({
           type={resolvedType}
           disabled={disabled}
           className={cn(
-            "flex h-9 sm:h-10 w-full rounded-md border border-border bg-card px-3 py-1 text-sm shadow-2xs transition-colors",
+            "flex h-9 sm:h-10 w-full rounded-md border border-border bg-card px-3 py-1 text-sm transition-colors",
             "text-foreground placeholder:text-muted-foreground",
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:border-transparent",
             "disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-secondary",

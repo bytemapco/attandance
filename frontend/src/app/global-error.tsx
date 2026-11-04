@@ -12,7 +12,7 @@ export default function GlobalError({
   return (
     <html lang="en">
       <body className="min-h-screen bg-background text-foreground flex items-center justify-center p-4 font-sans antialiased">
-        <div className="w-full max-w-md text-center rounded-lg border border-border bg-card p-8 shadow-[0_8px_24px_rgba(40,54,59,0.1)]">
+        <div className="w-full max-w-md text-center rounded-lg border border-border bg-card p-8">
           <div className="inline-flex p-3 rounded-lg bg-destructive-soft text-destructive border border-destructive-border mb-5">
             <svg
               className="h-8 w-8"
@@ -41,7 +41,7 @@ export default function GlobalError({
           <button
             type="button"
             onClick={() => reset()}
-            className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary-hover transition-all cursor-pointer shadow-xs"
+            className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary-hover transition-all cursor-pointer"
           >
             Restart Application
           </button>

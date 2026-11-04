@@ -132,13 +132,13 @@ export default function ClassDetailPage(): React.ReactElement {
 
         {/* Quick Metrics */}
         <div className="flex items-center gap-3 self-start sm:self-auto">
-          <div className="px-3.5 py-1.5 rounded-lg border border-border bg-card shadow-2xs text-center">
+          <div className="px-3.5 py-1.5 rounded-lg border border-border bg-card text-center">
             <div className="text-xs text-muted-foreground font-medium flex items-center gap-1 justify-center">
               <Users size={12} className="text-info" /> Students
             </div>
             <div className="text-lg font-bold text-foreground font-mono">{cls.member_count}</div>
           </div>
-          <div className="px-3.5 py-1.5 rounded-lg border border-border bg-card shadow-2xs text-center">
+          <div className="px-3.5 py-1.5 rounded-lg border border-border bg-card text-center">
             <div className="text-xs text-muted-foreground font-medium flex items-center gap-1 justify-center">
               <BookOpen size={12} className="text-success" /> Subjects
             </div>
@@ -149,7 +149,7 @@ export default function ClassDetailPage(): React.ReactElement {
 
       {/* Helpful Setup Reminder Banner if 0 subjects */}
       {isNeedsSetup && (
-        <div className="p-3.5 rounded-lg border border-warning-border bg-warning-soft text-xs text-warning flex items-center justify-between gap-3 shadow-2xs">
+        <div className="p-3.5 rounded-lg border border-warning-border bg-warning-soft text-xs text-warning flex items-center justify-between gap-3">
           <div className="flex items-center gap-2">
             <AlertCircle size={16} className="shrink-0 text-warning" />
             <span>{setupMessage}</span>

@@ -74,7 +74,7 @@ export default function OnboardingWizard({ initialStepId = null }: OnboardingWiz
         <p className="max-w-md text-sm text-muted-foreground">Everything required for attendance is in place. You can change any of it from Master Data or Settings.</p>
         <Link
           href="/admin/dashboard"
-          className="inline-flex min-h-10 items-center justify-center rounded-md bg-primary px-5 text-sm font-semibold text-primary-foreground shadow-xs transition-colors hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-muted-foreground"
+          className="inline-flex min-h-10 items-center justify-center rounded-md bg-primary px-5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-muted-foreground"
         >
           Go to dashboard
         </Link>

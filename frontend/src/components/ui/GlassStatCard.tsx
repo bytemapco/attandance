@@ -65,18 +65,18 @@ export default function GlassStatCard({
       hoverable
       padding="none"
       className={cn(
-        "relative overflow-hidden bg-card border border-border transition-all duration-200 p-5 shadow-[0_2px_8px_rgba(40,54,59,0.05)] group",
+        "relative overflow-hidden bg-card border border-border transition-all duration-200 p-5 group",
         theme.border
       )}
     >
       <div className="flex items-center justify-between mb-3.5 relative">
-        <div className={cn("p-2.5 rounded-lg border flex items-center justify-center shrink-0 shadow-2xs", theme.icon)}>
+        <div className={cn("p-2.5 rounded-lg border flex items-center justify-center shrink-0", theme.icon)}>
           {icon}
         </div>
         {trend && (
           <span
             className={cn(
-              "text-[11px] font-semibold px-2 py-0.5 rounded-full border flex items-center gap-1 shadow-2xs tabular-nums",
+              "text-[11px] font-semibold px-2 py-0.5 rounded-full border flex items-center gap-1 tabular-nums",
               trendUp
                 ? "bg-success-soft text-success border-success-border"
                 : "bg-destructive-soft text-destructive border-destructive-border"

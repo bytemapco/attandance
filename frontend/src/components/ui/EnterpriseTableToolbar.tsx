@@ -89,7 +89,7 @@ export default function EnterpriseTableToolbar({
             value={searchValue}
             placeholder={searchPlaceholder}
             onChange={(e) => onSearch(e.target.value)}
-            className="w-full h-9 pl-9 pr-8 rounded-lg border border-border bg-card text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-border-strong focus:border-border-strong transition-colors shadow-2xs"
+            className="w-full h-9 pl-9 pr-8 rounded-lg border border-border bg-card text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-border-strong focus:border-border-strong transition-colors"
           />
           {searchValue && (
             <button
@@ -118,7 +118,7 @@ export default function EnterpriseTableToolbar({
                 >
                   <SelectTrigger
                     className={cn(
-                      "h-9 w-auto min-w-[130px] gap-2 px-3 rounded-lg border text-xs shadow-2xs",
+                      "h-9 w-auto min-w-[130px] gap-2 px-3 rounded-lg border text-xs",
                       filter.value && filter.value !== "all"
                         ? "border-border-strong/80 bg-secondary/80 font-semibold text-foreground"
                         : "border-border bg-card text-muted-foreground hover:bg-secondary/60"
@@ -155,7 +155,7 @@ export default function EnterpriseTableToolbar({
               <button
                 type="button"
                 onClick={handleReset}
-                className="inline-flex items-center gap-1 h-9 px-2.5 rounded-lg border border-border/80 bg-card text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors shadow-2xs cursor-pointer"
+                className="inline-flex items-center gap-1 h-9 px-2.5 rounded-lg border border-border/80 bg-card text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors cursor-pointer"
                 title="Reset all active filters"
               >
                 <RotateCcw size={12} /> Reset

@@ -14,7 +14,7 @@ export default function ClassStep({ status }: StepProps): React.ReactElement {
       </p>
       <Link
         href="/admin/class-management/create"
-        className="inline-flex min-h-10 items-center justify-center rounded-md border border-border bg-card px-4 text-sm font-medium text-foreground shadow-xs transition-colors hover:bg-background focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-muted-foreground"
+        className="inline-flex min-h-10 items-center justify-center rounded-md border border-border bg-card px-4 text-sm font-medium text-foreground transition-colors hover:bg-background focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-muted-foreground"
       >
         Create class
       </Link>

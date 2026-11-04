@@ -89,7 +89,7 @@ export default function LeavesPage(): React.JSX.Element {
         <button
           type="button"
           onClick={() => router.push(`/teacher/leaves/${row.id}`)}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-card hover:bg-secondary text-foreground transition-all text-xs font-semibold cursor-pointer shadow-2xs"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-card hover:bg-secondary text-foreground transition-all text-xs font-semibold cursor-pointer"
           title="Review Leave Application"
         >
           <Eye size={13} className="text-primary" />
@@ -138,7 +138,7 @@ export default function LeavesPage(): React.JSX.Element {
       {leaves.length === 0 ? (
         <GlassEmptyState title="All Clear" message="No pending leave requests found." />
       ) : (
-        <div className="rounded-lg border border-border bg-card shadow-2xs overflow-hidden">
+        <div className="rounded-lg border border-border bg-card overflow-hidden">
           <GlassTable
             columns={columns}
             data={paginated as (PendingLeaveItem & Record<string, unknown>)[]}

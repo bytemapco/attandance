@@ -59,7 +59,7 @@ export default function TenantPoliciesTab({
         </div>
 
         <div className="flex justify-end pt-2">
-          <GlassButton variant="primary" disabled={saving} className="gap-2 font-semibold shadow-xs">
+          <GlassButton variant="primary" disabled={saving} className="gap-2 font-semibold">
             <Save size={14} />
             <span>{saving ? "Saving..." : "Save Changes"}</span>
           </GlassButton>

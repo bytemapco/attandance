@@ -18,7 +18,7 @@ export const studentColumns: TableColumn<StudentResponse & Record<string, unknow
       const initial = name.charAt(0).toUpperCase();
       return (
         <div className="flex items-center gap-2.5">
-          <div className="h-8 w-8 rounded-full bg-primary text-primary-foreground font-bold text-xs flex items-center justify-center shrink-0 shadow-2xs">
+          <div className="h-8 w-8 rounded-full bg-primary text-primary-foreground font-bold text-xs flex items-center justify-center shrink-0">
             {initial}
           </div>
           <div className="min-w-0">
@@ -91,14 +91,14 @@ export const studentColumns: TableColumn<StudentResponse & Record<string, unknow
       <div className="flex items-center gap-1.5">
         <Link
           href={`/admin/users/students/${row.id}`}
-          className="inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-secondary border border-border transition-colors shadow-2xs"
+          className="inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-secondary border border-border transition-colors"
           title="View Details"
         >
           <Eye size={12} /> View
         </Link>
         <Link
           href={`/admin/users/students/${row.id}/edit`}
-          className="inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-secondary border border-border transition-colors shadow-2xs"
+          className="inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-secondary border border-border transition-colors"
           title="Edit Student"
         >
           <Pencil size={12} /> Edit

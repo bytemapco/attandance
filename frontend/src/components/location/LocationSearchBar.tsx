@@ -126,7 +126,7 @@ export default function LocationSearchBar({
             if (results.length > 0) setIsOpen(true);
           }}
           placeholder={placeholder}
-          className="h-9.5 w-full rounded-lg border border-border bg-card pl-9 pr-8 text-sm text-foreground shadow-xs transition-colors placeholder:text-muted-foreground focus:border-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/20"
+          className="h-9.5 w-full rounded-lg border border-border bg-card pl-9 pr-8 text-sm text-foreground transition-colors placeholder:text-muted-foreground focus:border-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/20"
         />
         {query && (
           <button
@@ -141,7 +141,7 @@ export default function LocationSearchBar({
       </div>
 
       {isOpen && results.length > 0 && (
-        <ul className="absolute left-0 right-0 z-[1000] mt-1.5 max-h-60 divide-y divide-border overflow-y-auto rounded-lg border border-border bg-card py-1 shadow-lg">
+        <ul className="absolute left-0 right-0 z-[1000] mt-1.5 max-h-60 divide-y divide-border overflow-y-auto rounded-lg border border-border bg-card py-1 shadow-popover">
           {results.map((item) => {
             const parts = item.display_name.split(",");
             const title = parts[0];

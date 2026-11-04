@@ -18,7 +18,7 @@ export default function DashboardError({
 
   return (
     <div className="min-h-[60vh] flex items-center justify-center p-6 sm:p-8">
-      <div className="text-center max-w-md w-full rounded-lg border border-border bg-card p-6 sm:p-8 shadow-sm">
+      <div className="text-center max-w-md w-full rounded-lg border border-border bg-card p-6 sm:p-8">
         <div className="p-3 rounded-lg bg-destructive/10 text-destructive inline-flex mb-4">
           <AlertTriangle size={36} aria-hidden="true" />
         </div>

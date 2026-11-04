@@ -137,7 +137,7 @@ export default function GlassCombobox({
           aria-haspopup="listbox"
           aria-expanded={isOpen}
           className={cn(
-            "flex h-9 w-full items-center justify-between rounded-md border border-border bg-card px-3 py-1 text-sm shadow-xs transition-colors text-left cursor-pointer",
+            "flex h-9 w-full items-center justify-between rounded-md border border-border bg-card px-3 py-1 text-sm transition-colors text-left cursor-pointer",
             "text-foreground hover:border-accent/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
             "disabled:cursor-not-allowed disabled:opacity-50",
             error && "border-destructive focus-visible:ring-destructive",

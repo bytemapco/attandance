@@ -67,7 +67,7 @@ export function NotificationFeedList({
         <button
           type="button"
           onClick={onRetry}
-          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-primary-foreground bg-destructive hover:bg-destructive-hover rounded-lg transition-all cursor-pointer shadow-xs"
+          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-primary-foreground bg-destructive hover:bg-destructive-hover rounded-lg transition-all cursor-pointer"
         >
           <RotateCw size={13} />
           <span>Retry</span>

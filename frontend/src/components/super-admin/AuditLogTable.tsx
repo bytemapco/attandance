@@ -111,7 +111,7 @@ export default function AuditLogTable({
   };
 
   return (
-    <div className="bg-card border border-border rounded-lg overflow-hidden shadow-2xs">
+    <div className="bg-card border border-border rounded-lg overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full text-left text-xs">
           <thead className="bg-muted/50 border-b border-border text-[11px] font-bold text-muted-foreground uppercase tracking-wider">

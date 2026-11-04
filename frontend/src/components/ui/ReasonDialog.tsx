@@ -35,7 +35,7 @@ export default function ReasonDialog({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-primary/40 p-4" onClick={onCancel}>
       <div
-        className="w-full max-w-md rounded-lg border border-border bg-card p-6 shadow-[0_8px_24px_rgba(40,54,59,0.12)]"
+        className="w-full max-w-md rounded-lg border border-border bg-card p-6 shadow-popover"
         onClick={(e) => e.stopPropagation()}
       >
         <h3 className="mb-4 text-base font-bold text-foreground">{title}</h3>

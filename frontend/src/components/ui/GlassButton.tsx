@@ -15,11 +15,11 @@ export interface GlassButtonProps extends React.ButtonHTMLAttributes<HTMLButtonE
 }
 
 const variantStyles: Record<ButtonVariant, string> = {
-  primary: "bg-primary text-primary-foreground hover:bg-primary-hover border-transparent shadow-xs",
-  secondary: "bg-card text-foreground border-border hover:bg-secondary hover:border-border-strong shadow-xs",
-  danger: "bg-destructive text-primary-foreground hover:bg-destructive-hover border-transparent shadow-xs",
+  primary: "bg-primary text-primary-foreground hover:bg-primary-hover border-transparent",
+  secondary: "bg-card text-foreground border-border hover:bg-secondary hover:border-border-strong",
+  danger: "bg-destructive text-primary-foreground hover:bg-destructive-hover border-transparent",
   ghost: "bg-transparent text-muted-foreground hover:bg-secondary hover:text-foreground border-transparent",
-  accent: "bg-accent text-accent-foreground hover:bg-accent/90 border-transparent shadow-xs",
+  accent: "bg-accent text-accent-foreground hover:bg-accent/90 border-transparent",
 };
 
 const sizeStyles: Record<ButtonSize, string> = {

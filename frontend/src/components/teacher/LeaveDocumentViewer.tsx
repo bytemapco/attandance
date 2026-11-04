@@ -65,7 +65,7 @@ export default function LeaveDocumentViewer({ url }: LeaveDocumentViewerProps): 
           <iframe
             src={url}
             title="Leave Document Evidence"
-            className="w-full h-full min-h-[500px] rounded-lg border border-border shadow-xs"
+            className="w-full h-full min-h-[500px] rounded-lg border border-border"
           />
         ) : docLoadError ? (
           <div className="text-center py-16 space-y-3">
@@ -99,7 +99,7 @@ export default function LeaveDocumentViewer({ url }: LeaveDocumentViewerProps): 
                 setDocLoading(false);
                 setDocLoadError(true);
               }}
-              className="max-h-[600px] max-w-full rounded-lg object-contain border border-border shadow-xs"
+              className="max-h-[600px] max-w-full rounded-lg object-contain border border-border"
             />
           </div>
         )}

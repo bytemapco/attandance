@@ -81,7 +81,7 @@ export default function AdminDashboardPage(): React.ReactElement {
   return (
     <div className="space-y-6 pb-6">
       {/* Top Welcome Banner */}
-      <div className="relative overflow-hidden rounded-lg border border-border bg-card p-5 sm:p-6 shadow-[0_2px_8px_rgba(40,54,59,0.05)] flex flex-col md:flex-row md:items-center md:justify-between gap-5">
+      <div className="relative overflow-hidden rounded-lg border border-border bg-card p-5 sm:p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-5">
         <div className="space-y-1 z-10">
           <p className="text-xs font-medium text-muted-foreground">{todayStr}</p>
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-primary">
@@ -93,7 +93,7 @@ export default function AdminDashboardPage(): React.ReactElement {
         <div className="flex items-center gap-2.5 z-10 self-start md:self-center">
           <button
             onClick={() => router.push("/admin/notifications/broadcast")}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-border bg-secondary text-xs font-semibold text-foreground hover:bg-secondary/70 transition-all shadow-2xs cursor-pointer"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-border bg-secondary text-xs font-semibold text-foreground hover:bg-secondary/70 transition-all cursor-pointer"
           >
             <Megaphone size={14} className="text-accent-strong" />
             <span>New Announcement</span>
@@ -102,7 +102,7 @@ export default function AdminDashboardPage(): React.ReactElement {
           <button
             onClick={handleRefresh}
             disabled={refreshing}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-border bg-card text-xs font-semibold text-foreground hover:bg-secondary transition-all shadow-2xs disabled:opacity-50 cursor-pointer"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-border bg-card text-xs font-semibold text-foreground hover:bg-secondary transition-all disabled:opacity-50 cursor-pointer"
           >
             <RefreshCw size={13} className={refreshing ? "animate-spin text-accent-strong" : "text-muted-foreground"} />
             <span>{refreshing ? "Updating..." : "Refresh"}</span>

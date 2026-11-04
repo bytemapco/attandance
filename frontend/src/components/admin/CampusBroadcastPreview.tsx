@@ -56,7 +56,7 @@ export default function CampusBroadcastPreview({ formData }: CampusBroadcastPrev
       </div>
 
       {/* In-App Feed Card Simulation */}
-      <GlassCard className="p-4 bg-card border border-border space-y-3 shadow-2xs">
+      <GlassCard className="p-4 bg-card border border-border space-y-3">
         <div className="flex items-center justify-between pb-2 border-b border-border">
           <div className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground">
             <Bell size={13} />
@@ -94,17 +94,17 @@ export default function CampusBroadcastPreview({ formData }: CampusBroadcastPrev
       </GlassCard>
 
       {/* Mobile Lock Screen Push Banner */}
-      <GlassCard className="p-4 bg-card border border-border space-y-3 shadow-2xs">
+      <GlassCard className="p-4 bg-card border border-border space-y-3">
         <div className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground pb-2 border-b border-border">
           <Smartphone size={13} />
           <span>Mobile Device Push Notification</span>
         </div>
 
-        <div className="p-3 rounded-lg border border-border bg-background shadow-xs flex items-start gap-2.5">
+        <div className="p-3 rounded-lg border border-border bg-background flex items-start gap-2.5">
           <img
             src="/sahaj-app-icon.png"
             alt="SAHAJ"
-            className="w-7 h-7 rounded-md object-contain shrink-0 shadow-2xs mt-0.5"
+            className="w-7 h-7 rounded-md object-contain shrink-0 mt-0.5"
           />
           <div className="flex-1 min-w-0">
             <div className="flex items-center justify-between text-[11px] text-muted-foreground">

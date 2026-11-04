@@ -81,7 +81,7 @@ export default function LoginPage(): React.ReactElement {
 
   return (
     <div className="w-full max-w-[420px] mx-auto my-auto py-8 px-4">
-      <div className="rounded-lg border border-border/90 bg-white/95 p-7 sm:p-8 shadow-[0_10px_30px_rgba(40,54,59,0.08),0_1px_3px_rgba(40,54,59,0.04)]">
+      <div className="rounded-lg border border-border/90 bg-white/95 p-7 sm:p-8">
         {/* Brand Header */}
         <div className="flex flex-col items-center text-center mb-6">
           <Link
@@ -149,7 +149,7 @@ export default function LoginPage(): React.ReactElement {
               variant="primary"
               size="lg"
               loading={isSubmitting}
-              className="w-full font-semibold shadow-sm hover:shadow transition-shadow"
+              className="w-full font-semibold hover:shadow transition-shadow"
             >
               Sign In to Dashboard
             </GlassButton>

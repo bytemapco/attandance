@@ -7,7 +7,7 @@ export default function NotFoundPage(): React.ReactElement {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 bg-background text-foreground relative overflow-hidden">
       <div className="w-full max-w-md text-center z-10">
-        <div className="rounded-lg border border-border bg-card p-8 sm:p-10 shadow-[0_8px_24px_rgba(40,54,59,0.08)]">
+        <div className="rounded-lg border border-border bg-card p-8 sm:p-10">
           <div className="inline-flex p-3 rounded-lg bg-secondary text-muted-foreground border border-border mb-5">
             <Compass size={32} />
           </div>

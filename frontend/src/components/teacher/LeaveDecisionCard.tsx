@@ -54,7 +54,7 @@ export default function LeaveDecisionCard({
           type="button"
           disabled={submitting}
           onClick={() => handleSubmit("REJECTED")}
-          className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-destructive/30 bg-destructive/10 text-destructive hover:bg-destructive/20 font-semibold text-xs transition-all shadow-xs cursor-pointer disabled:opacity-50"
+          className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-destructive/30 bg-destructive/10 text-destructive hover:bg-destructive/20 font-semibold text-xs transition-all cursor-pointer disabled:opacity-50"
         >
           <XCircle size={16} />
           <span>Reject Leave</span>
@@ -64,7 +64,7 @@ export default function LeaveDecisionCard({
           type="button"
           disabled={submitting}
           onClick={() => handleSubmit("APPROVED")}
-          className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-success hover:bg-success text-primary-foreground font-semibold text-xs transition-all shadow-sm cursor-pointer disabled:opacity-50"
+          className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-success hover:bg-success text-primary-foreground font-semibold text-xs transition-all cursor-pointer disabled:opacity-50"
         >
           <CheckCircle2 size={16} />
           <span>Approve Leave</span>

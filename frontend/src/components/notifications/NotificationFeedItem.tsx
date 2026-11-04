@@ -96,7 +96,7 @@ export function NotificationFeedItem({
         isSelected
           ? "bg-secondary/40 border-primary/40 ring-1 ring-primary/20"
           : isUnread
-          ? "bg-card border-border shadow-xs hover:border-primary/30"
+          ? "bg-card border-border hover:border-primary/30"
           : "bg-card/60 border-border/70 opacity-85 hover:opacity-100 hover:bg-card hover:border-border"
       }`}
     >

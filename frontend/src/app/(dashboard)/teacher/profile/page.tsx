@@ -83,9 +83,9 @@ export default function TeacherProfilePage(): React.ReactElement {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
         {/* Profile Card */}
-        <div className="lg:col-span-1 rounded-lg border border-border bg-card p-6 shadow-2xs space-y-6">
+        <div className="lg:col-span-1 rounded-lg border border-border bg-card p-6 space-y-6">
           <div className="flex flex-col items-center text-center">
-            <div className="w-18 h-18 rounded-full bg-secondary text-primary font-bold text-2xl flex items-center justify-center border-2 border-border mb-3 shadow-2xs">
+            <div className="w-18 h-18 rounded-full bg-secondary text-primary font-bold text-2xl flex items-center justify-center border-2 border-border mb-3">
               {initial}
             </div>
             <h2 className="text-base font-bold text-foreground">
@@ -122,7 +122,7 @@ export default function TeacherProfilePage(): React.ReactElement {
         </div>
 
         {/* Security / Password Card */}
-        <div className="lg:col-span-2 rounded-lg border border-border bg-card p-6 shadow-2xs space-y-5">
+        <div className="lg:col-span-2 rounded-lg border border-border bg-card p-6 space-y-5">
           <div className="flex items-center gap-2.5 pb-4 border-b border-border">
             <div className="w-8 h-8 rounded-lg bg-secondary text-primary flex items-center justify-center border border-border">
               <Shield size={16} className="text-accent-strong" />

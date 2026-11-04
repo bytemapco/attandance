@@ -68,7 +68,7 @@ export default function Header({ onMenuToggle }: HeaderProps): React.JSX.Element
 
   return (
     <>
-      <header className="sticky top-0 z-20 h-16 bg-card border-b border-border px-4 sm:px-6 flex items-center justify-between gap-4 shadow-[0_1px_3px_rgba(40,54,59,0.03)]">
+      <header className="sticky top-0 z-20 h-16 bg-card border-b border-border px-4 sm:px-6 flex items-center justify-between gap-4">
         <div className="flex items-center gap-3 flex-1 max-w-lg">
           <button
             type="button"
@@ -83,7 +83,7 @@ export default function Header({ onMenuToggle }: HeaderProps): React.JSX.Element
             <img
               src="/sahaj-app-icon.png"
               alt="SAHAJ Logo"
-              className="h-7 w-7 rounded-lg shadow-2xs object-contain"
+              className="h-7 w-7 rounded-lg object-contain"
             />
             <span className="hidden sm:inline tracking-wider font-bold">SAHAJ</span>
           </Link>
@@ -105,7 +105,7 @@ export default function Header({ onMenuToggle }: HeaderProps): React.JSX.Element
               }
               className="w-full h-9 pl-9 pr-16 rounded-lg border border-border bg-secondary/50 text-xs text-foreground placeholder:text-muted-foreground group-hover:bg-background group-hover:border-accent/60 cursor-pointer transition-all outline-none"
             />
-            <kbd className="absolute right-2.5 px-1.5 py-0.5 rounded-sm border border-border bg-card text-[10px] font-mono text-muted-foreground font-semibold shadow-2xs pointer-events-none">
+            <kbd className="absolute right-2.5 px-1.5 py-0.5 rounded-sm border border-border bg-card text-[10px] font-mono text-muted-foreground font-semibold pointer-events-none">
               Ctrl K
             </kbd>
           </div>
@@ -113,7 +113,7 @@ export default function Header({ onMenuToggle }: HeaderProps): React.JSX.Element
 
         <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
           <div className="flex items-center gap-2.5 pl-1 sm:pl-2">
-            <div className="h-8 w-8 rounded-full bg-primary text-primary-foreground font-bold text-xs flex items-center justify-center shadow-xs select-none">
+            <div className="h-8 w-8 rounded-full bg-primary text-primary-foreground font-bold text-xs flex items-center justify-center select-none">
               {initials}
             </div>
             <div className="hidden lg:block text-left">

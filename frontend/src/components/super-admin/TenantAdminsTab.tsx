@@ -79,7 +79,7 @@ export default function TenantAdminsTab({ tenant, onRefresh }: TenantAdminsTabPr
         </GlassButton>
       </div>
 
-      <div className="bg-card border border-border rounded-lg overflow-hidden shadow-2xs">
+      <div className="bg-card border border-border rounded-lg overflow-hidden">
         <table className="w-full text-left text-xs">
           <thead className="bg-secondary/60 border-b border-border text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
             <tr>
