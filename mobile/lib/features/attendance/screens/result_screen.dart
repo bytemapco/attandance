@@ -130,9 +130,6 @@ class ResultScreen extends ConsumerWidget {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: SasColors.copper,
                             elevation: 0,
-                            shadowColor: const Color(
-                              0xFFF95721,
-                            ).withValues(alpha: 0.35),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
@@ -175,9 +172,6 @@ class ResultScreen extends ConsumerWidget {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: SasColors.copper,
                             elevation: 0,
-                            shadowColor: const Color(
-                              0xFFF95721,
-                            ).withValues(alpha: 0.35),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),

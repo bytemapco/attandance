@@ -109,9 +109,9 @@ class _FaceRegistrationScreenState
                 height: 52,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: const Color(
-                    0xFFF95721,
-                  ).withValues(alpha: isDark ? 0.2 : 0.12),
+                  color: SasColors.copper.withValues(
+                    alpha: isDark ? 0.2 : 0.12,
+                  ),
                 ),
                 child: const Icon(
                   Icons.face_retouching_natural_rounded,

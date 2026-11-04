@@ -4,14 +4,24 @@ The official student companion mobile app for SAHAJ campus platform.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+The app needs the backend URL at build time. There is no fallback host, so
+the app shows an error screen if the define is missing.
 
-A few resources to get you started if this is your first Flutter project:
+Start the backend (`./run.sh` from the repository root), then run the app on
+an Android emulator, where `10.0.2.2` is the host machine:
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+```sh
+flutter run -d emulator-5554 --dart-define=API_BASE_URL=http://10.0.2.2:8000/api/v1
+```
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Tests
+
+```sh
+flutter analyze --no-fatal-infos
+flutter test
+```
+
+The suite is offline and covers the brand tokens, text contrast, the shared
+buttons, cards and overlay, the home header, the API URL guard, and a source
+guard that blocks shadows, blur, gradients outside the three functional uses,
+emoji, text under 11px and the legacy orange palette.
