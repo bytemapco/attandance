@@ -113,12 +113,12 @@ export default function CommandPaletteModal({ isOpen, onClose }: CommandPaletteM
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center pt-16 px-4 bg-[#28363b]/50 backdrop-blur-xs animate-in fade-in duration-150">
+    <div className="fixed inset-0 z-50 flex items-start justify-center pt-16 px-4 bg-primary/50 backdrop-blur-xs animate-in fade-in duration-150">
       <div className="fixed inset-0" onClick={onClose} />
       
-      <div className="relative w-full max-w-2xl rounded-2xl border border-[#e3e1dc] bg-[#f5f2ed] shadow-[0_8px_24px_rgba(40,54,59,0.14)] overflow-hidden z-10 flex flex-col max-h-[80vh] animate-in zoom-in-95 duration-150">
-        <div className="flex items-center px-4 py-3.5 border-b border-[#e3e1dc] gap-3 bg-[#f5f2ed]">
-          <Search size={18} className="text-[#526f78] shrink-0" />
+      <div className="relative w-full max-w-2xl rounded-2xl border border-border bg-background shadow-[0_8px_24px_rgba(40,54,59,0.14)] overflow-hidden z-10 flex flex-col max-h-[80vh] animate-in zoom-in-95 duration-150">
+        <div className="flex items-center px-4 py-3.5 border-b border-border gap-3 bg-background">
+          <Search size={18} className="text-muted-foreground shrink-0" />
           <input
             ref={inputRef}
             type="text"
@@ -126,13 +126,13 @@ export default function CommandPaletteModal({ isOpen, onClose }: CommandPaletteM
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={handleKeyDown}
-            className="flex-1 text-sm bg-transparent text-[#202b30] placeholder:text-[#718087] outline-none font-medium"
+            className="flex-1 text-sm bg-transparent text-foreground placeholder:text-muted-foreground outline-none font-medium"
           />
-          {loading && <Loader2 size={16} className="animate-spin text-[#c98260] shrink-0" />}
+          {loading && <Loader2 size={16} className="animate-spin text-accent-strong shrink-0" />}
           <button
             onClick={onClose}
             aria-label="Close search"
-            className="p-1 rounded-lg hover:bg-[#eeece7] text-[#526f78] hover:text-[#202b30] transition-colors cursor-pointer"
+            className="p-1 rounded-lg hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
           >
             <X size={16} />
           </button>
@@ -140,9 +140,9 @@ export default function CommandPaletteModal({ isOpen, onClose }: CommandPaletteM
 
         <div className="overflow-y-auto p-2.5 space-y-3">
           {results.length === 0 && !loading ? (
-            <div className="py-12 text-center text-xs text-[#526f78]">
+            <div className="py-12 text-center text-xs text-muted-foreground">
               {query ? (
-                <>No matching results found for &ldquo;<strong className="text-[#202b30]">{query}</strong>&rdquo;</>
+                <>No matching results found for &ldquo;<strong className="text-foreground">{query}</strong>&rdquo;</>
               ) : (
                 "Type a query to search across your workspace..."
               )}
@@ -150,7 +150,7 @@ export default function CommandPaletteModal({ isOpen, onClose }: CommandPaletteM
           ) : (
             groupedSections.map((section) => (
               <div key={section.label} className="space-y-1">
-                <p className="px-3 pt-1 text-[10px] font-bold text-[#718087] uppercase tracking-wider">
+                <p className="px-3 pt-1 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
                   {section.label}
                 </p>
                 {section.items.map(({ item, globalIndex }) => (
@@ -167,13 +167,13 @@ export default function CommandPaletteModal({ isOpen, onClose }: CommandPaletteM
           )}
         </div>
 
-        <div className="px-4 py-2.5 border-t border-[#e3e1dc] bg-[#eeece7]/60 flex items-center justify-between text-[11px] text-[#526f78]">
+        <div className="px-4 py-2.5 border-t border-border bg-secondary/60 flex items-center justify-between text-[11px] text-muted-foreground">
           <div className="flex items-center gap-3">
-            <span><kbd className="font-mono px-1.5 py-0.5 rounded border border-[#e3e1dc] bg-[#f5f2ed] text-[10px]">↑↓</kbd> Navigate</span>
-            <span><kbd className="font-mono px-1.5 py-0.5 rounded border border-[#e3e1dc] bg-[#f5f2ed] text-[10px]">↵</kbd> Select</span>
-            <span><kbd className="font-mono px-1.5 py-0.5 rounded border border-[#e3e1dc] bg-[#f5f2ed] text-[10px]">esc</kbd> Dismiss</span>
+            <span><kbd className="font-mono px-1.5 py-0.5 rounded border border-border bg-background text-[10px]">↑↓</kbd> Navigate</span>
+            <span><kbd className="font-mono px-1.5 py-0.5 rounded border border-border bg-background text-[10px]">↵</kbd> Select</span>
+            <span><kbd className="font-mono px-1.5 py-0.5 rounded border border-border bg-background text-[10px]">esc</kbd> Dismiss</span>
           </div>
-          <span className="font-semibold text-[11px] text-[#526f78]">
+          <span className="font-semibold text-[11px] text-muted-foreground">
             Sahaj Search
           </span>
         </div>

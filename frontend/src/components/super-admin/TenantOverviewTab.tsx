@@ -87,7 +87,7 @@ export default function TenantOverviewTab({ tenant }: TenantOverviewTabProps): R
                     <p className="font-semibold text-foreground">{admin.email}</p>
                     <p className="text-[11px] text-muted-foreground">{admin.role}</p>
                   </div>
-                  <div className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-medium text-[11px]">
+                  <div className="flex items-center gap-1.5 text-success font-medium text-[11px]">
                     <CheckCircle2 size={13} />
                     <span>{admin.is_active !== false ? "Active" : "Suspended"}</span>
                   </div>

@@ -42,8 +42,8 @@ export default function SystemServicesGrid({ health }: SystemServicesGridProps):
       latency: pgService.latency_ms,
       status: pgService.status,
       icon: <Database size={17} />,
-      iconBg: "bg-[#eeece7] border border-[#e3e1dc]",
-      iconColor: "text-[#28363b]",
+      iconBg: "bg-secondary border border-border",
+      iconColor: "text-primary",
     },
     {
       id: "redis",
@@ -52,8 +52,8 @@ export default function SystemServicesGrid({ health }: SystemServicesGridProps):
       latency: redisService.latency_ms,
       status: redisService.status,
       icon: <Zap size={17} />,
-      iconBg: "bg-[#e8f3ed] border border-[#c6e2d3]",
-      iconColor: "text-[#247653]",
+      iconBg: "bg-success-soft border border-success-border",
+      iconColor: "text-success",
     },
     {
       id: "storage",
@@ -62,8 +62,8 @@ export default function SystemServicesGrid({ health }: SystemServicesGridProps):
       latency: storageService.latency_ms,
       status: storageService.status,
       icon: <HardDrive size={17} />,
-      iconBg: "bg-[#eeece7] border border-[#e3e1dc]",
-      iconColor: "text-[#526f78]",
+      iconBg: "bg-secondary border border-border",
+      iconColor: "text-muted-foreground",
     },
     {
       id: "biometric",
@@ -72,31 +72,31 @@ export default function SystemServicesGrid({ health }: SystemServicesGridProps):
       latency: hwService.latency_ms,
       status: hwService.status,
       icon: <Cpu size={17} />,
-      iconBg: "bg-[#f7efea] border border-[#f0ded4]",
-      iconColor: "text-[#c98260]",
+      iconBg: "bg-accent-soft border border-accent-border",
+      iconColor: "text-accent-strong",
     },
   ];
 
   const renderStatus = (status: ServiceHealthItem["status"]): React.ReactElement => {
     if (status === "healthy") {
       return (
-        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-[#247653] bg-[#e8f3ed] border border-[#c6e2d3]">
-          <span className="h-1.5 w-1.5 rounded-full bg-[#247653]" />
+        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-success bg-success-soft border border-success-border">
+          <span className="h-1.5 w-1.5 rounded-full bg-success" />
           <span>Operational</span>
         </span>
       );
     }
     if (status === "warning" || status === "degraded") {
       return (
-        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-[#8a5b12] bg-[#fbf1df] border border-[#f2deba]">
-          <span className="h-1.5 w-1.5 rounded-full bg-[#8a5b12]" />
+        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-warning bg-warning-soft border border-warning-border">
+          <span className="h-1.5 w-1.5 rounded-full bg-warning" />
           <span>Degraded</span>
         </span>
       );
     }
     return (
-      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-[#b54242] bg-[#f9eaea] border border-[#f0c9c9]">
-        <span className="h-1.5 w-1.5 rounded-full bg-[#b54242]" />
+      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-destructive bg-destructive-soft border border-destructive-border">
+        <span className="h-1.5 w-1.5 rounded-full bg-destructive" />
         <span>Offline</span>
       </span>
     );

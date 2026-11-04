@@ -34,7 +34,7 @@ export default function SummaryTable({ report }: { report: SummaryReport }): Rea
                     className={cn(
                       "px-3 py-3 text-center tabular-nums",
                       cell?.percentage !== null && cell?.percentage !== undefined && cell.percentage < meta.threshold
-                        ? "font-semibold text-[#b54242]"
+                        ? "font-semibold text-destructive"
                         : "text-foreground"
                     )}
                     title={cell ? `${cell.attended} of ${cell.held} classes` : "Not in this subject"}

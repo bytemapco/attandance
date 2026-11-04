@@ -32,10 +32,10 @@ export default function RangeSlider({
   return (
     <div className="space-y-1">
       <div className="flex items-baseline justify-between text-xs">
-        <label htmlFor={id} className="font-medium text-[#202b30]">
+        <label htmlFor={id} className="font-medium text-foreground">
           {label}
         </label>
-        <span className="font-semibold tabular-nums text-[#202b30]">{valueLabel}</span>
+        <span className="font-semibold tabular-nums text-foreground">{valueLabel}</span>
       </div>
       <input
         id={id}
@@ -45,10 +45,10 @@ export default function RangeSlider({
         step={step}
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
-        className="h-1.5 w-full cursor-pointer appearance-none rounded-full bg-[#eeece7] accent-[#28363b]"
+        className="h-1.5 w-full cursor-pointer appearance-none rounded-full bg-secondary accent-primary"
       />
       {(minLabel || maxLabel) && (
-        <div className="flex justify-between text-[11px] text-[#526f78]">
+        <div className="flex justify-between text-[11px] text-muted-foreground">
           <span>{minLabel}</span>
           <span>{maxLabel}</span>
         </div>

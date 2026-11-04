@@ -34,7 +34,7 @@ export default function TeacherDetailPage(): React.ReactElement {
       account={teacher}
       initials={(teacher.first_name?.[0] || "") + (teacher.last_name?.[0] || "")}
       fullName={fullName}
-      badge={<GlassBadge variant="info" icon={<span className="w-1.5 h-1.5 rounded-full bg-[#306b8a]" />}>Faculty</GlassBadge>}
+      badge={<GlassBadge variant="info" icon={<span className="w-1.5 h-1.5 rounded-full bg-info" />}>Faculty</GlassBadge>}
       identifier={{ label: "Employee ID", value: teacher.employee_id, hint: "Click to copy employee ID" }}
       chips={
         <>

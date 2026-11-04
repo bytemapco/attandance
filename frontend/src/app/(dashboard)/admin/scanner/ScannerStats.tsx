@@ -35,7 +35,7 @@ export default function ScannerStats({
               {totalFlagged}
             </p>
           </div>
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#f9eaea] text-[#b54242] border border-[#f0c9c9]">
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-destructive-soft text-destructive border border-destructive-border">
             <Users size={18} />
           </span>
         </GlassCard>
@@ -48,7 +48,7 @@ export default function ScannerStats({
               {avgScore.toFixed(3)}
             </p>
           </div>
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#fbf1df] text-[#8a5b12] border border-[#f2deba]">
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-warning-soft text-warning border border-warning-border">
             <Activity size={18} />
           </span>
         </GlassCard>
@@ -61,7 +61,7 @@ export default function ScannerStats({
               {maxScore.toFixed(3)}
             </p>
           </div>
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#f7efea] text-[#c98260] border border-[#f0ded4]">
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-accent-soft text-accent-strong border border-accent-border">
             <AlertTriangle size={18} />
           </span>
         </GlassCard>

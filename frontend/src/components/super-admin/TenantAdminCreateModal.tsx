@@ -58,24 +58,24 @@ export default function TenantAdminCreateModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#28363b]/40 backdrop-blur-xs"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-primary/40 backdrop-blur-xs"
       onClick={onClose}
     >
       <div
-        className="w-full max-w-md bg-card border border-[#e3e1dc] rounded-2xl shadow-xl p-6 space-y-5 animate-scale-in"
+        className="w-full max-w-md bg-card border border-border rounded-2xl shadow-xl p-6 space-y-5 animate-scale-in"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between pb-3 border-b border-[#e3e1dc]">
+        <div className="flex items-center justify-between pb-3 border-b border-border">
           <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-lg bg-[#eeece7] text-[#28363b] border border-[#e3e1dc]">
+            <div className="p-2 rounded-lg bg-secondary text-primary border border-border">
               <UserPlus size={16} />
             </div>
-            <h3 className="text-sm font-semibold text-[#28363b]">Add Administrator</h3>
+            <h3 className="text-sm font-semibold text-primary">Add Administrator</h3>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="p-1.5 rounded-lg text-[#718087] hover:text-[#202b30] hover:bg-[#eeece7] transition-colors cursor-pointer"
+            className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors cursor-pointer"
             aria-label="Close dialog"
           >
             <X size={16} />
@@ -101,7 +101,7 @@ export default function TenantAdminCreateModal({
             />
           </div>
 
-          <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#e3e1dc]">
+          <div className="flex items-center justify-end gap-2 pt-2 border-t border-border">
             <GlassButton
               type="button"
               variant="secondary"

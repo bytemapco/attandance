@@ -95,7 +95,7 @@ export default function LicenseRequestsPage(): React.JSX.Element {
 
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-2.5">
-          <label className="text-xs font-semibold text-[#526f78]">
+          <label className="text-xs font-semibold text-muted-foreground">
             Status
           </label>
           <Select
@@ -105,7 +105,7 @@ export default function LicenseRequestsPage(): React.JSX.Element {
               setPage(1);
             }}
           >
-            <SelectTrigger className="h-9 w-[150px] bg-card border-[#e3e1dc] text-xs font-medium text-[#202b30]">
+            <SelectTrigger className="h-9 w-[150px] bg-card border-border text-xs font-medium text-foreground">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
@@ -117,7 +117,7 @@ export default function LicenseRequestsPage(): React.JSX.Element {
             </SelectContent>
           </Select>
         </div>
-        <p className="text-xs font-medium text-[#526f78] tabular-nums">
+        <p className="text-xs font-medium text-muted-foreground tabular-nums">
           {total} {total === 1 ? "request" : "requests"}
         </p>
       </div>

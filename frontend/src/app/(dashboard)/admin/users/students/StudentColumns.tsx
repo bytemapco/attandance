@@ -18,7 +18,7 @@ export const studentColumns: TableColumn<StudentResponse & Record<string, unknow
       const initial = name.charAt(0).toUpperCase();
       return (
         <div className="flex items-center gap-2.5">
-          <div className="h-8 w-8 rounded-full bg-[#28363b] text-white font-bold text-xs flex items-center justify-center shrink-0 shadow-2xs">
+          <div className="h-8 w-8 rounded-full bg-primary text-primary-foreground font-bold text-xs flex items-center justify-center shrink-0 shadow-2xs">
             {initial}
           </div>
           <div className="min-w-0">
@@ -65,7 +65,7 @@ export const studentColumns: TableColumn<StudentResponse & Record<string, unknow
           {r.batch}
         </span>
       ) : (
-        <span className="text-xs text-amber-700">Not assigned</span>
+        <span className="text-xs text-warning">Not assigned</span>
       ),
   },
   {
@@ -74,11 +74,11 @@ export const studentColumns: TableColumn<StudentResponse & Record<string, unknow
     render: (r) => {
       const isActive = r.is_active !== false;
       return isActive ? (
-        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-[#e8f3ed] text-[#247653] border border-[#c6e2d3]">
+        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-success-soft text-success border border-success-border">
           Active
         </span>
       ) : (
-        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-[#eeece7] text-[#526f78] border border-[#e3e1dc]">
+        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-secondary text-muted-foreground border border-border">
           Inactive
         </span>
       );

@@ -146,7 +146,7 @@ export default function ReportsPage({ description }: ReportsPageProps): React.Re
             onClick={() => changeTab(id)}
             className={cn(
               "rounded-[8px] px-3 py-1.5 text-sm font-semibold transition-colors",
-              tab === id ? "bg-[#526f78] text-white" : "text-muted-foreground hover:text-foreground"
+              tab === id ? "bg-muted-foreground text-primary-foreground" : "text-muted-foreground hover:text-foreground"
             )}
           >
             {label}

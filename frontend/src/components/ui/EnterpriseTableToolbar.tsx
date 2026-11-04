@@ -89,7 +89,7 @@ export default function EnterpriseTableToolbar({
             value={searchValue}
             placeholder={searchPlaceholder}
             onChange={(e) => onSearch(e.target.value)}
-            className="w-full h-9 pl-9 pr-8 rounded-lg border border-border bg-card text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-slate-400 focus:border-slate-400 transition-colors shadow-2xs"
+            className="w-full h-9 pl-9 pr-8 rounded-lg border border-border bg-card text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-border-strong focus:border-border-strong transition-colors shadow-2xs"
           />
           {searchValue && (
             <button
@@ -120,7 +120,7 @@ export default function EnterpriseTableToolbar({
                     className={cn(
                       "h-9 w-auto min-w-[130px] gap-2 px-3 rounded-lg border text-xs shadow-2xs",
                       filter.value && filter.value !== "all"
-                        ? "border-slate-400/80 bg-secondary/80 font-semibold text-foreground"
+                        ? "border-border-strong/80 bg-secondary/80 font-semibold text-foreground"
                         : "border-border bg-card text-muted-foreground hover:bg-secondary/60"
                     )}
                   >

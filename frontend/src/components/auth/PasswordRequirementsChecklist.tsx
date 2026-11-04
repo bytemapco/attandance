@@ -34,7 +34,7 @@ export default function PasswordRequirementsChecklist({
         {rules.map((rule) => (
           <div key={rule.label} className="flex items-center gap-1.5 text-xs">
             {rule.valid ? (
-              <Check size={13} className="text-emerald-500 shrink-0" />
+              <Check size={13} className="text-success shrink-0" />
             ) : (
               <X size={13} className="text-muted-foreground/50 shrink-0" />
             )}

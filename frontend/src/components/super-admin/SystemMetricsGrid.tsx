@@ -30,7 +30,7 @@ export default function SystemMetricsGrid({ health }: SystemMetricsGridProps): R
     <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
       {/* Uptime */}
       <GlassCard className="p-4 flex items-center gap-3.5">
-        <div className="p-2.5 rounded-xl bg-[#eeece7] text-[#526f78] border border-[#e3e1dc] shrink-0">
+        <div className="p-2.5 rounded-xl bg-secondary text-muted-foreground border border-border shrink-0">
           <Server size={18} />
         </div>
         <div className="min-w-0">
@@ -43,7 +43,7 @@ export default function SystemMetricsGrid({ health }: SystemMetricsGridProps): R
 
       {/* DB Connections */}
       <GlassCard className="p-4 flex items-center gap-3.5">
-        <div className="p-2.5 rounded-xl bg-[#eeece7] text-[#28363b] border border-[#e3e1dc] shrink-0">
+        <div className="p-2.5 rounded-xl bg-secondary text-primary border border-border shrink-0">
           <Database size={18} />
         </div>
         <div className="min-w-0">
@@ -56,7 +56,7 @@ export default function SystemMetricsGrid({ health }: SystemMetricsGridProps): R
 
       {/* Cache Ping */}
       <GlassCard className="p-4 flex items-center gap-3.5">
-        <div className="p-2.5 rounded-xl bg-[#e8f3ed] text-[#247653] border border-[#c6e2d3] shrink-0">
+        <div className="p-2.5 rounded-xl bg-success-soft text-success border border-success-border shrink-0">
           <Zap size={18} />
         </div>
         <div className="min-w-0">
@@ -69,7 +69,7 @@ export default function SystemMetricsGrid({ health }: SystemMetricsGridProps): R
 
       {/* Biometric Compute */}
       <GlassCard className="p-4 flex items-center gap-3.5">
-        <div className="p-2.5 rounded-xl bg-[#f7efea] text-[#c98260] border border-[#f0ded4] shrink-0">
+        <div className="p-2.5 rounded-xl bg-accent-soft text-accent-strong border border-accent-border shrink-0">
           <Cpu size={18} />
         </div>
         <div className="min-w-0">

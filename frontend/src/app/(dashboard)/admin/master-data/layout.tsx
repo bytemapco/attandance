@@ -15,10 +15,10 @@ export default function MasterDataLayout({ children }: { children: React.ReactNo
       {showTabs && (
         <div className="space-y-3">
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-wider text-[#526f78]">Master Data</p>
-            <p className="text-xs text-[#718087]">Reference information used across students, classes and attendance.</p>
+            <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Master Data</p>
+            <p className="text-xs text-muted-foreground">Reference information used across students, classes and attendance.</p>
           </div>
-          <nav aria-label="Master data" className="flex gap-1 overflow-x-auto border-b border-[#e3e1dc]">
+          <nav aria-label="Master data" className="flex gap-1 overflow-x-auto border-b border-border">
             {masterDataTabs.map((tab) => {
               const active = tab.href === pathname;
               return (
@@ -29,11 +29,11 @@ export default function MasterDataLayout({ children }: { children: React.ReactNo
                   className={cn(
                     "flex shrink-0 items-center gap-2 border-b-2 px-4 py-2.5 text-xs font-semibold transition-colors -mb-px",
                     active
-                      ? "border-[#c98260] text-[#28363b]"
-                      : "border-transparent text-[#526f78] hover:text-[#202b30] hover:border-[#e3e1dc]"
+                      ? "border-accent text-primary"
+                      : "border-transparent text-muted-foreground hover:text-foreground hover:border-border"
                   )}
                 >
-                  <span className={active ? "text-[#c98260]" : ""}>{tab.icon}</span>
+                  <span className={active ? "text-accent-strong" : ""}>{tab.icon}</span>
                   {tab.label}
                 </Link>
               );

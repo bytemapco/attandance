@@ -28,7 +28,7 @@ export default function DepartmentDetailPage(): React.ReactElement {
   }, [id]);
 
   if (loading) return <GlassLoader />;
-  if (!department) return <div className="text-center py-20 text-slate-500">Department not found</div>;
+  if (!department) return <div className="text-center py-20 text-muted-foreground">Department not found</div>;
 
   return (
     <div className="animate-fade-in-up space-y-6">

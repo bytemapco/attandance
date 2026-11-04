@@ -45,25 +45,25 @@ const SEVERITY_TYPES: Array<{
     value: "info",
     label: "Info",
     icon: <Info size={13} />,
-    activeClass: "bg-[#eaf2f6] border-[#306b8a] text-[#306b8a]",
+    activeClass: "bg-info-soft border-info text-info",
   },
   {
     value: "warning",
     label: "Warning",
     icon: <AlertTriangle size={13} />,
-    activeClass: "bg-[#fbf1df] border-[#8a5b12] text-[#8a5b12]",
+    activeClass: "bg-warning-soft border-warning text-warning",
   },
   {
     value: "critical",
     label: "Critical",
     icon: <AlertCircle size={13} />,
-    activeClass: "bg-[#f9eaea] border-[#b54242] text-[#b54242]",
+    activeClass: "bg-destructive-soft border-destructive text-destructive",
   },
   {
     value: "success",
     label: "Success",
     icon: <CheckCircle2 size={13} />,
-    activeClass: "bg-[#e8f3ed] border-[#247653] text-[#247653]",
+    activeClass: "bg-success-soft border-success text-success",
   },
 ];
 
@@ -75,36 +75,36 @@ export default function BroadcastForm({
 }: BroadcastFormProps): React.ReactElement {
   return (
     <GlassCard className="p-6">
-      <div className="flex items-center gap-3 pb-4 mb-4 border-b border-[#e3e1dc]">
-        <div className="p-2 rounded-lg bg-[#eeece7] text-[#28363b] border border-[#e3e1dc] shrink-0">
+      <div className="flex items-center gap-3 pb-4 mb-4 border-b border-border">
+        <div className="p-2 rounded-lg bg-secondary text-primary border border-border shrink-0">
           <Radio size={18} />
         </div>
-        <h3 className="text-base font-semibold text-[#28363b]">New Announcement</h3>
+        <h3 className="text-base font-semibold text-primary">New Announcement</h3>
       </div>
 
       <form onSubmit={onSubmit} className="space-y-4">
         {/* Title */}
         <div className="space-y-1.5">
-          <label className="text-xs font-semibold text-[#526f78]">Title</label>
+          <label className="text-xs font-semibold text-muted-foreground">Title</label>
           <input
             type="text"
             placeholder="e.g. Scheduled platform maintenance"
             value={form.title}
             onChange={(e) => onChange({ title: e.target.value })}
             required
-            className="w-full px-3.5 py-2 bg-card border border-[#e3e1dc] rounded-lg text-xs text-[#202b30] placeholder:text-[#718087] focus:outline-none focus:ring-1 focus:ring-[#28363b] focus:border-[#28363b] transition-colors"
+            className="w-full px-3.5 py-2 bg-card border border-border rounded-lg text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors"
           />
         </div>
 
         {/* Audience & Category Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-[#526f78]">Audience</label>
+            <label className="text-xs font-semibold text-muted-foreground">Audience</label>
             <Select
               value={form.target_role || "ALL"}
               onValueChange={(val) => onChange({ target_role: val === "ALL" ? undefined : val })}
             >
-              <SelectTrigger className="w-full h-9 bg-card border-[#e3e1dc] text-xs rounded-lg text-[#202b30]">
+              <SelectTrigger className="w-full h-9 bg-card border-border text-xs rounded-lg text-foreground">
                 <SelectValue placeholder="Audience" />
               </SelectTrigger>
               <SelectContent>
@@ -118,12 +118,12 @@ export default function BroadcastForm({
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-[#526f78]">Category</label>
+            <label className="text-xs font-semibold text-muted-foreground">Category</label>
             <Select
               value={form.category}
               onValueChange={(val) => onChange({ category: val as GlobalBroadcastRequest["category"] })}
             >
-              <SelectTrigger className="w-full h-9 bg-card border-[#e3e1dc] text-xs rounded-lg text-[#202b30]">
+              <SelectTrigger className="w-full h-9 bg-card border-border text-xs rounded-lg text-foreground">
                 <SelectValue placeholder="Category" />
               </SelectTrigger>
               <SelectContent>
@@ -139,7 +139,7 @@ export default function BroadcastForm({
 
         {/* Severity */}
         <div className="space-y-1.5">
-          <label className="text-xs font-semibold text-[#526f78]">Severity</label>
+          <label className="text-xs font-semibold text-muted-foreground">Severity</label>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
             {SEVERITY_TYPES.map((sev) => {
               const isActive = form.type === sev.value;
@@ -151,7 +151,7 @@ export default function BroadcastForm({
                   className={`flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-semibold transition-all cursor-pointer ${
                     isActive
                       ? sev.activeClass
-                      : "bg-[#eeece7]/60 border-[#e3e1dc] text-[#526f78] hover:bg-[#eeece7] hover:text-[#202b30]"
+                      : "bg-secondary/60 border-border text-muted-foreground hover:bg-secondary hover:text-foreground"
                   }`}
                 >
                   {sev.icon}
@@ -164,14 +164,14 @@ export default function BroadcastForm({
 
         {/* Message */}
         <div className="space-y-1.5">
-          <label className="text-xs font-semibold text-[#526f78]">Message</label>
+          <label className="text-xs font-semibold text-muted-foreground">Message</label>
           <textarea
             rows={4}
             placeholder="Type your announcement details here..."
             value={form.message}
             onChange={(e) => onChange({ message: e.target.value })}
             required
-            className="w-full px-3.5 py-2.5 bg-card border border-[#e3e1dc] rounded-lg text-xs text-[#202b30] placeholder:text-[#718087] focus:outline-none focus:ring-1 focus:ring-[#28363b] focus:border-[#28363b] resize-y transition-colors leading-relaxed"
+            className="w-full px-3.5 py-2.5 bg-card border border-border rounded-lg text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary resize-y transition-colors leading-relaxed"
           />
         </div>
 

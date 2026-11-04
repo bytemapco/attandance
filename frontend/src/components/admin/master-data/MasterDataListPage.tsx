@@ -37,7 +37,7 @@ export default function MasterDataListPage({ entity }: MasterDataListPageProps):
           <button
             type="button"
             onClick={() => router.push(`${route}/${row.id}`)}
-            className="font-semibold text-[#202b30] hover:text-primary hover:underline text-left cursor-pointer"
+            className="font-semibold text-foreground hover:text-primary hover:underline text-left cursor-pointer"
           >
             {row.name}
           </button>
@@ -65,7 +65,7 @@ export default function MasterDataListPage({ entity }: MasterDataListPageProps):
             variant="ghost"
             size="sm"
             onClick={() => list.askToDelete(String(row.id))}
-            className="text-muted-foreground hover:text-[#b54242] hover:bg-[#f9eaea]"
+            className="text-muted-foreground hover:text-destructive hover:bg-destructive-soft"
             icon={<Trash2 size={13} />}
           />
         </div>

@@ -23,20 +23,20 @@ export default function CampusBroadcastForm({
 }: CampusBroadcastFormProps): React.JSX.Element {
   return (
     <form onSubmit={onSubmit} className="space-y-5">
-      <GlassCard className="p-5 bg-card border border-[#e3e1dc] space-y-4 shadow-2xs">
-        <div className="flex items-center gap-2.5 pb-3 border-b border-[#e3e1dc]">
-          <div className="p-1.5 rounded-xl bg-[#28363b]/10 text-[#28363b] border border-[#28363b]/20">
+      <GlassCard className="p-5 bg-card border border-border space-y-4 shadow-2xs">
+        <div className="flex items-center gap-2.5 pb-3 border-b border-border">
+          <div className="p-1.5 rounded-xl bg-primary/10 text-primary border border-primary/20">
             <Megaphone size={16} />
           </div>
           <div>
-            <h2 className="text-sm font-semibold text-[#28363b]">Announcement Content</h2>
-            <p className="text-xs text-[#526f78]">Draft title, detailed description, and optional action link.</p>
+            <h2 className="text-sm font-semibold text-primary">Announcement Content</h2>
+            <p className="text-xs text-muted-foreground">Draft title, detailed description, and optional action link.</p>
           </div>
         </div>
 
         <div>
-          <label htmlFor="broadcast-title" className="text-xs font-semibold text-[#28363b] block mb-1">
-            Announcement Title <span className="text-[#b54242]">*</span>
+          <label htmlFor="broadcast-title" className="text-xs font-semibold text-primary block mb-1">
+            Announcement Title <span className="text-destructive">*</span>
           </label>
           <input
             id="broadcast-title"
@@ -46,13 +46,13 @@ export default function CampusBroadcastForm({
             value={formData.title}
             onChange={(e) => onChange({ ...formData, title: e.target.value })}
             maxLength={120}
-            className="w-full px-3 py-2 rounded-xl border border-[#e3e1dc] bg-white text-xs sm:text-sm text-[#28363b] placeholder:text-[#526f78]/60 focus:outline-none focus:ring-1 focus:ring-[#c98260] focus:border-[#c98260] transition-all"
+            className="w-full px-3 py-2 rounded-xl border border-border bg-card text-xs sm:text-sm text-primary placeholder:text-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent transition-all"
           />
         </div>
 
         <div>
-          <label htmlFor="broadcast-message" className="text-xs font-semibold text-[#28363b] block mb-1">
-            Message Body <span className="text-[#b54242]">*</span>
+          <label htmlFor="broadcast-message" className="text-xs font-semibold text-primary block mb-1">
+            Message Body <span className="text-destructive">*</span>
           </label>
           <textarea
             id="broadcast-message"
@@ -62,16 +62,16 @@ export default function CampusBroadcastForm({
             value={formData.message}
             onChange={(e) => onChange({ ...formData, message: e.target.value })}
             maxLength={500}
-            className="w-full px-3 py-2 rounded-xl border border-[#e3e1dc] bg-white text-xs sm:text-sm text-[#28363b] placeholder:text-[#526f78]/60 focus:outline-none focus:ring-1 focus:ring-[#c98260] focus:border-[#c98260] transition-all resize-y"
+            className="w-full px-3 py-2 rounded-xl border border-border bg-card text-xs sm:text-sm text-primary placeholder:text-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent transition-all resize-y"
           />
-          <div className="flex justify-end mt-1 text-[11px] text-[#526f78]">
+          <div className="flex justify-end mt-1 text-[11px] text-muted-foreground">
             {formData.message.length}/500 characters
           </div>
         </div>
 
         <div>
-          <label htmlFor="broadcast-link" className="text-xs font-semibold text-[#28363b] block mb-1">
-            Action Deep Link <span className="text-xs font-normal text-[#526f78]">(Optional)</span>
+          <label htmlFor="broadcast-link" className="text-xs font-semibold text-primary block mb-1">
+            Action Deep Link <span className="text-xs font-normal text-muted-foreground">(Optional)</span>
           </label>
           <input
             id="broadcast-link"
@@ -79,7 +79,7 @@ export default function CampusBroadcastForm({
             placeholder="e.g. /teacher/dashboard or https://portal.institution.edu/notices"
             value={formData.link || ""}
             onChange={(e) => onChange({ ...formData, link: e.target.value })}
-            className="w-full px-3 py-1.5 rounded-xl border border-[#e3e1dc] bg-white text-xs text-[#28363b] placeholder:text-[#526f78]/60 focus:outline-none focus:ring-1 focus:ring-[#c98260] focus:border-[#c98260] transition-all font-mono"
+            className="w-full px-3 py-1.5 rounded-xl border border-border bg-card text-xs text-primary placeholder:text-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent transition-all font-mono"
           />
         </div>
       </GlassCard>
@@ -91,7 +91,7 @@ export default function CampusBroadcastForm({
           type="button"
           onClick={onReset}
           disabled={submitting}
-          className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-[#526f78] hover:text-[#28363b] bg-card border border-[#e3e1dc] rounded-xl hover:bg-[#eeece7] transition-colors disabled:opacity-50 cursor-pointer"
+          className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-muted-foreground hover:text-primary bg-card border border-border rounded-xl hover:bg-secondary transition-colors disabled:opacity-50 cursor-pointer"
         >
           <RotateCcw size={13} />
           <span>Reset Draft</span>
@@ -100,7 +100,7 @@ export default function CampusBroadcastForm({
         <button
           type="submit"
           disabled={submitting}
-          className="inline-flex items-center gap-2 px-5 py-2 text-xs font-semibold text-white bg-[#28363b] hover:bg-[#202b30] rounded-xl shadow-xs transition-colors disabled:opacity-50 cursor-pointer"
+          className="inline-flex items-center gap-2 px-5 py-2 text-xs font-semibold text-primary-foreground bg-primary hover:bg-foreground rounded-xl shadow-xs transition-colors disabled:opacity-50 cursor-pointer"
         >
           <Send size={13} />
           <span>{submitting ? "Dispatching..." : "Dispatch Broadcast Announcement"}</span>

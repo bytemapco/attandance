@@ -80,24 +80,24 @@ export default function ForgotPasswordPage(): React.ReactElement {
                 className="w-14 h-14 rounded-2xl shadow-sm object-contain"
               />
             </div>
-            <h1 className="text-2xl font-bold tracking-tight text-[#28363b]">
+            <h1 className="text-2xl font-bold tracking-tight text-primary">
               SAHAJ
             </h1>
-            <p className="text-xs text-[#526f78] mt-0.5 font-medium">Campus, made effortless.</p>
+            <p className="text-xs text-muted-foreground mt-0.5 font-medium">Campus, made effortless.</p>
           </Link>
         </div>
 
         {submitted ? (
-          <div className="rounded-2xl border border-[#e3e1dc] bg-card p-6 sm:p-7 text-center space-y-5 shadow-[0_4px_16px_rgba(40,54,59,0.06)]">
-            <div className="inline-flex p-3 rounded-full bg-[#e8f3ed] border border-[#c6e2d3] text-[#247653]">
+          <div className="rounded-2xl border border-border bg-card p-6 sm:p-7 text-center space-y-5 shadow-[0_4px_16px_rgba(40,54,59,0.06)]">
+            <div className="inline-flex p-3 rounded-full bg-success-soft border border-success-border text-success">
               <CheckCircle2 size={32} />
             </div>
             <div className="space-y-1.5">
-              <h2 className="text-lg font-bold text-[#202b30]">Check Your Inbox</h2>
-              <p className="text-xs text-[#526f78] leading-relaxed">
-                We sent a password reset link to <strong className="text-[#202b30]">{emailValue}</strong>.
+              <h2 className="text-lg font-bold text-foreground">Check Your Inbox</h2>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                We sent a password reset link to <strong className="text-foreground">{emailValue}</strong>.
               </p>
-              <p className="text-[11px] text-[#718087] pt-1">
+              <p className="text-[11px] text-muted-foreground pt-1">
                 Check your spam folder if it doesn&apos;t arrive in a few minutes.
               </p>
             </div>
@@ -118,11 +118,11 @@ export default function ForgotPasswordPage(): React.ReactElement {
                 <button
                   type="button"
                   onClick={() => setSubmitted(false)}
-                  className="text-[#526f78] hover:text-[#202b30] transition-colors font-medium cursor-pointer"
+                  className="text-muted-foreground hover:text-foreground transition-colors font-medium cursor-pointer"
                 >
                   Use a different email
                 </button>
-                <Link href="/login" className="text-[#28363b] hover:text-[#c98260] font-semibold transition-colors">
+                <Link href="/login" className="text-primary hover:text-accent-strong font-semibold transition-colors">
                   Back to Sign In
                 </Link>
               </div>
@@ -132,11 +132,11 @@ export default function ForgotPasswordPage(): React.ReactElement {
           <form
             noValidate
             onSubmit={handleSubmit(onSubmit)}
-            className="rounded-2xl border border-[#e3e1dc] bg-card p-6 sm:p-7 space-y-5 shadow-[0_4px_16px_rgba(40,54,59,0.06)]"
+            className="rounded-2xl border border-border bg-card p-6 sm:p-7 space-y-5 shadow-[0_4px_16px_rgba(40,54,59,0.06)]"
           >
             <div className="space-y-1">
-              <h2 className="text-base font-bold text-[#202b30]">Reset Password</h2>
-              <p className="text-xs text-[#526f78]">
+              <h2 className="text-base font-bold text-foreground">Reset Password</h2>
+              <p className="text-xs text-muted-foreground">
                 Enter your institutional email and we&apos;ll send you a recovery link.
               </p>
             </div>
@@ -164,7 +164,7 @@ export default function ForgotPasswordPage(): React.ReactElement {
 
               <Link
                 href="/login"
-                className="flex items-center justify-center gap-1 text-xs text-[#526f78] hover:text-[#202b30] transition-colors pt-1"
+                className="flex items-center justify-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors pt-1"
               >
                 <ArrowLeft size={13} /> Back to Sign In
               </Link>

@@ -66,16 +66,16 @@ export default function BulkImportResults({
       <div
         className={`p-4 rounded-xl border flex items-center gap-3.5 ${
           isAllSuccess
-            ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-600 dark:text-emerald-400"
+            ? "bg-success/10 border-success/20 text-success"
             : isPartial
-            ? "bg-amber-500/10 border-amber-500/20 text-amber-600 dark:text-amber-400"
-            : "bg-rose-500/10 border-rose-500/20 text-rose-600 dark:text-rose-400"
+            ? "bg-warning/10 border-warning/20 text-warning"
+            : "bg-destructive/10 border-destructive/20 text-destructive"
         }`}
       >
         <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 bg-background/50">
-          {isAllSuccess && <CheckCircle2 size={24} className="text-emerald-500" />}
-          {isPartial && <AlertTriangle size={24} className="text-amber-500" />}
-          {!isAllSuccess && !isPartial && <XCircle size={24} className="text-rose-500" />}
+          {isAllSuccess && <CheckCircle2 size={24} className="text-success" />}
+          {isPartial && <AlertTriangle size={24} className="text-warning" />}
+          {!isAllSuccess && !isPartial && <XCircle size={24} className="text-destructive" />}
         </div>
         <div>
           <h4 className="text-sm font-bold text-foreground">
@@ -102,7 +102,7 @@ export default function BulkImportResults({
 
         <div className="p-3 bg-secondary/30 rounded-xl border border-border">
           <p className="text-[11px] text-muted-foreground font-medium flex items-center gap-1">
-            <Mail size={12} className="text-indigo-500" /> Invitations Sent
+            <Mail size={12} className="text-info" /> Invitations Sent
           </p>
           <p className="text-xl font-bold font-mono text-foreground mt-0.5">{summary.totalInvited}</p>
         </div>
@@ -115,24 +115,24 @@ export default function BulkImportResults({
 
       {/* Error / Discrepancy Breakdown */}
       {summary.allErrors.length > 0 && (
-        <div className="rounded-xl border border-rose-500/20 bg-rose-500/5 p-3.5 space-y-2">
+        <div className="rounded-xl border border-destructive/20 bg-destructive/5 p-3.5 space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-rose-600 dark:text-rose-400 flex items-center gap-1.5">
+            <span className="text-xs font-semibold text-destructive flex items-center gap-1.5">
               <AlertTriangle size={13} /> {summary.allErrors.length} {summary.allErrors.length === 1 ? "Issue" : "Issues"} to Review
             </span>
             {summary.failedRecords.length > 0 && (
               <button
                 type="button"
                 onClick={handleDownloadFailedCsv}
-                className="text-[11px] text-rose-600 hover:text-rose-700 underline font-medium flex items-center gap-1 cursor-pointer"
+                className="text-[11px] text-destructive hover:text-destructive underline font-medium flex items-center gap-1 cursor-pointer"
               >
                 <Download size={11} /> Download Error Report
               </button>
             )}
           </div>
-          <div className="max-h-28 overflow-y-auto space-y-1 text-[11px] font-sans text-rose-700 dark:text-rose-300 pr-1">
+          <div className="max-h-28 overflow-y-auto space-y-1 text-[11px] font-sans text-destructive pr-1">
             {summary.allErrors.map((err, idx) => (
-              <p key={idx} className="bg-background/60 px-2.5 py-1.5 rounded border border-rose-500/10 font-medium">
+              <p key={idx} className="bg-background/60 px-2.5 py-1.5 rounded border border-destructive/10 font-medium">
                 {err}
               </p>
             ))}

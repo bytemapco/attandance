@@ -80,7 +80,7 @@ export default function DeviceChangeTable({ requests, onActionComplete }: Device
             <span className="text-xs font-mono text-foreground">{req.new_device_uuid.substring(0, 8)}...</span>
           </div>
           {req.reason && (
-            <div className="flex items-center gap-1 mt-1 text-xs text-amber-700 dark:text-amber-300 bg-amber-500/10 border border-amber-500/20 w-fit px-2 py-0.5 rounded">
+            <div className="flex items-center gap-1 mt-1 text-xs text-warning bg-warning/10 border border-warning/20 w-fit px-2 py-0.5 rounded">
               <AlertCircle size={10} />
               <span className="truncate max-w-[200px]">{req.reason}</span>
             </div>
@@ -113,7 +113,7 @@ export default function DeviceChangeTable({ requests, onActionComplete }: Device
               type="button"
               onClick={() => void handleAction(req.id, "APPROVED")}
               disabled={isProcessing}
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border border-emerald-500/20 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20 active:scale-95 disabled:opacity-50 transition-all text-xs font-medium cursor-pointer"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border border-success/20 bg-success/10 text-success hover:bg-success/20 active:scale-95 disabled:opacity-50 transition-all text-xs font-medium cursor-pointer"
             >
               {isProcessing && processing?.action === "APPROVED" ? <Loader2 size={13} className="animate-spin" /> : <CheckCircle2 size={13} />}
               <span>Approve</span>

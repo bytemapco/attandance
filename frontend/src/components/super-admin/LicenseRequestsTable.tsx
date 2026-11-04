@@ -63,10 +63,10 @@ export default function LicenseRequestsTable({
 
   if (requests.length === 0) {
     return (
-      <div className="bg-card border border-[#e3e1dc] rounded-2xl p-10 flex flex-col items-center justify-center text-center">
-        <Inbox size={32} className="text-[#526f78]/50 mb-3" />
-        <p className="text-sm font-semibold text-[#28363b]">No license requests</p>
-        <p className="text-xs text-[#526f78] mt-1">
+      <div className="bg-card border border-border rounded-2xl p-10 flex flex-col items-center justify-center text-center">
+        <Inbox size={32} className="text-muted-foreground/50 mb-3" />
+        <p className="text-sm font-semibold text-primary">No license requests</p>
+        <p className="text-xs text-muted-foreground mt-1">
           {statusFilter !== "ALL"
             ? "No requests match the selected status."
             : "Requests submitted by institution administrators will appear here."}
@@ -76,10 +76,10 @@ export default function LicenseRequestsTable({
   }
 
   return (
-    <div className="bg-card border border-[#e3e1dc] rounded-xl overflow-hidden shadow-[0_2px_8px_rgba(40,54,59,0.04)]">
+    <div className="bg-card border border-border rounded-xl overflow-hidden shadow-[0_2px_8px_rgba(40,54,59,0.04)]">
       <div className="overflow-x-auto">
         <table className="w-full text-left text-xs">
-          <thead className="bg-[#eeece7]/80 border-b border-[#e3e1dc] text-[11px] font-bold text-[#526f78] uppercase tracking-wider">
+          <thead className="bg-secondary/80 border-b border-border text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
             <tr>
               <th className="px-4 py-3">Institution</th>
               <th className="px-4 py-3">Requested By</th>
@@ -90,16 +90,16 @@ export default function LicenseRequestsTable({
               <th className="px-4 py-3 text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-[#e3e1dc]">
+          <tbody className="divide-y divide-border">
             {requests.map((request) => (
               <tr key={request.id} className="hover:bg-secondary/40 transition-colors">
                 <td className="px-4 py-3.5">
-                  <p className="font-bold text-[#202b30] text-sm">{request.tenant_name || "Unknown tenant"}</p>
+                  <p className="font-bold text-foreground text-sm">{request.tenant_name || "Unknown tenant"}</p>
                 </td>
-                <td className="px-4 py-3.5 text-[#526f78]">
+                <td className="px-4 py-3.5 text-muted-foreground">
                   {request.requested_by_email || request.requested_by_name || "—"}
                 </td>
-                <td className="px-4 py-3.5 text-[#202b30] font-mono font-medium">
+                <td className="px-4 py-3.5 text-foreground font-mono font-medium">
                   +{request.requested_count.toLocaleString()}
                 </td>
                 <td className="px-4 py-3.5">
@@ -107,8 +107,8 @@ export default function LicenseRequestsTable({
                     {request.status}
                   </GlassBadge>
                 </td>
-                <td className="px-4 py-3.5 text-[#526f78] text-[11px] font-mono">{formatDate(request.created_at)}</td>
-                <td className="px-4 py-3.5 text-[#526f78] text-[11px]">
+                <td className="px-4 py-3.5 text-muted-foreground text-[11px] font-mono">{formatDate(request.created_at)}</td>
+                <td className="px-4 py-3.5 text-muted-foreground text-[11px]">
                   {request.status === "PENDING"
                     ? "—"
                     : `${formatDate(request.processed_at)}${request.processed_by_email ? ` · ${request.processed_by_email}` : ""}`}
@@ -120,7 +120,7 @@ export default function LicenseRequestsTable({
                         type="button"
                         disabled={processingId === request.id}
                         onClick={() => void onProcess(request, true)}
-                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-semibold bg-[#247653]/10 text-[#247653] hover:bg-[#247653]/20 transition-colors disabled:opacity-50 cursor-pointer"
+                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-semibold bg-success/10 text-success hover:bg-success/20 transition-colors disabled:opacity-50 cursor-pointer"
                       >
                         <Check size={12} />
                         <span>Approve</span>
@@ -129,14 +129,14 @@ export default function LicenseRequestsTable({
                         type="button"
                         disabled={processingId === request.id}
                         onClick={() => void onProcess(request, false)}
-                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-semibold bg-[#b54242]/10 text-[#b54242] hover:bg-[#b54242]/20 transition-colors disabled:opacity-50 cursor-pointer"
+                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-semibold bg-destructive/10 text-destructive hover:bg-destructive/20 transition-colors disabled:opacity-50 cursor-pointer"
                       >
                         <X size={12} />
                         <span>Reject</span>
                       </button>
                     </div>
                   ) : (
-                    <span className="text-[11px] text-[#526f78]">Resolved</span>
+                    <span className="text-[11px] text-muted-foreground">Resolved</span>
                   )}
                 </td>
               </tr>

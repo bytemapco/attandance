@@ -86,7 +86,7 @@ export default function ForceChangePasswordModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/40 backdrop-blur-sm">
       <div className="w-full max-w-md rounded-xl border border-border bg-card p-6 shadow-xl relative z-10">
         <div className="flex items-center gap-3 mb-4">
-          <div className="p-2.5 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-600">
+          <div className="p-2.5 rounded-lg bg-success-soft border border-success-border text-success">
             <ShieldCheck size={22} />
           </div>
           <div>
@@ -112,11 +112,11 @@ export default function ForceChangePasswordModal({
               {rules.map((rule) => (
                 <div key={rule.label} className="flex items-center gap-2 text-xs">
                   {rule.valid ? (
-                    <Check size={13} className="text-emerald-600 shrink-0" />
+                    <Check size={13} className="text-success shrink-0" />
                   ) : (
                     <X size={13} className="text-muted-foreground/60 shrink-0" />
                   )}
-                  <span className={rule.valid ? "text-emerald-700 font-medium" : "text-muted-foreground"}>
+                  <span className={rule.valid ? "text-success font-medium" : "text-muted-foreground"}>
                     {rule.label}
                   </span>
                 </div>
@@ -138,13 +138,13 @@ export default function ForceChangePasswordModal({
             <div className="flex items-center gap-1.5 text-xs px-1">
               {passwordsMatch ? (
                 <>
-                  <Check size={14} className="text-emerald-600" />
-                  <span className="text-emerald-700 font-medium">Passwords match</span>
+                  <Check size={14} className="text-success" />
+                  <span className="text-success font-medium">Passwords match</span>
                 </>
               ) : (
                 <>
-                  <X size={14} className="text-rose-600" />
-                  <span className="text-rose-600">Passwords do not match</span>
+                  <X size={14} className="text-destructive" />
+                  <span className="text-destructive">Passwords do not match</span>
                 </>
               )}
             </div>

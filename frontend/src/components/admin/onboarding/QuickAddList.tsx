@@ -50,7 +50,7 @@ export default function QuickAddList({
   });
   const addedNames = useMemo(() => items.map((item) => item.name), [items]);
 
-  if (loading) return <p role="status" className="text-xs text-[#526f78]">Loading {noun}s…</p>;
+  if (loading) return <p role="status" className="text-xs text-muted-foreground">Loading {noun}s…</p>;
   if (loadFailed) {
     return (
       <GlassErrorState
@@ -65,7 +65,7 @@ export default function QuickAddList({
 
   return (
     <div className="space-y-3">
-      {hint && <p className="text-xs text-[#526f78]">{hint}</p>}
+      {hint && <p className="text-xs text-muted-foreground">{hint}</p>}
       <QuickAddChips
         items={items}
         noun={noun}

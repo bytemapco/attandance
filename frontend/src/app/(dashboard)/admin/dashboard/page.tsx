@@ -81,10 +81,10 @@ export default function AdminDashboardPage(): React.ReactElement {
   return (
     <div className="space-y-6 pb-6">
       {/* Top Welcome Banner */}
-      <div className="relative overflow-hidden rounded-2xl border border-[#e3e1dc] bg-card p-5 sm:p-6 shadow-[0_2px_8px_rgba(40,54,59,0.05)] flex flex-col md:flex-row md:items-center md:justify-between gap-5">
+      <div className="relative overflow-hidden rounded-2xl border border-border bg-card p-5 sm:p-6 shadow-[0_2px_8px_rgba(40,54,59,0.05)] flex flex-col md:flex-row md:items-center md:justify-between gap-5">
         <div className="space-y-1 z-10">
-          <p className="text-xs font-medium text-[#526f78]">{todayStr}</p>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#28363b]">
+          <p className="text-xs font-medium text-muted-foreground">{todayStr}</p>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-primary">
             {greeting}, {displayName}
           </h1>
         </div>
@@ -93,18 +93,18 @@ export default function AdminDashboardPage(): React.ReactElement {
         <div className="flex items-center gap-2.5 z-10 self-start md:self-center">
           <button
             onClick={() => router.push("/admin/notifications/broadcast")}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-[#e3e1dc] bg-secondary text-xs font-semibold text-[#202b30] hover:bg-secondary/70 transition-all shadow-2xs cursor-pointer"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-border bg-secondary text-xs font-semibold text-foreground hover:bg-secondary/70 transition-all shadow-2xs cursor-pointer"
           >
-            <Megaphone size={14} className="text-[#c98260]" />
+            <Megaphone size={14} className="text-accent-strong" />
             <span>New Announcement</span>
           </button>
 
           <button
             onClick={handleRefresh}
             disabled={refreshing}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-[#e3e1dc] bg-card text-xs font-semibold text-[#202b30] hover:bg-secondary transition-all shadow-2xs disabled:opacity-50 cursor-pointer"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-border bg-card text-xs font-semibold text-foreground hover:bg-secondary transition-all shadow-2xs disabled:opacity-50 cursor-pointer"
           >
-            <RefreshCw size={13} className={refreshing ? "animate-spin text-[#c98260]" : "text-[#526f78]"} />
+            <RefreshCw size={13} className={refreshing ? "animate-spin text-accent-strong" : "text-muted-foreground"} />
             <span>{refreshing ? "Updating..." : "Refresh"}</span>
           </button>
         </div>
@@ -114,7 +114,7 @@ export default function AdminDashboardPage(): React.ReactElement {
 
       {/* KPI Metric Strip */}
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <Link href="/admin/users/students" aria-label="View students" className="rounded-xl focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#526f78]">
+        <Link href="/admin/users/students" aria-label="View students" className="rounded-xl focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-muted-foreground">
           <GlassStatCard
             icon={<GraduationCap size={20} />}
             label="Students"
@@ -123,7 +123,7 @@ export default function AdminDashboardPage(): React.ReactElement {
             accentColor="mineral"
           />
         </Link>
-        <Link href="/admin/users/teachers" aria-label="View faculty" className="rounded-xl focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#526f78]">
+        <Link href="/admin/users/teachers" aria-label="View faculty" className="rounded-xl focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-muted-foreground">
           <GlassStatCard
             icon={<Users size={20} />}
             label="Faculty"
@@ -132,7 +132,7 @@ export default function AdminDashboardPage(): React.ReactElement {
             accentColor="carbon"
           />
         </Link>
-        <Link href="/admin/class-management" aria-label="View classes" className="rounded-xl focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#526f78]">
+        <Link href="/admin/class-management" aria-label="View classes" className="rounded-xl focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-muted-foreground">
           <GlassStatCard
             icon={<BookOpen size={20} />}
             label="Classes"
@@ -153,7 +153,7 @@ export default function AdminDashboardPage(): React.ReactElement {
       {/* Administration Controls Hub */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <h2 className="text-base font-semibold text-[#202b30]">
+          <h2 className="text-base font-semibold text-foreground">
             Quick actions
           </h2>
         </div>

@@ -19,7 +19,7 @@ export default function InfoRow({ icon: Icon, label, value, copyValue, copyKey }
   return (
     <div className="group flex items-center justify-between p-3 rounded-lg border border-transparent hover:border-border/60 hover:bg-muted/40 transition-colors">
       <div className="flex items-center gap-3.5 min-w-0">
-        <div className="w-9 h-9 rounded-lg bg-muted/60 border border-border/60 flex items-center justify-center text-[#526f78] shrink-0">
+        <div className="w-9 h-9 rounded-lg bg-muted/60 border border-border/60 flex items-center justify-center text-muted-foreground shrink-0">
           <Icon size={16} />
         </div>
         <div className="min-w-0">
@@ -35,7 +35,7 @@ export default function InfoRow({ icon: Icon, label, value, copyValue, copyKey }
           title={`Copy ${label}`}
           aria-label={`Copy ${label}`}
         >
-          {copiedKey === copyKey ? <Check size={14} className="text-[#247653]" /> : <Copy size={14} />}
+          {copiedKey === copyKey ? <Check size={14} className="text-success" /> : <Copy size={14} />}
         </button>
       )}
     </div>

@@ -75,7 +75,7 @@ export default function MasterDataFormPage({ entity, mode }: MasterDataFormPageP
 
   if (loading) return <GlassLoader />;
   if (editing && !record) {
-    return <div className="text-center py-20 text-slate-500">{entity.singular} not found</div>;
+    return <div className="text-center py-20 text-muted-foreground">{entity.singular} not found</div>;
   }
 
   const placeholder = (text: string): string | undefined => (editing ? undefined : text);

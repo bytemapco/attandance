@@ -149,7 +149,7 @@ export default function AuditLogTable({
                     </div>
                     {log.tenant_name && log.tenant_name !== "Platform Global" && (
                       <div className="flex items-center gap-1 text-[11px] text-muted-foreground mt-0.5">
-                        <Building2 size={11} className="text-[#C98260] shrink-0" />
+                        <Building2 size={11} className="text-accent-strong shrink-0" />
                         <span className="truncate max-w-[200px]">{log.tenant_name}</span>
                       </div>
                     )}

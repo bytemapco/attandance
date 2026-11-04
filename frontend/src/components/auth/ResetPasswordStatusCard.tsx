@@ -17,7 +17,7 @@ export default function ResetPasswordStatusCard({
   if (status === "invalid") {
     return (
       <div className="rounded-2xl border border-border bg-card p-7 text-center space-y-5 shadow-sm">
-        <div className="inline-flex p-3 rounded-full bg-red-500/10 border border-red-500/20 text-red-500">
+        <div className="inline-flex p-3 rounded-full bg-destructive/10 border border-destructive/20 text-destructive">
           <AlertCircle size={32} />
         </div>
         <div>
@@ -35,7 +35,7 @@ export default function ResetPasswordStatusCard({
 
   return (
     <div className="rounded-2xl border border-border bg-card p-7 text-center space-y-5 shadow-sm">
-      <div className="inline-flex p-3 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-500">
+      <div className="inline-flex p-3 rounded-full bg-success/10 border border-success/20 text-success">
         <CheckCircle2 size={32} />
       </div>
       <div>

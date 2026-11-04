@@ -26,17 +26,17 @@ export function GlassErrorState({
     <div
       role="alert"
       className={cn(
-        "rounded-xl border border-[#f0c9c9] bg-[#f9eaea]/60 p-8 text-center shadow-xs",
+        "rounded-xl border border-destructive-border bg-destructive-soft/60 p-8 text-center shadow-xs",
         className
       )}
     >
-      <div className="mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-2xl bg-[#f9eaea] text-[#b54242] border border-[#f0c9c9]">
+      <div className="mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-2xl bg-destructive-soft text-destructive border border-destructive-border">
         <AlertCircle size={22} aria-hidden="true" />
       </div>
-      <h3 className="text-base font-bold text-[#202b30] tracking-tight">{title}</h3>
-      <p className="mt-1 text-xs sm:text-sm text-[#526f78] max-w-md mx-auto leading-relaxed">{message}</p>
+      <h3 className="text-base font-bold text-foreground tracking-tight">{title}</h3>
+      <p className="mt-1 text-xs sm:text-sm text-muted-foreground max-w-md mx-auto leading-relaxed">{message}</p>
       {details && (
-        <pre className="mt-3 max-w-md mx-auto overflow-x-auto rounded-lg bg-card p-2.5 text-xs text-[#526f78] border border-[#e3e1dc] text-left font-mono">
+        <pre className="mt-3 max-w-md mx-auto overflow-x-auto rounded-lg bg-card p-2.5 text-xs text-muted-foreground border border-border text-left font-mono">
           {details}
         </pre>
       )}

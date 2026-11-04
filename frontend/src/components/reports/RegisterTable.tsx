@@ -64,7 +64,7 @@ export default function RegisterTable({ report }: { report: RegisterReport }): R
                   className={cn(
                     "px-3 py-2 text-right font-semibold tabular-nums",
                     row.percentage !== null && row.percentage !== undefined && row.percentage < meta.threshold
-                      ? "text-[#b54242]"
+                      ? "text-destructive"
                       : "text-foreground"
                   )}
                 >

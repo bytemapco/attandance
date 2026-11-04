@@ -75,7 +75,7 @@ export default function AddStudentsPanel({ cls, onUpdated, onClose }: AddStudent
   return (
     <GlassCard className="space-y-3">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-bold text-[#202b30]">
+        <h3 className="text-sm font-bold text-foreground">
           Add students from {cls.department_name}
         </h3>
         <GlassButton variant="ghost" size="sm" onClick={onClose}>
@@ -83,14 +83,14 @@ export default function AddStudentsPanel({ cls, onUpdated, onClose }: AddStudent
         </GlassButton>
       </div>
       <GlassSearch placeholder="Search by name or enrollment number" onSearch={setSearch} />
-      <ul className="max-h-72 divide-y divide-[#e3e1dc] overflow-y-auto rounded-lg border border-[#e3e1dc]">
-        {candidates.length === 0 && <li className="p-4 text-center text-xs text-[#526f78]">No students available to add.</li>}
+      <ul className="max-h-72 divide-y divide-border overflow-y-auto rounded-lg border border-border">
+        {candidates.length === 0 && <li className="p-4 text-center text-xs text-muted-foreground">No students available to add.</li>}
         {candidates.map((s) => (
           <li key={s.id}>
             <label className="flex cursor-pointer items-center gap-3 px-3 py-2 text-sm hover:bg-secondary">
               <input type="checkbox" checked={selected.has(s.id)} onChange={() => toggle(s.id)} />
               <span className="font-medium">{displayName(s)}</span>
-              <span className="text-xs text-[#526f78]">{s.enrollment_number}</span>
+              <span className="text-xs text-muted-foreground">{s.enrollment_number}</span>
             </label>
           </li>
         ))}

@@ -38,7 +38,7 @@ export default function AnomalyCard({ result }: AnomalyCardProps): React.ReactEl
   }
 
   return (
-    <GlassCard className="bg-card border-border/80 p-4 rounded-2xl flex flex-col justify-between hover:border-slate-300 transition-all duration-200 shadow-xs">
+    <GlassCard className="bg-card border-border/80 p-4 rounded-2xl flex flex-col justify-between hover:border-border-strong transition-all duration-200 shadow-xs">
       <div className="space-y-3.5">
         {/* Top Header */}
         <div className="flex items-start justify-between gap-2">
@@ -55,7 +55,7 @@ export default function AnomalyCard({ result }: AnomalyCardProps): React.ReactEl
 
         {/* Pattern Notice */}
         {result.primary_pattern && (
-          <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[#fbf1df] text-[#8a5b12] border border-[#f2deba] text-xs font-medium">
+          <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-warning-soft text-warning border border-warning-border text-xs font-medium">
             <AlertCircle size={13} className="shrink-0" />
             <span className="truncate">{result.primary_pattern}</span>
           </div>
@@ -99,7 +99,7 @@ export default function AnomalyCard({ result }: AnomalyCardProps): React.ReactEl
                     key={day}
                     className={`flex flex-col items-center justify-between py-1.5 px-0.5 rounded-lg border text-center transition-colors ${
                       isPeak
-                        ? "bg-[#fbf1df] border-[#f2deba] text-[#8a5b12]"
+                        ? "bg-warning-soft border-warning-border text-warning"
                         : "bg-secondary/40 border-border/30 text-muted-foreground"
                     }`}
                   >
@@ -107,7 +107,7 @@ export default function AnomalyCard({ result }: AnomalyCardProps): React.ReactEl
                     <span className="text-[10px] font-mono font-bold my-0.5">{count}</span>
                     <div className="w-full h-1 bg-secondary rounded-full overflow-hidden px-0.5">
                       <div
-                        className={`h-full rounded-full ${isPeak ? "bg-[#8a5b12]" : "bg-muted-foreground/40"}`}
+                        className={`h-full rounded-full ${isPeak ? "bg-warning" : "bg-muted-foreground/40"}`}
                         style={{ width: `${ratio}%` }}
                       />
                     </div>
@@ -132,8 +132,8 @@ export default function AnomalyCard({ result }: AnomalyCardProps): React.ReactEl
         >
           {copied ? (
             <>
-              <Check size={12} className="text-emerald-500" />
-              <span className="text-[11px] text-emerald-600 font-medium">Copied</span>
+              <Check size={12} className="text-success" />
+              <span className="text-[11px] text-success font-medium">Copied</span>
             </>
           ) : (
             <>

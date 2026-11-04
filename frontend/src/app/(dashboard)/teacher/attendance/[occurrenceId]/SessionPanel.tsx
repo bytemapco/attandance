@@ -47,7 +47,7 @@ function Progress({ counts }: { counts: Counts }): React.ReactElement {
         <span className="ml-1.5 text-base font-medium text-muted-foreground">of {counts.ALL} present</span>
       </p>
       <div className="mt-3 h-2 overflow-hidden rounded-full bg-secondary" role="progressbar" aria-valuenow={percent} aria-valuemin={0} aria-valuemax={100} aria-label="Students present">
-        <div className="h-full rounded-full bg-[#247653] transition-all duration-500" style={{ width: `${percent}%` }} />
+        <div className="h-full rounded-full bg-success transition-all duration-500" style={{ width: `${percent}%` }} />
       </div>
     </div>
   );
@@ -94,11 +94,11 @@ export default function SessionPanel({
       {live && (
         <>
           <div className="flex items-center justify-between gap-2">
-            <GlassBadge variant="success" icon={<span className="h-1.5 w-1.5 rounded-full bg-[#247653]" aria-hidden />}>Live</GlassBadge>
+            <GlassBadge variant="success" icon={<span className="h-1.5 w-1.5 rounded-full bg-success" aria-hidden />}>Live</GlassBadge>
             <button
               type="button"
               onClick={() => onFullscreenChange(true)}
-              className="inline-flex h-8 cursor-pointer items-center gap-1.5 rounded-md px-2 text-xs font-semibold text-[#526f78] hover:bg-secondary hover:text-foreground focus-visible:ring-2 focus-visible:ring-[#526f78] outline-none"
+              className="inline-flex h-8 cursor-pointer items-center gap-1.5 rounded-md px-2 text-xs font-semibold text-muted-foreground hover:bg-secondary hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring outline-none"
             >
               <Maximize2 size={14} /> Full screen
               <kbd className="rounded border border-border px-1.5 text-[11px] font-medium">F</kbd>
@@ -109,7 +109,7 @@ export default function SessionPanel({
       )}
       {state === "NOT_STARTED" && (
         <div className="flex flex-col items-center gap-3 rounded-[10px] border border-dashed border-border px-4 py-8 text-center">
-          <QrCode size={28} className="text-[#526f78]" />
+          <QrCode size={28} className="text-muted-foreground" />
           <p className="text-sm font-semibold text-foreground">Attendance hasn&apos;t started</p>
           <p className="text-xs text-muted-foreground">Start to show the QR code and let students mark themselves.</p>
           <GlassButton variant="primary" size="md" loading={starting} icon={<Play size={14} />} onClick={onStart}>

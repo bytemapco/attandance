@@ -81,7 +81,7 @@ export default function LoginPage(): React.ReactElement {
 
   return (
     <div className="w-full max-w-[420px] mx-auto my-auto py-8 px-4">
-      <div className="rounded-2xl border border-[#e3e1dc]/90 bg-white/95 backdrop-blur-md p-7 sm:p-8 shadow-[0_10px_30px_rgba(40,54,59,0.08),0_1px_3px_rgba(40,54,59,0.04)]">
+      <div className="rounded-2xl border border-border/90 bg-white/95 backdrop-blur-md p-7 sm:p-8 shadow-[0_10px_30px_rgba(40,54,59,0.08),0_1px_3px_rgba(40,54,59,0.04)]">
         {/* Brand Header */}
         <div className="flex flex-col items-center text-center mb-6">
           <Link
@@ -102,11 +102,11 @@ export default function LoginPage(): React.ReactElement {
           className="space-y-5"
         >
           {suspensionError && (
-            <div className="rounded-xl border border-[#f2deba] bg-[#fbf1df] p-4 text-left flex gap-3 items-start animate-in fade-in duration-200">
-              <AlertTriangle className="w-5 h-5 text-[#8a5b12] shrink-0 mt-0.5" />
+            <div className="rounded-xl border border-warning-border bg-warning-soft p-4 text-left flex gap-3 items-start animate-in fade-in duration-200">
+              <AlertTriangle className="w-5 h-5 text-warning shrink-0 mt-0.5" />
               <div className="space-y-1">
-                <p className="text-xs font-bold text-[#8a5b12]">Institution Suspended</p>
-                <p className="text-xs text-[#526f78] leading-relaxed">{suspensionError}</p>
+                <p className="text-xs font-bold text-warning">Institution Suspended</p>
+                <p className="text-xs text-muted-foreground leading-relaxed">{suspensionError}</p>
               </div>
             </div>
           )}
@@ -135,7 +135,7 @@ export default function LoginPage(): React.ReactElement {
               <div className="flex justify-end pt-1.5">
                 <Link
                   href="/forgot-password"
-                  className="text-xs font-medium text-[#526f78] hover:text-[#202b30] transition-colors focus:outline-none focus:underline"
+                  className="text-xs font-medium text-muted-foreground hover:text-foreground transition-colors focus:outline-none focus:underline"
                 >
                   Forgot password?
                 </Link>

@@ -96,16 +96,16 @@ export default function SlotDialog({ cls, draft, onUpdated, onClose }: SlotDialo
 
   return (
     <>
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#28363b]/40 p-4 backdrop-blur-xs" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-primary/40 p-4 backdrop-blur-xs" onClick={onClose}>
       <div
         role="dialog"
         aria-label={editing ? "Change class time" : "Add class time"}
-        className="max-h-full w-full max-w-md space-y-4 overflow-y-auto rounded-2xl border border-[#e3e1dc] bg-card p-6 shadow-[0_8px_24px_rgba(40,54,59,0.12)]"
+        className="max-h-full w-full max-w-md space-y-4 overflow-y-auto rounded-2xl border border-border bg-card p-6 shadow-[0_8px_24px_rgba(40,54,59,0.12)]"
         onClick={(e) => e.stopPropagation()}
       >
-        <h3 className="text-base font-bold text-[#202b30]">{editing ? "Change class time" : "Add class time"}</h3>
+        <h3 className="text-base font-bold text-foreground">{editing ? "Change class time" : "Add class time"}</h3>
         {editing ? (
-          <p className="text-sm font-semibold text-[#202b30]">{subjectName}</p>
+          <p className="text-sm font-semibold text-foreground">{subjectName}</p>
         ) : (
           <GlassSelect label="Subject" placeholder="Select subject" searchable value={subjectId} onChange={pickSubject} options={subjectOptions} />
         )}
@@ -119,10 +119,10 @@ export default function SlotDialog({ cls, draft, onUpdated, onClose }: SlotDialo
         <div className="flex flex-wrap items-center justify-between gap-2">
           {editing ? (
             <div className="flex gap-1">
-              <GlassButton variant="ghost" size="sm" disabled={busy} className="text-[#b54242]" onClick={() => void removeTime()}>
+              <GlassButton variant="ghost" size="sm" disabled={busy} className="text-destructive" onClick={() => void removeTime()}>
                 Remove time
               </GlassButton>
-              <GlassButton variant="ghost" size="sm" disabled={busy} className="text-[#b54242]" onClick={() => setConfirmingRemove(true)}>
+              <GlassButton variant="ghost" size="sm" disabled={busy} className="text-destructive" onClick={() => setConfirmingRemove(true)}>
                 Remove subject
               </GlassButton>
             </div>

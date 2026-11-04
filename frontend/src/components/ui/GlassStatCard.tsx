@@ -16,36 +16,36 @@ export interface GlassStatCardProps {
 
 const colorStyles: Record<string, { icon: string; border: string }> = {
   copper: {
-    icon: "text-[#8a4d30] bg-[#f7efea] border-[#f0ded4]",
-    border: "hover:border-[#c98260]/60",
+    icon: "text-accent-strong bg-accent-soft border-accent-border",
+    border: "hover:border-accent/60",
   },
   mineral: {
-    icon: "text-[#526f78] bg-[#eeece7] border-[#e3e1dc]",
-    border: "hover:border-[#526f78]/60",
+    icon: "text-muted-foreground bg-secondary border-border",
+    border: "hover:border-muted-foreground/60",
   },
   carbon: {
-    icon: "text-[#28363b] bg-[#eeece7] border-[#e3e1dc]",
-    border: "hover:border-[#28363b]/60",
+    icon: "text-primary bg-secondary border-border",
+    border: "hover:border-primary/60",
   },
   blue: {
-    icon: "text-[#306b8a] bg-[#eaf2f6] border-[#c5dce8]",
-    border: "hover:border-[#306b8a]/40",
+    icon: "text-info bg-info-soft border-info-border",
+    border: "hover:border-info/40",
   },
   emerald: {
-    icon: "text-[#247653] bg-[#e8f3ed] border-[#c6e2d3]",
-    border: "hover:border-[#247653]/40",
+    icon: "text-success bg-success-soft border-success-border",
+    border: "hover:border-success/40",
   },
   purple: {
-    icon: "text-[#526f78] bg-[#eeece7] border-[#e3e1dc]",
-    border: "hover:border-[#526f78]/40",
+    icon: "text-muted-foreground bg-secondary border-border",
+    border: "hover:border-muted-foreground/40",
   },
   amber: {
-    icon: "text-[#8a5b12] bg-[#fbf1df] border-[#f2deba]",
-    border: "hover:border-[#8a5b12]/40",
+    icon: "text-warning bg-warning-soft border-warning-border",
+    border: "hover:border-warning/40",
   },
   rose: {
-    icon: "text-[#b54242] bg-[#f9eaea] border-[#f0c9c9]",
-    border: "hover:border-[#b54242]/40",
+    icon: "text-destructive bg-destructive-soft border-destructive-border",
+    border: "hover:border-destructive/40",
   },
 };
 
@@ -78,8 +78,8 @@ export default function GlassStatCard({
             className={cn(
               "text-[11px] font-semibold px-2 py-0.5 rounded-full border flex items-center gap-1 shadow-2xs tabular-nums",
               trendUp
-                ? "bg-[#e8f3ed] text-[#247653] border-[#c6e2d3]"
-                : "bg-[#f9eaea] text-[#b54242] border-[#f0c9c9]"
+                ? "bg-success-soft text-success border-success-border"
+                : "bg-destructive-soft text-destructive border-destructive-border"
             )}
           >
             <span>{trendUp ? "↑" : "↓"}</span>
@@ -88,15 +88,15 @@ export default function GlassStatCard({
         )}
       </div>
       <div className="relative">
-          <p className="text-2xl sm:text-3xl font-bold tracking-tight text-[#202b30] font-sans tabular-nums">
+          <p className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground font-sans tabular-nums">
           {typeof value === "number" ? value.toLocaleString() : value}
         </p>
-        <p className="text-xs font-semibold text-[#526f78] uppercase tracking-wider mt-1">
+        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mt-1">
           {label}
         </p>
         {subtext && (
-          <p className="text-[11px] text-[#526f78] mt-1.5 flex items-center gap-1.5 font-normal">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#d4d0c8] inline-block" />
+          <p className="text-[11px] text-muted-foreground mt-1.5 flex items-center gap-1.5 font-normal">
+            <span className="w-1.5 h-1.5 rounded-full bg-border-strong inline-block" />
             <span>{subtext}</span>
           </p>
         )}

@@ -64,7 +64,7 @@ export default function AttendanceRulesForm({ onDirtyChange }: AttendanceRulesFo
     }
   }
 
-  if (loading) return <p role="status" className="text-sm text-[#526f78]">Loading attendance rules…</p>;
+  if (loading) return <p role="status" className="text-sm text-muted-foreground">Loading attendance rules…</p>;
   if (failed || !saved || !draft) {
     return <GlassErrorState title="Could not load attendance rules" message="Your saved rules are unchanged." retryLabel="Reload" className="p-5 sm:p-8" onRetry={() => void load()} />;
   }

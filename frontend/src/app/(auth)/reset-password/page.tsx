@@ -109,11 +109,11 @@ function ResetPasswordContent(): React.ReactElement {
     <form
       noValidate
       onSubmit={handleSubmit(onSubmit)}
-      className="rounded-2xl border border-[#e3e1dc] bg-card p-6 sm:p-7 space-y-4 shadow-[0_4px_16px_rgba(40,54,59,0.06)]"
+      className="rounded-2xl border border-border bg-card p-6 sm:p-7 space-y-4 shadow-[0_4px_16px_rgba(40,54,59,0.06)]"
     >
       <div className="space-y-1">
-        <h2 className="text-base font-bold text-[#202b30]">Choose New Password</h2>
-        <p className="text-xs text-[#526f78]">
+        <h2 className="text-base font-bold text-foreground">Choose New Password</h2>
+        <p className="text-xs text-muted-foreground">
           {tokenData.name
             ? `Resetting password for ${tokenData.name} (${tokenData.email})`
             : `Resetting password for ${tokenData.email}`}
@@ -174,16 +174,16 @@ export default function ResetPasswordPage(): React.ReactElement {
                 className="w-14 h-14 rounded-2xl shadow-sm object-contain"
               />
             </div>
-            <h1 className="text-2xl font-bold tracking-tight text-[#28363b]">
+            <h1 className="text-2xl font-bold tracking-tight text-primary">
               SAHAJ
             </h1>
-            <p className="text-xs text-[#526f78] mt-0.5 font-medium">Campus, made effortless.</p>
+            <p className="text-xs text-muted-foreground mt-0.5 font-medium">Campus, made effortless.</p>
           </Link>
         </div>
 
         <Suspense
           fallback={
-            <div className="rounded-2xl border border-[#e3e1dc] bg-card p-8 text-center">
+            <div className="rounded-2xl border border-border bg-card p-8 text-center">
               <GlassLoader />
             </div>
           }

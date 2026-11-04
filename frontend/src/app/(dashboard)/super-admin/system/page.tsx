@@ -91,8 +91,8 @@ export default function PlatformHealthPage(): React.ReactElement {
               <span
                 className={`h-2.5 w-2.5 rounded-full shrink-0 ${
                   isHealthy
-                    ? "bg-emerald-500 ring-4 ring-emerald-500/20"
-                    : "bg-amber-500 ring-4 ring-amber-500/20"
+                    ? "bg-success ring-4 ring-success/20"
+                    : "bg-warning ring-4 ring-warning/20"
                 }`}
               />
               <div>

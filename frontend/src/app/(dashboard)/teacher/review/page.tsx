@@ -57,7 +57,7 @@ export default function ReviewQueuePage(): React.ReactElement {
                 <p className="text-xs text-muted-foreground">
                   {item.subject_name} · {item.class_code} · {formatDate(item.date)}, {item.time_range}
                 </p>
-                <p className="flex items-start gap-1.5 text-xs text-[#8a5b12]">
+                <p className="flex items-start gap-1.5 text-xs text-warning">
                   <AlertTriangle size={13} className="mt-px shrink-0" aria-hidden />
                   {item.remarks ?? "Needs your review"}
                 </p>
@@ -65,7 +65,7 @@ export default function ReviewQueuePage(): React.ReactElement {
               <GlassBadge variant="warning">To verify · {METHOD[item.method] ?? item.method}</GlassBadge>
               <Link
                 href={`/teacher/attendance/${item.occurrence_id}`}
-                className="inline-flex h-9 items-center gap-2 rounded-[10px] border border-border bg-card px-4 text-xs font-semibold text-foreground outline-none hover:bg-secondary focus-visible:ring-2 focus-visible:ring-[#526f78]"
+                className="inline-flex h-9 items-center gap-2 rounded-[10px] border border-border bg-card px-4 text-xs font-semibold text-foreground outline-none hover:bg-secondary focus-visible:ring-2 focus-visible:ring-ring"
               >
                 {item.locked ? "View register" : "Review in register"} <ArrowRight size={14} aria-hidden />
               </Link>

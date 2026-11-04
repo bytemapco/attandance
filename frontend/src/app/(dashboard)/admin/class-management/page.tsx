@@ -135,7 +135,7 @@ export default function ClassManagementPage(): React.ReactElement {
           );
         }
         return (
-          <span className="inline-flex items-center gap-1 text-xs font-medium text-amber-700 bg-amber-50 border border-amber-200/80 px-2 py-0.5 rounded-full">
+          <span className="inline-flex items-center gap-1 text-xs font-medium text-warning bg-warning-soft border border-warning-border/80 px-2 py-0.5 rounded-full">
             <AlertCircle size={11} /> Needs setup
           </span>
         );
@@ -152,10 +152,10 @@ export default function ClassManagementPage(): React.ReactElement {
               e.stopPropagation();
               router.push(`/admin/class-management/${row.id}`);
             }}
-            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-border hover:border-[#526f78] bg-card hover:bg-muted text-xs font-semibold text-foreground transition-all cursor-pointer shadow-2xs"
+            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-border hover:border-muted-foreground bg-card hover:bg-muted text-xs font-semibold text-foreground transition-all cursor-pointer shadow-2xs"
           >
             Manage
-            <ChevronRight size={13} className="text-[#526f78]" />
+            <ChevronRight size={13} className="text-muted-foreground" />
           </button>
         </div>
       ),

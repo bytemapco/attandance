@@ -54,29 +54,29 @@ export default function BulkImportProgress({
 
       {/* Real-time KPI Counters */}
       <div className="grid grid-cols-3 gap-3">
-        <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl">
-          <p className="text-[10px] uppercase tracking-wider font-semibold text-emerald-600 dark:text-emerald-400">
+        <div className="p-3 bg-success/10 border border-success/20 rounded-xl">
+          <p className="text-[10px] uppercase tracking-wider font-semibold text-success">
             Imported
           </p>
-          <p className="text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400 mt-0.5">
+          <p className="text-xl font-bold font-mono text-success mt-0.5">
             {importedCount}
           </p>
         </div>
 
-        <div className="p-3 bg-indigo-500/10 border border-indigo-500/20 rounded-xl">
-          <p className="text-[10px] uppercase tracking-wider font-semibold text-indigo-600 dark:text-indigo-400">
+        <div className="p-3 bg-info/10 border border-info/20 rounded-xl">
+          <p className="text-[10px] uppercase tracking-wider font-semibold text-info">
             Invitations Sent
           </p>
-          <p className="text-xl font-bold font-mono text-indigo-600 dark:text-indigo-400 mt-0.5 flex items-center gap-1.5">
+          <p className="text-xl font-bold font-mono text-info mt-0.5 flex items-center gap-1.5">
             <Mail size={16} /> {invitationsSent}
           </p>
         </div>
 
-        <div className="p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl">
-          <p className="text-[10px] uppercase tracking-wider font-semibold text-rose-600 dark:text-rose-400">
+        <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-xl">
+          <p className="text-[10px] uppercase tracking-wider font-semibold text-destructive">
             Failed
           </p>
-          <p className="text-xl font-bold font-mono text-rose-600 dark:text-rose-400 mt-0.5">
+          <p className="text-xl font-bold font-mono text-destructive mt-0.5">
             {failedCount}
           </p>
         </div>
@@ -103,8 +103,8 @@ export default function BulkImportProgress({
               >
                 <div className="flex items-center gap-2">
                   {isCurrent && <Loader2 size={13} className="animate-spin text-primary" />}
-                  {isCompleted && <CheckCircle2 size={13} className="text-emerald-500" />}
-                  {isFailed && <AlertCircle size={13} className="text-rose-500" />}
+                  {isCompleted && <CheckCircle2 size={13} className="text-success" />}
+                  {isFailed && <AlertCircle size={13} className="text-destructive" />}
                   {batch.status === "queued" && <Clock size={13} className="text-muted-foreground" />}
                   <span className="text-foreground">
                     Batch #{batch.batchNumber}{" "}
@@ -142,7 +142,7 @@ export default function BulkImportProgress({
           type="button"
           onClick={onAbort}
           disabled={isAborting}
-          className="text-xs text-rose-500 hover:text-rose-600 flex items-center gap-1 font-medium transition-colors cursor-pointer disabled:opacity-50"
+          className="text-xs text-destructive hover:text-destructive flex items-center gap-1 font-medium transition-colors cursor-pointer disabled:opacity-50"
         >
           <ShieldAlert size={13} /> {isAborting ? "Stopping..." : "Stop Import"}
         </button>

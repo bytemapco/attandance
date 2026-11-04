@@ -4,12 +4,12 @@ import type { ReportParams, ReportTab } from "@/types";
 export type ExportFormat = "xlsx" | "pdf";
 
 export const MARK_STYLE: Record<string, { code: string; className: string; label: string }> = {
-  PRESENT: { code: "P", className: "bg-[#e3f3ea] text-[#247653]", label: "Present" },
-  APPROVED: { code: "P", className: "bg-[#e3f3ea] text-[#247653]", label: "Present" },
-  LATE: { code: "L", className: "bg-[#fbf0d9] text-[#8a5d0a]", label: "Late" },
-  ABSENT: { code: "A", className: "bg-[#f7e3e3] text-[#b54242]", label: "Absent" },
-  EXCUSED: { code: "E", className: "bg-[#e2edf3] text-[#3a6a80]", label: "Excused" },
-  FLAGGED: { code: "F", className: "bg-[#f9e8dc] text-[#b3541f]", label: "Flagged for review" },
+  PRESENT: { code: "P", className: "bg-success-soft text-success", label: "Present" },
+  APPROVED: { code: "P", className: "bg-success-soft text-success", label: "Present" },
+  LATE: { code: "L", className: "bg-warning-soft text-warning", label: "Late" },
+  ABSENT: { code: "A", className: "bg-destructive-soft text-destructive", label: "Absent" },
+  EXCUSED: { code: "E", className: "bg-info-soft text-info", label: "Excused" },
+  FLAGGED: { code: "F", className: "bg-accent-soft text-accent-strong", label: "Flagged for review" },
   NOT_ENROLLED: { code: "–", className: "text-muted-foreground", label: "Not yet enrolled" },
 };
 

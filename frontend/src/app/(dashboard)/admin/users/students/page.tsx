@@ -132,18 +132,18 @@ export default function StudentsPage(): React.ReactElement {
     <div className="space-y-4 animate-fade-in">
       <GlassBreadcrumb items={[{ label: "Admin", href: "/admin/dashboard" }, { label: "Users" }, { label: "Students" }]} />
 
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-2 border-b border-[#e3e1dc]">
-        <h1 className="text-2xl font-bold tracking-tight text-[#28363b]">Students</h1>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-2 border-b border-border">
+        <h1 className="text-2xl font-bold tracking-tight text-primary">Students</h1>
         <div className="flex items-center gap-2">
           <button
             onClick={() => setIsBulkImportOpen(true)}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#e3e1dc] bg-card text-xs font-semibold text-[#28363b] hover:bg-[#eeece7] transition-colors shadow-2xs cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-border bg-card text-xs font-semibold text-primary hover:bg-secondary transition-colors shadow-2xs cursor-pointer"
           >
             <Upload size={13} /> Bulk Import
           </button>
           <button
             onClick={() => router.push("/admin/users/students/add")}
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#28363b] text-white text-xs font-semibold hover:bg-[#202b30] transition-colors shadow-2xs cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-primary text-primary-foreground text-xs font-semibold hover:bg-foreground transition-colors shadow-2xs cursor-pointer"
           >
             <Plus size={14} /> Add Student
           </button>
@@ -158,7 +158,7 @@ export default function StudentsPage(): React.ReactElement {
         onResetAll={handleResetAll}
       />
 
-      <div className="rounded-2xl border border-[#e3e1dc] bg-card shadow-2xs overflow-hidden">
+      <div className="rounded-2xl border border-border bg-card shadow-2xs overflow-hidden">
         <GlassTable
           columns={studentColumns}
           data={students as (StudentResponse & Record<string, unknown>)[]}

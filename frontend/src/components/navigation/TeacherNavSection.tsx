@@ -32,7 +32,7 @@ export default function TeacherNavSection({ unreadCount, onClose }: TeacherNavSe
   return (
     <>
       <div>
-        <p className="px-3 mb-2 text-[10px] font-bold text-[#526f78] uppercase tracking-wider">
+        <p className="px-3 mb-2 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
           Teaching Operations
         </p>
         <div className="space-y-0.5">
@@ -48,21 +48,21 @@ export default function TeacherNavSection({ unreadCount, onClose }: TeacherNavSe
                 className={cn(
                   "flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition-all",
                   isActive
-                    ? "bg-[#f7efea] text-[#28363b] font-semibold border-l-[3px] border-[#c98260] shadow-2xs"
-                    : "text-[#526f78] hover:bg-secondary/70 hover:text-[#202b30]"
+                    ? "bg-accent-soft text-primary font-semibold border-l-[3px] border-accent shadow-2xs"
+                    : "text-muted-foreground hover:bg-secondary/70 hover:text-foreground"
                 )}
               >
                 <div className="flex items-center gap-2.5">
-                  <span className={cn(isActive ? "text-[#c98260]" : "text-[#526f78]")}>{link.icon}</span>
+                  <span className={cn(isActive ? "text-accent-strong" : "text-muted-foreground")}>{link.icon}</span>
                   <span>{link.label}</span>
                 </div>
                 {isReviewLink && flaggedCount > 0 && (
-                  <span className="inline-flex items-center justify-center px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-[#fbf1df] text-[#8a5b12] border border-[#f2deba]">
+                  <span className="inline-flex items-center justify-center px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-warning-soft text-warning border border-warning-border">
                     {flaggedCount > 99 ? "99+" : flaggedCount}
                   </span>
                 )}
                 {isNotif && unreadCount > 0 && (
-                  <span className="inline-flex items-center justify-center min-w-4.5 h-4.5 px-1.5 rounded-full text-[10px] font-bold bg-[#28363b] text-white shadow-2xs">
+                  <span className="inline-flex items-center justify-center min-w-4.5 h-4.5 px-1.5 rounded-full text-[10px] font-bold bg-primary text-primary-foreground shadow-2xs">
                     {unreadCount > 99 ? "99+" : unreadCount}
                   </span>
                 )}
@@ -73,7 +73,7 @@ export default function TeacherNavSection({ unreadCount, onClose }: TeacherNavSe
       </div>
 
       <div>
-        <p className="px-3 mb-2 text-[10px] font-bold text-[#526f78] uppercase tracking-wider">
+        <p className="px-3 mb-2 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
           Analytics & Reports
         </p>
         <div className="space-y-0.5">
@@ -87,11 +87,11 @@ export default function TeacherNavSection({ unreadCount, onClose }: TeacherNavSe
                 className={cn(
                   "flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition-all",
                   isActive
-                    ? "bg-[#f7efea] text-[#28363b] font-semibold border-l-[3px] border-[#c98260] shadow-2xs"
-                    : "text-[#526f78] hover:bg-secondary/70 hover:text-[#202b30]"
+                    ? "bg-accent-soft text-primary font-semibold border-l-[3px] border-accent shadow-2xs"
+                    : "text-muted-foreground hover:bg-secondary/70 hover:text-foreground"
                 )}
               >
-                <span className={cn(isActive ? "text-[#c98260]" : "text-[#526f78]")}>{link.icon}</span>
+                <span className={cn(isActive ? "text-accent-strong" : "text-muted-foreground")}>{link.icon}</span>
                 <span>{link.label}</span>
               </Link>
             );

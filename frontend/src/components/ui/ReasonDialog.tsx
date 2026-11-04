@@ -33,12 +33,12 @@ export default function ReasonDialog({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#28363b]/40 p-4 backdrop-blur-xs" onClick={onCancel}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-primary/40 p-4 backdrop-blur-xs" onClick={onCancel}>
       <div
-        className="w-full max-w-md rounded-2xl border border-[#e3e1dc] bg-card p-6 shadow-[0_8px_24px_rgba(40,54,59,0.12)]"
+        className="w-full max-w-md rounded-2xl border border-border bg-card p-6 shadow-[0_8px_24px_rgba(40,54,59,0.12)]"
         onClick={(e) => e.stopPropagation()}
       >
-        <h3 className="mb-4 text-base font-bold text-[#202b30]">{title}</h3>
+        <h3 className="mb-4 text-base font-bold text-foreground">{title}</h3>
         <GlassTextarea
           label="Reason"
           placeholder="Recorded in the class history"
@@ -46,7 +46,7 @@ export default function ReasonDialog({
           onChange={(e) => setReason(e.target.value)}
           error={error}
         />
-        <div className="mt-5 flex justify-end gap-2 border-t border-[#e3e1dc] pt-3">
+        <div className="mt-5 flex justify-end gap-2 border-t border-border pt-3">
           <GlassButton variant="ghost" size="sm" onClick={onCancel} disabled={loading}>
             Cancel
           </GlassButton>
