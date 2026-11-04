@@ -8,7 +8,7 @@ import { useDebounce } from "@/hooks/useDebounce";
 import api, { getApiErrorMessage } from "@/lib/api";
 import { toast } from "react-hot-toast";
 import type { DeviceChangeRequest } from "@/types/models";
-import { formatDateIndianMedium } from "@/utils/dateFormatter";
+import { formatDateIndianMedium } from "@/lib/dateFormatter";
 
 interface DeviceChangeTableProps {
   requests: DeviceChangeRequest[];
