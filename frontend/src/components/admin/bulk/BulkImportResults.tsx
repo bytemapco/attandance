@@ -2,7 +2,7 @@
 
 import React from "react";
 import { CheckCircle2, AlertTriangle, XCircle, Download, Mail, RefreshCw } from "lucide-react";
-import GlassButton from "@/components/ui/GlassButton";
+import Button from "@/components/ui/Button";
 import { BulkImportSummary, BulkImportEntityType } from "./bulkTypes";
 
 interface BulkImportResultsProps {
@@ -143,11 +143,11 @@ export default function BulkImportResults({
 
       {/* Action Footer */}
       <div className="flex items-center justify-between pt-2 border-t border-border">
-        <GlassButton variant="ghost" icon={<RefreshCw size={14} />} onClick={onReset}>
+        <Button variant="ghost" icon={<RefreshCw size={14} />} onClick={onReset}>
           Import another file
-        </GlassButton>
+        </Button>
 
-        <GlassButton onClick={onClose}>Done</GlassButton>
+        <Button onClick={onClose}>Done</Button>
       </div>
     </div>
   );

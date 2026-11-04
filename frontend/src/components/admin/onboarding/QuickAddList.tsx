@@ -3,7 +3,7 @@
 import React, { useMemo } from "react";
 import { useQuickAddItems } from "@/hooks/useQuickAddItems";
 import type { PresetItem } from "@/lib/onboarding/collegePreset";
-import GlassErrorState from "@/components/ui/GlassErrorState";
+import ErrorState from "@/components/ui/ErrorState";
 import QuickAddChips from "./QuickAddChips";
 import QuickAddForm from "./QuickAddForm";
 
@@ -53,7 +53,7 @@ export default function QuickAddList({
   if (loading) return <p role="status" className="text-xs text-muted-foreground">Loading {noun}s…</p>;
   if (loadFailed) {
     return (
-      <GlassErrorState
+      <ErrorState
         title={`Could not load ${noun}s`}
         message="Your saved items are unchanged. Try again to continue."
         retryLabel="Reload items"

@@ -2,10 +2,10 @@
 
 import React from "react";
 import { FolderOpen } from "lucide-react";
-import GlassButton from "./GlassButton";
+import Button from "./Button";
 import { cn } from "@/lib/utils";
 
-export interface GlassEmptyStateProps {
+export interface EmptyStateProps {
   title?: string;
   message?: string;
   actionLabel?: string;
@@ -14,14 +14,14 @@ export interface GlassEmptyStateProps {
   className?: string;
 }
 
-export default function GlassEmptyState({
+export default function EmptyState({
   title = "No records yet",
   message = "There is nothing to display right now.",
   actionLabel,
   onAction,
   icon,
   className = "",
-}: GlassEmptyStateProps): React.ReactElement {
+}: EmptyStateProps): React.ReactElement {
   return (
     <div className={cn("rounded-lg border border-border bg-card px-6 py-12 text-center", className)}>
       <div className="mx-auto mb-3 flex justify-center text-muted-foreground" aria-hidden>
@@ -31,9 +31,9 @@ export default function GlassEmptyState({
       <p className="mt-1 text-sm text-muted-foreground max-w-sm mx-auto">{message}</p>
       {actionLabel && onAction && (
         <div className="mt-5">
-          <GlassButton variant="primary" size="sm" onClick={onAction}>
+          <Button variant="primary" size="sm" onClick={onAction}>
             {actionLabel}
-          </GlassButton>
+          </Button>
         </div>
       )}
     </div>

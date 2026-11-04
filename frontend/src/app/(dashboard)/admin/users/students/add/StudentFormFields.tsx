@@ -1,7 +1,7 @@
 import React from "react";
 import { UseFormRegister, Control, FieldErrors, Controller } from "react-hook-form";
-import GlassInput from "@/components/ui/GlassInput";
-import GlassSelect from "@/components/ui/GlassSelect";
+import Input from "@/components/ui/Input";
+import SelectField from "@/components/ui/SelectField";
 import DepartmentBatchSelect from "@/components/admin/batches/DepartmentBatchSelect";
 import type { StudentFormData } from "@/lib/validations/student";
 
@@ -33,19 +33,19 @@ export default function StudentFormFields({
 }: StudentFormFieldsProps): React.ReactElement {
   return (
     <div className="p-5 grid grid-cols-1 sm:grid-cols-2 gap-5">
-      <GlassInput
+      <Input
         label="First Name *"
         placeholder="e.g. Aanya"
         {...register("first_name")}
         error={errors.first_name?.message}
       />
-      <GlassInput
+      <Input
         label="Last Name *"
         placeholder="e.g. Sharma"
         {...register("last_name")}
         error={errors.last_name?.message}
       />
-      <GlassInput
+      <Input
         label="Phone *"
         type="tel"
         placeholder="+91 98765 43210"
@@ -56,7 +56,7 @@ export default function StudentFormFields({
         control={control}
         name="gender"
         render={({ field }) => (
-          <GlassSelect
+          <SelectField
             label="Gender *"
             options={[{ value: "", label: "— Select Gender —" }, ...GENDER_OPTIONS]}
             value={typeof field.value === "string" ? field.value : ""}
@@ -65,7 +65,7 @@ export default function StudentFormFields({
           />
         )}
       />
-      <GlassInput
+      <Input
         label="Date of Birth *"
         type="date"
         {...register("date_of_birth")}
@@ -75,7 +75,7 @@ export default function StudentFormFields({
         control={control}
         name="department_id"
         render={({ field }) => (
-          <GlassSelect
+          <SelectField
             label="Department *"
             options={deptOptions}
             value={typeof field.value === "string" ? field.value : ""}
@@ -101,7 +101,7 @@ export default function StudentFormFields({
         control={control}
         name="semester"
         render={({ field }) => (
-          <GlassSelect
+          <SelectField
             label="Semester *"
             options={[{ value: "", label: "— Select Semester —" }, ...SEMESTER_OPTIONS]}
             value={field.value !== undefined && field.value !== null ? String(field.value) : ""}

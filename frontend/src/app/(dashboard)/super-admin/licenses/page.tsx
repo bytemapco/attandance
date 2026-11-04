@@ -5,10 +5,10 @@ import toast from "react-hot-toast";
 import { RefreshCw } from "lucide-react";
 import { superAdminService } from "@/services/superAdminService";
 import { getApiErrorMessage } from "@/lib/api";
-import GlassBreadcrumb from "@/components/ui/GlassBreadcrumb";
-import GlassPageHeader from "@/components/ui/GlassPageHeader";
-import GlassButton from "@/components/ui/GlassButton";
-import EnterprisePagination from "@/components/ui/EnterprisePagination";
+import Breadcrumb from "@/components/ui/Breadcrumb";
+import PageHeader from "@/components/ui/PageHeader";
+import Button from "@/components/ui/Button";
+import Pagination from "@/components/ui/Pagination";
 import LicenseRequestsTable from "@/components/super-admin/LicenseRequestsTable";
 import {
   Select,
@@ -16,7 +16,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/components/ui/SelectMenu";
 import type { LicenseRequestItem } from "@/types/tenant";
 
 const STATUS_OPTIONS: Array<{ value: string; label: string }> = [
@@ -76,20 +76,20 @@ export default function LicenseRequestsPage(): React.JSX.Element {
 
   return (
     <div className="space-y-6 max-w-7xl">
-      <GlassBreadcrumb
+      <Breadcrumb
         items={[
           { label: "Dashboard", href: "/super-admin/dashboard" },
           { label: "License Requests" },
         ]}
       />
 
-      <GlassPageHeader
+      <PageHeader
         title="License Requests"
         actions={
-          <GlassButton variant="ghost" onClick={() => void fetchRequests()} className="gap-2">
+          <Button variant="ghost" onClick={() => void fetchRequests()} className="gap-2">
             <RefreshCw size={14} />
             <span>Refresh</span>
-          </GlassButton>
+          </Button>
         }
       />
 
@@ -131,7 +131,7 @@ export default function LicenseRequestsPage(): React.JSX.Element {
           onProcess={handleProcess}
         />
         {!loading && total > 0 && (
-          <EnterprisePagination
+          <Pagination
             totalItems={total}
             currentPage={page}
             pageSize={pageSize}

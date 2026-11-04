@@ -3,8 +3,8 @@
 import React, { useState } from "react";
 import { Copy, Check, AlertCircle } from "lucide-react";
 import toast from "react-hot-toast";
-import GlassCard from "@/components/ui/GlassCard";
-import GlassBadge, { type BadgeVariant } from "@/components/ui/GlassBadge";
+import Card from "@/components/ui/Card";
+import Badge, { type BadgeVariant } from "@/components/ui/Badge";
 import type { AnomalyResult } from "@/types";
 
 interface AnomalyCardProps {
@@ -38,7 +38,7 @@ export default function AnomalyCard({ result }: AnomalyCardProps): React.ReactEl
   }
 
   return (
-    <GlassCard className="bg-card border-border/80 p-4 rounded-lg flex flex-col justify-between hover:border-border-strong transition-all duration-200">
+    <Card className="bg-card border-border/80 p-4 rounded-lg flex flex-col justify-between hover:border-border-strong transition-all duration-200">
       <div className="space-y-3.5">
         {/* Top Header */}
         <div className="flex items-start justify-between gap-2">
@@ -50,7 +50,7 @@ export default function AnomalyCard({ result }: AnomalyCardProps): React.ReactEl
               PRN: {result.enrollment_number || "N/A"}
             </span>
           </div>
-          <GlassBadge variant={risk.variant}>{risk.label}</GlassBadge>
+          <Badge variant={risk.variant}>{risk.label}</Badge>
         </div>
 
         {/* Pattern Notice */}
@@ -143,6 +143,6 @@ export default function AnomalyCard({ result }: AnomalyCardProps): React.ReactEl
           )}
         </button>
       </div>
-    </GlassCard>
+    </Card>
   );
 }

@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { AlertCircle, CheckCircle2 } from "lucide-react";
-import GlassButton from "@/components/ui/GlassButton";
+import Button from "@/components/ui/Button";
 
 interface OnboardingInvalidCardProps {
   message?: string;
@@ -22,7 +22,7 @@ export function OnboardingInvalidCard({ message }: OnboardingInvalidCardProps): 
         </p>
       </div>
       <Link href="/login" className="inline-block">
-        <GlassButton variant="secondary" size="sm">Back to Sign In</GlassButton>
+        <Button variant="secondary" size="sm">Back to Sign In</Button>
       </Link>
     </div>
   );
@@ -41,7 +41,7 @@ export function OnboardingCompletedCard(): React.ReactElement {
         </p>
       </div>
       <Link href="/login" className="inline-block">
-        <GlassButton variant="primary" size="sm">Sign In Now</GlassButton>
+        <Button variant="primary" size="sm">Sign In Now</Button>
       </Link>
     </div>
   );

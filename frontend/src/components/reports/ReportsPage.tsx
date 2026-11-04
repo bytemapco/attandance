@@ -7,11 +7,11 @@ import api, { getApiErrorMessage } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { downloadReport, type ExportFormat } from "@/lib/reports";
 import { useReport } from "@/hooks/useReport";
-import GlassButton from "@/components/ui/GlassButton";
-import GlassEmptyState from "@/components/ui/GlassEmptyState";
-import GlassErrorState from "@/components/ui/GlassErrorState";
-import GlassLoader from "@/components/ui/GlassLoader";
-import GlassPageHeader from "@/components/ui/GlassPageHeader";
+import Button from "@/components/ui/Button";
+import EmptyState from "@/components/ui/EmptyState";
+import ErrorState from "@/components/ui/ErrorState";
+import PageSkeleton from "@/components/ui/PageSkeleton";
+import PageHeader from "@/components/ui/PageHeader";
 import ReportFilterBar from "@/components/reports/ReportFilterBar";
 import RegisterTable from "@/components/reports/RegisterTable";
 import ShortageTable from "@/components/reports/ShortageTable";
@@ -93,21 +93,21 @@ export default function ReportsPage({ description }: ReportsPageProps): React.Re
     }
   };
 
-  if (loadError) return <GlassErrorState message={loadError} onRetry={() => void loadFilters()} />;
-  if (!filters) return <GlassLoader />;
+  if (loadError) return <ErrorState message={loadError} onRetry={() => void loadFilters()} />;
+  if (!filters) return <PageSkeleton />;
   if (filters.classes.length === 0) {
-    return <GlassEmptyState title="No classes yet" message="Reports appear once a class with subjects and a timetable exists." />;
+    return <EmptyState title="No classes yet" message="Reports appear once a class with subjects and a timetable exists." />;
   }
 
   return (
     <div className="space-y-5">
-      <GlassPageHeader
+      <PageHeader
         title="Attendance reports"
         description={description}
         actions={
           <div className="flex gap-2">
             {(["xlsx", "pdf"] as const).map((format) => (
-              <GlassButton
+              <Button
                 key={format}
                 variant="secondary"
                 size="sm"
@@ -117,7 +117,7 @@ export default function ReportsPage({ description }: ReportsPageProps): React.Re
                 onClick={() => void exportAs(format)}
               >
                 {format === "xlsx" ? "Excel" : "PDF"}
-              </GlassButton>
+              </Button>
             ))}
           </div>
         }
@@ -154,11 +154,11 @@ export default function ReportsPage({ description }: ReportsPageProps): React.Re
         ))}
       </div>
       {!ready ? (
-        <GlassEmptyState title="Choose a subject" message="The lecture register shows one subject at a time." />
+        <EmptyState title="Choose a subject" message="The lecture register shows one subject at a time." />
       ) : active.error ? (
-        <GlassErrorState message={active.error} />
+        <ErrorState message={active.error} />
       ) : active.loading || !active.data ? (
-        <GlassLoader />
+        <PageSkeleton />
       ) : (
         <>
           <p className="text-xs text-muted-foreground">

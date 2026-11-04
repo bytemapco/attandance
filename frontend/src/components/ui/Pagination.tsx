@@ -8,9 +8,9 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/components/ui/SelectMenu";
 
-interface EnterprisePaginationProps {
+interface PaginationProps {
   totalItems: number;
   currentPage: number;
   pageSize: number;
@@ -36,7 +36,7 @@ function getPageNumbers(currentPage: number, totalPages: number): (number | stri
   return [1, "...", currentPage - 1, currentPage, currentPage + 1, "...", totalPages];
 }
 
-export default function EnterprisePagination({
+export default function Pagination({
   totalItems,
   currentPage,
   pageSize,
@@ -44,7 +44,7 @@ export default function EnterprisePagination({
   onPageSizeChange,
   itemName = "records",
   pageSizeOptions = [10, 20, 50, 100],
-}: EnterprisePaginationProps): React.JSX.Element {
+}: PaginationProps): React.JSX.Element {
   const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
   const validPage = Math.min(Math.max(1, currentPage), totalPages);
   const startItem = totalItems === 0 ? 0 : (validPage - 1) * pageSize + 1;

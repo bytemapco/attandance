@@ -2,8 +2,8 @@
 
 import React from "react";
 import { Building2, Power, PowerOff, RefreshCw, Edit3, Trash2 } from "lucide-react";
-import GlassBadge from "@/components/ui/GlassBadge";
-import GlassButton from "@/components/ui/GlassButton";
+import Badge from "@/components/ui/Badge";
+import Button from "@/components/ui/Button";
 import type { TenantDetail } from "@/types/tenant";
 
 interface TenantHeaderBannerProps {
@@ -30,37 +30,37 @@ export default function TenantHeaderBanner({
         <div>
           <div className="flex items-center gap-2">
             <h1 className="text-xl font-semibold text-foreground">{tenant.name}</h1>
-            <GlassBadge variant={tenant.status === "ACTIVE" ? "success" : "danger"}>
+            <Badge variant={tenant.status === "ACTIVE" ? "success" : "danger"}>
               {tenant.status}
-            </GlassBadge>
+            </Badge>
           </div>
         </div>
       </div>
 
       <div className="flex flex-wrap items-center gap-2 shrink-0">
-        <GlassButton variant="secondary" onClick={onRefresh} className="gap-1.5">
+        <Button variant="secondary" onClick={onRefresh} className="gap-1.5">
           <RefreshCw size={13} />
           <span>Refresh</span>
-        </GlassButton>
+        </Button>
         {onEdit && (
-          <GlassButton variant="secondary" onClick={onEdit} className="gap-1.5">
+          <Button variant="secondary" onClick={onEdit} className="gap-1.5">
             <Edit3 size={13} />
             <span>Edit Details</span>
-          </GlassButton>
+          </Button>
         )}
-        <GlassButton
+        <Button
           variant={tenant.status === "ACTIVE" ? "secondary" : "primary"}
           onClick={onToggleStatus}
           className="gap-1.5"
         >
           {tenant.status === "ACTIVE" ? <PowerOff size={13} /> : <Power size={13} />}
           <span>{tenant.status === "ACTIVE" ? "Suspend" : "Activate"}</span>
-        </GlassButton>
+        </Button>
         {onDelete && (
-          <GlassButton variant="danger" onClick={onDelete} className="gap-1.5">
+          <Button variant="danger" onClick={onDelete} className="gap-1.5">
             <Trash2 size={13} />
             <span>Delete Institution</span>
-          </GlassButton>
+          </Button>
         )}
       </div>
     </div>

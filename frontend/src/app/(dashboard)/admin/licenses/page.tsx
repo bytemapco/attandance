@@ -5,12 +5,12 @@ import toast from "react-hot-toast";
 import { KeyRound, RefreshCw, Plus } from "lucide-react";
 import { superAdminService } from "@/services/superAdminService";
 import { getApiErrorMessage } from "@/lib/api";
-import GlassBreadcrumb from "@/components/ui/GlassBreadcrumb";
-import GlassPageHeader from "@/components/ui/GlassPageHeader";
+import Breadcrumb from "@/components/ui/Breadcrumb";
+import PageHeader from "@/components/ui/PageHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
-import GlassButton from "@/components/ui/GlassButton";
-import GlassCard from "@/components/ui/GlassCard";
-import GlassInput from "@/components/ui/GlassInput";
+import Button from "@/components/ui/Button";
+import Card from "@/components/ui/Card";
+import Input from "@/components/ui/Input";
 import LicenseRequestListCard from "@/components/admin/LicenseRequestListCard";
 import type { LicenseRequestItem, TenantLicenseUsage } from "@/types/tenant";
 
@@ -67,21 +67,21 @@ export default function TenantLicensesPage(): React.JSX.Element {
 
   return (
     <div className="space-y-6 max-w-5xl">
-      <GlassBreadcrumb
+      <Breadcrumb
         items={[
           { label: "Dashboard", href: "/admin/dashboard" },
           { label: "Licenses" },
         ]}
       />
 
-      <GlassPageHeader
+      <PageHeader
         title="Licenses & Capacity"
         description="Monitor your institution's license usage and request additional seats when needed."
         actions={
-          <GlassButton variant="ghost" onClick={() => void loadData()} className="gap-2">
+          <Button variant="ghost" onClick={() => void loadData()} className="gap-2">
             <RefreshCw size={14} />
             <span>Refresh</span>
-          </GlassButton>
+          </Button>
         }
       />
 
@@ -97,14 +97,14 @@ export default function TenantLicensesPage(): React.JSX.Element {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <GlassCard className="p-5">
+          <Card className="p-5">
             <p className="text-xs text-muted-foreground">Total Licenses</p>
             <p className="text-2xl font-semibold text-primary mt-1">
               {licenseCount.toLocaleString()}
             </p>
             <p className="text-xs text-muted-foreground mt-2">Allocated seats for students & teachers</p>
-          </GlassCard>
-          <GlassCard className="p-5">
+          </Card>
+          <Card className="p-5">
             <p className="text-xs text-muted-foreground">Seats Used</p>
             <p className="text-2xl font-semibold text-primary mt-1">
               {totalUsed.toLocaleString()}
@@ -112,18 +112,18 @@ export default function TenantLicensesPage(): React.JSX.Element {
             <p className="text-xs text-muted-foreground mt-2">
               {usage ? `${usage.student_count} students · ${usage.teacher_count} teachers` : "—"}
             </p>
-          </GlassCard>
-          <GlassCard className="p-5">
+          </Card>
+          <Card className="p-5">
             <p className="text-xs text-muted-foreground">Remaining Seats</p>
             <p className="text-2xl font-semibold text-primary mt-1">
               {(usage?.remaining ?? 0).toLocaleString()}
             </p>
             <p className="text-xs text-muted-foreground mt-2">Available for new users</p>
-          </GlassCard>
+          </Card>
         </div>
       )}
 
-      <GlassCard className="p-5">
+      <Card className="p-5">
         <div className="flex items-center justify-between mb-3">
           <p className="text-xs font-semibold text-primary">Capacity</p>
           <p className="text-xs text-muted-foreground">{pct}% used</p>
@@ -136,10 +136,10 @@ export default function TenantLicensesPage(): React.JSX.Element {
             style={{ width: `${pct}%` }}
           />
         </div>
-      </GlassCard>
+      </Card>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <GlassCard className="p-5 space-y-4">
+        <Card className="p-5 space-y-4">
           <div className="flex items-center gap-2.5">
             <div className="p-2 rounded-lg bg-primary/10 text-primary">
               <KeyRound size={16} />
@@ -153,7 +153,7 @@ export default function TenantLicensesPage(): React.JSX.Element {
           </div>
 
           <form onSubmit={handleSubmitRequest} className="space-y-3">
-            <GlassInput
+            <Input
               label="Number of additional licenses"
               type="number"
               min={1}
@@ -161,12 +161,12 @@ export default function TenantLicensesPage(): React.JSX.Element {
               onChange={(e) => setRequestCount(e.target.value)}
               placeholder="e.g. 10"
             />
-            <GlassButton type="submit" variant="primary" loading={submitting} className="w-full gap-2">
+            <Button type="submit" variant="primary" loading={submitting} className="w-full gap-2">
               <Plus size={14} />
               <span>Submit License Request</span>
-            </GlassButton>
+            </Button>
           </form>
-        </GlassCard>
+        </Card>
 
         <LicenseRequestListCard requests={requests} />
       </div>

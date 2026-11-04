@@ -3,7 +3,7 @@
 import React, { useEffect } from "react";
 import Link from "next/link";
 import { AlertTriangle, RefreshCw, LayoutDashboard } from "lucide-react";
-import GlassButton from "@/components/ui/GlassButton";
+import Button from "@/components/ui/Button";
 
 export default function DashboardError({
   error,
@@ -34,7 +34,7 @@ export default function DashboardError({
           </p>
         )}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-          <GlassButton
+          <Button
             variant="primary"
             size="md"
             icon={<RefreshCw size={14} />}
@@ -42,7 +42,7 @@ export default function DashboardError({
             className="w-full sm:w-auto"
           >
             Try Again
-          </GlassButton>
+          </Button>
           <Link
             href="/admin/dashboard"
             className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2 rounded-md border border-border bg-secondary/50 text-foreground font-semibold text-xs hover:bg-secondary transition-all cursor-pointer"

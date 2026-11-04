@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Check, X, Inbox } from "lucide-react";
-import GlassBadge from "@/components/ui/GlassBadge";
+import Badge from "@/components/ui/Badge";
 import type { LicenseRequestItem, LicenseRequestStatus } from "@/types/tenant";
 import { Skeleton } from "@/components/ui/Skeleton";
 
@@ -103,9 +103,9 @@ export default function LicenseRequestsTable({
                   +{request.requested_count.toLocaleString()}
                 </td>
                 <td className="px-4 py-3.5">
-                  <GlassBadge variant={statusVariant(request.status)}>
+                  <Badge variant={statusVariant(request.status)}>
                     {request.status}
-                  </GlassBadge>
+                  </Badge>
                 </td>
                 <td className="px-4 py-3.5 text-muted-foreground text-xs font-mono">{formatDate(request.created_at)}</td>
                 <td className="px-4 py-3.5 text-muted-foreground text-xs">

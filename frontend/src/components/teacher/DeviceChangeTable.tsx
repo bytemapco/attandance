@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect, useMemo } from "react";
 import { CheckCircle2, XCircle, Smartphone, AlertCircle, Loader2, Search, X } from "lucide-react";
-import GlassTable, { TableColumn } from "@/components/ui/GlassTable";
-import EnterprisePagination from "@/components/ui/EnterprisePagination";
+import DataTable, { TableColumn } from "@/components/ui/DataTable";
+import Pagination from "@/components/ui/Pagination";
 import { useDebounce } from "@/hooks/useDebounce";
 import api, { getApiErrorMessage } from "@/lib/api";
 import { toast } from "react-hot-toast";
@@ -157,14 +157,14 @@ export default function DeviceChangeTable({ requests, onActionComplete }: Device
       </div>
 
       <div className="rounded-lg border border-border bg-card overflow-hidden">
-        <GlassTable
+        <DataTable
           columns={columns}
           data={paginatedRequests as (DeviceChangeRequest & Record<string, unknown>)[]}
           rowKey={(req) => req.id}
           emptyMessage="No device requests match your search."
         />
         {filteredRequests.length > 0 && (
-          <EnterprisePagination
+          <Pagination
             totalItems={filteredRequests.length}
             currentPage={page}
             pageSize={pageSize}

@@ -3,8 +3,8 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { RefreshCw } from "lucide-react";
 import api, { getApiErrorMessage } from "@/lib/api";
-import GlassButton from "@/components/ui/GlassButton";
-import GlassPageHeader from "@/components/ui/GlassPageHeader";
+import Button from "@/components/ui/Button";
+import PageHeader from "@/components/ui/PageHeader";
 import DeviceChangeTable from "@/components/teacher/DeviceChangeTable";
 import { toast } from "react-hot-toast";
 import type { DeviceChangeRequest } from "@/types/models";
@@ -38,19 +38,19 @@ export default function DeviceChangesPage(): React.ReactElement {
 
   return (
     <div className="p-6 md:p-8 max-w-[1400px] mx-auto space-y-8">
-      <GlassPageHeader
+      <PageHeader
         title="Device change requests"
         description="Review student requests to update their registered attendance device."
         className="mb-0"
         actions={
-          <GlassButton
+          <Button
             variant="secondary"
             icon={<RefreshCw size={14} />}
             loading={loading || refreshing}
             onClick={() => void fetchRequests(true)}
           >
             Refresh
-          </GlassButton>
+          </Button>
         }
       />
 

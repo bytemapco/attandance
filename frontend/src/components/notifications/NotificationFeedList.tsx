@@ -3,8 +3,8 @@
 import React, { useState } from "react";
 import { Inbox, Trash2, X } from "lucide-react";
 import { NotificationFeedItem } from "./NotificationFeedItem";
-import GlassConfirmDialog from "@/components/ui/GlassConfirmDialog";
-import GlassErrorState from "@/components/ui/GlassErrorState";
+import ConfirmDialog from "@/components/ui/ConfirmDialog";
+import ErrorState from "@/components/ui/ErrorState";
 import type { NotificationItem } from "@/types/notification";
 import { Skeleton } from "@/components/ui/Skeleton";
 
@@ -61,7 +61,7 @@ export function NotificationFeedList({
 
   if (error && notifications.length === 0) {
     return (
-      <GlassErrorState title="Unable to load notifications" message={error} onRetry={onRetry} />
+      <ErrorState title="Unable to load notifications" message={error} onRetry={onRetry} />
     );
   }
 
@@ -160,7 +160,7 @@ export function NotificationFeedList({
         ))}
       </div>
 
-      <GlassConfirmDialog
+      <ConfirmDialog
         isOpen={confirmDeleteSelectedOpen}
         title="Delete Selected Notifications"
         message={`Delete ${selectedCount} selected notification(s)? This action cannot be undone.`}
@@ -169,7 +169,7 @@ export function NotificationFeedList({
         onCancel={() => setConfirmDeleteSelectedOpen(false)}
         loading={deleting}
       />
-      <GlassConfirmDialog
+      <ConfirmDialog
         isOpen={confirmDeleteAllOpen}
         title="Delete All Notifications"
         message="Clear all notifications from your feed? This action cannot be undone."

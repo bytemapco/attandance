@@ -6,11 +6,11 @@ import toast from "react-hot-toast";
 
 import { superAdminService } from "@/services/superAdminService";
 import { getApiErrorMessage } from "@/lib/api";
-import GlassBreadcrumb from "@/components/ui/GlassBreadcrumb";
-import GlassPageHeader from "@/components/ui/GlassPageHeader";
+import Breadcrumb from "@/components/ui/Breadcrumb";
+import PageHeader from "@/components/ui/PageHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
-import GlassButton from "@/components/ui/GlassButton";
-import GlassCard from "@/components/ui/GlassCard";
+import Button from "@/components/ui/Button";
+import Card from "@/components/ui/Card";
 import SystemMetricsGrid from "@/components/super-admin/SystemMetricsGrid";
 import SystemServicesGrid from "@/components/super-admin/SystemServicesGrid";
 import type { PlatformHealth } from "@/types/tenant";
@@ -44,18 +44,18 @@ export default function PlatformHealthPage(): React.ReactElement {
 
   return (
     <div className="space-y-5 max-w-5xl">
-      <GlassBreadcrumb
+      <Breadcrumb
         items={[
           { label: "Dashboard", href: "/super-admin/dashboard" },
           { label: "System Status" },
         ]}
       />
 
-      <GlassPageHeader
+      <PageHeader
         title="System Status"
         description="Service health and diagnostics."
         actions={
-          <GlassButton
+          <Button
             variant="secondary"
             onClick={() => void fetchHealth(true)}
             disabled={refreshing}
@@ -63,7 +63,7 @@ export default function PlatformHealthPage(): React.ReactElement {
           >
             <RefreshCw size={13} className={refreshing ? "animate-spin" : ""} />
             <span>Refresh</span>
-          </GlassButton>
+          </Button>
         }
       />
 
@@ -86,7 +86,7 @@ export default function PlatformHealthPage(): React.ReactElement {
       ) : (
         <div className="space-y-5">
           {/* Status Header Strip */}
-          <GlassCard className="p-4 flex items-center justify-between gap-3">
+          <Card className="p-4 flex items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               <span
                 className={`h-2.5 w-2.5 rounded-full shrink-0 ${
@@ -109,7 +109,7 @@ export default function PlatformHealthPage(): React.ReactElement {
                 </p>
               </div>
             </div>
-          </GlassCard>
+          </Card>
 
           {/* Vitals KPI Strip */}
           <SystemMetricsGrid health={health} />

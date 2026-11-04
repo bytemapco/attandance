@@ -2,9 +2,9 @@
 
 import React, { useState } from "react";
 import { Save } from "lucide-react";
-import GlassCard from "@/components/ui/GlassCard";
-import GlassInput from "@/components/ui/GlassInput";
-import GlassButton from "@/components/ui/GlassButton";
+import Card from "@/components/ui/Card";
+import Input from "@/components/ui/Input";
+import Button from "@/components/ui/Button";
 import type { TenantDetail } from "@/types/tenant";
 
 interface TenantPoliciesTabProps {
@@ -35,20 +35,20 @@ export default function TenantPoliciesTab({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      <GlassCard className="p-6 space-y-6">
+      <Card className="p-6 space-y-6">
         <div>
           <h3 className="text-sm font-semibold text-foreground">General Settings</h3>
           <p className="text-xs text-muted-foreground">Institution name and license quota.</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <GlassInput
+          <Input
             label="Institution Name"
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
           />
-          <GlassInput
+          <Input
             label="License Quota"
             type="number"
             value={licenseCount}
@@ -59,12 +59,12 @@ export default function TenantPoliciesTab({
         </div>
 
         <div className="flex justify-end pt-2">
-          <GlassButton variant="primary" disabled={saving} className="gap-2 font-semibold">
+          <Button variant="primary" disabled={saving} className="gap-2 font-semibold">
             <Save size={14} />
             <span>{saving ? "Saving..." : "Save Changes"}</span>
-          </GlassButton>
+          </Button>
         </div>
-      </GlassCard>
+      </Card>
     </form>
   );
 }

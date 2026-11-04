@@ -2,8 +2,8 @@
 
 import React, { useState } from "react";
 import { ScanSearch, SlidersHorizontal } from "lucide-react";
-import GlassCard from "@/components/ui/GlassCard";
-import GlassButton from "@/components/ui/GlassButton";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
 
 interface ScannerControlsProps {
   contamination: number;
@@ -45,7 +45,7 @@ export default function ScannerControls({
   }
 
   return (
-    <GlassCard className="bg-card border-border/80 p-3 sm:p-4">
+    <Card className="bg-card border-border/80 p-3 sm:p-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         {/* Left: Sensitivity Segmented Control */}
         <div className="flex flex-wrap items-center gap-2">
@@ -90,7 +90,7 @@ export default function ScannerControls({
 
         {/* Right: Primary Scan Button */}
         <div className="shrink-0">
-          <GlassButton
+          <Button
             variant="primary"
             size="md"
             loading={loading}
@@ -99,7 +99,7 @@ export default function ScannerControls({
             className="w-full sm:w-auto font-medium"
           >
             {loading ? "Scanning..." : "Run Scan"}
-          </GlassButton>
+          </Button>
         </div>
       </div>
 
@@ -122,6 +122,6 @@ export default function ScannerControls({
           <span className="text-muted-foreground text-xs">(Flags top {currentPercent}%)</span>
         </div>
       )}
-    </GlassCard>
+    </Card>
   );
 }

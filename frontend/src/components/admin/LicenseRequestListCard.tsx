@@ -2,8 +2,8 @@
 
 import React from "react";
 import { Inbox } from "lucide-react";
-import GlassCard from "@/components/ui/GlassCard";
-import GlassBadge from "@/components/ui/GlassBadge";
+import Card from "@/components/ui/Card";
+import Badge from "@/components/ui/Badge";
 import type { LicenseRequestItem, LicenseRequestStatus } from "@/types/tenant";
 
 function statusVariant(status: LicenseRequestStatus): "success" | "danger" | "warning" | "info" {
@@ -36,7 +36,7 @@ export default function LicenseRequestListCard({
   requests,
 }: LicenseRequestListCardProps): React.ReactElement {
   return (
-    <GlassCard className="p-5 space-y-4">
+    <Card className="p-5 space-y-4">
       <h3 className="text-sm font-semibold text-primary">Your License Requests</h3>
       {requests.length === 0 ? (
         <div className="py-8 flex flex-col items-center justify-center text-center">
@@ -58,11 +58,11 @@ export default function LicenseRequestListCard({
                   Requested {formatDate(request.created_at)}
                 </p>
               </div>
-              <GlassBadge variant={statusVariant(request.status)}>{request.status}</GlassBadge>
+              <Badge variant={statusVariant(request.status)}>{request.status}</Badge>
             </div>
           ))}
         </div>
       )}
-    </GlassCard>
+    </Card>
   );
 }

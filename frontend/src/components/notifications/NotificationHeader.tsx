@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { CheckCheck, RotateCw, Plus } from "lucide-react";
-import GlassButton from "@/components/ui/GlassButton";
+import Button from "@/components/ui/Button";
 
 interface ActionButtonProps {
   label: string;
@@ -55,9 +55,9 @@ export function NotificationHeader({
         </button>
 
         {unreadCount > 0 && (
-          <GlassButton variant="secondary" icon={<CheckCheck size={14} />} onClick={onMarkAllRead} disabled={loading}>
+          <Button variant="secondary" icon={<CheckCheck size={14} />} onClick={onMarkAllRead} disabled={loading}>
             Mark all read
-          </GlassButton>
+          </Button>
         )}
 
         {actionButton && (

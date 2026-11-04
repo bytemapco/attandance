@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import api, { getApiErrorMessage } from "@/lib/api";
 import type { SystemConfig } from "@/types/systemConfig";
-import GlassErrorState from "@/components/ui/GlassErrorState";
+import ErrorState from "@/components/ui/ErrorState";
 import AttendanceRulesFields, { rulesOf, sameRules, type AttendanceRules } from "../../settings/AttendanceRulesFields";
 import type { StepProps } from "./stepProps";
 
@@ -62,7 +62,7 @@ export default function AttendanceRulesStep({ registerContinueAction }: StepProp
 
   if (loading) return <p role="status" className="text-sm text-muted-foreground">Loading…</p>;
   if (loadFailed || !rules) {
-    return <GlassErrorState title="Could not load the attendance rules" message="Nothing has been changed." retryLabel="Reload" className="p-5 sm:p-8" onRetry={() => void load()} />;
+    return <ErrorState title="Could not load the attendance rules" message="Nothing has been changed." retryLabel="Reload" className="p-5 sm:p-8" onRetry={() => void load()} />;
   }
 
   return <AttendanceRulesFields value={rules} onChange={setRules} />;

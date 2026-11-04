@@ -2,10 +2,10 @@
 
 import React from "react";
 import { AlertCircle, RefreshCw } from "lucide-react";
-import GlassButton from "./GlassButton";
+import Button from "./Button";
 import { cn } from "@/lib/utils";
 
-export interface GlassErrorStateProps {
+export interface ErrorStateProps {
   title?: string;
   message?: string;
   details?: string;
@@ -14,14 +14,14 @@ export interface GlassErrorStateProps {
   className?: string;
 }
 
-export function GlassErrorState({
+export function ErrorState({
   title = "Unable to load data",
   message = "This information could not be loaded. Try again.",
   details,
   retryLabel = "Try again",
   onRetry,
   className = "",
-}: GlassErrorStateProps): React.ReactElement {
+}: ErrorStateProps): React.ReactElement {
   return (
     <div
       role="alert"
@@ -40,18 +40,18 @@ export function GlassErrorState({
       )}
       {onRetry && (
         <div className="mt-5 flex justify-center">
-          <GlassButton
+          <Button
             variant="secondary"
             size="sm"
             onClick={onRetry}
             icon={<RefreshCw size={13} />}
           >
             {retryLabel}
-          </GlassButton>
+          </Button>
         </div>
       )}
     </div>
   );
 }
 
-export default GlassErrorState;
+export default ErrorState;

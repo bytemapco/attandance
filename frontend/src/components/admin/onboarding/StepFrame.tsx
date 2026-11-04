@@ -1,6 +1,6 @@
 import React from "react";
 import { Info } from "lucide-react";
-import GlassCard from "@/components/ui/GlassCard";
+import Card from "@/components/ui/Card";
 
 interface StepFrameProps {
   title: string;
@@ -13,7 +13,7 @@ interface StepFrameProps {
 /** Common frame for one wizard step: heading, what is still needed, then the step's own form. */
 export default function StepFrame({ title, blockers = [], children, scrollContent = true }: StepFrameProps): React.ReactElement {
   return (
-    <GlassCard className="flex min-h-0 flex-1 flex-col gap-3 overflow-hidden p-4 sm:p-5">
+    <Card className="flex min-h-0 flex-1 flex-col gap-3 overflow-hidden p-4 sm:p-5">
       <header className="shrink-0">
         <h2 className="text-xl font-semibold text-foreground">{title}</h2>
       </header>
@@ -35,6 +35,6 @@ export default function StepFrame({ title, blockers = [], children, scrollConten
         </div>
       )}
       <div className={`min-h-0 flex-1 ${scrollContent ? "overflow-y-auto overscroll-contain" : "flex flex-col overflow-visible"}`}>{children}</div>
-    </GlassCard>
+    </Card>
   );
 }

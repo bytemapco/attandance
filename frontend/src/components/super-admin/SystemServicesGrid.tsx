@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Database, Zap, HardDrive, Cpu } from "lucide-react";
-import GlassCard from "@/components/ui/GlassCard";
+import Card from "@/components/ui/Card";
 import type { PlatformHealth, ServiceHealthItem } from "@/types/tenant";
 
 interface SystemServicesGridProps {
@@ -103,7 +103,7 @@ export default function SystemServicesGrid({ health }: SystemServicesGridProps):
   };
 
   return (
-    <GlassCard padding="none" className="overflow-hidden">
+    <Card padding="none" className="overflow-hidden">
       <div className="px-5 py-3 border-b border-border/60 bg-muted/20 flex items-center justify-between">
         <h3 className="text-xs font-semibold text-muted-foreground">
           Infrastructure Services
@@ -138,6 +138,6 @@ export default function SystemServicesGrid({ health }: SystemServicesGridProps):
           </div>
         ))}
       </div>
-    </GlassCard>
+    </Card>
   );
 }

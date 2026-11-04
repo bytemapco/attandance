@@ -3,7 +3,7 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 
-export interface GlassCardProps {
+export interface CardProps {
   children: React.ReactNode;
   className?: string;
   hoverable?: boolean;
@@ -18,13 +18,13 @@ const padMap: Record<"none" | "sm" | "md" | "lg", string> = {
   lg: "p-6 sm:p-8",
 };
 
-export default function GlassCard({
+export default function Card({
   children,
   className = "",
   hoverable = false,
   padding = "md",
   onClick,
-}: GlassCardProps): React.ReactElement {
+}: CardProps): React.ReactElement {
   function handleKeyDown(e: React.KeyboardEvent<HTMLDivElement>): void {
     if (!onClick || (e.key !== "Enter" && e.key !== " ")) return;
     e.preventDefault();

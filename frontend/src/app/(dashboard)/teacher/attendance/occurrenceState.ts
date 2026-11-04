@@ -1,4 +1,4 @@
-import type { BadgeVariant } from "@/components/ui/GlassBadge";
+import type { BadgeVariant } from "@/components/ui/Badge";
 
 export type OccurrenceState = "NOT_STARTED" | "LIVE" | "COMPLETED" | "CANCELLED";
 

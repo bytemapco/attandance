@@ -4,11 +4,11 @@ import React, { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { AlertTriangle, ArrowRight } from "lucide-react";
 import api, { getApiErrorMessage } from "@/lib/api";
-import GlassBadge from "@/components/ui/GlassBadge";
-import GlassEmptyState from "@/components/ui/GlassEmptyState";
-import GlassErrorState from "@/components/ui/GlassErrorState";
-import GlassLoader from "@/components/ui/GlassLoader";
-import GlassPageHeader from "@/components/ui/GlassPageHeader";
+import Badge from "@/components/ui/Badge";
+import EmptyState from "@/components/ui/EmptyState";
+import ErrorState from "@/components/ui/ErrorState";
+import PageSkeleton from "@/components/ui/PageSkeleton";
+import PageHeader from "@/components/ui/PageHeader";
 import type { FlaggedRecord } from "@/types";
 
 const METHOD: Record<string, string> = { AI_BIOMETRIC: "Face", QR_CODE: "QR code", SMART_PASS_OFFLINE: "Smart Pass" };
@@ -35,17 +35,17 @@ export default function ReviewQueuePage(): React.ReactElement {
     void load();
   }, [load]);
 
-  if (error) return <GlassErrorState message={error} onRetry={() => void load()} />;
-  if (!items) return <GlassLoader />;
+  if (error) return <ErrorState message={error} onRetry={() => void load()} />;
+  if (!items) return <PageSkeleton />;
 
   return (
     <div className="space-y-5">
-      <GlassPageHeader
+      <PageHeader
         title="Verify attendance"
         description="Students whose attendance needs your decision. Open the register to mark them present or absent."
       />
       {items.length === 0 ? (
-        <GlassEmptyState title="Nothing to verify" message="Marks that need your check will appear here. Nothing needs your action right now." />
+        <EmptyState title="Nothing to verify" message="Marks that need your check will appear here. Nothing needs your action right now." />
       ) : (
         <ul className="divide-y divide-border overflow-hidden rounded-lg border border-border bg-card">
           {items.map((item) => (
@@ -62,7 +62,7 @@ export default function ReviewQueuePage(): React.ReactElement {
                   {item.remarks ?? "Needs your review"}
                 </p>
               </div>
-              <GlassBadge variant="warning">To verify · {METHOD[item.method] ?? item.method}</GlassBadge>
+              <Badge variant="warning">To verify · {METHOD[item.method] ?? item.method}</Badge>
               <Link
                 href={`/teacher/attendance/${item.occurrence_id}`}
                 className="inline-flex h-9 items-center gap-2 rounded-lg border border-border bg-card px-4 text-xs font-semibold text-foreground outline-none hover:bg-secondary focus-visible:ring-2 focus-visible:ring-ring"

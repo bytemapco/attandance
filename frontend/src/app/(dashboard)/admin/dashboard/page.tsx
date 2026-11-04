@@ -9,10 +9,10 @@ import {
 import api from "@/lib/api";
 import toast from "react-hot-toast";
 import { useAuthStore } from "@/store/authStore";
-import GlassButton from "@/components/ui/GlassButton";
-import GlassPageHeader from "@/components/ui/GlassPageHeader";
-import GlassStatCard from "@/components/ui/GlassStatCard";
-import GlassLoader from "@/components/ui/GlassLoader";
+import Button from "@/components/ui/Button";
+import PageHeader from "@/components/ui/PageHeader";
+import StatCard from "@/components/ui/StatCard";
+import PageSkeleton from "@/components/ui/PageSkeleton";
 import AdminQuickActions from "@/components/admin/AdminQuickActions";
 import SetupGate from "@/components/admin/onboarding/SetupGate";
 import type { AdminStatsResponse } from "@/types";
@@ -78,31 +78,31 @@ export default function AdminDashboardPage(): React.ReactElement {
     await fetchDashboardData();
   };
 
-  if (loading) return <GlassLoader />;
+  if (loading) return <PageSkeleton />;
 
   return (
     <div className="space-y-6 pb-6">
-      <GlassPageHeader
+      <PageHeader
         title={`${greeting}, ${displayName}`}
         description={todayStr}
         className="mb-0"
         actions={
           <>
-            <GlassButton
+            <Button
               variant="secondary"
               icon={<Megaphone size={14} />}
               onClick={() => router.push("/admin/notifications/broadcast")}
             >
               New announcement
-            </GlassButton>
-            <GlassButton
+            </Button>
+            <Button
               variant="secondary"
               icon={<RefreshCw size={14} />}
               loading={refreshing}
               onClick={handleRefresh}
             >
               Refresh
-            </GlassButton>
+            </Button>
           </>
         }
       />
@@ -112,7 +112,7 @@ export default function AdminDashboardPage(): React.ReactElement {
       {/* KPI Metric Strip */}
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <Link href="/admin/users/students" aria-label="View students" className="rounded-lg focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-muted-foreground">
-          <GlassStatCard
+          <StatCard
             icon={<GraduationCap size={20} />}
             label="Students"
             value={stats?.studentCount ?? "—"}
@@ -122,7 +122,7 @@ export default function AdminDashboardPage(): React.ReactElement {
           />
         </Link>
         <Link href="/admin/users/teachers" aria-label="View faculty" className="rounded-lg focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-muted-foreground">
-          <GlassStatCard
+          <StatCard
             icon={<Users size={20} />}
             label="Faculty"
             value={stats?.teacherCount ?? "—"}
@@ -132,7 +132,7 @@ export default function AdminDashboardPage(): React.ReactElement {
           />
         </Link>
         <Link href="/admin/class-management" aria-label="View classes" className="rounded-lg focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-muted-foreground">
-          <GlassStatCard
+          <StatCard
             icon={<BookOpen size={20} />}
             label="Classes"
             value={stats?.classCount ?? "—"}
@@ -141,7 +141,7 @@ export default function AdminDashboardPage(): React.ReactElement {
             interactive
           />
         </Link>
-        <GlassStatCard
+        <StatCard
           icon={<ShieldCheck size={20} />}
           label="Attendance Rate"
           value={stats && (stats.attendanceCount ?? 0) > 0 ? `${stats.attendanceRate ?? 0}%` : "—"}

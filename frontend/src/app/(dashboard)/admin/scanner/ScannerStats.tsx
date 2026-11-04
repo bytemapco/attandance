@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Search, X, Users, AlertTriangle, Activity, ArrowUpDown } from "lucide-react";
-import GlassCard from "@/components/ui/GlassCard";
+import Card from "@/components/ui/Card";
 
 interface ScannerStatsProps {
   totalFlagged: number;
@@ -28,7 +28,7 @@ export default function ScannerStats({
       {/* 3 Metric Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         {/* Flagged Count */}
-        <GlassCard className="p-4 bg-card border-border flex items-center justify-between">
+        <Card className="p-4 bg-card border-border flex items-center justify-between">
           <div>
             <span className="text-xs font-medium text-muted-foreground">Flagged Students</span>
             <p className="text-2xl font-semibold tracking-tight text-foreground mt-0.5 font-mono">
@@ -38,10 +38,10 @@ export default function ScannerStats({
           <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-destructive-soft text-destructive border border-destructive-border">
             <Users size={18} />
           </span>
-        </GlassCard>
+        </Card>
 
         {/* Avg Score */}
-        <GlassCard className="p-4 bg-card border-border flex items-center justify-between">
+        <Card className="p-4 bg-card border-border flex items-center justify-between">
           <div>
             <span className="text-xs font-medium text-muted-foreground">Average Score</span>
             <p className="text-2xl font-semibold tracking-tight text-foreground mt-0.5 font-mono">
@@ -51,10 +51,10 @@ export default function ScannerStats({
           <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-warning-soft text-warning border border-warning-border">
             <Activity size={18} />
           </span>
-        </GlassCard>
+        </Card>
 
         {/* Max Score */}
-        <GlassCard className="p-4 bg-card border-border flex items-center justify-between">
+        <Card className="p-4 bg-card border-border flex items-center justify-between">
           <div>
             <span className="text-xs font-medium text-muted-foreground">Highest Score</span>
             <p className="text-2xl font-semibold tracking-tight text-foreground mt-0.5 font-mono">
@@ -64,7 +64,7 @@ export default function ScannerStats({
           <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent-soft text-accent-strong border border-accent-border">
             <AlertTriangle size={18} />
           </span>
-        </GlassCard>
+        </Card>
       </div>
 
       {/* Filter and Sort Toolbar */}

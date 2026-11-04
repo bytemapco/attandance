@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Search, RotateCcw, RefreshCw, Filter } from "lucide-react";
-import GlassButton from "@/components/ui/GlassButton";
+import Button from "@/components/ui/Button";
 
 import {
   Select,
@@ -10,7 +10,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/components/ui/SelectMenu";
 
 interface AuditFilterBarProps {
   actorSearch: string;
@@ -109,15 +109,15 @@ export default function AuditFilterBar({
           </SelectContent>
         </Select>
 
-        <GlassButton variant="ghost" size="sm" onClick={onReset} className="h-9 px-3 gap-1.5 text-xs text-muted-foreground hover:text-foreground">
+        <Button variant="ghost" size="sm" onClick={onReset} className="h-9 px-3 gap-1.5 text-xs text-muted-foreground hover:text-foreground">
           <RotateCcw size={13} />
           <span>Reset</span>
-        </GlassButton>
+        </Button>
 
-        <GlassButton variant="secondary" size="sm" onClick={onRefresh} className="h-9 px-3 gap-1.5 text-xs">
+        <Button variant="secondary" size="sm" onClick={onRefresh} className="h-9 px-3 gap-1.5 text-xs">
           <RefreshCw size={13} />
           <span>Refresh</span>
-        </GlassButton>
+        </Button>
       </div>
     </div>
   );

@@ -4,8 +4,8 @@ import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Plus, ArrowRight } from "lucide-react";
-import GlassPageHeader from "@/components/ui/GlassPageHeader";
-import GlassButton from "@/components/ui/GlassButton";
+import PageHeader from "@/components/ui/PageHeader";
+import Button from "@/components/ui/Button";
 import TenantTable from "@/components/super-admin/TenantTable";
 import { superAdminService } from "@/services/superAdminService";
 import type { Tenant } from "@/types";
@@ -49,13 +49,13 @@ export default function SuperAdminDashboardPage(): React.ReactElement {
 
   return (
     <div>
-      <GlassPageHeader
+      <PageHeader
         title="Institutions"
         actions={
-          <GlassButton onClick={() => router.push("/super-admin/tenants/provision")} className="gap-2">
+          <Button onClick={() => router.push("/super-admin/tenants/provision")} className="gap-2">
             <Plus size={15} />
             <span>Add Institution</span>
-          </GlassButton>
+          </Button>
         }
       />
 

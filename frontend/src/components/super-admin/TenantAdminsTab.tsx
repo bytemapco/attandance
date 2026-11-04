@@ -3,9 +3,9 @@
 import React, { useState } from "react";
 import { UserPlus, UserCheck, KeyRound, Pencil, Trash2 } from "lucide-react";
 import toast from "react-hot-toast";
-import GlassButton from "@/components/ui/GlassButton";
-import GlassResetPasswordDialog from "@/components/ui/GlassResetPasswordDialog";
-import GlassConfirmDialog from "@/components/ui/GlassConfirmDialog";
+import Button from "@/components/ui/Button";
+import ResetPasswordDialog from "@/components/ui/ResetPasswordDialog";
+import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import TenantAdminEditModal from "@/components/super-admin/TenantAdminEditModal";
 import TenantAdminCreateModal from "@/components/super-admin/TenantAdminCreateModal";
 import { superAdminService } from "@/services/superAdminService";
@@ -73,10 +73,10 @@ export default function TenantAdminsTab({ tenant, onRefresh }: TenantAdminsTabPr
           <h3 className="text-sm font-semibold text-primary">Administrators</h3>
           <p className="text-xs text-muted-foreground">Manage administrators for this institution. Setup links are sent by email.</p>
         </div>
-        <GlassButton variant="primary" onClick={() => setShowAddAdmin(true)} className="gap-1.5 text-xs">
+        <Button variant="primary" onClick={() => setShowAddAdmin(true)} className="gap-1.5 text-xs">
           <UserPlus size={14} />
           <span>Add Administrator</span>
-        </GlassButton>
+        </Button>
       </div>
 
       <div className="bg-card border border-border rounded-lg overflow-hidden">
@@ -165,7 +165,7 @@ export default function TenantAdminsTab({ tenant, onRefresh }: TenantAdminsTabPr
         admin={adminToEdit}
         onSuccess={onRefresh}
       />
-      <GlassConfirmDialog
+      <ConfirmDialog
         isOpen={Boolean(adminToDelete)}
         title="Remove Administrator"
         message={`Are you sure you want to permanently remove administrator '${adminToDelete?.email}' from ${tenant.name}? This action cannot be undone.`}
@@ -174,7 +174,7 @@ export default function TenantAdminsTab({ tenant, onRefresh }: TenantAdminsTabPr
         onCancel={() => setAdminToDelete(null)}
         loading={deleting}
       />
-      <GlassResetPasswordDialog
+      <ResetPasswordDialog
         isOpen={Boolean(adminToReset)}
         onClose={() => setAdminToReset(null)}
         onConfirm={handleSendResetEmail}

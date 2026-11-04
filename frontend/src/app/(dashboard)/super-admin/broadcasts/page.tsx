@@ -5,8 +5,8 @@ import toast from "react-hot-toast";
 
 import { superAdminService } from "@/services/superAdminService";
 import { getApiErrorMessage } from "@/lib/api";
-import GlassBreadcrumb from "@/components/ui/GlassBreadcrumb";
-import GlassPageHeader from "@/components/ui/GlassPageHeader";
+import Breadcrumb from "@/components/ui/Breadcrumb";
+import PageHeader from "@/components/ui/PageHeader";
 import BroadcastForm from "@/components/super-admin/BroadcastForm";
 import BroadcastPreview from "@/components/super-admin/BroadcastPreview";
 import BroadcastHistoryTable from "@/components/super-admin/BroadcastHistoryTable";
@@ -97,14 +97,14 @@ export default function SuperAdminBroadcastsPage(): React.ReactElement {
 
   return (
     <div className="space-y-6 max-w-7xl">
-      <GlassBreadcrumb
+      <Breadcrumb
         items={[
           { label: "Dashboard", href: "/super-admin/dashboard" },
           { label: "Announcements" },
         ]}
       />
 
-      <GlassPageHeader
+      <PageHeader
         title="Announcements"
         actions={
           <div className="flex items-center gap-2">

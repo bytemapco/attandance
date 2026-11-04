@@ -3,8 +3,8 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { History, RefreshCw, Radio, Users, AlertCircle, CheckCircle2, Info, AlertTriangle } from "lucide-react";
 import { superAdminService } from "@/services/superAdminService";
-import GlassCard from "@/components/ui/GlassCard";
-import GlassBadge, { type BadgeVariant } from "@/components/ui/GlassBadge";
+import Card from "@/components/ui/Card";
+import Badge, { type BadgeVariant } from "@/components/ui/Badge";
 import type { BroadcastHistoryItem } from "@/types/tenant";
 
 interface BroadcastHistoryTableProps {
@@ -66,7 +66,7 @@ export default function BroadcastHistoryTable({
   };
 
   return (
-    <GlassCard className="p-6">
+    <Card className="p-6">
       <div className="flex items-center justify-between pb-4 mb-4 border-b border-border">
         <div className="flex items-center gap-3">
           <div className="p-2 rounded-lg bg-secondary text-muted-foreground border border-border shrink-0">
@@ -141,10 +141,10 @@ export default function BroadcastHistoryTable({
                       </span>
                     </td>
                     <td className="py-3 px-3 whitespace-nowrap">
-                      <GlassBadge variant={badge.variant} className="gap-1 text-xs">
+                      <Badge variant={badge.variant} className="gap-1 text-xs">
                         {badge.icon}
                         <span>{item.severity}</span>
-                      </GlassBadge>
+                      </Badge>
                     </td>
                     <td className="py-3 px-3 whitespace-nowrap text-foreground text-xs">
                       {item.delivered_count > 0 ? `${item.delivered_count} users` : "—"}
@@ -167,6 +167,6 @@ export default function BroadcastHistoryTable({
           </table>
         </div>
       )}
-    </GlassCard>
+    </Card>
   );
 }

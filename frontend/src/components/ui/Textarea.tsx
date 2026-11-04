@@ -3,19 +3,19 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 
-export interface GlassTextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
+export interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   label?: string;
   error?: string;
 }
 
-export default function GlassTextarea({
+export default function Textarea({
   label,
   error,
   id,
   className = "",
   disabled,
   ...props
-}: GlassTextareaProps): React.ReactElement {
+}: TextareaProps): React.ReactElement {
   const textareaId = id || (label ? label.toLowerCase().replace(/\s+/g, "-") : undefined);
 
   return (

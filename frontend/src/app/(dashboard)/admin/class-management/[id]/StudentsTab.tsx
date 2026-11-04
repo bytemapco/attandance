@@ -4,9 +4,9 @@ import React, { useState } from "react";
 import { Search, UserMinus, UserPlus } from "lucide-react";
 import toast from "react-hot-toast";
 import api, { getApiErrorMessage } from "@/lib/api";
-import GlassButton from "@/components/ui/GlassButton";
-import GlassInput from "@/components/ui/GlassInput";
-import GlassTable, { type TableColumn } from "@/components/ui/GlassTable";
+import Button from "@/components/ui/Button";
+import Input from "@/components/ui/Input";
+import DataTable, { type TableColumn } from "@/components/ui/DataTable";
 import AddStudentsPanel from "./AddStudentsPanel";
 import ReasonDialog from "@/components/ui/ReasonDialog";
 import type { ClassDetail, ClassMemberItem } from "@/types";
@@ -53,9 +53,9 @@ export default function StudentsTab({ cls, onUpdated }: StudentsTabProps): React
       key: "actions",
       header: "Actions",
       render: (row) => (
-        <GlassButton variant="ghost" size="sm" icon={<UserMinus size={13} />} onClick={() => setRemoving(row)}>
+        <Button variant="ghost" size="sm" icon={<UserMinus size={13} />} onClick={() => setRemoving(row)}>
           Remove
-        </GlassButton>
+        </Button>
       ),
     },
   ];
@@ -64,7 +64,7 @@ export default function StudentsTab({ cls, onUpdated }: StudentsTabProps): React
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="w-full sm:max-w-xs">
-          <GlassInput
+          <Input
             aria-label="Search students"
             placeholder="Search name or enrollment no."
             icon={<Search size={14} />}
@@ -72,12 +72,12 @@ export default function StudentsTab({ cls, onUpdated }: StudentsTabProps): React
             onChange={(event) => setQuery(event.target.value)}
           />
         </div>
-        <GlassButton variant="primary" icon={<UserPlus size={16} />} onClick={() => setAdding(true)}>
+        <Button variant="primary" icon={<UserPlus size={16} />} onClick={() => setAdding(true)}>
           Add students
-        </GlassButton>
+        </Button>
       </div>
       {adding && <AddStudentsPanel cls={cls} onUpdated={onUpdated} onClose={() => setAdding(false)} />}
-      <GlassTable
+      <DataTable
         columns={columns}
         data={visible as MemberRow[]}
         emptyMessage={needle ? "No student matches your search." : "No students in this class yet."}

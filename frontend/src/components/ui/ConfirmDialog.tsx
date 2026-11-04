@@ -2,11 +2,11 @@
 
 import React from "react";
 import { AlertTriangle } from "lucide-react";
-import GlassButton from "./GlassButton";
+import Button from "./Button";
 import ModalFrame from "./ModalFrame";
 import { cn } from "@/lib/utils";
 
-export interface GlassConfirmDialogProps {
+export interface ConfirmDialogProps {
   isOpen: boolean;
   title: string;
   message: string;
@@ -17,7 +17,7 @@ export interface GlassConfirmDialogProps {
   variant?: "danger" | "primary";
 }
 
-export default function GlassConfirmDialog({
+export default function ConfirmDialog({
   isOpen,
   title,
   message,
@@ -26,7 +26,7 @@ export default function GlassConfirmDialog({
   onCancel,
   loading = false,
   variant = "danger",
-}: GlassConfirmDialogProps): React.ReactElement | null {
+}: ConfirmDialogProps): React.ReactElement | null {
   if (!isOpen) return null;
 
   return (
@@ -43,17 +43,17 @@ export default function GlassConfirmDialog({
         </div>
       </div>
       <div className="flex justify-end gap-2 border-t border-border pt-3">
-        <GlassButton variant="ghost" size="sm" onClick={onCancel} disabled={loading}>
+        <Button variant="ghost" size="sm" onClick={onCancel} disabled={loading}>
           Cancel
-        </GlassButton>
-        <GlassButton
+        </Button>
+        <Button
           variant={variant === "danger" ? "danger" : "primary"}
           size="sm"
           onClick={onConfirm}
           loading={loading}
         >
           {confirmLabel}
-        </GlassButton>
+        </Button>
       </div>
     </ModalFrame>
   );

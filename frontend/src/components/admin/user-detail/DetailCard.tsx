@@ -1,5 +1,5 @@
 import React from "react";
-import GlassCard from "@/components/ui/GlassCard";
+import Card from "@/components/ui/Card";
 
 interface DetailCardProps {
   icon: React.ElementType;
@@ -10,7 +10,7 @@ interface DetailCardProps {
 
 export default function DetailCard({ icon: Icon, title, subtitle, children }: DetailCardProps): React.ReactElement {
   return (
-    <GlassCard className="!p-0 overflow-hidden">
+    <Card className="!p-0 overflow-hidden">
       <div className="px-5 py-4 border-b border-border bg-muted/30 flex items-center justify-between">
         <h2 className="text-sm font-semibold text-foreground flex items-center gap-2.5">
           <Icon size={17} className="text-muted-foreground" />
@@ -19,6 +19,6 @@ export default function DetailCard({ icon: Icon, title, subtitle, children }: De
         <span className="text-xs font-medium text-muted-foreground">{subtitle}</span>
       </div>
       <div className="p-4 space-y-1">{children}</div>
-    </GlassCard>
+    </Card>
   );
 }

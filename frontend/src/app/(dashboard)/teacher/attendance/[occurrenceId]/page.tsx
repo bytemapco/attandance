@@ -4,9 +4,9 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 import toast from "react-hot-toast";
 import api, { getApiErrorMessage } from "@/lib/api";
-import GlassConfirmDialog from "@/components/ui/GlassConfirmDialog";
-import GlassErrorState from "@/components/ui/GlassErrorState";
-import GlassLoader from "@/components/ui/GlassLoader";
+import ConfirmDialog from "@/components/ui/ConfirmDialog";
+import ErrorState from "@/components/ui/ErrorState";
+import PageSkeleton from "@/components/ui/PageSkeleton";
 import ReasonDialog from "@/components/ui/ReasonDialog";
 import type { OccurrenceRegisterData } from "@/types";
 import { occurrenceState } from "../occurrenceState";
@@ -152,8 +152,8 @@ export default function OccurrenceAttendancePage(): React.ReactElement {
     onEscape: () => setFullscreen(false),
   });
 
-  if (failed) return <GlassErrorState message="This class could not be loaded." onRetry={() => void load()} />;
-  if (!register) return <GlassLoader />;
+  if (failed) return <ErrorState message="This class could not be loaded." onRetry={() => void load()} />;
+  if (!register) return <PageSkeleton />;
 
   return (
     <div className="flex flex-col gap-5 lg:h-[calc(100dvh-7.5rem)]">
@@ -191,7 +191,7 @@ export default function OccurrenceAttendancePage(): React.ReactElement {
           onMark={markStudent}
         />
       </div>
-      <GlassConfirmDialog
+      <ConfirmDialog
         isOpen={confirmStop}
         title="Stop and lock attendance"
         message={`${counts.WAITING} student${counts.WAITING === 1 ? "" : "s"} still waiting will be recorded absent (or on leave if their leave is approved), and the register will be locked.${changed.length ? ` Your ${changed.length} unsaved change${changed.length === 1 ? "" : "s"} will be saved first.` : ""}`}

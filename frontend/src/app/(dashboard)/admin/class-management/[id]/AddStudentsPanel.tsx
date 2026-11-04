@@ -3,9 +3,9 @@
 import React, { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import api, { getApiErrorMessage } from "@/lib/api";
-import GlassButton from "@/components/ui/GlassButton";
-import GlassCard from "@/components/ui/GlassCard";
-import GlassSearch from "@/components/ui/GlassSearch";
+import Button from "@/components/ui/Button";
+import Card from "@/components/ui/Card";
+import SearchInput from "@/components/ui/SearchInput";
 import type { ClassDetail, StudentResponse } from "@/types";
 
 interface AddStudentsPanelProps {
@@ -73,16 +73,16 @@ export default function AddStudentsPanel({ cls, onUpdated, onClose }: AddStudent
   }
 
   return (
-    <GlassCard className="space-y-3">
+    <Card className="space-y-3">
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-semibold text-foreground">
           Add students from {cls.department_name}
         </h3>
-        <GlassButton variant="ghost" size="sm" onClick={onClose}>
+        <Button variant="ghost" size="sm" onClick={onClose}>
           Close
-        </GlassButton>
+        </Button>
       </div>
-      <GlassSearch placeholder="Search by name or enrollment number" onSearch={setSearch} />
+      <SearchInput placeholder="Search by name or enrollment number" onSearch={setSearch} />
       <ul className="max-h-72 divide-y divide-border overflow-y-auto rounded-lg border border-border">
         {candidates.length === 0 && <li className="p-4 text-center text-xs text-muted-foreground">No students available to add.</li>}
         {candidates.map((s) => (
@@ -96,10 +96,10 @@ export default function AddStudentsPanel({ cls, onUpdated, onClose }: AddStudent
         ))}
       </ul>
       <div className="flex justify-end">
-        <GlassButton variant="primary" disabled={selected.size === 0} loading={saving} onClick={() => void addSelected()}>
+        <Button variant="primary" disabled={selected.size === 0} loading={saving} onClick={() => void addSelected()}>
           Add {selected.size || ""} selected
-        </GlassButton>
+        </Button>
       </div>
-    </GlassCard>
+    </Card>
   );
 }

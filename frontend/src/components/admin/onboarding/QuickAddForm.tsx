@@ -5,7 +5,7 @@ import { HelpCircle } from "lucide-react";
 import { useNameSuggestion } from "@/hooks/useNameSuggestion";
 import { suggestCode, type PresetItem } from "@/lib/onboarding/collegePreset";
 import type { NewSetupItem } from "@/services/setupItems";
-import GlassButton from "@/components/ui/GlassButton";
+import Button from "@/components/ui/Button";
 
 const MIN_NAME_LENGTH = 2;
 
@@ -66,8 +66,8 @@ export default function QuickAddForm({
     event.preventDefault();
     const trimmed = name.trim();
     if (trimmed.length < MIN_NAME_LENGTH) return;
-    const finalCode = (code.trim() || suggestion?.code || suggestCode(trimmed)).toUpperCase();
-    const added = await onAdd([{ name: trimmed, code: finalCode }]);
+    const resolvedCode = (code.trim() || suggestion?.code || suggestCode(trimmed)).toUpperCase();
+    const added = await onAdd([{ name: trimmed, code: resolvedCode }]);
     if (added === 0) return;
     setName("");
     setCode("");
@@ -149,7 +149,7 @@ export default function QuickAddForm({
           />
         </div>
       )}
-      <GlassButton
+      <Button
         type="submit"
         variant="primary"
         loading={busy}
@@ -157,7 +157,7 @@ export default function QuickAddForm({
         className="h-10"
       >
         Add {noun}
-      </GlassButton>
+      </Button>
     </form>
   );
 }

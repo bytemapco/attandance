@@ -7,12 +7,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { User, GraduationCap, Save, X } from "lucide-react";
 import toast from "react-hot-toast";
 import api, { getApiErrorMessage, applyValidationErrorsToForm } from "@/lib/api";
-import GlassBreadcrumb from "@/components/ui/GlassBreadcrumb";
-import GlassPageHeader from "@/components/ui/GlassPageHeader";
-import GlassCard from "@/components/ui/GlassCard";
-import GlassInput from "@/components/ui/GlassInput";
-import GlassButton from "@/components/ui/GlassButton";
-import GlassLoader from "@/components/ui/GlassLoader";
+import Breadcrumb from "@/components/ui/Breadcrumb";
+import PageHeader from "@/components/ui/PageHeader";
+import Card from "@/components/ui/Card";
+import Input from "@/components/ui/Input";
+import Button from "@/components/ui/Button";
+import PageSkeleton from "@/components/ui/PageSkeleton";
 import EditStudentFormFields from "./EditStudentFormFields";
 import { studentUpdateSchema, StudentUpdateFormData } from "@/lib/validations/student";
 import type { StudentResponse, DepartmentResponse } from "@/types";
@@ -118,12 +118,12 @@ export default function EditStudentPage(): React.ReactElement {
     ...departments.map((d) => ({ value: d.id, label: `${d.name} (${d.code})` })),
   ];
 
-  if (loading) return <GlassLoader text="Loading student..." />;
+  if (loading) return <PageSkeleton text="Loading student..." />;
   if (!student) return <div className="text-center py-20 text-muted-foreground">Student not found</div>;
 
   return (
     <div>
-      <GlassBreadcrumb
+      <Breadcrumb
         items={[
           { label: "Admin", href: "/admin/dashboard" },
           { label: "Students", href: "/admin/users/students" },
@@ -131,12 +131,12 @@ export default function EditStudentPage(): React.ReactElement {
           { label: "Edit" },
         ]}
       />
-      <GlassPageHeader title="Edit Student Profile" description="Update student personal and academic details." />
+      <PageHeader title="Edit Student Profile" description="Update student personal and academic details." />
 
       <form onSubmit={handleSubmit(onSubmit)} className="max-w-4xl space-y-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-1 space-y-8">
-            <GlassCard className="!p-0 overflow-hidden">
+            <Card className="!p-0 overflow-hidden">
               <div className="p-5 border-b border-border bg-muted/40">
                 <h3 className="text-base font-semibold text-foreground flex items-center gap-2">
                   <User size={18} className="text-primary" />
@@ -145,18 +145,18 @@ export default function EditStudentPage(): React.ReactElement {
                 <p className="text-xs text-muted-foreground mt-0.5">Core system identifiers.</p>
               </div>
               <div className="p-5 space-y-4">
-                <GlassInput label="Email Address" value={student.email} disabled />
-                <GlassInput
+                <Input label="Email Address" value={student.email} disabled />
+                <Input
                   label="Enrollment Number"
                   {...register("enrollment_number")}
                   error={errors.enrollment_number?.message}
                 />
               </div>
-            </GlassCard>
+            </Card>
           </div>
 
           <div className="lg:col-span-2">
-            <GlassCard className="!p-0 h-full">
+            <Card className="!p-0 h-full">
               <div className="p-5 border-b border-border bg-muted/40 rounded-t-[inherit]">
                 <h3 className="text-base font-semibold text-foreground flex items-center gap-2">
                   <GraduationCap size={18} className="text-primary" />
@@ -171,17 +171,17 @@ export default function EditStudentPage(): React.ReactElement {
                 deptOptions={deptOptions}
                 departmentId={departmentId}
               />
-            </GlassCard>
+            </Card>
           </div>
         </div>
 
         <div className="flex justify-end gap-4 pt-4 pb-12">
-          <GlassButton variant="ghost" type="button" onClick={() => router.back()} icon={<X size={16} />}>
+          <Button variant="ghost" type="button" onClick={() => router.back()} icon={<X size={16} />}>
             Cancel
-          </GlassButton>
-          <GlassButton variant="primary" type="submit" loading={saving} icon={<Save size={16} />}>
+          </Button>
+          <Button variant="primary" type="submit" loading={saving} icon={<Save size={16} />}>
             Save Changes
-          </GlassButton>
+          </Button>
         </div>
       </form>
     </div>

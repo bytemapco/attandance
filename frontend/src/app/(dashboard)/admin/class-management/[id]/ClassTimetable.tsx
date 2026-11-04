@@ -2,7 +2,7 @@
 
 import React, { useMemo, useState } from "react";
 import { Plus } from "lucide-react";
-import GlassButton from "@/components/ui/GlassButton";
+import Button from "@/components/ui/Button";
 import type { ClassDetail, ClassSectionItem } from "@/types";
 import { blockPosition, HOUR_PX, hourRange, toClock, toMinutes, visibleDays, type TimedEntry } from "@/lib/classTimetable";
 import SlotDialog from "./SlotDialog";
@@ -76,9 +76,9 @@ export default function ClassTimetable({ cls, onUpdated }: ClassTimetableProps):
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center gap-2">
-        <GlassButton variant="primary" size="sm" icon={<Plus size={14} />} onClick={() => addAt(1, 9)}>
+        <Button variant="primary" size="sm" icon={<Plus size={14} />} onClick={() => addAt(1, 9)}>
           Add class time
-        </GlassButton>
+        </Button>
         {unscheduled.length > 0 && <span className="text-sm text-muted-foreground">Not on the timetable:</span>}
         {unscheduled.map((s) => (
           <button

@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { Eye, Pencil } from "lucide-react";
-import type { TableColumn } from "@/components/ui/GlassTable";
+import type { TableColumn } from "@/components/ui/DataTable";
 import type { TeacherResponse } from "@/types";
 
 export const teacherColumns: TableColumn<TeacherResponse & Record<string, unknown>>[] = [

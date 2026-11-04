@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Bell, ExternalLink, Smartphone, Eye } from "lucide-react";
-import GlassCard from "@/components/ui/GlassCard";
+import Card from "@/components/ui/Card";
 import type { NotificationBroadcastCreate, NotificationType, NotificationCategory } from "@/types/notification";
 
 interface CampusBroadcastPreviewProps {
@@ -56,7 +56,7 @@ export default function CampusBroadcastPreview({ formData }: CampusBroadcastPrev
       </div>
 
       {/* In-App Feed Card Simulation */}
-      <GlassCard className="p-4 bg-card border border-border space-y-3">
+      <Card className="p-4 bg-card border border-border space-y-3">
         <div className="flex items-center justify-between pb-2 border-b border-border">
           <div className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground">
             <Bell size={13} />
@@ -91,10 +91,10 @@ export default function CampusBroadcastPreview({ formData }: CampusBroadcastPrev
             </div>
           )}
         </div>
-      </GlassCard>
+      </Card>
 
       {/* Mobile Lock Screen Push Banner */}
-      <GlassCard className="p-4 bg-card border border-border space-y-3">
+      <Card className="p-4 bg-card border border-border space-y-3">
         <div className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground pb-2 border-b border-border">
           <Smartphone size={13} />
           <span>Mobile Device Push Notification</span>
@@ -119,7 +119,7 @@ export default function CampusBroadcastPreview({ formData }: CampusBroadcastPrev
             </p>
           </div>
         </div>
-      </GlassCard>
+      </Card>
     </div>
   );
 }

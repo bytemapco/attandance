@@ -2,10 +2,10 @@
 
 import React from "react";
 import { ArrowDown, ArrowUp } from "lucide-react";
-import GlassCard from "./GlassCard";
+import Card from "./Card";
 import { cn } from "@/lib/utils";
 
-export interface GlassStatCardProps {
+export interface StatCardProps {
   icon: React.ReactNode;
   label: string;
   value: string | number;
@@ -27,7 +27,7 @@ const iconColor: Record<string, string> = {
   rose: "text-destructive",
 };
 
-export default function GlassStatCard({
+export default function StatCard({
   icon,
   label,
   value,
@@ -36,11 +36,11 @@ export default function GlassStatCard({
   accentColor = "mineral",
   subtext,
   interactive = false,
-}: GlassStatCardProps): React.ReactElement {
+}: StatCardProps): React.ReactElement {
   const TrendIcon = trendUp ? ArrowUp : ArrowDown;
 
   return (
-    <GlassCard hoverable={interactive} padding="none" className="h-full p-5">
+    <Card hoverable={interactive} padding="none" className="h-full p-5">
       <div className="flex items-center justify-between gap-3">
         <p className="text-sm font-medium text-muted-foreground">{label}</p>
         <span className={cn("shrink-0", iconColor[accentColor] ?? iconColor.mineral)} aria-hidden>
@@ -61,6 +61,6 @@ export default function GlassStatCard({
           {subtext && <span>{subtext}</span>}
         </div>
       )}
-    </GlassCard>
+    </Card>
   );
 }

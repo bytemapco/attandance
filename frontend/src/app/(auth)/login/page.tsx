@@ -11,8 +11,8 @@ import toast from "react-hot-toast";
 import api, { getApiErrorMessage, applyValidationErrorsToForm } from "@/lib/api";
 import { loginSchema, type LoginFormData } from "@/lib/validations/auth";
 import { useAuthStore } from "@/store/authStore";
-import GlassInput from "@/components/ui/GlassInput";
-import GlassButton from "@/components/ui/GlassButton";
+import Input from "@/components/ui/Input";
+import Button from "@/components/ui/Button";
 import ForceChangePasswordModal from "@/components/auth/ForceChangePasswordModal";
 import type { TokenResponse, UserProfile } from "@/types";
 
@@ -109,7 +109,7 @@ export default function LoginPage(): React.ReactElement {
           )}
 
           <div className="space-y-4">
-            <GlassInput
+            <Input
               label="Email"
               type="email"
               placeholder="name@university.edu"
@@ -120,7 +120,7 @@ export default function LoginPage(): React.ReactElement {
             />
 
             <div>
-              <GlassInput
+              <Input
                 label="Password"
                 type="password"
                 placeholder="••••••••"
@@ -141,7 +141,7 @@ export default function LoginPage(): React.ReactElement {
           </div>
 
           <div className="pt-2">
-            <GlassButton
+            <Button
               type="submit"
               variant="primary"
               size="lg"
@@ -149,7 +149,7 @@ export default function LoginPage(): React.ReactElement {
               className="w-full"
             >
               Sign in
-            </GlassButton>
+            </Button>
           </div>
         </form>
       </div>

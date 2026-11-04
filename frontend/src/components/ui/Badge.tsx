@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 
 export type BadgeVariant = "success" | "warning" | "danger" | "info" | "neutral";
 
-export interface GlassBadgeProps {
+export interface BadgeProps {
   variant: BadgeVariant;
   children: React.ReactNode;
   className?: string;
@@ -20,12 +20,12 @@ const badgeVariantClasses: Record<BadgeVariant, string> = {
   neutral: "bg-secondary text-muted-foreground border-border",
 };
 
-export default function GlassBadge({
+export default function Badge({
   variant,
   children,
   className = "",
   icon,
-}: GlassBadgeProps): React.ReactElement {
+}: BadgeProps): React.ReactElement {
   return (
     <span
       className={cn(

@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 import { useMapEvents, useMap } from "react-leaflet";
 import { Navigation } from "lucide-react";
 import toast from "react-hot-toast";
-import GlassButton from "@/components/ui/GlassButton";
+import Button from "@/components/ui/Button";
 import { BRAND_COLORS } from "@/lib/brandColors";
 
 const MapContainer = dynamic(
@@ -179,14 +179,14 @@ export default function GeofenceMap({
 
           {/* Current Location button */}
           <div className="absolute right-3 top-3 z-[400]">
-            <GlassButton
+            <Button
               variant="secondary"
               size="sm"
               icon={<Navigation size={13} className="text-primary" />}
               onClick={handleGetCurrentLocation}
             >
               Current Location
-            </GlassButton>
+            </Button>
           </div>
         </>
       ) : (

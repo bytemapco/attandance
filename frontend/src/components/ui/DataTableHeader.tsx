@@ -11,19 +11,19 @@ export interface TableColumnHeader<T> {
   sortable?: boolean;
 }
 
-interface GlassTableHeaderProps<T> {
+interface DataTableHeaderProps<T> {
   columns: TableColumnHeader<T>[];
   activeSortKey: string | null;
   isAsc: boolean;
   onSort: (key: string) => void;
 }
 
-export default function GlassTableHeader<T>({
+export default function DataTableHeader<T>({
   columns,
   activeSortKey,
   isAsc,
   onSort,
-}: GlassTableHeaderProps<T>): React.ReactElement {
+}: DataTableHeaderProps<T>): React.ReactElement {
   return (
     <thead className="border-b border-border bg-surface">
       <tr>

@@ -3,9 +3,9 @@
 import React from "react";
 import { Plus, Trash2, Shield, Users } from "lucide-react";
 import { UseFormRegister, FieldErrors, UseFieldArrayReturn } from "react-hook-form";
-import GlassCard from "@/components/ui/GlassCard";
-import GlassInput from "@/components/ui/GlassInput";
-import GlassButton from "@/components/ui/GlassButton";
+import Card from "@/components/ui/Card";
+import Input from "@/components/ui/Input";
+import Button from "@/components/ui/Button";
 import type { TenantProvisionFormData } from "@/lib/validations/superAdmin";
 
 interface ProvisionAdminAccountsCardProps {
@@ -22,7 +22,7 @@ export default function ProvisionAdminAccountsCard({
   const { fields, append, remove } = fieldArray;
 
   return (
-    <GlassCard className="p-6 space-y-6">
+    <Card className="p-6 space-y-6">
       <div className="flex items-center justify-between pb-3 border-b border-border">
         <div className="flex items-center gap-3">
           <div className="p-2 rounded-lg bg-primary/10 text-primary">
@@ -38,7 +38,7 @@ export default function ProvisionAdminAccountsCard({
           </div>
         </div>
 
-        <GlassButton
+        <Button
           type="button"
           variant="secondary"
           size="sm"
@@ -46,7 +46,7 @@ export default function ProvisionAdminAccountsCard({
           onClick={() => append({ name: "", email: "", role: "TENANT_ADMIN" })}
         >
           Add Administrator
-        </GlassButton>
+        </Button>
       </div>
 
       {errors.admins?.root && (
@@ -79,14 +79,14 @@ export default function ProvisionAdminAccountsCard({
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <GlassInput
+              <Input
                 label="Full Name"
                 placeholder="e.g. John Doe"
                 {...register(`admins.${index}.name`)}
                 error={errors.admins?.[index]?.name?.message}
               />
 
-              <GlassInput
+              <Input
                 label="Email Address"
                 type="email"
                 placeholder="e.g. principal@school.edu"
@@ -97,6 +97,6 @@ export default function ProvisionAdminAccountsCard({
           </div>
         ))}
       </div>
-    </GlassCard>
+    </Card>
   );
 }

@@ -3,8 +3,8 @@
 import React from "react";
 import { Building } from "lucide-react";
 import { UseFormRegister, FieldErrors } from "react-hook-form";
-import GlassCard from "@/components/ui/GlassCard";
-import GlassInput from "@/components/ui/GlassInput";
+import Card from "@/components/ui/Card";
+import Input from "@/components/ui/Input";
 import type { TenantProvisionFormData } from "@/lib/validations/superAdmin";
 
 interface ProvisionBasicInfoCardProps {
@@ -19,7 +19,7 @@ export default function ProvisionBasicInfoCard({
   onNameChange,
 }: ProvisionBasicInfoCardProps): React.ReactElement {
   return (
-    <GlassCard className="p-6 space-y-6">
+    <Card className="p-6 space-y-6">
       <div className="flex items-center gap-3 pb-3 border-b border-border">
         <div className="p-2 rounded-lg bg-primary/10 text-primary">
           <Building size={18} />
@@ -33,7 +33,7 @@ export default function ProvisionBasicInfoCard({
       </div>
 
       <div className="space-y-4">
-        <GlassInput
+        <Input
           label="Institution Name"
           placeholder="e.g. Oxford Public School or City Engineering College"
           {...register("name")}
@@ -43,7 +43,7 @@ export default function ProvisionBasicInfoCard({
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <GlassInput
+            <Input
               label="URL Slug"
               placeholder="e.g. oxford or city-college"
               {...register("slug")}
@@ -54,7 +54,7 @@ export default function ProvisionBasicInfoCard({
             </span>
           </div>
 
-          <GlassInput
+          <Input
             label="Institution Type"
             value="College / University"
             readOnly
@@ -62,7 +62,7 @@ export default function ProvisionBasicInfoCard({
         </div>
 
         <div className="max-w-sm">
-          <GlassInput
+          <Input
             label="License Quota"
             type="number"
             placeholder="0"
@@ -72,6 +72,6 @@ export default function ProvisionBasicInfoCard({
 
         </div>
       </div>
-    </GlassCard>
+    </Card>
   );
 }

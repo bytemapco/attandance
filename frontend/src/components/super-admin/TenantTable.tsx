@@ -1,8 +1,8 @@
 "use client";
 
 import React from "react";
-import GlassBadge from "@/components/ui/GlassBadge";
-import GlassEmptyState from "@/components/ui/GlassEmptyState";
+import Badge from "@/components/ui/Badge";
+import EmptyState from "@/components/ui/EmptyState";
 import Link from "next/link";
 import { Building2, Power, PowerOff, ExternalLink, Edit3, Trash2 } from "lucide-react";
 import type { Tenant, TenantStatus } from "@/types/tenant";
@@ -59,7 +59,7 @@ export default function TenantTable({
 
   if (tenants.length === 0) {
     return (
-      <GlassEmptyState
+      <EmptyState
         title="No institutions found"
         message="No institutions match your search or filter criteria."
       />
@@ -114,9 +114,9 @@ export default function TenantTable({
                   </td>
 
                   <td className="px-4 py-3.5">
-                    <GlassBadge variant={statusToVariant(tenant.status)}>
+                    <Badge variant={statusToVariant(tenant.status)}>
                       {tenant.status}
-                    </GlassBadge>
+                    </Badge>
                   </td>
 
                   <td className="px-4 py-3.5 text-foreground font-mono font-medium">

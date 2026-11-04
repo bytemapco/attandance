@@ -16,8 +16,8 @@ import {
   type CampusLocationFormData,
 } from "@/lib/validations/campusLocation";
 import type { SystemConfig } from "@/types/systemConfig";
-import GlassErrorState from "@/components/ui/GlassErrorState";
-import GlassLoader from "@/components/ui/GlassLoader";
+import ErrorState from "@/components/ui/ErrorState";
+import PageSkeleton from "@/components/ui/PageSkeleton";
 import RangeSlider from "@/components/ui/RangeSlider";
 import LocationSearchBar from "@/components/location/LocationSearchBar";
 import { useCampusLocationSettings } from "./useCampusLocationSettings";
@@ -159,9 +159,9 @@ export default function CampusLocationCard({
     onStateChange?.({ dirty: !isSaved, active: serverPinned });
   }, [failed, isSaved, loading, onStateChange, serverPinned]);
 
-  if (loading) return <GlassLoader />;
+  if (loading) return <PageSkeleton />;
   if (failed) {
-    return <GlassErrorState title="Could not load campus settings" message="Your saved location has not changed. Reload it before making edits." retryLabel="Reload settings" className="p-5 sm:p-8" onRetry={() => void reload()} />;
+    return <ErrorState title="Could not load campus settings" message="Your saved location has not changed. Reload it before making edits." retryLabel="Reload settings" className="p-5 sm:p-8" onRetry={() => void reload()} />;
   }
 
   return (

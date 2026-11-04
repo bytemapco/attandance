@@ -15,11 +15,11 @@ import toast from "react-hot-toast";
 
 import api, { getApiErrorMessage } from "@/lib/api";
 import { cn } from "@/lib/utils";
-import GlassBreadcrumb from "@/components/ui/GlassBreadcrumb";
-import GlassErrorState from "@/components/ui/GlassErrorState";
-import GlassLoader from "@/components/ui/GlassLoader";
-import GlassBadge from "@/components/ui/GlassBadge";
-import GlassButton from "@/components/ui/GlassButton";
+import Breadcrumb from "@/components/ui/Breadcrumb";
+import ErrorState from "@/components/ui/ErrorState";
+import PageSkeleton from "@/components/ui/PageSkeleton";
+import Badge from "@/components/ui/Badge";
+import Button from "@/components/ui/Button";
 import ClassTimetable from "./ClassTimetable";
 import StudentsTab from "./StudentsTab";
 import type { ClassDetail } from "@/types";
@@ -63,8 +63,8 @@ export default function ClassDetailPage(): React.ReactElement {
     }
   }
 
-  if (error) return <GlassErrorState message={error} onRetry={() => void load()} />;
-  if (!cls) return <GlassLoader />;
+  if (error) return <ErrorState message={error} onRetry={() => void load()} />;
+  if (!cls) return <PageSkeleton />;
 
   const incompleteSubjects = cls.sections.filter((s) => !s.teacher_id || s.schedule.length === 0).length;
   const isNeedsSetup = (cls.subject_count || 0) === 0 || incompleteSubjects > 0;
@@ -76,7 +76,7 @@ export default function ClassDetailPage(): React.ReactElement {
   return (
     <div className="space-y-5">
       {/* Breadcrumb Navigation */}
-      <GlassBreadcrumb
+      <Breadcrumb
         items={[
           { label: "Admin", href: "/admin/dashboard" },
           { label: "Classes", href: "/admin/class-management" },
@@ -88,7 +88,7 @@ export default function ClassDetailPage(): React.ReactElement {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-border/70">
         <div>
           <div className="flex items-center gap-3">
-            <GlassButton
+            <Button
               variant="ghost"
               size="sm"
               icon={<ArrowLeft size={14} />}
@@ -96,7 +96,7 @@ export default function ClassDetailPage(): React.ReactElement {
               className="text-xs -ml-2"
             >
               Classes
-            </GlassButton>
+            </Button>
             <span className="text-muted-foreground/50">|</span>
             <h1 className="text-2xl font-semibold tracking-tight text-foreground">
               {cls.code}
@@ -112,9 +112,9 @@ export default function ClassDetailPage(): React.ReactElement {
                 <option key={number} value={number}>Semester {number}</option>
               ))}
             </select>
-            <GlassBadge variant={cls.status === "ACTIVE" ? "success" : "neutral"}>
+            <Badge variant={cls.status === "ACTIVE" ? "success" : "neutral"}>
               {cls.status}
-            </GlassBadge>
+            </Badge>
           </div>
 
           <div className="flex flex-wrap items-center gap-3 mt-2 text-xs text-muted-foreground">

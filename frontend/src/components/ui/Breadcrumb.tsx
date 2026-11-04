@@ -10,12 +10,12 @@ export interface BreadcrumbItem {
   href?: string;
 }
 
-export interface GlassBreadcrumbProps {
+export interface BreadcrumbProps {
   items: BreadcrumbItem[];
   className?: string;
 }
 
-export default function GlassBreadcrumb({ items, className = "" }: GlassBreadcrumbProps): React.ReactElement {
+export default function Breadcrumb({ items, className = "" }: BreadcrumbProps): React.ReactElement {
   return (
     <nav aria-label="Breadcrumb" className={cn("mb-4 flex items-center text-xs text-muted-foreground", className)}>
       <ol className="flex items-center gap-1.5 flex-wrap">

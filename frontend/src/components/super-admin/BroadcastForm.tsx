@@ -2,8 +2,8 @@
 
 import React from "react";
 import { Send, Radio, Info, AlertTriangle, AlertCircle, CheckCircle2 } from "lucide-react";
-import GlassCard from "@/components/ui/GlassCard";
-import GlassButton from "@/components/ui/GlassButton";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
 import type { GlobalBroadcastRequest } from "@/types/tenant";
 import {
   Select,
@@ -11,7 +11,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/components/ui/SelectMenu";
 
 interface BroadcastFormProps {
   form: GlobalBroadcastRequest;
@@ -74,7 +74,7 @@ export default function BroadcastForm({
   submitting,
 }: BroadcastFormProps): React.ReactElement {
   return (
-    <GlassCard className="p-6">
+    <Card className="p-6">
       <div className="flex items-center gap-3 pb-4 mb-4 border-b border-border">
         <div className="p-2 rounded-lg bg-secondary text-primary border border-border shrink-0">
           <Radio size={18} />
@@ -177,7 +177,7 @@ export default function BroadcastForm({
 
         {/* Submit */}
         <div className="pt-2 flex justify-end">
-          <GlassButton
+          <Button
             type="submit"
             variant="primary"
             loading={submitting}
@@ -186,9 +186,9 @@ export default function BroadcastForm({
           >
             <Send size={13} />
             <span>Send Announcement</span>
-          </GlassButton>
+          </Button>
         </div>
       </form>
-    </GlassCard>
+    </Card>
   );
 }

@@ -3,7 +3,7 @@
 import React from "react";
 import { Search, Check, X } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { ComboboxOption } from "./GlassCombobox";
+import type { ComboboxOption } from "./Combobox";
 
 interface ComboboxDropdownProps {
   searchInputRef: React.RefObject<HTMLInputElement | null>;

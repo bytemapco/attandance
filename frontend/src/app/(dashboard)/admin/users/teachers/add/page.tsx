@@ -7,11 +7,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { User, PlusCircle, X, Lock } from "lucide-react";
 import toast from "react-hot-toast";
 import api, { getApiErrorMessage, applyValidationErrorsToForm } from "@/lib/api";
-import GlassBreadcrumb from "@/components/ui/GlassBreadcrumb";
-import GlassPageHeader from "@/components/ui/GlassPageHeader";
-import GlassCard from "@/components/ui/GlassCard";
-import GlassInput from "@/components/ui/GlassInput";
-import GlassButton from "@/components/ui/GlassButton";
+import Breadcrumb from "@/components/ui/Breadcrumb";
+import PageHeader from "@/components/ui/PageHeader";
+import Card from "@/components/ui/Card";
+import Input from "@/components/ui/Input";
+import Button from "@/components/ui/Button";
 import TeacherFormProfile from "./TeacherFormProfile";
 import { teacherFormSchema, TeacherFormData } from "@/lib/validations/teacher";
 import type { DepartmentResponse, DesignationResponse, TeacherResponse } from "@/types";
@@ -94,14 +94,14 @@ export default function AddTeacherPage(): React.ReactElement {
 
   return (
     <div>
-      <GlassBreadcrumb
+      <Breadcrumb
         items={[
           { label: "Admin", href: "/admin/dashboard" },
           { label: "Teachers", href: "/admin/users/teachers" },
           { label: "Add New" },
         ]}
       />
-      <GlassPageHeader
+      <PageHeader
         title="Add Teacher"
         description="Create a new teacher account with FK-linked department and designation"
       />
@@ -109,7 +109,7 @@ export default function AddTeacherPage(): React.ReactElement {
       <form noValidate onSubmit={handleSubmit(onSubmit)} className="max-w-4xl space-y-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-1 space-y-6">
-            <GlassCard className="!p-0 overflow-hidden">
+            <Card className="!p-0 overflow-hidden">
               <div className="p-5 border-b border-border bg-muted/40">
                 <h3 className="text-base font-semibold text-foreground flex items-center gap-2">
                   <User size={18} className="text-primary" />
@@ -118,14 +118,14 @@ export default function AddTeacherPage(): React.ReactElement {
                 <p className="text-xs text-muted-foreground mt-0.5">Core system credentials.</p>
               </div>
               <div className="p-5 space-y-4">
-                <GlassInput
+                <Input
                   label="Email Address"
                   type="email"
                   placeholder="teacher@university.edu"
                   {...register("email")}
                   error={errors.email?.message}
                 />
-                <GlassInput
+                <Input
                   label="Employee ID"
                   placeholder="e.g. EMP2024001"
                   {...register("employee_id")}
@@ -136,7 +136,7 @@ export default function AddTeacherPage(): React.ReactElement {
                   <span>A temporary password is generated and emailed to this teacher. They choose a new one on first sign-in.</span>
                 </div>
               </div>
-            </GlassCard>
+            </Card>
           </div>
 
           <div className="lg:col-span-2">
@@ -151,12 +151,12 @@ export default function AddTeacherPage(): React.ReactElement {
         </div>
 
         <div className="flex justify-end gap-4 pt-4 pb-12">
-          <GlassButton variant="ghost" type="button" onClick={() => router.back()} icon={<X size={16} />}>
+          <Button variant="ghost" type="button" onClick={() => router.back()} icon={<X size={16} />}>
             Cancel
-          </GlassButton>
-          <GlassButton variant="primary" type="submit" loading={loading} icon={<PlusCircle size={16} />}>
+          </Button>
+          <Button variant="primary" type="submit" loading={loading} icon={<PlusCircle size={16} />}>
             Create Teacher
-          </GlassButton>
+          </Button>
         </div>
       </form>
     </div>

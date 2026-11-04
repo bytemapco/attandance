@@ -13,10 +13,10 @@ import {
   stepIndexById,
   type StepId,
 } from "@/lib/onboarding/setupSteps";
-import GlassButton from "@/components/ui/GlassButton";
-import GlassCard from "@/components/ui/GlassCard";
-import GlassLoader from "@/components/ui/GlassLoader";
-import GlassErrorState from "@/components/ui/GlassErrorState";
+import Button from "@/components/ui/Button";
+import Card from "@/components/ui/Card";
+import PageSkeleton from "@/components/ui/PageSkeleton";
+import ErrorState from "@/components/ui/ErrorState";
 import SetupStepper from "./SetupStepper";
 import StepFrame from "./StepFrame";
 import type { StepProps } from "./steps/stepProps";
@@ -63,12 +63,12 @@ export default function OnboardingWizard({ initialStepId = null }: OnboardingWiz
     }
   }, [status, initialStepId]);
 
-  if (loading) return <div className="flex min-h-0 flex-1 items-center justify-center"><GlassLoader /></div>;
-  if (failed || !status) return <div className="flex min-h-0 flex-1 items-center justify-center"><GlassErrorState message="Could not load your setup progress." onRetry={() => void refresh()} /></div>;
+  if (loading) return <div className="flex min-h-0 flex-1 items-center justify-center"><PageSkeleton /></div>;
+  if (failed || !status) return <div className="flex min-h-0 flex-1 items-center justify-center"><ErrorState message="Could not load your setup progress." onRetry={() => void refresh()} /></div>;
 
   if (status.completed) {
     return (
-      <GlassCard className="flex flex-col items-center gap-3 p-10 text-center">
+      <Card className="flex flex-col items-center gap-3 p-10 text-center">
         <CheckCircle2 size={40} className="text-success" aria-hidden />
         <h2 className="text-xl font-semibold text-foreground">Setup is complete</h2>
         <p className="max-w-md text-sm text-muted-foreground">Everything required for attendance is in place. You can change any of it from Master Data or Settings.</p>
@@ -78,7 +78,7 @@ export default function OnboardingWizard({ initialStepId = null }: OnboardingWiz
         >
           Go to dashboard
         </Link>
-      </GlassCard>
+      </Card>
     );
   }
 
@@ -118,13 +118,13 @@ export default function OnboardingWizard({ initialStepId = null }: OnboardingWiz
 
         <div className="flex shrink-0 flex-col gap-2 border-t border-border pt-2 sm:flex-row sm:items-center sm:justify-between">
           {index > 0 ? (
-            <GlassButton variant="ghost" icon={<ArrowLeft size={15} />} onClick={() => setIndex(index - 1)}>
+            <Button variant="ghost" icon={<ArrowLeft size={15} />} onClick={() => setIndex(index - 1)}>
               Back
-            </GlassButton>
+            </Button>
           ) : <span />}
           <div className="flex items-center justify-end gap-3">
             {!last && (
-              <GlassButton
+              <Button
                 variant="primary"
                 loading={continuing}
                 disabled={continuing || (!savesOnContinue && !canContinue(step, status.checks))}
@@ -132,7 +132,7 @@ export default function OnboardingWizard({ initialStepId = null }: OnboardingWiz
               >
                 {continueLabel}
                 <ArrowRight size={15} className="ml-1.5" aria-hidden />
-              </GlassButton>
+              </Button>
             )}
           </div>
         </div>

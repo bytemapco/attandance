@@ -4,13 +4,13 @@ import React, { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export interface GlassInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   error?: string;
   icon?: React.ReactNode;
 }
 
-export default function GlassInput({
+export default function Input({
   label,
   error,
   icon,
@@ -19,7 +19,7 @@ export default function GlassInput({
   className = "",
   disabled,
   ...props
-}: GlassInputProps): React.ReactElement {
+}: InputProps): React.ReactElement {
   const [showPassword, setShowPassword] = useState(false);
   const isPassword = type === "password";
   const resolvedType = isPassword ? (showPassword ? "text" : "password") : type;

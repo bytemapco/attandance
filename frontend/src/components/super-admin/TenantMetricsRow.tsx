@@ -2,7 +2,7 @@
 
 import React from "react";
 import { GraduationCap, Users, Radio, Building2, ShieldCheck } from "lucide-react";
-import GlassCard from "@/components/ui/GlassCard";
+import Card from "@/components/ui/Card";
 import type { TenantDetail } from "@/types/tenant";
 
 interface TenantMetricsRowProps {
@@ -27,7 +27,7 @@ export default function TenantMetricsRow({
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
       {/* Students Card */}
-      <GlassCard className="p-4 flex flex-col justify-center">
+      <Card className="p-4 flex flex-col justify-center">
         <div className="flex items-center gap-3">
           <div className="p-2.5 rounded-lg bg-secondary text-muted-foreground border border-border">
             <GraduationCap size={20} />
@@ -39,10 +39,10 @@ export default function TenantMetricsRow({
             </p>
           </div>
         </div>
-      </GlassCard>
+      </Card>
 
       {/* Faculty Card */}
-      <GlassCard className="p-4 flex flex-col justify-center">
+      <Card className="p-4 flex flex-col justify-center">
         <div className="flex items-center gap-3">
           <div className="p-2.5 rounded-lg bg-accent-soft text-accent-strong border border-accent-border">
             <Users size={20} />
@@ -54,10 +54,10 @@ export default function TenantMetricsRow({
             </p>
           </div>
         </div>
-      </GlassCard>
+      </Card>
 
       {/* License Usage Card */}
-      <GlassCard className="p-4 flex flex-col justify-between">
+      <Card className="p-4 flex flex-col justify-between">
         <div className="flex items-center gap-3">
           <div className="p-2.5 rounded-lg bg-secondary text-primary border border-border">
             <ShieldCheck size={20} />
@@ -83,10 +83,10 @@ export default function TenantMetricsRow({
             <span>{capacityPct}%</span>
           </div>
         </div>
-      </GlassCard>
+      </Card>
 
       {/* Academic Structure Card */}
-      <GlassCard className="p-4 flex flex-col justify-center">
+      <Card className="p-4 flex flex-col justify-center">
         <div className="flex items-center gap-3">
           <div className="p-2.5 rounded-lg bg-secondary text-muted-foreground border border-border">
             <Building2 size={20} />
@@ -98,10 +98,10 @@ export default function TenantMetricsRow({
             </p>
           </div>
         </div>
-      </GlassCard>
+      </Card>
 
       {/* Attendance Activity Card */}
-      <GlassCard className="p-4 flex flex-col justify-center">
+      <Card className="p-4 flex flex-col justify-center">
         <div className="flex items-center gap-3">
           <div className="p-2.5 rounded-lg bg-success-soft text-success border border-success-border">
             <Radio size={20} />
@@ -113,7 +113,7 @@ export default function TenantMetricsRow({
             </p>
           </div>
         </div>
-      </GlassCard>
+      </Card>
     </div>
   );
 }

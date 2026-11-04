@@ -3,8 +3,8 @@
 import React, { useState } from "react";
 import { X, Copy, Check, ShieldAlert, Clock, User, Globe } from "lucide-react";
 import type { SuperAdminAuditLog } from "@/types";
-import GlassBadge, { type BadgeVariant } from "@/components/ui/GlassBadge";
-import GlassButton from "@/components/ui/GlassButton";
+import Badge, { type BadgeVariant } from "@/components/ui/Badge";
+import Button from "@/components/ui/Button";
 import ModalFrame from "@/components/ui/ModalFrame";
 import toast from "react-hot-toast";
 
@@ -81,9 +81,9 @@ export default function AuditDetailModal({
           <div>
             <div className="flex items-center gap-2">
               <h3 className="text-base font-semibold text-foreground">{formatEventTitle(log.event_type)}</h3>
-              <GlassBadge variant={getSeverityVariant(log.severity)}>
+              <Badge variant={getSeverityVariant(log.severity)}>
                 {log.severity}
-              </GlassBadge>
+              </Badge>
             </div>
             <p className="text-xs text-muted-foreground mt-0.5">
               {log.tenant_name && log.tenant_name !== "Platform Global" ? log.tenant_name : "Global Platform"}
@@ -183,9 +183,9 @@ export default function AuditDetailModal({
 
       {/* Modal Footer */}
       <div className="px-6 py-3.5 border-t border-border flex justify-end bg-card">
-        <GlassButton variant="secondary" onClick={onClose}>
+        <Button variant="secondary" onClick={onClose}>
           Close
-        </GlassButton>
+        </Button>
       </div>
     </ModalFrame>
   );

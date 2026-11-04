@@ -8,7 +8,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-} from "@/components/ui/select";
+} from "@/components/ui/SelectMenu";
 import { cn } from "@/lib/utils";
 
 export interface FilterOption {
@@ -25,7 +25,7 @@ export interface ToolbarFilterConfig {
   icon?: React.ReactNode;
 }
 
-export interface EnterpriseTableToolbarProps {
+export interface TableToolbarProps {
   searchPlaceholder?: string;
   searchValue?: string;
   onSearch: (value: string) => void;
@@ -41,7 +41,7 @@ export interface EnterpriseTableToolbarProps {
   onStatusChange?: (value: string) => void;
 }
 
-export default function EnterpriseTableToolbar({
+export default function TableToolbar({
   searchPlaceholder = "Search by name, email, ID...",
   searchValue = "",
   onSearch,
@@ -54,7 +54,7 @@ export default function EnterpriseTableToolbar({
   statusOptions = [],
   selectedStatus = "all",
   onStatusChange,
-}: EnterpriseTableToolbarProps): React.ReactElement {
+}: TableToolbarProps): React.ReactElement {
   // Merge legacy filters into unified list if filters array not directly provided
   const resolvedFilters: ToolbarFilterConfig[] = filters ?? [
     ...(filterOptions.length > 0 && onFilterChange

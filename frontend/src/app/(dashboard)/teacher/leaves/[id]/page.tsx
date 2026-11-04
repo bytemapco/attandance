@@ -5,11 +5,11 @@ import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft, User, Calendar, Hash } from "lucide-react";
 import toast from "react-hot-toast";
 import api, { getApiErrorMessage } from "@/lib/api";
-import GlassBreadcrumb from "@/components/ui/GlassBreadcrumb";
-import GlassPageHeader from "@/components/ui/GlassPageHeader";
-import GlassCard from "@/components/ui/GlassCard";
-import GlassButton from "@/components/ui/GlassButton";
-import GlassLoader from "@/components/ui/GlassLoader";
+import Breadcrumb from "@/components/ui/Breadcrumb";
+import PageHeader from "@/components/ui/PageHeader";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import PageSkeleton from "@/components/ui/PageSkeleton";
 import LeaveDecisionCard from "@/components/teacher/LeaveDecisionCard";
 import LeaveDocumentViewer from "@/components/teacher/LeaveDocumentViewer";
 import type { PendingLeaveItem } from "@/types";
@@ -72,7 +72,7 @@ export default function LeaveReviewDetailPage(): React.ReactElement {
     }
   };
 
-  if (loading) return <GlassLoader text="Loading leave application & attached records..." />;
+  if (loading) return <PageSkeleton text="Loading leave application & attached records..." />;
   if (!leave) return <div className="text-center py-20 text-muted-foreground">Leave application not found.</div>;
 
   const fromDate = new Date(leave.start_date).toLocaleDateString(undefined, {
@@ -90,7 +90,7 @@ export default function LeaveReviewDetailPage(): React.ReactElement {
 
   return (
     <div className="space-y-6 pb-12 max-w-7xl mx-auto">
-      <GlassBreadcrumb
+      <Breadcrumb
         items={[
           { label: "Faculty", href: "/teacher/dashboard" },
           { label: "Leave Requests", href: "/teacher/leaves" },
@@ -99,22 +99,22 @@ export default function LeaveReviewDetailPage(): React.ReactElement {
       />
 
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-border pb-4">
-        <GlassPageHeader
+        <PageHeader
           title="Leave Application Adjudication"
           description={`Formal faculty review and verification of student leave application #${leave.id.slice(0, 8)}`}
         />
-        <GlassButton
+        <Button
           variant="ghost"
           icon={<ArrowLeft size={15} />}
           onClick={() => router.push("/teacher/leaves")}
         >
           Back to Leave Roster
-        </GlassButton>
+        </Button>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         <div className="lg:col-span-5 space-y-6">
-          <GlassCard className="p-6 bg-card border border-border space-y-4">
+          <Card className="p-6 bg-card border border-border space-y-4">
             <div className="flex items-center gap-3 pb-3 border-b border-border">
               <div className="w-12 h-12 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-semibold text-lg shrink-0">
                 <User size={22} />
@@ -146,7 +146,7 @@ export default function LeaveReviewDetailPage(): React.ReactElement {
                 </div>
               </div>
             </div>
-          </GlassCard>
+          </Card>
 
           <LeaveDecisionCard
             submitting={submitting}

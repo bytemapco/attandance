@@ -7,9 +7,9 @@ import toast from "react-hot-toast";
 import { getApiErrorMessage } from "@/lib/api";
 import { useCopyToClipboard } from "@/hooks/useCopyToClipboard";
 import { sendPasswordReset } from "@/services/adminUsers";
-import GlassBreadcrumb from "@/components/ui/GlassBreadcrumb";
-import GlassButton from "@/components/ui/GlassButton";
-import GlassResetPasswordDialog from "@/components/ui/GlassResetPasswordDialog";
+import Breadcrumb from "@/components/ui/Breadcrumb";
+import Button from "@/components/ui/Button";
+import ResetPasswordDialog from "@/components/ui/ResetPasswordDialog";
 import { ClipboardProvider } from "./ClipboardContext";
 
 interface BreadcrumbItem {
@@ -60,7 +60,7 @@ export default function UserDetailView({
   return (
     <ClipboardProvider value={clipboard}>
       <div className="space-y-6">
-        <GlassBreadcrumb items={breadcrumb} />
+        <Breadcrumb items={breadcrumb} />
 
         <div className="rounded-lg border border-border bg-card p-6 sm:p-7">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
@@ -98,24 +98,24 @@ export default function UserDetailView({
             </div>
 
             <div className="flex items-center justify-center sm:justify-end gap-3 pt-3 sm:pt-0 border-t sm:border-t-0 border-border">
-              <GlassButton variant="primary" size="md" icon={<Pencil size={15} />} onClick={() => router.push(editHref)}>
+              <Button variant="primary" size="md" icon={<Pencil size={15} />} onClick={() => router.push(editHref)}>
                 Edit Profile
-              </GlassButton>
-              <GlassButton
+              </Button>
+              <Button
                 variant="secondary"
                 size="md"
                 icon={<KeyRound size={15} className="text-muted-foreground" />}
                 onClick={() => setIsResetDialogOpen(true)}
               >
                 Reset Password
-              </GlassButton>
+              </Button>
             </div>
           </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">{children}</div>
 
-        <GlassResetPasswordDialog
+        <ResetPasswordDialog
           isOpen={isResetDialogOpen}
           onClose={() => setIsResetDialogOpen(false)}
           onConfirm={handleResetPassword}

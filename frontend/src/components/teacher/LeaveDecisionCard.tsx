@@ -2,8 +2,8 @@
 
 import React, { useState } from "react";
 import { CheckCircle2, XCircle, ShieldCheck } from "lucide-react";
-import GlassButton from "@/components/ui/GlassButton";
-import GlassCard from "@/components/ui/GlassCard";
+import Button from "@/components/ui/Button";
+import Card from "@/components/ui/Card";
 
 interface LeaveDecisionCardProps {
   submitting: boolean;
@@ -21,7 +21,7 @@ export default function LeaveDecisionCard({
   };
 
   return (
-    <GlassCard className="p-6 bg-card border border-border space-y-5">
+    <Card className="p-6 bg-card border border-border space-y-5">
       <div className="flex items-center gap-2.5 pb-3 border-b border-border">
         <div className="p-2 rounded-lg bg-success/10 text-success">
           <ShieldCheck size={18} />
@@ -51,7 +51,7 @@ export default function LeaveDecisionCard({
       </div>
 
       <div className="grid grid-cols-2 gap-3 pt-2">
-        <GlassButton
+        <Button
           variant="secondary"
           disabled={submitting}
           onClick={() => handleSubmit("REJECTED")}
@@ -59,17 +59,17 @@ export default function LeaveDecisionCard({
           className="w-full text-destructive"
         >
           Reject leave
-        </GlassButton>
+        </Button>
 
-        <GlassButton
+        <Button
           disabled={submitting}
           onClick={() => handleSubmit("APPROVED")}
           icon={<CheckCircle2 size={16} />}
           className="w-full"
         >
           Approve leave
-        </GlassButton>
+        </Button>
       </div>
-    </GlassCard>
+    </Card>
   );
 }

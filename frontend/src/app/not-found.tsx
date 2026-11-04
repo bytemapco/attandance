@@ -1,7 +1,7 @@
 import Link from "next/link";
 import React from "react";
 import { Compass, Home, Mail, ArrowLeft } from "lucide-react";
-import GlassButton from "@/components/ui/GlassButton";
+import Button from "@/components/ui/Button";
 
 export default function NotFoundPage(): React.ReactElement {
   return (
@@ -26,15 +26,15 @@ export default function NotFoundPage(): React.ReactElement {
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5">
             <Link href="/" className="w-full sm:w-auto">
-              <GlassButton variant="primary" size="md" icon={<Home size={14} />} className="w-full">
+              <Button variant="primary" size="md" icon={<Home size={14} />} className="w-full">
                 Dashboard
-              </GlassButton>
+              </Button>
             </Link>
 
             <Link href="/login" className="w-full sm:w-auto">
-              <GlassButton variant="secondary" size="md" icon={<ArrowLeft size={14} />} className="w-full">
+              <Button variant="secondary" size="md" icon={<ArrowLeft size={14} />} className="w-full">
                 Sign In
-              </GlassButton>
+              </Button>
             </Link>
           </div>
         </div>

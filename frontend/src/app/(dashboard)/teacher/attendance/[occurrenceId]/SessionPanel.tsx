@@ -2,8 +2,8 @@
 
 import React from "react";
 import { AlertTriangle, Clock, Maximize2, Play, QrCode, X } from "lucide-react";
-import GlassBadge from "@/components/ui/GlassBadge";
-import GlassButton from "@/components/ui/GlassButton";
+import Badge from "@/components/ui/Badge";
+import Button from "@/components/ui/Button";
 import type { OccurrenceQrData } from "@/types";
 import type { OccurrenceState } from "../occurrenceState";
 import QrCodeTile from "./QrCodeTile";
@@ -73,9 +73,9 @@ function FullscreenView({ qr, failed, counts, onClose }: { qr: OccurrenceQrData 
       <p className="text-3xl font-semibold tabular-nums text-foreground">
         {counts.PRESENT} <span className="text-lg font-medium text-muted-foreground">of {counts.ALL} present</span>
       </p>
-      <GlassButton variant="secondary" size="md" icon={<X size={15} />} onClick={onClose}>
+      <Button variant="secondary" size="md" icon={<X size={15} />} onClick={onClose}>
         Close <kbd className="ml-1 rounded-sm border border-border px-1.5 text-xs text-muted-foreground">Esc</kbd>
-      </GlassButton>
+      </Button>
     </div>
   );
 }
@@ -94,7 +94,7 @@ export default function SessionPanel({
       {live && (
         <>
           <div className="flex items-center justify-between gap-2">
-            <GlassBadge variant="success" icon={<span className="h-1.5 w-1.5 rounded-full bg-success" aria-hidden />}>Live</GlassBadge>
+            <Badge variant="success" icon={<span className="h-1.5 w-1.5 rounded-full bg-success" aria-hidden />}>Live</Badge>
             <button
               type="button"
               onClick={() => onFullscreenChange(true)}
@@ -112,9 +112,9 @@ export default function SessionPanel({
           <QrCode size={28} className="text-muted-foreground" />
           <p className="text-sm font-semibold text-foreground">Attendance hasn&apos;t started</p>
           <p className="text-xs text-muted-foreground">Start to show the QR code and let students mark themselves.</p>
-          <GlassButton variant="primary" size="md" loading={starting} icon={<Play size={14} />} onClick={onStart}>
+          <Button variant="primary" size="md" loading={starting} icon={<Play size={14} />} onClick={onStart}>
             Start attendance
-          </GlassButton>
+          </Button>
         </div>
       )}
       <Progress counts={counts} />

@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { FileText, Image as ImageIcon, ExternalLink, Download, AlertCircle, Loader2 } from "lucide-react";
-import GlassCard from "@/components/ui/GlassCard";
+import Card from "@/components/ui/Card";
 
 interface LeaveDocumentViewerProps {
   url: string | null | undefined;
@@ -15,7 +15,7 @@ export default function LeaveDocumentViewer({ url }: LeaveDocumentViewerProps): 
   const isPdf = url ? url.toLowerCase().split("?")[0].endsWith(".pdf") : false;
 
   return (
-    <GlassCard className="p-0 overflow-hidden bg-card border border-border flex flex-col h-full min-h-[550px]">
+    <Card className="p-0 overflow-hidden bg-card border border-border flex flex-col h-full min-h-[550px]">
       <div className="flex items-center justify-between px-5 py-4 border-b border-border bg-secondary/40">
         <div className="flex items-center gap-2.5">
           <div className="p-2 rounded-lg bg-success/10 text-success">
@@ -104,6 +104,6 @@ export default function LeaveDocumentViewer({ url }: LeaveDocumentViewerProps): 
           </div>
         )}
       </div>
-    </GlassCard>
+    </Card>
   );
 }

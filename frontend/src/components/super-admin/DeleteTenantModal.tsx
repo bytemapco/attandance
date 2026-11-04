@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { X, AlertTriangle, Trash2 } from "lucide-react";
-import GlassButton from "@/components/ui/GlassButton";
+import Button from "@/components/ui/Button";
 import ModalFrame from "@/components/ui/ModalFrame";
 import type { Tenant } from "@/types/tenant";
 
@@ -94,10 +94,10 @@ export default function DeleteTenantModal({
         </div>
 
         <div className="flex items-center justify-end gap-2 border-t border-border pt-4">
-          <GlassButton type="button" variant="secondary" onClick={onClose} disabled={loading}>
+          <Button type="button" variant="secondary" onClick={onClose} disabled={loading}>
             Cancel
-          </GlassButton>
-          <GlassButton
+          </Button>
+          <Button
             type="button"
             variant="danger"
             disabled={!isMatch}
@@ -106,7 +106,7 @@ export default function DeleteTenantModal({
             onClick={() => void handleDelete()}
           >
             Delete institution
-          </GlassButton>
+          </Button>
         </div>
       </div>
     </ModalFrame>

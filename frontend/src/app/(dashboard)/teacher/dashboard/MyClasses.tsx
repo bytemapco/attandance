@@ -4,11 +4,11 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import api, { getApiErrorMessage } from "@/lib/api";
-import GlassEmptyState from "@/components/ui/GlassEmptyState";
-import GlassErrorState from "@/components/ui/GlassErrorState";
-import GlassLoader from "@/components/ui/GlassLoader";
+import EmptyState from "@/components/ui/EmptyState";
+import ErrorState from "@/components/ui/ErrorState";
+import PageSkeleton from "@/components/ui/PageSkeleton";
 import type { ClassSessionStartResult, TeacherClassItem } from "@/types";
-import ClassCard from "./ClassCard";
+import DashboardClassCard from "./DashboardClassCard";
 
 interface MyClassesProps {
   refreshKey: number;
@@ -49,11 +49,11 @@ export default function MyClasses({ refreshKey }: MyClassesProps): React.ReactEl
     }
   }
 
-  if (loading) return <GlassLoader />;
-  if (failed) return <GlassErrorState message="Your classes could not be loaded." onRetry={() => void load()} />;
+  if (loading) return <PageSkeleton />;
+  if (failed) return <ErrorState message="Your classes could not be loaded." onRetry={() => void load()} />;
   if (items.length === 0) {
     return (
-      <GlassEmptyState
+      <EmptyState
         title="No classes assigned yet"
         message="Your administrator assigns you to a class and subject. They will appear here."
       />
@@ -63,7 +63,7 @@ export default function MyClasses({ refreshKey }: MyClassesProps): React.ReactEl
   return (
     <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
       {items.map((item) => (
-        <ClassCard
+        <DashboardClassCard
           key={item.course_section_id}
           item={item}
           starting={startingId === item.course_section_id}

@@ -3,8 +3,8 @@
 import React, { useState } from "react";
 import { X } from "lucide-react";
 import toast from "react-hot-toast";
-import GlassButton from "@/components/ui/GlassButton";
-import GlassInput from "@/components/ui/GlassInput";
+import Button from "@/components/ui/Button";
+import Input from "@/components/ui/Input";
 import ModalFrame from "@/components/ui/ModalFrame";
 import { superAdminService } from "@/services/superAdminService";
 import { getApiErrorMessage } from "@/lib/api";
@@ -77,7 +77,7 @@ export default function TenantAdminEditModal({
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        <GlassInput
+        <Input
           label="Email address"
           type="email"
           value={email}
@@ -87,22 +87,22 @@ export default function TenantAdminEditModal({
         />
 
         <div className="flex items-center justify-end gap-2 pt-2 border-t border-border">
-          <GlassButton
+          <Button
             type="button"
             variant="secondary"
             onClick={onClose}
             disabled={submitting}
           >
             Cancel
-          </GlassButton>
-          <GlassButton
+          </Button>
+          <Button
             type="submit"
             variant="primary"
             loading={submitting}
             disabled={submitting || !email.trim() || email.trim().toLowerCase() === admin.email.toLowerCase()}
           >
             Save changes
-          </GlassButton>
+          </Button>
         </div>
       </form>
     </ModalFrame>

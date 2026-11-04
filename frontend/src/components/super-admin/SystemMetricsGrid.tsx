@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Server, Database, Zap, Cpu } from "lucide-react";
-import GlassCard from "@/components/ui/GlassCard";
+import Card from "@/components/ui/Card";
 import type { PlatformHealth } from "@/types/tenant";
 
 interface SystemMetricsGridProps {
@@ -29,7 +29,7 @@ export default function SystemMetricsGrid({ health }: SystemMetricsGridProps): R
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
       {/* Uptime */}
-      <GlassCard className="p-4 flex items-center gap-3.5">
+      <Card className="p-4 flex items-center gap-3.5">
         <div className="p-2.5 rounded-lg bg-secondary text-muted-foreground border border-border shrink-0">
           <Server size={18} />
         </div>
@@ -39,10 +39,10 @@ export default function SystemMetricsGrid({ health }: SystemMetricsGridProps): R
             {formatUptime(health.server_uptime_seconds)}
           </p>
         </div>
-      </GlassCard>
+      </Card>
 
       {/* DB Connections */}
-      <GlassCard className="p-4 flex items-center gap-3.5">
+      <Card className="p-4 flex items-center gap-3.5">
         <div className="p-2.5 rounded-lg bg-secondary text-primary border border-border shrink-0">
           <Database size={18} />
         </div>
@@ -52,10 +52,10 @@ export default function SystemMetricsGrid({ health }: SystemMetricsGridProps): R
             {poolActive} <span className="text-xs font-normal text-muted-foreground">/ {poolMax}</span>
           </p>
         </div>
-      </GlassCard>
+      </Card>
 
       {/* Cache Ping */}
-      <GlassCard className="p-4 flex items-center gap-3.5">
+      <Card className="p-4 flex items-center gap-3.5">
         <div className="p-2.5 rounded-lg bg-success-soft text-success border border-success-border shrink-0">
           <Zap size={18} />
         </div>
@@ -65,10 +65,10 @@ export default function SystemMetricsGrid({ health }: SystemMetricsGridProps): R
             {redisLatency != null ? `${redisLatency} ms` : "0 ms"}
           </p>
         </div>
-      </GlassCard>
+      </Card>
 
       {/* Biometric Compute */}
-      <GlassCard className="p-4 flex items-center gap-3.5">
+      <Card className="p-4 flex items-center gap-3.5">
         <div className="p-2.5 rounded-lg bg-accent-soft text-accent-strong border border-accent-border shrink-0">
           <Cpu size={18} />
         </div>
@@ -78,7 +78,7 @@ export default function SystemMetricsGrid({ health }: SystemMetricsGridProps): R
             {activeDevice.replace(/^\/device:/, "")}
           </p>
         </div>
-      </GlassCard>
+      </Card>
     </div>
   );
 }

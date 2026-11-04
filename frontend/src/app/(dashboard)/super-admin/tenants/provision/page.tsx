@@ -12,9 +12,9 @@ import {
 } from "@/lib/validations/superAdmin";
 import { superAdminService } from "@/services/superAdminService";
 import { getApiErrorMessage, applyValidationErrorsToForm } from "@/lib/api";
-import GlassBreadcrumb from "@/components/ui/GlassBreadcrumb";
-import GlassPageHeader from "@/components/ui/GlassPageHeader";
-import GlassButton from "@/components/ui/GlassButton";
+import Breadcrumb from "@/components/ui/Breadcrumb";
+import PageHeader from "@/components/ui/PageHeader";
+import Button from "@/components/ui/Button";
 import ProvisionBasicInfoCard from "@/components/super-admin/ProvisionBasicInfoCard";
 import ProvisionAdminAccountsCard from "@/components/super-admin/ProvisionAdminAccountsCard";
 
@@ -88,7 +88,7 @@ export default function ProvisionTenantPage(): React.ReactElement {
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto pb-12">
-      <GlassBreadcrumb
+      <Breadcrumb
         items={[
           { label: "Super Admin", href: "/super-admin/dashboard" },
           { label: "Institutions", href: "/super-admin/tenants" },
@@ -96,7 +96,7 @@ export default function ProvisionTenantPage(): React.ReactElement {
         ]}
       />
 
-      <GlassPageHeader
+      <PageHeader
         title="Add Institution"
         description="Register a College / University and configure initial administrator accounts."
       />
@@ -115,17 +115,17 @@ export default function ProvisionTenantPage(): React.ReactElement {
         />
 
         <div className="flex items-center justify-end gap-3 pt-2">
-          <GlassButton
+          <Button
             type="button"
             variant="ghost"
             onClick={() => router.push("/super-admin/tenants")}
             disabled={isSubmitting}
           >
             Cancel
-          </GlassButton>
-          <GlassButton type="submit" variant="primary" loading={isSubmitting}>
+          </Button>
+          <Button type="submit" variant="primary" loading={isSubmitting}>
             Create Institution
-          </GlassButton>
+          </Button>
         </div>
       </form>
     </div>

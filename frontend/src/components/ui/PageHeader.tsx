@@ -3,7 +3,7 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 
-export interface GlassPageHeaderProps {
+export interface PageHeaderProps {
   title: string;
   description?: string;
   subtitle?: string;
@@ -11,13 +11,13 @@ export interface GlassPageHeaderProps {
   className?: string;
 }
 
-export default function GlassPageHeader({
+export default function PageHeader({
   title,
   description,
   subtitle,
   actions,
   className = "",
-}: GlassPageHeaderProps): React.ReactElement {
+}: PageHeaderProps): React.ReactElement {
   const text = description || subtitle;
 
   return (

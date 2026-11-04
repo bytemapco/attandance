@@ -3,7 +3,7 @@
 import React, { useEffect } from "react";
 import Link from "next/link";
 import { AlertCircle, RefreshCw, Home } from "lucide-react";
-import GlassButton from "@/components/ui/GlassButton";
+import Button from "@/components/ui/Button";
 
 export default function RootError({
   error,
@@ -39,7 +39,7 @@ export default function RootError({
           )}
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5">
-            <GlassButton
+            <Button
               variant="primary"
               size="md"
               icon={<RefreshCw size={14} />}
@@ -47,17 +47,17 @@ export default function RootError({
               className="w-full sm:w-auto"
             >
               Try Again
-            </GlassButton>
+            </Button>
 
             <Link href="/" className="w-full sm:w-auto">
-              <GlassButton
+              <Button
                 variant="secondary"
                 size="md"
                 icon={<Home size={14} />}
                 className="w-full"
               >
                 Go Home
-              </GlassButton>
+              </Button>
             </Link>
           </div>
         </div>

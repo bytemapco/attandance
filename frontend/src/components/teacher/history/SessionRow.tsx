@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import GlassBadge from "@/components/ui/GlassBadge";
+import Badge from "@/components/ui/Badge";
 import type { HistoryItem } from "@/types";
 
 export default function SessionRow({ item }: { item: HistoryItem }): React.ReactElement {
@@ -26,8 +26,8 @@ export default function SessionRow({ item }: { item: HistoryItem }): React.React
           </span>
         </span>
         <span className="col-span-2 flex flex-wrap items-center gap-1.5 sm:col-span-1 sm:justify-end">
-          {item.locked ? <GlassBadge variant="neutral">Submitted</GlassBadge> : <GlassBadge variant="success">In progress</GlassBadge>}
-          {item.flagged > 0 && <GlassBadge variant="warning">{item.flagged} to verify</GlassBadge>}
+          {item.locked ? <Badge variant="neutral">Submitted</Badge> : <Badge variant="success">In progress</Badge>}
+          {item.flagged > 0 && <Badge variant="warning">{item.flagged} to verify</Badge>}
         </span>
       </Link>
     </li>

@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import GlassButton from "@/components/ui/GlassButton";
+import Button from "@/components/ui/Button";
 
 export interface SectionStatus {
   label: string;
@@ -46,12 +46,12 @@ export default function SettingsSection({
 
       {dirty && (
         <footer className="flex justify-end gap-2 border-t border-border px-5 py-3">
-          <GlassButton variant="ghost" size="sm" disabled={saving} onClick={onDiscard}>
+          <Button variant="ghost" size="sm" disabled={saving} onClick={onDiscard}>
             Discard
-          </GlassButton>
-          <GlassButton variant="primary" size="sm" loading={saving} onClick={onSave}>
+          </Button>
+          <Button variant="primary" size="sm" loading={saving} onClick={onSave}>
             Save
-          </GlassButton>
+          </Button>
         </footer>
       )}
     </section>

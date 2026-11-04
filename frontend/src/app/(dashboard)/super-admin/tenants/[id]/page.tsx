@@ -7,7 +7,7 @@ import toast from "react-hot-toast";
 
 import { superAdminService } from "@/services/superAdminService";
 import { getApiErrorMessage } from "@/lib/api";
-import GlassBreadcrumb from "@/components/ui/GlassBreadcrumb";
+import Breadcrumb from "@/components/ui/Breadcrumb";
 import { ContentSkeleton } from "@/components/ui/Skeleton";
 import TenantHeaderBanner from "@/components/super-admin/TenantHeaderBanner";
 import TenantOverviewTab from "@/components/super-admin/TenantOverviewTab";
@@ -89,7 +89,7 @@ export default function TenantDetailPage(): React.ReactElement {
 
   return (
     <div className="space-y-6 max-w-6xl">
-      <GlassBreadcrumb
+      <Breadcrumb
         items={[
           { label: "Dashboard", href: "/super-admin/dashboard" },
           { label: "Institutions", href: "/super-admin/tenants" },

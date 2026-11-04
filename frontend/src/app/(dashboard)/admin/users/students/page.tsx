@@ -4,11 +4,11 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Plus, Upload } from "lucide-react";
 import api from "@/lib/api";
-import GlassBreadcrumb from "@/components/ui/GlassBreadcrumb";
-import GlassButton from "@/components/ui/GlassButton";
-import GlassTable from "@/components/ui/GlassTable";
-import EnterpriseTableToolbar, { type ToolbarFilterConfig } from "@/components/ui/EnterpriseTableToolbar";
-import EnterprisePagination from "@/components/ui/EnterprisePagination";
+import Breadcrumb from "@/components/ui/Breadcrumb";
+import Button from "@/components/ui/Button";
+import DataTable from "@/components/ui/DataTable";
+import TableToolbar, { type ToolbarFilterConfig } from "@/components/ui/TableToolbar";
+import Pagination from "@/components/ui/Pagination";
 import BulkImportModal from "@/components/admin/BulkImportModal";
 import { useTableQuery } from "@/hooks/useTableQuery";
 import { studentColumns } from "./StudentColumns";
@@ -131,21 +131,21 @@ export default function StudentsPage(): React.ReactElement {
 
   return (
     <div className="space-y-4">
-      <GlassBreadcrumb items={[{ label: "Admin", href: "/admin/dashboard" }, { label: "Users" }, { label: "Students" }]} />
+      <Breadcrumb items={[{ label: "Admin", href: "/admin/dashboard" }, { label: "Users" }, { label: "Students" }]} />
 
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-2 border-b border-border">
         <h1 className="text-2xl font-semibold tracking-tight text-primary">Students</h1>
         <div className="flex items-center gap-2">
-          <GlassButton variant="secondary" icon={<Upload size={14} />} onClick={() => setIsBulkImportOpen(true)}>
+          <Button variant="secondary" icon={<Upload size={14} />} onClick={() => setIsBulkImportOpen(true)}>
             Bulk import
-          </GlassButton>
-          <GlassButton icon={<Plus size={14} />} onClick={() => router.push("/admin/users/students/add")}>
+          </Button>
+          <Button icon={<Plus size={14} />} onClick={() => router.push("/admin/users/students/add")}>
             Add student
-          </GlassButton>
+          </Button>
         </div>
       </div>
 
-      <EnterpriseTableToolbar
+      <TableToolbar
         searchPlaceholder="Search by name, email, login ID..."
         searchValue={searchQuery}
         onSearch={setSearchQuery}
@@ -154,7 +154,7 @@ export default function StudentsPage(): React.ReactElement {
       />
 
       <div className="rounded-lg border border-border bg-card overflow-hidden">
-        <GlassTable
+        <DataTable
           columns={studentColumns}
           data={students as (StudentResponse & Record<string, unknown>)[]}
           loading={loading}
@@ -169,7 +169,7 @@ export default function StudentsPage(): React.ReactElement {
               : "No students yet. Add one, or import a CSV to add many at once."
           }
         />
-        <EnterprisePagination
+        <Pagination
           totalItems={totalItems}
           currentPage={currentPage}
           pageSize={pageSize}

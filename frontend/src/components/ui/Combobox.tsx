@@ -10,7 +10,7 @@ export interface ComboboxOption {
   label: string;
 }
 
-export interface GlassComboboxProps {
+export interface ComboboxProps {
   label?: string;
   options: ComboboxOption[];
   value: string;
@@ -23,7 +23,7 @@ export interface GlassComboboxProps {
   className?: string;
 }
 
-export default function GlassCombobox({
+export default function Combobox({
   label,
   options,
   value,
@@ -34,7 +34,7 @@ export default function GlassCombobox({
   id,
   disabled = false,
   className = "",
-}: GlassComboboxProps): React.ReactElement {
+}: ComboboxProps): React.ReactElement {
   const generatedId = useId();
   const comboboxId = id || generatedId;
   const [isOpen, setIsOpen] = useState(false);

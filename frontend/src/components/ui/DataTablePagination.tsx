@@ -3,7 +3,7 @@
 import React from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-interface GlassTablePaginationProps {
+interface DataTablePaginationProps {
   page: number;
   pageSize: number;
   totalItems: number;
@@ -11,13 +11,13 @@ interface GlassTablePaginationProps {
   onPageChange: (newPage: number) => void;
 }
 
-export default function GlassTablePagination({
+export default function DataTablePagination({
   page,
   pageSize,
   totalItems,
   totalPages,
   onPageChange,
-}: GlassTablePaginationProps): React.ReactElement {
+}: DataTablePaginationProps): React.ReactElement {
   const start = page * pageSize + 1;
   const end = Math.min((page + 1) * pageSize, totalItems);
 

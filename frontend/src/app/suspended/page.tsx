@@ -4,7 +4,7 @@ import React from "react";
 import { useRouter } from "next/navigation";
 import { Building2, AlertTriangle, Mail, ArrowRight } from "lucide-react";
 import { useAuthStore } from "@/store/authStore";
-import GlassButton from "@/components/ui/GlassButton";
+import Button from "@/components/ui/Button";
 
 export default function SuspendedPage(): React.ReactElement {
   const router = useRouter();
@@ -71,7 +71,7 @@ export default function SuspendedPage(): React.ReactElement {
         </div>
 
         <div className="flex flex-col gap-2.5">
-          <GlassButton
+          <Button
             variant="primary"
             size="lg"
             onClick={handleContactSupport}
@@ -79,8 +79,8 @@ export default function SuspendedPage(): React.ReactElement {
             className="w-full"
           >
             Contact SAHAJ Support
-          </GlassButton>
-          <GlassButton
+          </Button>
+          <Button
             variant="secondary"
             size="md"
             onClick={handleLogout}
@@ -88,7 +88,7 @@ export default function SuspendedPage(): React.ReactElement {
           >
             <span>Sign Out</span>
             <ArrowRight className="w-4 h-4 ml-1" />
-          </GlassButton>
+          </Button>
         </div>
       </div>
     </div>

@@ -6,7 +6,7 @@ import { useDebounce } from "@/hooks/useDebounce";
 import { NotificationHeader } from "@/components/notifications/NotificationHeader";
 import { NotificationFilterBar } from "@/components/notifications/NotificationFilterBar";
 import { NotificationFeedList } from "@/components/notifications/NotificationFeedList";
-import EnterprisePagination from "@/components/ui/EnterprisePagination";
+import Pagination from "@/components/ui/Pagination";
 
 export default function SuperAdminNotificationsPage(): React.JSX.Element {
   const {
@@ -112,7 +112,7 @@ export default function SuperAdminNotificationsPage(): React.JSX.Element {
         />
 
         {!loading && totalCount > pageSize && (
-          <EnterprisePagination
+          <Pagination
             totalItems={totalCount}
             currentPage={page}
             pageSize={pageSize}

@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Users } from "lucide-react";
-import GlassCard from "@/components/ui/GlassCard";
+import Card from "@/components/ui/Card";
 import type { NotificationBroadcastCreate, NotificationCategory, NotificationType } from "@/types/notification";
 import {
   Select,
@@ -10,7 +10,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/components/ui/SelectMenu";
 
 interface BroadcastTargetSectionProps {
   formData: NotificationBroadcastCreate;
@@ -29,7 +29,7 @@ export default function BroadcastTargetSection({
   onChange,
 }: BroadcastTargetSectionProps): React.ReactElement {
   return (
-    <GlassCard className="p-5 bg-card border border-border space-y-4">
+    <Card className="p-5 bg-card border border-border space-y-4">
       <div className="flex items-center gap-2.5 pb-3 border-b border-border">
         <div className="p-1.5 rounded-lg bg-info/10 text-info border border-info/20">
           <Users size={16} />
@@ -108,6 +108,6 @@ export default function BroadcastTargetSection({
           </Select>
         </div>
       </div>
-    </GlassCard>
+    </Card>
   );
 }

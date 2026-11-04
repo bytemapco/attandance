@@ -10,9 +10,9 @@ import toast from "react-hot-toast";
 
 import api, { getApiErrorMessage, applyValidationErrorsToForm } from "@/lib/api";
 import { resetPasswordSchema, type ResetPasswordFormData } from "@/lib/validations/auth";
-import GlassInput from "@/components/ui/GlassInput";
-import GlassButton from "@/components/ui/GlassButton";
-import GlassLoader from "@/components/ui/GlassLoader";
+import Input from "@/components/ui/Input";
+import Button from "@/components/ui/Button";
+import PageSkeleton from "@/components/ui/PageSkeleton";
 import PasswordRequirementsChecklist from "@/components/auth/PasswordRequirementsChecklist";
 import ResetPasswordStatusCard from "@/components/auth/ResetPasswordStatusCard";
 import StudentMobileAppCallout from "@/components/auth/StudentMobileAppCallout";
@@ -92,7 +92,7 @@ function ResetPasswordContent(): React.ReactElement {
   if (verifying) {
     return (
       <div className="flex flex-col items-center justify-center p-8 space-y-3">
-        <GlassLoader text="Verifying password reset token..." />
+        <PageSkeleton text="Verifying password reset token..." />
       </div>
     );
   }
@@ -123,7 +123,7 @@ function ResetPasswordContent(): React.ReactElement {
       {tokenData.role === "STUDENT" && <StudentMobileAppCallout token={token} />}
 
       <div className="space-y-3">
-        <GlassInput
+        <Input
           label="New Password"
           type="password"
           placeholder="••••••••"
@@ -135,7 +135,7 @@ function ResetPasswordContent(): React.ReactElement {
 
         <PasswordRequirementsChecklist password={passwordValue} />
 
-        <GlassInput
+        <Input
           label="Confirm New Password"
           type="password"
           placeholder="••••••••"
@@ -147,7 +147,7 @@ function ResetPasswordContent(): React.ReactElement {
       </div>
 
       <div className="pt-1">
-        <GlassButton
+        <Button
           type="submit"
           variant="primary"
           size="lg"
@@ -155,7 +155,7 @@ function ResetPasswordContent(): React.ReactElement {
           className="w-full font-semibold"
         >
           Update Password
-        </GlassButton>
+        </Button>
       </div>
     </form>
   );
@@ -184,7 +184,7 @@ export default function ResetPasswordPage(): React.ReactElement {
         <Suspense
           fallback={
             <div className="rounded-lg border border-border bg-card p-8 text-center">
-              <GlassLoader />
+              <PageSkeleton />
             </div>
           }
         >

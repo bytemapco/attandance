@@ -2,10 +2,10 @@
 
 import React, { useState } from "react";
 import { Mail } from "lucide-react";
-import GlassButton from "./GlassButton";
+import Button from "./Button";
 import ModalFrame from "./ModalFrame";
 
-export interface GlassResetPasswordDialogProps {
+export interface ResetPasswordDialogProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => Promise<void>;
@@ -14,14 +14,14 @@ export interface GlassResetPasswordDialogProps {
   userEmail?: string;
 }
 
-export default function GlassResetPasswordDialog({
+export default function ResetPasswordDialog({
   isOpen,
   onClose,
   onConfirm,
   title = "Send password reset link",
   description,
   userEmail,
-}: GlassResetPasswordDialogProps): React.ReactElement | null {
+}: ResetPasswordDialogProps): React.ReactElement | null {
   const [loading, setLoading] = useState(false);
 
   if (!isOpen) return null;
@@ -51,12 +51,12 @@ export default function GlassResetPasswordDialog({
       </p>
 
       <form onSubmit={handleTrigger} className="mt-5 flex justify-end gap-2 border-t border-border pt-3">
-        <GlassButton type="button" variant="ghost" size="sm" onClick={onClose} disabled={loading}>
+        <Button type="button" variant="ghost" size="sm" onClick={onClose} disabled={loading}>
           Cancel
-        </GlassButton>
-        <GlassButton type="submit" variant="primary" size="sm" loading={loading} icon={<Mail size={15} />}>
+        </Button>
+        <Button type="submit" variant="primary" size="sm" loading={loading} icon={<Mail size={15} />}>
           Send reset email
-        </GlassButton>
+        </Button>
       </form>
     </ModalFrame>
   );

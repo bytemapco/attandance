@@ -2,8 +2,8 @@
 
 import React from "react";
 import { Globe, UserCheck, CheckCircle2 } from "lucide-react";
-import GlassCard from "@/components/ui/GlassCard";
-import GlassBadge from "@/components/ui/GlassBadge";
+import Card from "@/components/ui/Card";
+import Badge from "@/components/ui/Badge";
 import TenantMetricsRow from "./TenantMetricsRow";
 import type { TenantDetail } from "@/types/tenant";
 
@@ -37,13 +37,13 @@ export default function TenantOverviewTab({ tenant }: TenantOverviewTabProps): R
       {/* Details & Administration Section */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Tenant Access Card */}
-        <GlassCard className="p-5 space-y-4">
+        <Card className="p-5 space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
               <Globe size={16} className="text-primary" />
               <span>Tenant Login</span>
             </h3>
-            <GlassBadge variant="neutral">Slug-based</GlassBadge>
+            <Badge variant="neutral">Slug-based</Badge>
           </div>
 
           <div className="p-3.5 bg-muted/40 rounded-lg border border-border space-y-2.5">
@@ -58,10 +58,10 @@ export default function TenantOverviewTab({ tenant }: TenantOverviewTabProps): R
               <span className="font-mono text-muted-foreground">{tenant.slug}</span>
             </div>
           </div>
-        </GlassCard>
+        </Card>
 
         {/* Primary Administrators Card */}
-        <GlassCard className="p-5 space-y-4">
+        <Card className="p-5 space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
               <UserCheck size={16} className="text-primary" />
@@ -95,7 +95,7 @@ export default function TenantOverviewTab({ tenant }: TenantOverviewTabProps): R
               ))}
             </div>
           )}
-        </GlassCard>
+        </Card>
       </div>
     </div>
   );

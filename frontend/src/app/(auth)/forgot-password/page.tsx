@@ -9,8 +9,8 @@ import toast from "react-hot-toast";
 
 import api, { getApiErrorMessage, applyValidationErrorsToForm } from "@/lib/api";
 import { forgotPasswordSchema, type ForgotPasswordFormData } from "@/lib/validations/auth";
-import GlassInput from "@/components/ui/GlassInput";
-import GlassButton from "@/components/ui/GlassButton";
+import Input from "@/components/ui/Input";
+import Button from "@/components/ui/Button";
 
 export default function ForgotPasswordPage(): React.ReactElement {
   const [resending, setResending] = useState(false);
@@ -103,7 +103,7 @@ export default function ForgotPasswordPage(): React.ReactElement {
             </div>
 
             <div className="pt-2 space-y-2.5">
-              <GlassButton
+              <Button
                 variant="secondary"
                 size="md"
                 onClick={() => void handleResend()}
@@ -112,7 +112,7 @@ export default function ForgotPasswordPage(): React.ReactElement {
               >
                 <RotateCw size={13} className={resending ? "animate-spin mr-1.5" : "mr-1.5"} />
                 {resendCooldown > 0 ? `Resend email in ${resendCooldown}s` : "Resend Reset Link"}
-              </GlassButton>
+              </Button>
 
               <div className="flex items-center justify-between pt-2 text-xs">
                 <button
@@ -141,7 +141,7 @@ export default function ForgotPasswordPage(): React.ReactElement {
               </p>
             </div>
 
-            <GlassInput
+            <Input
               label="Email Address"
               type="email"
               placeholder="name@university.edu"
@@ -152,7 +152,7 @@ export default function ForgotPasswordPage(): React.ReactElement {
             />
 
             <div className="pt-1 space-y-3">
-              <GlassButton
+              <Button
                 type="submit"
                 variant="primary"
                 size="lg"
@@ -160,7 +160,7 @@ export default function ForgotPasswordPage(): React.ReactElement {
                 className="w-full font-semibold"
               >
                 Send Reset Link
-              </GlassButton>
+              </Button>
 
               <Link
                 href="/login"

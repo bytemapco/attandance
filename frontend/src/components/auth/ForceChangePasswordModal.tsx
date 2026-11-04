@@ -7,8 +7,8 @@ import { z } from "zod";
 import { Lock, CheckCircle2, Check, X } from "lucide-react";
 import toast from "react-hot-toast";
 import api, { getApiErrorMessage, applyValidationErrorsToForm } from "@/lib/api";
-import GlassInput from "@/components/ui/GlassInput";
-import GlassButton from "@/components/ui/GlassButton";
+import Input from "@/components/ui/Input";
+import Button from "@/components/ui/Button";
 import ModalFrame from "@/components/ui/ModalFrame";
 
 const forceChangePasswordSchema = z
@@ -91,7 +91,7 @@ export default function ForceChangePasswordModal({
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <GlassInput
+        <Input
           label="New Permanent Password"
           type="password"
           placeholder="Create a strong password"
@@ -119,7 +119,7 @@ export default function ForceChangePasswordModal({
           </div>
         </div>
 
-        <GlassInput
+        <Input
           label="Confirm New Password"
           type="password"
           placeholder="Re-enter permanent password"
@@ -146,7 +146,7 @@ export default function ForceChangePasswordModal({
         )}
 
         <div className="pt-2">
-          <GlassButton
+          <Button
             type="submit"
             variant="primary"
             size="lg"
@@ -155,7 +155,7 @@ export default function ForceChangePasswordModal({
             icon={<CheckCircle2 size={16} />}
           >
             Activate Account & Continue
-          </GlassButton>
+          </Button>
         </div>
       </form>
     </ModalFrame>

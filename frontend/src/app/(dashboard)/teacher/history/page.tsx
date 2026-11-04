@@ -3,10 +3,10 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import api, { getApiErrorMessage } from "@/lib/api";
 import { cn } from "@/lib/utils";
-import GlassEmptyState from "@/components/ui/GlassEmptyState";
-import GlassErrorState from "@/components/ui/GlassErrorState";
-import GlassLoader from "@/components/ui/GlassLoader";
-import GlassPageHeader from "@/components/ui/GlassPageHeader";
+import EmptyState from "@/components/ui/EmptyState";
+import ErrorState from "@/components/ui/ErrorState";
+import PageSkeleton from "@/components/ui/PageSkeleton";
+import PageHeader from "@/components/ui/PageHeader";
 import SessionRow from "@/components/teacher/history/SessionRow";
 import type { HistoryItem } from "@/types";
 
@@ -96,14 +96,14 @@ export default function AttendanceHistoryPage(): React.ReactElement {
     setShown(PAGE_SIZE);
   };
 
-  if (error) return <GlassErrorState message={error} onRetry={() => void load()} />;
-  if (!items) return <GlassLoader />;
+  if (error) return <ErrorState message={error} onRetry={() => void load()} />;
+  if (!items) return <PageSkeleton />;
 
   return (
     <div className="space-y-5">
-      <GlassPageHeader title="Attendance history" description="Every lecture you have taken, newest first. Open one to see or correct its attendance register." />
+      <PageHeader title="Attendance history" description="Every lecture you have taken, newest first. Open one to see or correct its attendance register." />
       {items.length === 0 ? (
-        <GlassEmptyState title="No lectures taken yet" message="Lectures you take attendance for from My Classes will be listed here." />
+        <EmptyState title="No lectures taken yet" message="Lectures you take attendance for from My Classes will be listed here." />
       ) : (
         <>
           <div className="space-y-3">

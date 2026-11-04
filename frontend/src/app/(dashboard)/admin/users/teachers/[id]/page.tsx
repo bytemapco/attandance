@@ -8,8 +8,8 @@ import DetailCard from "@/components/admin/user-detail/DetailCard";
 import InfoRow from "@/components/admin/user-detail/InfoRow";
 import MetaChip from "@/components/admin/user-detail/MetaChip";
 import UserDetailView from "@/components/admin/user-detail/UserDetailView";
-import GlassBadge from "@/components/ui/GlassBadge";
-import GlassLoader from "@/components/ui/GlassLoader";
+import Badge from "@/components/ui/Badge";
+import PageSkeleton from "@/components/ui/PageSkeleton";
 import type { TeacherResponse } from "@/types";
 
 const NOT_PROVIDED = "Not provided";
@@ -19,7 +19,7 @@ export default function TeacherDetailPage(): React.ReactElement {
   const { id } = useParams<{ id: string }>();
   const { account: teacher, loading } = useAccountDetail<TeacherResponse>("teachers", id, "Failed to load teacher");
 
-  if (loading) return <GlassLoader text="Loading faculty details..." />;
+  if (loading) return <PageSkeleton text="Loading faculty details..." />;
   if (!teacher) return <div className="text-center py-20 text-muted-foreground">Faculty member not found</div>;
 
   const fullName = `${teacher.first_name} ${teacher.last_name}`;
@@ -34,7 +34,7 @@ export default function TeacherDetailPage(): React.ReactElement {
       account={teacher}
       initials={(teacher.first_name?.[0] || "") + (teacher.last_name?.[0] || "")}
       fullName={fullName}
-      badge={<GlassBadge variant="info" icon={<span className="w-1.5 h-1.5 rounded-full bg-info" />}>Faculty</GlassBadge>}
+      badge={<Badge variant="info" icon={<span className="w-1.5 h-1.5 rounded-full bg-info" />}>Faculty</Badge>}
       identifier={{ label: "Employee ID", value: teacher.employee_id, hint: "Click to copy employee ID" }}
       chips={
         <>

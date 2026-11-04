@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import api, { getApiErrorMessage } from "@/lib/api";
 import type { SystemConfig } from "@/types/systemConfig";
-import GlassErrorState from "@/components/ui/GlassErrorState";
+import ErrorState from "@/components/ui/ErrorState";
 import SettingsSection from "./SettingsSection";
 import AttendanceRulesFields, { rulesOf, sameRules, type AttendanceRules } from "./AttendanceRulesFields";
 
@@ -66,7 +66,7 @@ export default function AttendanceRulesForm({ onDirtyChange }: AttendanceRulesFo
 
   if (loading) return <p role="status" className="text-sm text-muted-foreground">Loading attendance rules…</p>;
   if (failed || !saved || !draft) {
-    return <GlassErrorState title="Could not load attendance rules" message="Your saved rules are unchanged." retryLabel="Reload" className="p-5 sm:p-8" onRetry={() => void load()} />;
+    return <ErrorState title="Could not load attendance rules" message="Your saved rules are unchanged." retryLabel="Reload" className="p-5 sm:p-8" onRetry={() => void load()} />;
   }
 
   return (

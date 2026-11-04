@@ -2,8 +2,8 @@
 
 import React from "react";
 import { Megaphone, Send, RotateCcw } from "lucide-react";
-import GlassButton from "@/components/ui/GlassButton";
-import GlassCard from "@/components/ui/GlassCard";
+import Button from "@/components/ui/Button";
+import Card from "@/components/ui/Card";
 import BroadcastTargetSection from "@/components/admin/BroadcastTargetSection";
 import type { NotificationBroadcastCreate } from "@/types/notification";
 
@@ -24,7 +24,7 @@ export default function CampusBroadcastForm({
 }: CampusBroadcastFormProps): React.JSX.Element {
   return (
     <form onSubmit={onSubmit} className="space-y-5">
-      <GlassCard className="p-5 bg-card border border-border space-y-4">
+      <Card className="p-5 bg-card border border-border space-y-4">
         <div className="flex items-center gap-2.5 pb-3 border-b border-border">
           <div className="p-1.5 rounded-lg bg-primary/10 text-primary border border-primary/20">
             <Megaphone size={16} />
@@ -83,18 +83,18 @@ export default function CampusBroadcastForm({
             className="w-full px-3 py-1.5 rounded-lg border border-border bg-card text-xs text-primary placeholder:text-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent transition-all font-mono"
           />
         </div>
-      </GlassCard>
+      </Card>
 
       <BroadcastTargetSection formData={formData} onChange={onChange} />
 
       <div className="flex items-center justify-between gap-3 pt-1">
-        <GlassButton type="button" variant="secondary" icon={<RotateCcw size={14} />} onClick={onReset} disabled={submitting}>
+        <Button type="button" variant="secondary" icon={<RotateCcw size={14} />} onClick={onReset} disabled={submitting}>
           Reset draft
-        </GlassButton>
+        </Button>
 
-        <GlassButton type="submit" icon={<Send size={14} />} loading={submitting}>
+        <Button type="submit" icon={<Send size={14} />} loading={submitting}>
           Send announcement
-        </GlassButton>
+        </Button>
       </div>
     </form>
   );

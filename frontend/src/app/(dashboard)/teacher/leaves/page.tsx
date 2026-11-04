@@ -5,13 +5,13 @@ import { useRouter } from "next/navigation";
 import { ArrowRight, FileText, Image as ImageIcon, Eye } from "lucide-react";
 import api from "@/lib/api";
 import { useDebounce } from "@/hooks/useDebounce";
-import GlassPageHeader from "@/components/ui/GlassPageHeader";
-import GlassTable, { type TableColumn } from "@/components/ui/GlassTable";
-import GlassLoader from "@/components/ui/GlassLoader";
-import GlassEmptyState from "@/components/ui/GlassEmptyState";
-import GlassCard from "@/components/ui/GlassCard";
-import GlassSearch from "@/components/ui/GlassSearch";
-import EnterprisePagination from "@/components/ui/EnterprisePagination";
+import PageHeader from "@/components/ui/PageHeader";
+import DataTable, { type TableColumn } from "@/components/ui/DataTable";
+import PageSkeleton from "@/components/ui/PageSkeleton";
+import EmptyState from "@/components/ui/EmptyState";
+import Card from "@/components/ui/Card";
+import SearchInput from "@/components/ui/SearchInput";
+import Pagination from "@/components/ui/Pagination";
 import type { PendingLeaveItem } from "@/types";
 
 export default function LeavesPage(): React.JSX.Element {
@@ -115,37 +115,37 @@ export default function LeavesPage(): React.JSX.Element {
     return filtered.slice(start, start + pageSize);
   }, [filtered, page, pageSize]);
 
-  if (loading) return <GlassLoader text="Loading leave requests..." />;
+  if (loading) return <PageSkeleton text="Loading leave requests..." />;
 
   return (
     <div className="space-y-6">
-      <GlassPageHeader 
+      <PageHeader 
         title="Leave Requests" 
       />
 
-      <GlassCard padding="sm">
+      <Card padding="sm">
         <div className="flex flex-col sm:flex-row gap-4">
           <div className="flex-1">
-            <GlassSearch
+            <SearchInput
               placeholder="Search by student name, enrollment, or reason..."
               value={searchTerm}
               onSearch={(val) => { setSearchTerm(val); setPage(1); }}
             />
           </div>
         </div>
-      </GlassCard>
+      </Card>
 
       {leaves.length === 0 ? (
-        <GlassEmptyState title="All Clear" message="No pending leave requests found." />
+        <EmptyState title="All Clear" message="No pending leave requests found." />
       ) : (
         <div className="rounded-lg border border-border bg-card overflow-hidden">
-          <GlassTable
+          <DataTable
             columns={columns}
             data={paginated as (PendingLeaveItem & Record<string, unknown>)[]}
             emptyMessage="No pending leaves match your search."
           />
           {filtered.length > 0 && (
-            <EnterprisePagination
+            <Pagination
               totalItems={filtered.length}
               currentPage={page}
               pageSize={pageSize}

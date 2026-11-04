@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { AlertCircle, CheckCircle2 } from "lucide-react";
-import GlassButton from "@/components/ui/GlassButton";
+import Button from "@/components/ui/Button";
 
 interface ResetPasswordStatusCardProps {
   status: "invalid" | "completed";
@@ -27,7 +27,7 @@ export default function ResetPasswordStatusCard({
           </p>
         </div>
         <Link href="/forgot-password" className="inline-block">
-          <GlassButton variant="secondary" size="sm">Request New Link</GlassButton>
+          <Button variant="secondary" size="sm">Request New Link</Button>
         </Link>
       </div>
     );
@@ -45,7 +45,7 @@ export default function ResetPasswordStatusCard({
         </p>
       </div>
       <Link href="/login" className="inline-block">
-        <GlassButton variant="primary" size="sm">Go to Login</GlassButton>
+        <Button variant="primary" size="sm">Go to Login</Button>
       </Link>
     </div>
   );

@@ -2,14 +2,14 @@
 
 import React, { useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
-import GlassErrorState from "./GlassErrorState";
-import GlassTableHeader, { type TableColumnHeader } from "./GlassTableHeader";
-import GlassTablePagination from "./GlassTablePagination";
+import ErrorState from "./ErrorState";
+import DataTableHeader, { type TableColumnHeader } from "./DataTableHeader";
+import DataTablePagination from "./DataTablePagination";
 import { Skeleton } from "./Skeleton";
 
 export type TableColumn<T> = TableColumnHeader<T>;
 
-export interface GlassTableProps<T> {
+export interface DataTableProps<T> {
   columns: TableColumn<T>[];
   data: T[];
   pageSize?: number;
@@ -35,7 +35,7 @@ function sortByColumn<T extends Record<string, unknown>>(a: T, b: T, key: string
   return asc ? cmp : -cmp;
 }
 
-export default function GlassTable<T extends Record<string, unknown>>({
+export default function DataTable<T extends Record<string, unknown>>({
   columns,
   data,
   pageSize = 10,
@@ -49,7 +49,7 @@ export default function GlassTable<T extends Record<string, unknown>>({
   sortOrder = "asc",
   onSortChange,
   rowKey,
-}: GlassTableProps<T>): React.ReactElement {
+}: DataTableProps<T>): React.ReactElement {
   const [page, setPage] = useState(0);
   const [internalSortKey, setInternalSortKey] = useState<string | null>(null);
   const [internalSortAsc, setInternalSortAsc] = useState(true);
@@ -103,7 +103,7 @@ export default function GlassTable<T extends Record<string, unknown>>({
   if (error) {
     return (
       <div className={cn("rounded-lg border border-border bg-card overflow-hidden", className)}>
-        <GlassErrorState message={error} onRetry={onRetry} />
+        <ErrorState message={error} onRetry={onRetry} />
       </div>
     );
   }
@@ -114,7 +114,7 @@ export default function GlassTable<T extends Record<string, unknown>>({
     <div className={cn("rounded-lg border border-border bg-card overflow-hidden", className)}>
       <div className="overflow-x-auto">
         <table className="w-full text-left text-sm border-collapse">
-          <GlassTableHeader
+          <DataTableHeader
             columns={columns}
             activeSortKey={activeSortKey}
             isAsc={isAsc}
@@ -153,7 +153,7 @@ export default function GlassTable<T extends Record<string, unknown>>({
       </div>
 
       {sortBy === undefined && totalPages > 1 && (
-        <GlassTablePagination
+        <DataTablePagination
           page={page}
           pageSize={pageSize}
           totalItems={sorted.length}

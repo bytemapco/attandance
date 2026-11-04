@@ -6,11 +6,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Building, Briefcase, Award, Shield, Lock } from "lucide-react";
 import toast from "react-hot-toast";
 import api, { getApiErrorMessage, applyValidationErrorsToForm } from "@/lib/api";
-import GlassPageHeader from "@/components/ui/GlassPageHeader";
-import GlassBreadcrumb from "@/components/ui/GlassBreadcrumb";
-import GlassButton from "@/components/ui/GlassButton";
-import GlassInput from "@/components/ui/GlassInput";
-import GlassLoader from "@/components/ui/GlassLoader";
+import PageHeader from "@/components/ui/PageHeader";
+import Breadcrumb from "@/components/ui/Breadcrumb";
+import Button from "@/components/ui/Button";
+import Input from "@/components/ui/Input";
+import PageSkeleton from "@/components/ui/PageSkeleton";
 import { changePasswordSchema, ChangePasswordFormData } from "@/lib/validations/auth";
 import type { UserProfile } from "@/types";
 
@@ -61,7 +61,7 @@ export default function TeacherProfilePage(): React.ReactElement {
     }
   };
 
-  if (loading) return <GlassLoader text="Loading profile..." />;
+  if (loading) return <PageSkeleton text="Loading profile..." />;
   if (!profile) return <div className="text-center py-20 text-muted-foreground text-xs">Profile unavailable</div>;
 
   const t = profile.teacher_profile;
@@ -69,14 +69,14 @@ export default function TeacherProfilePage(): React.ReactElement {
 
   return (
     <div className="space-y-6">
-      <GlassBreadcrumb
+      <Breadcrumb
         items={[
           { label: "Teacher", href: "/teacher/dashboard" },
           { label: "Profile" },
         ]}
       />
 
-      <GlassPageHeader
+      <PageHeader
         title="Profile & Security"
         description="View your faculty details and update your account password."
       />
@@ -134,21 +134,21 @@ export default function TeacherProfilePage(): React.ReactElement {
           </div>
 
           <form onSubmit={handleSubmit(handleChangePassword)} className="space-y-4 max-w-md">
-            <GlassInput
+            <Input
               type="password"
               label="Current Password"
               placeholder="Enter current password"
               {...register("current_password")}
               error={errors.current_password?.message}
             />
-            <GlassInput
+            <Input
               type="password"
               label="New Password"
               placeholder="Minimum 8 characters"
               {...register("new_password")}
               error={errors.new_password?.message}
             />
-            <GlassInput
+            <Input
               type="password"
               label="Confirm New Password"
               placeholder="Re-enter new password"
@@ -157,9 +157,9 @@ export default function TeacherProfilePage(): React.ReactElement {
             />
 
             <div className="pt-2">
-              <GlassButton type="submit" variant="primary" loading={isSubmitting} icon={<Lock size={14} />}>
+              <Button type="submit" variant="primary" loading={isSubmitting} icon={<Lock size={14} />}>
                 Update Password
-              </GlassButton>
+              </Button>
             </div>
           </form>
         </div>

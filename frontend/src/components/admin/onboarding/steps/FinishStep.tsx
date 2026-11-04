@@ -6,7 +6,7 @@ import { CheckCircle2, Circle } from "lucide-react";
 import toast from "react-hot-toast";
 import api, { getApiErrorMessage } from "@/lib/api";
 import type { SetupIncompleteDetail } from "@/types/setupStatus";
-import GlassButton from "@/components/ui/GlassButton";
+import Button from "@/components/ui/Button";
 import type { StepProps } from "./stepProps";
 
 function missingFrom(err: unknown): SetupIncompleteDetail | null {
@@ -75,9 +75,9 @@ export default function FinishStep({ status, refresh }: StepProps): React.ReactE
         </div>
       )}
 
-      <GlassButton variant="primary" loading={busy} disabled={!canFinish} onClick={() => void finish()}>
+      <Button variant="primary" loading={busy} disabled={!canFinish} onClick={() => void finish()}>
         Finish setup
-      </GlassButton>
+      </Button>
     </div>
   );
 }

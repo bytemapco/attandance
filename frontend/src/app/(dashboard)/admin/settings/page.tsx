@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import GlassBreadcrumb from "@/components/ui/GlassBreadcrumb";
-import GlassPageHeader from "@/components/ui/GlassPageHeader";
+import Breadcrumb from "@/components/ui/Breadcrumb";
+import PageHeader from "@/components/ui/PageHeader";
 import CampusLocationCard, {
   type CampusLocationHandle,
   type CampusLocationState,
@@ -47,8 +47,8 @@ export default function AdminSettingsPage(): React.ReactElement {
 
   return (
     <div>
-      <GlassBreadcrumb items={[{ label: "Admin", href: "/admin/dashboard" }, { label: "Settings" }]} />
-      <GlassPageHeader title="Settings" />
+      <Breadcrumb items={[{ label: "Admin", href: "/admin/dashboard" }, { label: "Settings" }]} />
+      <PageHeader title="Settings" />
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[11rem_minmax(0,1fr)] lg:gap-10">
         <SettingsNav items={SECTIONS} />

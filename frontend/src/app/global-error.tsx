@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import GlassButton from "@/components/ui/GlassButton";
+import Button from "@/components/ui/Button";
 
 export default function GlobalError({
   error,
@@ -39,7 +39,7 @@ export default function GlobalError({
             {error.message || "A critical system error occurred. Restarting the session usually resolves this."}
           </p>
 
-          <GlassButton onClick={() => reset()}>Reload</GlassButton>
+          <Button onClick={() => reset()}>Reload</Button>
         </div>
       </body>
     </html>

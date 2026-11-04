@@ -3,8 +3,8 @@
 import React from "react";
 import { Eye, AlertTriangle, AlertCircle, Info, Building2 } from "lucide-react";
 import type { SuperAdminAuditLog } from "@/types/tenant";
-import GlassBadge from "@/components/ui/GlassBadge";
-import GlassEmptyState from "@/components/ui/GlassEmptyState";
+import Badge from "@/components/ui/Badge";
+import EmptyState from "@/components/ui/EmptyState";
 import { Skeleton } from "@/components/ui/Skeleton";
 
 function formatEventType(type: string): string {
@@ -78,7 +78,7 @@ export default function AuditLogTable({
 
   if (logs.length === 0) {
     return (
-      <GlassEmptyState
+      <EmptyState
         title="No audit events found"
         message="No security actions or system audit logs match your filter criteria."
       />
@@ -90,22 +90,22 @@ export default function AuditLogTable({
       case "CRITICAL":
       case "ERROR":
         return (
-          <GlassBadge variant="danger" className="gap-1 text-xs">
+          <Badge variant="danger" className="gap-1 text-xs">
             <AlertCircle size={11} /> {sev}
-          </GlassBadge>
+          </Badge>
         );
       case "WARNING":
         return (
-          <GlassBadge variant="warning" className="gap-1 text-xs">
+          <Badge variant="warning" className="gap-1 text-xs">
             <AlertTriangle size={11} /> {sev}
-          </GlassBadge>
+          </Badge>
         );
       case "INFO":
       default:
         return (
-          <GlassBadge variant="info" className="gap-1 text-xs">
+          <Badge variant="info" className="gap-1 text-xs">
             <Info size={11} /> {sev}
-          </GlassBadge>
+          </Badge>
         );
     }
   };

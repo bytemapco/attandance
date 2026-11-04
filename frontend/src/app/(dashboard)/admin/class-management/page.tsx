@@ -6,10 +6,10 @@ import { Plus, AlertCircle, ChevronRight } from "lucide-react";
 import toast from "react-hot-toast";
 
 import api, { getApiErrorMessage } from "@/lib/api";
-import GlassBreadcrumb from "@/components/ui/GlassBreadcrumb";
-import GlassButton from "@/components/ui/GlassButton";
-import GlassTable, { type TableColumn } from "@/components/ui/GlassTable";
-import EnterpriseTableToolbar, { type ToolbarFilterConfig } from "@/components/ui/EnterpriseTableToolbar";
+import Breadcrumb from "@/components/ui/Breadcrumb";
+import Button from "@/components/ui/Button";
+import DataTable, { type TableColumn } from "@/components/ui/DataTable";
+import TableToolbar, { type ToolbarFilterConfig } from "@/components/ui/TableToolbar";
 import type { ClassSummary, DepartmentResponse } from "@/types";
 
 type ClassRow = ClassSummary & Record<string, unknown>;
@@ -164,7 +164,7 @@ export default function ClassManagementPage(): React.ReactElement {
 
   return (
     <div className="space-y-4">
-      <GlassBreadcrumb items={[{ label: "Admin", href: "/admin/dashboard" }, { label: "Classes" }]} />
+      <Breadcrumb items={[{ label: "Admin", href: "/admin/dashboard" }, { label: "Classes" }]} />
 
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-2 border-b border-border">
@@ -172,18 +172,18 @@ export default function ClassManagementPage(): React.ReactElement {
           <h1 className="text-2xl font-semibold tracking-tight text-foreground">Classes</h1>
           <span className="text-xs font-medium text-muted-foreground">({classes.length} total)</span>
         </div>
-        <GlassButton 
+        <Button 
           variant="primary" 
           size="md"
           icon={<Plus size={15} />} 
           onClick={() => router.push("/admin/class-management/create")}
         >
           Create Class
-        </GlassButton>
+        </Button>
       </div>
 
       {/* Filter Toolbar */}
-      <EnterpriseTableToolbar
+      <TableToolbar
         searchPlaceholder="Search by class code or department..."
         searchValue={search}
         onSearch={setSearch}
@@ -193,7 +193,7 @@ export default function ClassManagementPage(): React.ReactElement {
 
       {/* Clean Structured Table */}
       <div className="rounded-lg border border-border bg-card overflow-hidden">
-        <GlassTable
+        <DataTable
           columns={columns}
           data={classes}
           loading={loading}

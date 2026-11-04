@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { GraduationCap, Users } from "lucide-react";
-import GlassBadge from "@/components/ui/GlassBadge";
+import Badge from "@/components/ui/Badge";
 import type { StepProps } from "./stepProps";
 
 function countOf(status: StepProps["status"], id: string): number {
@@ -36,7 +36,7 @@ export default function PeopleStep({ status }: StepProps): React.ReactElement {
               <span className="flex items-center gap-2 font-medium text-foreground">
                 <Icon size={18} aria-hidden /> {title}
               </span>
-              <GlassBadge variant={countOf(status, id) > 0 ? "success" : "neutral"}>{countOf(status, id)} added</GlassBadge>
+              <Badge variant={countOf(status, id) > 0 ? "success" : "neutral"}>{countOf(status, id)} added</Badge>
             </div>
             <div className="flex gap-3 text-sm">
               <Link href={add} className="font-medium text-accent-strong hover:underline">Add one</Link>

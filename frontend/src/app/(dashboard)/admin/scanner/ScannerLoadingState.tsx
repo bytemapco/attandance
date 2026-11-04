@@ -2,11 +2,11 @@
 
 import React from "react";
 import { Loader2 } from "lucide-react";
-import GlassCard from "@/components/ui/GlassCard";
+import Card from "@/components/ui/Card";
 
 export default function ScannerLoadingState(): React.ReactElement {
   return (
-    <GlassCard className="py-16">
+    <Card className="py-16">
       <div className="flex flex-col items-center text-center" role="status" aria-live="polite">
         <Loader2 size={20} className="mb-4 animate-spin text-muted-foreground" aria-hidden />
         <h3 className="text-sm font-semibold text-foreground">Scanning attendance</h3>
@@ -14,6 +14,6 @@ export default function ScannerLoadingState(): React.ReactElement {
           Looking for irregular absence patterns. This can take a few seconds.
         </p>
       </div>
-    </GlassCard>
+    </Card>
   );
 }

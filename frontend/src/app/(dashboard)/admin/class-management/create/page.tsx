@@ -13,11 +13,11 @@ import {
   type ClassCreateFormData,
   type ClassCreateFormInput,
 } from "@/lib/validations/classManagement";
-import GlassBreadcrumb from "@/components/ui/GlassBreadcrumb";
-import GlassPageHeader from "@/components/ui/GlassPageHeader";
-import GlassCard from "@/components/ui/GlassCard";
-import GlassSelect from "@/components/ui/GlassSelect";
-import GlassButton from "@/components/ui/GlassButton";
+import Breadcrumb from "@/components/ui/Breadcrumb";
+import PageHeader from "@/components/ui/PageHeader";
+import Card from "@/components/ui/Card";
+import SelectField from "@/components/ui/SelectField";
+import Button from "@/components/ui/Button";
 import { useDepartmentBatches } from "@/components/admin/batches/useDepartmentBatches";
 import StudentSelectionList from "./StudentSelectionList";
 import type { ClassDetail, DepartmentResponse, StudentResponse } from "@/types";
@@ -100,24 +100,24 @@ export default function CreateClassPage(): React.ReactElement {
 
   return (
     <div>
-      <GlassBreadcrumb
+      <Breadcrumb
         items={[
           { label: "Admin", href: "/admin/dashboard" },
           { label: "Classes", href: "/admin/class-management" },
           { label: "Create" },
         ]}
       />
-      <GlassPageHeader
+      <PageHeader
         title="Create Class"
         description="Pick a department, semester and batch. Students of that batch are selected automatically."
       />
-      <GlassCard className="max-w-xl">
+      <Card className="max-w-xl">
         <form noValidate onSubmit={handleSubmit(onSubmit)} className="space-y-5">
           <Controller
             control={control}
             name="department_id"
             render={({ field }) => (
-              <GlassSelect
+              <SelectField
                 label="Department"
                 placeholder="Select department"
                 value={field.value}
@@ -132,7 +132,7 @@ export default function CreateClassPage(): React.ReactElement {
             control={control}
             name="semester_number"
             render={({ field }) => (
-              <GlassSelect
+              <SelectField
                 label="Semester"
                 value={String(field.value)}
                 onChange={field.onChange}
@@ -145,7 +145,7 @@ export default function CreateClassPage(): React.ReactElement {
             control={control}
             name="batch_id"
             render={({ field }) => (
-              <GlassSelect
+              <SelectField
                 label="Batch"
                 placeholder={departmentId ? "Select batch" : "Select a department first"}
                 value={field.value}
@@ -168,15 +168,15 @@ export default function CreateClassPage(): React.ReactElement {
             <StudentSelectionList students={matching} selected={selected} onToggle={toggle} onToggleAll={toggleAll} />
           )}
           <div className="flex justify-end gap-3 pt-4">
-            <GlassButton variant="ghost" type="button" onClick={() => router.back()}>
+            <Button variant="ghost" type="button" onClick={() => router.back()}>
               Cancel
-            </GlassButton>
-            <GlassButton variant="primary" type="submit" loading={isSubmitting}>
+            </Button>
+            <Button variant="primary" type="submit" loading={isSubmitting}>
               Create Class
-            </GlassButton>
+            </Button>
           </div>
         </form>
-      </GlassCard>
+      </Card>
     </div>
   );
 }

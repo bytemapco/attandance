@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Bell, AlertTriangle, AlertCircle, Info, CheckCircle2 } from "lucide-react";
-import GlassCard from "@/components/ui/GlassCard";
+import Card from "@/components/ui/Card";
 import type { GlobalBroadcastRequest } from "@/types/tenant";
 
 interface BroadcastPreviewProps {
@@ -43,7 +43,7 @@ export default function BroadcastPreview({ broadcast }: BroadcastPreviewProps): 
   const badge = getBadgeStyle();
 
   return (
-    <GlassCard className="p-6">
+    <Card className="p-6">
       <div className="flex items-center gap-3 pb-4 mb-4 border-b border-border">
         <div className="p-2 rounded-lg bg-accent-soft text-accent-strong border border-accent-border shrink-0">
           <Bell size={18} />
@@ -88,6 +88,6 @@ export default function BroadcastPreview({ broadcast }: BroadcastPreviewProps): 
           Audience: {broadcast.target_role ? broadcast.target_role.replace(/_/g, " ") : "All users"}
         </div>
       </div>
-    </GlassCard>
+    </Card>
   );
 }

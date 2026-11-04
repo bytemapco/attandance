@@ -3,13 +3,13 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Building2, Save } from "lucide-react";
-import GlassBreadcrumb from "@/components/ui/GlassBreadcrumb";
-import GlassPageHeader from "@/components/ui/GlassPageHeader";
-import GlassCard from "@/components/ui/GlassCard";
-import GlassInput from "@/components/ui/GlassInput";
-import GlassSelect from "@/components/ui/GlassSelect";
-import GlassButton from "@/components/ui/GlassButton";
-import GlassLoader from "@/components/ui/GlassLoader";
+import Breadcrumb from "@/components/ui/Breadcrumb";
+import PageHeader from "@/components/ui/PageHeader";
+import Card from "@/components/ui/Card";
+import Input from "@/components/ui/Input";
+import SelectField from "@/components/ui/SelectField";
+import Button from "@/components/ui/Button";
+import PageSkeleton from "@/components/ui/PageSkeleton";
 import { superAdminService } from "@/services/superAdminService";
 import { getApiErrorMessage } from "@/lib/api";
 import type { TenantDetail, TenantStatus } from "@/types/tenant";
@@ -78,11 +78,11 @@ export default function EditTenantPage(): React.ReactElement {
     }
   };
 
-  if (loading || !tenant) return <GlassLoader text="Loading institution details..." />;
+  if (loading || !tenant) return <PageSkeleton text="Loading institution details..." />;
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto pb-12">
-      <GlassBreadcrumb
+      <Breadcrumb
         items={[
           { label: "Super Admin", href: "/super-admin/dashboard" },
           { label: "Institutions", href: "/super-admin/tenants" },
@@ -91,53 +91,53 @@ export default function EditTenantPage(): React.ReactElement {
         ]}
       />
 
-      <GlassPageHeader
+      <PageHeader
         title="Edit Institution"
       />
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        <GlassCard className="p-6 space-y-6">
+        <Card className="p-6 space-y-6">
           <div className="flex items-center gap-2 border-b border-border pb-3">
             <Building2 size={18} className="text-primary" />
             <h3 className="text-sm font-semibold text-foreground">Institution Profile</h3>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            <GlassInput
+            <Input
               label="Institution Name"
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g. Stanford Academy"
               required
             />
-            <GlassInput
+            <Input
               label="URL Slug"
               value={slug}
               onChange={(e) => setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]+/g, ""))}
               placeholder="e.g. stanford-academy"
               required
             />
-            <GlassInput
+            <Input
               label="Institution Type"
               value="College / University"
               readOnly
             />
-            <GlassSelect
+            <SelectField
               label="Platform Status"
               options={STATUS_OPTIONS}
               value={status}
               onChange={(val) => setStatus(val as TenantStatus)}
             />
           </div>
-        </GlassCard>
+        </Card>
 
-        <GlassCard className="p-6 space-y-6">
+        <Card className="p-6 space-y-6">
           <div className="border-b border-border pb-3">
             <h3 className="text-sm font-semibold text-foreground">Licensing</h3>
           </div>
 
           <div className="max-w-sm">
-            <GlassInput
+            <Input
               label="License Quota"
               type="number"
               value={licenseCount}
@@ -146,21 +146,21 @@ export default function EditTenantPage(): React.ReactElement {
               required
             />
           </div>
-        </GlassCard>
+        </Card>
 
         <div className="flex items-center justify-end gap-3 pt-2">
-          <GlassButton
+          <Button
             type="button"
             variant="ghost"
             onClick={() => router.push(`/super-admin/tenants/${tenantId}`)}
             disabled={saving}
           >
             Cancel
-          </GlassButton>
-          <GlassButton type="submit" variant="primary" loading={saving} className="gap-2">
+          </Button>
+          <Button type="submit" variant="primary" loading={saving} className="gap-2">
             <Save size={14} />
             <span>Save Changes</span>
-          </GlassButton>
+          </Button>
         </div>
       </form>
     </div>

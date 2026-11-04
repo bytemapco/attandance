@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 export type ButtonVariant = "primary" | "secondary" | "danger" | "ghost" | "accent";
 export type ButtonSize = "sm" | "md" | "lg";
 
-export interface GlassButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
   size?: ButtonSize;
   loading?: boolean;
@@ -28,7 +28,7 @@ const sizeStyles: Record<ButtonSize, string> = {
   lg: "h-10 px-5 text-sm rounded-md",
 };
 
-export default function GlassButton({
+export default function Button({
   variant = "primary",
   size = "md",
   loading = false,
@@ -37,7 +37,7 @@ export default function GlassButton({
   className = "",
   disabled,
   ...props
-}: GlassButtonProps): React.ReactElement {
+}: ButtonProps): React.ReactElement {
   return (
     <button
       className={cn(

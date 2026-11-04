@@ -3,7 +3,7 @@
 import React from "react";
 import { X, Users, GraduationCap, BookOpen, Building2, DoorOpen, Award } from "lucide-react";
 import toast from "react-hot-toast";
-import GlassButton from "@/components/ui/GlassButton";
+import Button from "@/components/ui/Button";
 import ModalFrame from "@/components/ui/ModalFrame";
 import { useBulkImportProcessor } from "./bulk/useBulkImportProcessor";
 import BulkImportDropzone from "./bulk/BulkImportDropzone";
@@ -129,17 +129,17 @@ export default function BulkImportModal({
             onRemoveRecord={handleRemoveRecord}
           />
           <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-border">
-            <GlassButton type="button" variant="secondary" size="sm" onClick={handleReset}>
+            <Button type="button" variant="secondary" size="sm" onClick={handleReset}>
               Cancel
-            </GlassButton>
-            <GlassButton
+            </Button>
+            <Button
               type="button"
               size="sm"
               onClick={executeBulkImport}
               disabled={records.length === 0}
             >
               Import {records.length} records
-            </GlassButton>
+            </Button>
           </div>
         </>
       )}

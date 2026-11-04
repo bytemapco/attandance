@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import GlassSearch from "@/components/ui/GlassSearch";
+import SearchInput from "@/components/ui/SearchInput";
 import { Filter } from "lucide-react";
 import {
   Select,
@@ -9,7 +9,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/components/ui/SelectMenu";
 
 interface TenantFilterBarProps {
   searchQuery: string;
@@ -31,7 +31,7 @@ export default function TenantFilterBar({
   return (
     <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-3 bg-card rounded-lg border border-border mb-4">
       <div className="flex-1 max-w-md">
-        <GlassSearch
+        <SearchInput
           placeholder="Search by institution name or slug..."
           value={searchQuery}
           onSearch={onSearchChange}

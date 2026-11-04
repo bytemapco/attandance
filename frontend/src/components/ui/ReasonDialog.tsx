@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import GlassButton from "@/components/ui/GlassButton";
-import GlassTextarea from "@/components/ui/GlassTextarea";
+import Button from "@/components/ui/Button";
+import Textarea from "@/components/ui/Textarea";
 import ModalFrame from "@/components/ui/ModalFrame";
 import { reasonSchema } from "@/lib/validations/classManagement";
 
@@ -36,7 +36,7 @@ export default function ReasonDialog({
   return (
     <ModalFrame label={title} onClose={onCancel} className="p-6">
       <h3 className="mb-4 text-base font-semibold text-foreground">{title}</h3>
-      <GlassTextarea
+      <Textarea
         label="Reason"
         placeholder="Recorded in the class history"
         value={reason}
@@ -44,12 +44,12 @@ export default function ReasonDialog({
         error={error}
       />
       <div className="mt-5 flex justify-end gap-2 border-t border-border pt-3">
-        <GlassButton variant="ghost" size="sm" onClick={onCancel} disabled={loading}>
+        <Button variant="ghost" size="sm" onClick={onCancel} disabled={loading}>
           Cancel
-        </GlassButton>
-        <GlassButton variant="primary" size="sm" onClick={submit} loading={loading}>
+        </Button>
+        <Button variant="primary" size="sm" onClick={submit} loading={loading}>
           {confirmLabel}
-        </GlassButton>
+        </Button>
       </div>
     </ModalFrame>
   );

@@ -10,9 +10,9 @@ import toast from "react-hot-toast";
 
 import api, { getApiErrorMessage, applyValidationErrorsToForm } from "@/lib/api";
 import { onboardingSchema, type OnboardingFormData } from "@/lib/validations/auth";
-import GlassInput from "@/components/ui/GlassInput";
-import GlassButton from "@/components/ui/GlassButton";
-import GlassLoader from "@/components/ui/GlassLoader";
+import Input from "@/components/ui/Input";
+import Button from "@/components/ui/Button";
+import PageSkeleton from "@/components/ui/PageSkeleton";
 import { OnboardingInvalidCard, OnboardingCompletedCard } from "@/components/auth/OnboardingStatusCards";
 
 interface VerifyData {
@@ -87,7 +87,7 @@ function OnboardingContent(): React.ReactElement {
   if (verifying) {
     return (
       <div className="flex flex-col items-center justify-center p-8 space-y-3">
-        <GlassLoader text="Checking link..." />
+        <PageSkeleton text="Checking link..." />
       </div>
     );
   }
@@ -114,7 +114,7 @@ function OnboardingContent(): React.ReactElement {
       </div>
 
       <div className="space-y-3.5">
-        <GlassInput
+        <Input
           label="New Password"
           type="password"
           placeholder="••••••••"
@@ -124,7 +124,7 @@ function OnboardingContent(): React.ReactElement {
           autoComplete="new-password"
         />
 
-        <GlassInput
+        <Input
           label="Confirm Password"
           type="password"
           placeholder="••••••••"
@@ -136,7 +136,7 @@ function OnboardingContent(): React.ReactElement {
       </div>
 
       <div className="pt-1">
-        <GlassButton
+        <Button
           type="submit"
           variant="primary"
           size="lg"
@@ -144,7 +144,7 @@ function OnboardingContent(): React.ReactElement {
           className="w-full font-semibold"
         >
           Activate & Save Password
-        </GlassButton>
+        </Button>
       </div>
     </form>
   );
@@ -173,7 +173,7 @@ export default function OnboardingPage(): React.ReactElement {
         <Suspense
           fallback={
             <div className="rounded-lg border border-border bg-card p-8 text-center">
-              <GlassLoader />
+              <PageSkeleton />
             </div>
           }
         >
