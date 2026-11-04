@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useAuthStore } from "@/store/authStore";
 import api from "@/lib/api";
+import { WS_URL } from "@/lib/config";
 
 type WsMessage = {
   type?: string;
@@ -15,7 +16,6 @@ type WsMessage = {
   [key: string]: unknown;
 };
 
-const WS_URL = process.env.NEXT_PUBLIC_WS_URL ?? "ws://localhost:8000/ws/connect";
 const RECONNECT_DELAY_MS = 5000;
 const MAX_RECONNECT_ATTEMPTS = 5;
 

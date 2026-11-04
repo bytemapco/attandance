@@ -6,19 +6,16 @@ import {
   ArrowLeft,
   Building2,
   CalendarDays,
-  GraduationCap,
   Layers,
   Users,
   BookOpen,
   AlertCircle,
-  CheckCircle2,
 } from "lucide-react";
 import toast from "react-hot-toast";
 
 import api, { getApiErrorMessage } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import GlassBreadcrumb from "@/components/ui/GlassBreadcrumb";
-import GlassPageHeader from "@/components/ui/GlassPageHeader";
 import GlassErrorState from "@/components/ui/GlassErrorState";
 import GlassLoader from "@/components/ui/GlassLoader";
 import GlassBadge from "@/components/ui/GlassBadge";

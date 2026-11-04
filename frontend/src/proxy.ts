@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const AUTH_COOKIE = "sas-auth-storage";
+import { AUTH_STORAGE_KEY } from "@/lib/config";
 
 interface ParsedAuth {
   token: string | null;
@@ -21,7 +21,7 @@ function decodeJwtPayload(token: string): { role?: string; exp?: number } | null
 }
 
 function parseAuthCookie(request: NextRequest): ParsedAuth {
-  const cookie = request.cookies.get(AUTH_COOKIE);
+  const cookie = request.cookies.get(AUTH_STORAGE_KEY);
   if (!cookie?.value) return { token: null, role: null };
 
   const attempts = [
