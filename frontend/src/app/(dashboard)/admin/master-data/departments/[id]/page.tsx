@@ -4,7 +4,9 @@ import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Pencil } from "lucide-react";
 import toast from "react-hot-toast";
-import api, { getApiErrorMessage } from "@/lib/api";
+import { getApiErrorMessage } from "@/lib/api";
+import { DEPARTMENTS } from "@/lib/masterData/entities";
+import { getRecord } from "@/services/masterData";
 import GlassBreadcrumb from "@/components/ui/GlassBreadcrumb";
 import GlassPageHeader from "@/components/ui/GlassPageHeader";
 import GlassButton from "@/components/ui/GlassButton";
@@ -19,9 +21,8 @@ export default function DepartmentDetailPage(): React.ReactElement {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api
-      .get<DepartmentResponse>(`/admin/departments/${id}`)
-      .then(({ data }) => setDepartment(data))
+    getRecord<DepartmentResponse>(DEPARTMENTS, id)
+      .then(setDepartment)
       .catch((err: unknown) => toast.error(getApiErrorMessage(err, "Failed to load department")))
       .finally(() => setLoading(false));
   }, [id]);
