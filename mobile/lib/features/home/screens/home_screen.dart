@@ -23,13 +23,18 @@ class HomeScreen extends ConsumerStatefulWidget {
 
 class _HomeScreenState extends ConsumerState<HomeScreen>
     with WidgetsBindingObserver {
+  // Kept here because `ref` cannot be used once the screen is being disposed, and leaving
+  // Home would otherwise throw and keep the student on this tab.
+  late final SessionNotifier _sessions;
+
   @override
   void initState() {
     super.initState();
+    _sessions = ref.read(sessionProvider.notifier);
     WidgetsBinding.instance.addObserver(this);
     Future.microtask(() {
       if (mounted) {
-        ref.read(sessionProvider.notifier).startPolling();
+        _sessions.startPolling();
         ref.read(analyticsProvider.notifier).fetch();
       }
     });
@@ -38,7 +43,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    ref.read(sessionProvider.notifier).stopPolling();
+    _sessions.stopPolling();
     super.dispose();
   }
 
@@ -46,9 +51,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.inactive ||
         state == AppLifecycleState.paused) {
-      ref.read(sessionProvider.notifier).stopPolling();
+      _sessions.stopPolling();
     } else if (state == AppLifecycleState.resumed) {
-      ref.read(sessionProvider.notifier).startPolling();
+      _sessions.startPolling();
     }
   }
 
