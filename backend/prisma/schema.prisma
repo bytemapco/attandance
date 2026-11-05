@@ -171,7 +171,7 @@ model User {
 
 model Student {
   id               String    @id @default(uuid())
-  tenantId         String    @map("tenant_id")
+  tenantId         String?   @map("tenant_id")
   userId           String    @unique @map("user_id")
   departmentId     String    @map("department_id")
   enrollmentNumber String    @map("enrollment_number")
@@ -212,7 +212,7 @@ model Student {
 
 model Teacher {
   id              String    @id @default(uuid())
-  tenantId        String    @map("tenant_id")
+  tenantId        String?   @map("tenant_id")
   userId          String    @unique @map("user_id")
   departmentId    String    @map("department_id")
   designationId   String    @map("designation_id")
@@ -326,7 +326,7 @@ model Classroom {
 
 model LeaveRequest {
   id           String      @id @default(uuid())
-  tenantId     String      @map("tenant_id")
+  tenantId     String?     @map("tenant_id")
   studentId    String      @map("student_id")
   startDate    DateTime    @map("start_date")
   endDate      DateTime    @map("end_date")
@@ -348,7 +348,7 @@ model LeaveRequest {
 
 model DeviceChangeRequest {
   id            String             @id @default(uuid())
-  tenantId      String             @map("tenant_id")
+  tenantId      String?            @map("tenant_id")
   studentId     String             @map("student_id")
   newDeviceUuid String             @map("new_device_uuid")
   reason        String?
