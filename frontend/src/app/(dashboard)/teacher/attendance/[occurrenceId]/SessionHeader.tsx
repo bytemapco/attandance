@@ -13,6 +13,7 @@ interface SessionHeaderProps {
   state: OccurrenceState;
   changedCount: number;
   waitingCount: number;
+  flaggedCount: number;
   saving: boolean;
   correcting: boolean;
   onMarkRemaining: () => void;
@@ -27,7 +28,7 @@ function Kbd({ children }: { children: React.ReactNode }): React.ReactElement {
 }
 
 export default function SessionHeader({
-  register, state, changedCount, waitingCount, saving, correcting, onMarkRemaining, onSave, onStop, onCorrect, onCancelCorrection,
+  register, state, changedCount, waitingCount, flaggedCount, saving, correcting, onMarkRemaining, onSave, onStop, onCorrect, onCancelCorrection,
 }: SessionHeaderProps): React.ReactElement {
   return (
     <header className="flex flex-wrap items-end justify-between gap-x-6 gap-y-3">
@@ -38,6 +39,7 @@ export default function SessionHeader({
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
           <h1 className="text-2xl font-semibold leading-tight tracking-tight text-foreground">{register.course_name}</h1>
           <Badge variant={STATE_BADGE[state]}>{STATE_LABEL[state]}</Badge>
+          {flaggedCount > 0 && <Badge variant="warning">{flaggedCount} to verify</Badge>}
         </div>
         <p className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground">
           <span className="font-semibold text-foreground">{register.class_code}</span>

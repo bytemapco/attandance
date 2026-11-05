@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import api from "@/lib/api";
+import { FLAGGED_CHANGED_EVENT } from "@/lib/flaggedEvents";
 import { cn } from "@/lib/utils";
 import { teacherLinks, teacherReportLinks } from "./sidebarNav";
 
@@ -20,13 +21,20 @@ export default function TeacherNavSection({ unreadCount, onClose }: TeacherNavSe
     let isMounted = true;
     const fetchFlagged = async () => {
       try {
-        const { data } = await api.get<unknown[]>("/teacher/attendance/flagged");
+        const { data } = await api.get<unknown[]>("/faculty/flagged");
         if (isMounted) setFlaggedCount(Array.isArray(data) ? data.length : 0);
       } catch { /* Polling error ignored */ }
     };
     void fetchFlagged();
     const interval = setInterval(() => void fetchFlagged(), 60_000);
-    return () => { isMounted = false; clearInterval(interval); };
+    // A decision made on the attendance page updates the count at once.
+    const onChanged = (): void => void fetchFlagged();
+    window.addEventListener(FLAGGED_CHANGED_EVENT, onChanged);
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+      window.removeEventListener(FLAGGED_CHANGED_EVENT, onChanged);
+    };
   }, []);
 
   return (

@@ -53,6 +53,27 @@ export function markedBy(student: RegisterStudentItem): string | null {
   return METHOD_LABEL[student.method] ?? student.method;
 }
 
+/** Flagged marks the teacher can decide on now. A student with an unsaved grid edit is left to that edit. */
+export function flaggedForReview(students: RegisterStudentItem[], edits: Edits): RegisterStudentItem[] {
+  return students.filter((s) => s.status === "FLAGGED" && !!s.record_id && !edits[s.student_id]);
+}
+
+/** A sentence for the stop-and-lock dialog, or "" when every flagged mark has a decision. */
+export function pendingFlagsText(count: number): string {
+  return count === 0 ? "" : ` ${count} mark${count === 1 ? "" : "s"} still to verify will stay pending.`;
+}
+
+function scoreText(value?: number | null): string {
+  return value == null ? "not checked" : `${Math.round(value * 100)}%`;
+}
+
+/** How the mark was made, and for a face check the scores. A check that did not run says so; it is never shown as 0. */
+export function evidenceLine(student: RegisterStudentItem): string {
+  const via = markedBy(student) ?? "Unknown method";
+  if (student.method !== "AI_BIOMETRIC") return `Marked via ${via}`;
+  return `Marked via ${via} · Face match ${scoreText(student.face_score)} · Liveness ${scoreText(student.liveness_score)}`;
+}
+
 export function initials(name: string): string {
   const parts = name.trim().split(/\s+/);
   return ((parts[0]?.[0] ?? "") + (parts.length > 1 ? parts[parts.length - 1][0] : "")).toUpperCase() || "?";
