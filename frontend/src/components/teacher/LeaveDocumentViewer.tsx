@@ -64,7 +64,7 @@ export default function LeaveDocumentViewer({ url }: LeaveDocumentViewerProps): 
         ) : isPdf ? (
           <iframe
             src={url}
-            title="Leave Document Evidence"
+            title="Leave document evidence"
             className="w-full h-full min-h-[500px] rounded-lg border border-border"
           />
         ) : docLoadError ? (

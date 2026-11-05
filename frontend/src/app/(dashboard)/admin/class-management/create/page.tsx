@@ -108,7 +108,7 @@ export default function CreateClassPage(): React.ReactElement {
         ]}
       />
       <PageHeader
-        title="Create Class"
+        title="Create class"
         description="Pick a department, semester and batch. Students of that batch are selected automatically."
       />
       <Card className="max-w-xl">

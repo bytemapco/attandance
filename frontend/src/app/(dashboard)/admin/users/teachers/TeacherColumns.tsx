@@ -110,14 +110,14 @@ export const teacherColumns: TableColumn<TeacherResponse & Record<string, unknow
         <Link
           href={`/admin/users/teachers/${row.id}`}
           className="inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-secondary border border-border transition-colors"
-          title="View Profile"
+          title="View profile"
         >
           <Eye size={12} /> View
         </Link>
         <Link
           href={`/admin/users/teachers/${row.id}/edit`}
           className="inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-secondary border border-border transition-colors"
-          title="Edit Teacher"
+          title="Edit teacher"
         >
           <Pencil size={12} /> Edit
         </Link>

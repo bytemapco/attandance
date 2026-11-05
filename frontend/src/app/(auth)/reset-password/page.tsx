@@ -79,7 +79,7 @@ function ResetPasswordContent(): React.ReactElement {
         new_password: formData.password,
       });
       setCompleted(true);
-      toast.success("Password has been reset successfully!");
+      toast.success("Password reset");
       setTimeout(() => router.push("/login"), 2500);
     } catch (err: unknown) {
       const handled = applyValidationErrorsToForm(err, setError);

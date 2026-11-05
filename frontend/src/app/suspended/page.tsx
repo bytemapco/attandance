@@ -38,7 +38,7 @@ export default function SuspendedPage(): React.ReactElement {
 
         <div className="space-y-2">
           <h1 className="text-2xl font-semibold tracking-tight text-primary">Account Suspended</h1>
-          <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+          <p className="text-sm text-muted-foreground leading-relaxed">
             {suspensionReason ? (
               <span>{suspensionReason}</span>
             ) : (

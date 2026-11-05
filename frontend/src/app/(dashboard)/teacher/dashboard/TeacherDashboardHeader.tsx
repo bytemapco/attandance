@@ -16,16 +16,6 @@ export default function TeacherDashboardHeader({
 }: TeacherDashboardHeaderProps): React.ReactElement {
   const { user } = useAuthStore();
   const profile = user?.teacher_profile;
-  const teacherName = profile
-    ? `${profile.first_name} ${profile.last_name}`.trim()
-    : user?.email?.split("@")[0] || "Teacher";
-
-  const greeting = (() => {
-    const hour = new Date().getHours();
-    if (hour < 12) return "Good morning";
-    if (hour < 17) return "Good afternoon";
-    return "Good evening";
-  })();
 
   return (
     <div className="rounded-lg border border-border bg-card p-5 sm:p-6 flex flex-col md:flex-row md:items-center justify-between gap-5">
@@ -46,7 +36,7 @@ export default function TeacherDashboardHeader({
         </div>
 
         <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-primary">
-          {greeting}, {teacherName}
+          Dashboard
         </h1>
       </div>
 

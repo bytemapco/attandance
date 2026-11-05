@@ -74,7 +74,7 @@ function OnboardingContent(): React.ReactElement {
         password: formData.password,
       });
       setCompleted(true);
-      toast.success("Account activated successfully!");
+      toast.success("Account activated");
       setTimeout(() => router.push("/login"), 2500);
     } catch (err: unknown) {
       const handled = applyValidationErrorsToForm(err, setError);

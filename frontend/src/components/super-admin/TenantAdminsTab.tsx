@@ -167,7 +167,7 @@ export default function TenantAdminsTab({ tenant, onRefresh }: TenantAdminsTabPr
       />
       <ConfirmDialog
         isOpen={Boolean(adminToDelete)}
-        title="Remove Administrator"
+        title="Remove administrator"
         message={`Are you sure you want to permanently remove administrator '${adminToDelete?.email}' from ${tenant.name}? This action cannot be undone.`}
         confirmLabel="Remove Administrator"
         onConfirm={() => void handleDeleteAdmin()}
@@ -179,7 +179,7 @@ export default function TenantAdminsTab({ tenant, onRefresh }: TenantAdminsTabPr
         onClose={() => setAdminToReset(null)}
         onConfirm={handleSendResetEmail}
         userEmail={adminToReset?.email}
-        title="Send Administrator Password Reset Link"
+        title="Send administrator password reset link"
       />
     </div>
   );

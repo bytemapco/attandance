@@ -120,7 +120,7 @@ export default function UserDetailView({
           onClose={() => setIsResetDialogOpen(false)}
           onConfirm={handleResetPassword}
           userEmail={account.email}
-          title="Send Password Reset Email"
+          title="Send password reset email"
         />
       </div>
     </ClipboardProvider>

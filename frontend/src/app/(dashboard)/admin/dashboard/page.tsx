@@ -8,7 +8,6 @@ import {
 } from "lucide-react";
 import api from "@/lib/api";
 import toast from "react-hot-toast";
-import { useAuthStore } from "@/store/authStore";
 import Button from "@/components/ui/Button";
 import PageHeader from "@/components/ui/PageHeader";
 import StatCard from "@/components/ui/StatCard";
@@ -19,35 +18,9 @@ import type { AdminStatsResponse } from "@/types";
 
 export default function AdminDashboardPage(): React.ReactElement {
   const router = useRouter();
-  const { user } = useAuthStore();
   const [stats, setStats] = useState<AdminStatsResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-
-  const greeting = (() => {
-    const hour = new Date().getHours();
-    if (hour < 12) return "Good morning";
-    if (hour < 17) return "Good afternoon";
-    return "Good evening";
-  })();
-
-  const displayName = (() => {
-    if (user?.teacher_profile?.first_name) {
-      return `${user.teacher_profile.first_name} ${user.teacher_profile.last_name || ""}`.trim();
-    }
-    if (user?.student_profile?.first_name) {
-      return `${user.student_profile.first_name} ${user.student_profile.last_name || ""}`.trim();
-    }
-    if (user?.email) {
-      const handle = user.email.split("@")[0].replace(/[._-]/g, " ");
-      return handle
-        .split(" ")
-        .filter(Boolean)
-        .map((w) => (w.length <= 3 ? w.toUpperCase() : w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()))
-        .join(" ");
-    }
-    return "Administrator";
-  })();
 
   const todayStr = new Intl.DateTimeFormat("en-US", {
     weekday: "long",
@@ -83,7 +56,7 @@ export default function AdminDashboardPage(): React.ReactElement {
   return (
     <div className="space-y-6 pb-6">
       <PageHeader
-        title={`${greeting}, ${displayName}`}
+        title="Dashboard"
         description={todayStr}
         className="mb-0"
         actions={

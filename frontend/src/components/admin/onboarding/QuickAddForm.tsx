@@ -79,7 +79,7 @@ export default function QuickAddForm({
       className={`grid items-end gap-2.5 pt-0.5 ${needsCode ? "sm:grid-cols-[1fr_8.5rem_auto]" : "sm:grid-cols-[1fr_auto]"}`}
     >
       <div className="flex flex-col gap-1.5 w-full">
-        <label htmlFor={nameInputId} className="text-xs sm:text-sm font-semibold text-foreground">
+        <label htmlFor={nameInputId} className="text-sm font-semibold text-foreground">
           {nameLabel || defaultLabel}
         </label>
         <div className="relative flex items-center w-full rounded-md border border-border bg-card transition-colors focus-within:ring-2 focus-within:ring-ring focus-within:border-transparent">
@@ -121,7 +121,7 @@ export default function QuickAddForm({
       {needsCode && (
         <div className="flex flex-col gap-1.5 w-full">
           <div className="flex items-center gap-1">
-            <label htmlFor="quick-add-code-input" className="text-xs sm:text-sm font-semibold text-foreground">
+            <label htmlFor="quick-add-code-input" className="text-sm font-semibold text-foreground">
               {codeLabel || "Code"}
             </label>
             <div className="group relative inline-flex items-center">

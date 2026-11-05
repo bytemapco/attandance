@@ -84,7 +84,7 @@ export default function LicenseRequestsPage(): React.JSX.Element {
       />
 
       <PageHeader
-        title="License Requests"
+        title="License requests"
         actions={
           <Button variant="ghost" onClick={() => void fetchRequests()} className="gap-2">
             <RefreshCw size={14} />

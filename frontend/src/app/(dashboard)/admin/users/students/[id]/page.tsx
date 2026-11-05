@@ -74,7 +74,7 @@ export default function StudentDetailPage(): React.ReactElement {
       }
       editHref={`/admin/users/students/${id}/edit`}
     >
-      <DetailCard icon={GraduationCap} title="Academic Profile" subtitle="Institutional Records">
+      <DetailCard icon={GraduationCap} title="Academic profile" subtitle="Institutional records">
         <InfoRow
           icon={Hash}
           label="Enrollment Number"
@@ -95,7 +95,7 @@ export default function StudentDetailPage(): React.ReactElement {
         />
       </DetailCard>
 
-      <DetailCard icon={User} title="Personal Information" subtitle="Contact & Identity">
+      <DetailCard icon={User} title="Personal information" subtitle="Contact & identity">
         <InfoRow icon={Mail} label="Email Address" value={student.email} copyValue={student.email} copyKey="Email" />
         <InfoRow
           icon={Phone}

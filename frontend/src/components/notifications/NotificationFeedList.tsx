@@ -70,7 +70,7 @@ export function NotificationFeedList({
       <div className="p-12 rounded-lg bg-card border border-border text-center space-y-3">
         <div className="inline-flex p-3.5 rounded-lg bg-secondary text-muted-foreground border border-border"><Inbox size={24} /></div>
         <h3 className="text-base font-semibold text-foreground">{searchQuery ? "No matching notifications" : "Inbox zero"}</h3>
-        <p className="text-xs sm:text-sm text-muted-foreground max-w-md mx-auto leading-relaxed">
+        <p className="text-sm text-muted-foreground max-w-md mx-auto leading-relaxed">
           {searchQuery ? `No alerts match "${searchQuery}". Check spelling or switch filter tabs.` : "You have reviewed all platform alerts. New campus activities will appear here in real time."}
         </p>
       </div>
@@ -162,7 +162,7 @@ export function NotificationFeedList({
 
       <ConfirmDialog
         isOpen={confirmDeleteSelectedOpen}
-        title="Delete Selected Notifications"
+        title="Delete selected notifications"
         message={`Delete ${selectedCount} selected notification(s)? This action cannot be undone.`}
         confirmLabel="Delete Selected"
         onConfirm={() => void handleDeleteSelected()}
@@ -171,7 +171,7 @@ export function NotificationFeedList({
       />
       <ConfirmDialog
         isOpen={confirmDeleteAllOpen}
-        title="Delete All Notifications"
+        title="Delete all notifications"
         message="Clear all notifications from your feed? This action cannot be undone."
         confirmLabel="Delete All"
         onConfirm={() => void handleDeleteAll()}

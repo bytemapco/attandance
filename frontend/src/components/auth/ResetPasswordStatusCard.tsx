@@ -39,7 +39,7 @@ export default function ResetPasswordStatusCard({
         <CheckCircle2 size={32} />
       </div>
       <div>
-        <h2 className="text-lg font-semibold text-foreground">Password Updated!</h2>
+        <h2 className="text-lg font-semibold text-foreground">Password updated</h2>
         <p className="text-xs text-muted-foreground mt-1.5">
           Your new password is now active. Redirecting to sign in...
         </p>

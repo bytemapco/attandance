@@ -52,7 +52,7 @@ export default function PlatformHealthPage(): React.ReactElement {
       />
 
       <PageHeader
-        title="System Status"
+        title="System status"
         description="Service health and diagnostics."
         actions={
           <Button

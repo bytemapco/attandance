@@ -75,7 +75,7 @@ export default function ForceChangePasswordModal({
       await api.post("/auth/change-password", {
         new_password: data.new_password,
       });
-      toast.success("Password updated successfully!");
+      toast.success("Password updated");
       onSuccess();
     } catch (err: unknown) {
       applyValidationErrorsToForm(err, setError);

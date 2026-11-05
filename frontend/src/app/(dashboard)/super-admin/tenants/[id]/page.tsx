@@ -53,7 +53,7 @@ export default function TenantDetailPage(): React.ReactElement {
     try {
       const updated = await superAdminService.updateTenant(tenantId, payload);
       setTenant(updated);
-      toast.success("Tenant settings updated successfully!");
+      toast.success("Settings updated");
     } catch (err) {
       toast.error(getApiErrorMessage(err, "Failed to update tenant"));
     } finally {

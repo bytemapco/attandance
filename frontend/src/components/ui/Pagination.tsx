@@ -66,7 +66,7 @@ export default function Pagination({
           onClick={() => onPageChange(1)}
           disabled={validPage <= 1}
           className="inline-flex items-center justify-center h-7 w-7 rounded-md border border-border bg-card text-foreground hover:bg-muted disabled:opacity-40 disabled:pointer-events-none transition-colors cursor-pointer"
-          title="First Page"
+          title="First page"
           aria-label="First page"
         >
           <ChevronsLeft size={13} />
@@ -77,7 +77,7 @@ export default function Pagination({
           onClick={() => onPageChange(validPage - 1)}
           disabled={validPage <= 1}
           className="inline-flex items-center justify-center h-7 w-7 rounded-md border border-border bg-card text-foreground hover:bg-muted disabled:opacity-40 disabled:pointer-events-none transition-colors cursor-pointer"
-          title="Previous Page"
+          title="Previous page"
           aria-label="Previous page"
         >
           <ChevronLeft size={13} />
@@ -115,7 +115,7 @@ export default function Pagination({
           onClick={() => onPageChange(validPage + 1)}
           disabled={validPage >= totalPages}
           className="inline-flex items-center justify-center h-7 w-7 rounded-md border border-border bg-card text-foreground hover:bg-muted disabled:opacity-40 disabled:pointer-events-none transition-colors cursor-pointer"
-          title="Next Page"
+          title="Next page"
           aria-label="Next page"
         >
           <ChevronRight size={13} />
@@ -126,7 +126,7 @@ export default function Pagination({
           onClick={() => onPageChange(totalPages)}
           disabled={validPage >= totalPages}
           className="inline-flex items-center justify-center h-7 w-7 rounded-md border border-border bg-card text-foreground hover:bg-muted disabled:opacity-40 disabled:pointer-events-none transition-colors cursor-pointer"
-          title="Last Page"
+          title="Last page"
           aria-label="Last page"
         >
           <ChevronsRight size={13} />

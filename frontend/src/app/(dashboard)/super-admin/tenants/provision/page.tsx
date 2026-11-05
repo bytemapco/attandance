@@ -97,7 +97,7 @@ export default function ProvisionTenantPage(): React.ReactElement {
       />
 
       <PageHeader
-        title="Add Institution"
+        title="Add institution"
         description="Register a College / University and configure initial administrator accounts."
       />
 

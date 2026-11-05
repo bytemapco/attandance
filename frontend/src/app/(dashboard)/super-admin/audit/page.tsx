@@ -79,7 +79,7 @@ export default function SecurityAuditPage(): React.JSX.Element {
       />
 
       <PageHeader
-        title="Audit Logs"
+        title="Audit logs"
       />
 
       <AuditFilterBar

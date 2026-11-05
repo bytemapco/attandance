@@ -75,7 +75,7 @@ export default function TenantLicensesPage(): React.JSX.Element {
       />
 
       <PageHeader
-        title="Licenses & Capacity"
+        title="Licenses & capacity"
         description="Monitor your institution's license usage and request additional seats when needed."
         actions={
           <Button variant="ghost" onClick={() => void loadData()} className="gap-2">
