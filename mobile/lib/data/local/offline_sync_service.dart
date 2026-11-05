@@ -7,6 +7,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_attendance_app/core/constants.dart';
 import 'package:smart_attendance_app/core/attendance_constants.dart';
+import 'package:smart_attendance_app/core/offline_window.dart';
 import 'package:smart_attendance_app/data/api/dio_client.dart';
 import 'package:smart_attendance_app/data/api/student_api.dart';
 import 'package:smart_attendance_app/domain/models/offline_payload.dart';
@@ -92,6 +93,11 @@ class OfflineSyncService {
     }
   }
 
+  Future<void> _discard(OfflineAttendancePayload payload) async {
+    await _removePayload(payload);
+    await _deleteImageFile(payload.imagePath);
+  }
+
   Future<void> _deleteImageFile(String imagePath) async {
     try {
       final file = File(imagePath);
@@ -134,12 +140,21 @@ class OfflineSyncService {
     final age = DateTime.now().difference(payload.capturedAt);
 
     if (age > kOfflinePayloadMaxAge) {
-      await _removePayload(payload);
-      await _deleteImageFile(payload.imagePath);
+      await _discard(payload);
       await _notify(
         'Submission Expired',
         'Attendance for ${_className(payload)} was captured ${age.inMinutes} minutes ago and has expired.',
         kSeverityWarning,
+      );
+      return false;
+    }
+
+    if (windowHasClosed(payload.windowClosesAt, DateTime.now())) {
+      await _discard(payload);
+      await _notify(
+        'Attendance Not Recorded',
+        'The attendance window for ${_className(payload)} closed before your phone reconnected, so the mark was not sent.',
+        kSeverityDanger,
       );
       return false;
     }
@@ -152,8 +167,7 @@ class OfflineSyncService {
         accuracy: payload.accuracy ?? 0.0,
         imagePath: payload.imagePath,
       );
-      await _removePayload(payload);
-      await _deleteImageFile(payload.imagePath);
+      await _discard(payload);
       await _notify(
         'Offline Sync Complete',
         'Successfully synced offline attendance for ${_className(payload)}.',
@@ -166,8 +180,7 @@ class OfflineSyncService {
         _handleSyncError(payload);
         return false;
       }
-      await _removePayload(payload);
-      await _deleteImageFile(payload.imagePath);
+      await _discard(payload);
       final reason = mapDioError(e).message;
       if (e.response?.statusCode == 409) {
         await _notify(

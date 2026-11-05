@@ -19,13 +19,14 @@ class OfflineAttendancePayloadAdapter
       capturedAt: fields[4] as DateTime,
       className: fields[5] as String?,
       accuracy: fields[6] as double?,
+      windowClosesAt: fields[7] as DateTime?,
     );
   }
 
   @override
   void write(BinaryWriter writer, OfflineAttendancePayload obj) {
     writer
-      ..writeByte(7)
+      ..writeByte(8)
       ..writeByte(0)
       ..write(obj.sessionId)
       ..writeByte(1)
@@ -39,7 +40,9 @@ class OfflineAttendancePayloadAdapter
       ..writeByte(5)
       ..write(obj.className)
       ..writeByte(6)
-      ..write(obj.accuracy);
+      ..write(obj.accuracy)
+      ..writeByte(7)
+      ..write(obj.windowClosesAt);
   }
 
   @override

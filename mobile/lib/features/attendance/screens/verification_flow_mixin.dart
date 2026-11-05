@@ -50,6 +50,23 @@ mixin VerificationFlowMixin
     }
   }
 
+  /// Saves the reviewed mark. The class name and window close time travel with it, so a mark
+  /// queued while offline can be explained to the student and dropped if the window closes first.
+  Future<void> confirmAttendance() {
+    final session = ref
+        .read(sessionProvider)
+        .sessions
+        .where((s) => s.sessionId == widget.sessionId)
+        .firstOrNull;
+    return ref
+        .read(attendanceVerificationProvider.notifier)
+        .confirm(
+          widget.sessionId,
+          className: session?.subject,
+          windowClosesAt: session?.sessionEndTime,
+        );
+  }
+
   void retakePhoto() {
     disposeCamera();
     if (mounted) {

@@ -153,9 +153,7 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen>
           onCapture: capturePhoto,
           onRetake: retakePhoto,
           onAnalyze: analyzePhoto,
-          onSubmit: () => ref
-              .read(attendanceVerificationProvider.notifier)
-              .confirm(widget.sessionId),
+          onSubmit: confirmAttendance,
         ),
       ),
     );

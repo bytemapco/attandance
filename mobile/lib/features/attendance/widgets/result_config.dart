@@ -45,7 +45,7 @@ class ResultConfig {
     color: SasColors.info,
     title: 'Saved Offline',
     subtitle:
-        'Attendance queued locally. It will automatically sync when online.',
+        'Pending: your phone could not reach the server. It will send this mark when you are back online, if the teacher\'s attendance window is still open.',
   );
 
   factory ResultConfig.present(AttendanceResult att) => ResultConfig(
