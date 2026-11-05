@@ -6,6 +6,9 @@ import 'package:smart_attendance_app/domain/models/offline_payload.dart';
 import 'package:smart_attendance_app/domain/models/user.dart';
 import 'package:smart_attendance_app/domain/models/system_configuration.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:smart_attendance_app/data/local/read_cache.dart';
+
+const String _kHiveBoxReadCache = 'sas_read_cache';
 
 final hiveServiceProvider = Provider<HiveService>((ref) {
   return HiveService();
@@ -15,6 +18,9 @@ class HiveService {
   Box<OfflineAttendancePayload>? _offlineBox;
   Box<String>? _profileBox;
   Box<String>? _configBox;
+  Box<String>? _readCacheBox;
+
+  ReadCache get readCache => ReadCache(_readCacheBox);
 
   Future<void> initialize() async {
     await Hive.initFlutter();
@@ -28,6 +34,7 @@ class HiveService {
     );
     _profileBox = await Hive.openBox<String>(kHiveBoxProfile);
     _configBox = await Hive.openBox<String>(kHiveBoxConfig);
+    _readCacheBox = await Hive.openBox<String>(_kHiveBoxReadCache);
   }
 
   Future<void> addToQueue(OfflineAttendancePayload payload) async {
@@ -76,5 +83,6 @@ class HiveService {
     await _offlineBox?.clear();
     await _profileBox?.clear();
     await _configBox?.clear();
+    await _readCacheBox?.clear();
   }
 }
