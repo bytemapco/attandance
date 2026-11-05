@@ -64,7 +64,7 @@ class ProfileScreen extends ConsumerWidget {
                         ),
                       ),
                       InkWell(
-                        onTap: () => context.push('/settings/goals'),
+                        onTap: () => context.push('/settings/notifications'),
                         borderRadius: BorderRadius.circular(12),
                         child: Container(
                           width: 42,

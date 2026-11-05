@@ -12,7 +12,7 @@ def _to_dt(d: date) -> datetime:
     return datetime(d.year, d.month, d.day, 0, 0, 0)
 
 
-async def _authorize_register_access(occurrence, user: User) -> None:
+async def authorize_register_access(occurrence, user: User) -> None:
     """Teachers may only open the register of a class they take or substitute; admins are tenant-scoped upstream."""
     if user.role != "TEACHER":
         return
@@ -74,7 +74,7 @@ class OccurrenceRegisterService:
         )
         if not occurrence:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Class occurrence not found")
-        await _authorize_register_access(occurrence, user)
+        await authorize_register_access(occurrence, user)
 
         records_by_student = {r.studentId: r for r in occurrence.attendanceRecords}
         students_payload = []
@@ -89,7 +89,9 @@ class OccurrenceRegisterService:
                 student_name = student.user.name
             else:
                 student_name = "Student"
+            flagged = bool(existing_rec and existing_rec.status == "FLAGGED")
             students_payload.append({
+                "record_id": existing_rec.id if existing_rec else None,
                 "student_id": student.id,
                 "student_name": student_name,
                 "enrollment_number": student.enrollmentNumber,
@@ -99,6 +101,8 @@ class OccurrenceRegisterService:
                 "liveness_score": existing_rec.livenessScore if existing_rec else None,
                 "evidence_photo_url": existing_rec.evidencePhotoUrl if existing_rec else None,
                 "remarks": existing_rec.remarks if existing_rec else None,
+                # The student's explanation is only needed while the teacher decides on a flagged mark.
+                "student_note": existing_rec.studentNote if flagged else None,
                 "verified_at": existing_rec.verifiedAt if existing_rec else None,
             })
         return {
@@ -130,7 +134,7 @@ class OccurrenceRegisterService:
         )
         if not occurrence:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Class occurrence not found")
-        await _authorize_register_access(occurrence, user)
+        await authorize_register_access(occurrence, user)
         if occurrence.isAttendanceLocked and not (reason and reason.strip()):
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,

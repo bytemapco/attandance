@@ -1,22 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:smart_attendance_app/app/theme.dart';
+import 'package:smart_attendance_app/domain/models/analytics.dart';
 import 'package:smart_attendance_app/features/home/widgets/home_compliance_arc.dart';
 import 'package:smart_attendance_app/features/home/widgets/home_compliance_info.dart';
 
 /// Hero compliance widget featuring clean surface card with circular progress gauge.
 class HomeComplianceCard extends StatelessWidget {
-  final double percentage;
+  /// Null until a class has been held.
+  final double? percentage;
+  final double threshold;
+  final Standing standing;
   final VoidCallback onTap;
 
   const HomeComplianceCard({
     super.key,
     required this.percentage,
+    required this.threshold,
+    required this.standing,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    final clampedPct = (percentage / 100.0).clamp(0.0, 1.0);
+    final clampedPct = ((percentage ?? 0) / 100.0).clamp(0.0, 1.0);
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final cardBg = isDark ? SasColors.darkSurface : Colors.white;
@@ -38,7 +44,13 @@ class HomeComplianceCard extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Expanded(child: HomeComplianceInfo(percentage: percentage)),
+            Expanded(
+              child: HomeComplianceInfo(
+                percentage: percentage,
+                threshold: threshold,
+                standing: standing,
+              ),
+            ),
             const SizedBox(width: 8),
             HomeComplianceArc(progress: clampedPct, size: 122),
           ],

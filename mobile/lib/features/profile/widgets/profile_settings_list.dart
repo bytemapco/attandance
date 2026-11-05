@@ -50,16 +50,16 @@ class ProfileSettingsList extends StatelessWidget {
               const AppearanceSettingTile(),
               Divider(height: 1, thickness: 1, color: dividerColor, indent: 56),
 
-              // 2. Goals & Targets
+              // 2. Leaderboard (moved off the analytics screen)
               ProfileSettingItemRow(
-                icon: Icons.track_changes_rounded,
+                icon: Icons.leaderboard_rounded,
                 iconColor: SasColors.success,
                 iconBgColor: isDark
                     ? SasColors.darkSuccessSoft
                     : SasColors.successSoft,
-                title: 'Goals & Targets',
-                subtitle: 'Set minimum attendance threshold',
-                onTap: () => context.push('/settings/goals'),
+                title: 'Leaderboard',
+                subtitle: 'See how you rank in your department',
+                onTap: () => context.push('/leaderboard'),
               ),
               Divider(height: 1, thickness: 1, color: dividerColor, indent: 56),
 

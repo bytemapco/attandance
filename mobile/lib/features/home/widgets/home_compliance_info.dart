@@ -1,17 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:smart_attendance_app/app/theme.dart';
 import 'package:smart_attendance_app/app/typography.dart';
+import 'package:smart_attendance_app/domain/models/analytics.dart';
+import 'package:smart_attendance_app/shared/outcome_style.dart';
 
 /// Left content of compliance card displaying percentage, goal, and warning badge.
 class HomeComplianceInfo extends StatelessWidget {
-  final double percentage;
+  /// Null until a class has been held.
+  final double? percentage;
+  final double threshold;
+  final Standing standing;
 
-  const HomeComplianceInfo({super.key, required this.percentage});
+  const HomeComplianceInfo({
+    super.key,
+    required this.percentage,
+    required this.threshold,
+    required this.standing,
+  });
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final isBelowGoal = percentage < 75.0;
+    final badgeColor = standingColor(standing);
+    final goal = '${threshold.toStringAsFixed(0)}%';
 
     final primaryTextColor = isDark
         ? SasColors.ivory
@@ -71,7 +82,7 @@ class HomeComplianceInfo extends StatelessWidget {
 
         // 0% Big Stat
         Text(
-          '${percentage.toStringAsFixed(0)}%',
+          percentage == null ? '–' : '${percentage!.toStringAsFixed(0)}%',
           style: SasTypography.style(
             fontSize: 52,
             fontWeight: FontWeight.w600,
@@ -106,7 +117,7 @@ class HomeComplianceInfo extends StatelessWidget {
                       ),
                     ),
                     TextSpan(
-                      text: '75%',
+                      text: goal,
                       style: SasTypography.style(
                         fontSize: 13.5,
                         fontWeight: FontWeight.w600,
@@ -125,33 +136,29 @@ class HomeComplianceInfo extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
-            color: isBelowGoal
-                ? (isDark ? SasColors.darkDangerSoft : SasColors.dangerSoft)
-                : (isDark ? SasColors.darkSuccessSoft : SasColors.successSoft),
+            color: badgeColor.withValues(alpha: isDark ? 0.18 : 0.1),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(
-                isBelowGoal
-                    ? Icons.warning_amber_rounded
-                    : Icons.check_circle_rounded,
+                standing == Standing.ok
+                    ? Icons.check_circle_rounded
+                    : Icons.warning_amber_rounded,
                 size: 15,
-                color: isBelowGoal
-                    ? SasColors.danger
-                    : SasColors.success,
+                color: badgeColor,
               ),
               const SizedBox(width: 5),
               Flexible(
                 child: Text(
-                  isBelowGoal ? 'Below 75%' : 'Good Standing',
+                  standing == Standing.shortage
+                      ? 'Below $goal'
+                      : standingLabel(standing),
                   style: SasTypography.style(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
-                    color: isBelowGoal
-                        ? SasColors.danger
-                        : SasColors.success,
+                    color: badgeColor,
                   ),
                 ),
               ),

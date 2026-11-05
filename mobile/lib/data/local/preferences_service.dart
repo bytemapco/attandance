@@ -6,7 +6,6 @@ final preferencesServiceProvider = Provider<PreferencesService>((ref) {
 });
 
 class PreferencesService {
-  static const _keyAttendanceTarget = 'pref_attendance_target';
   static const _keyNotifyClassStart = 'pref_notify_class_start';
   static const _keyNotifyWindowOpen = 'pref_notify_window_open';
   static const _keyNotifySyncDone = 'pref_notify_sync_done';
@@ -19,16 +18,6 @@ class PreferencesService {
   Future<SharedPreferences> get _instance async {
     _prefs ??= await SharedPreferences.getInstance();
     return _prefs!;
-  }
-
-  Future<double> getAttendanceTarget() async {
-    final prefs = await _instance;
-    return prefs.getDouble(_keyAttendanceTarget) ?? 75.0;
-  }
-
-  Future<void> setAttendanceTarget(double value) async {
-    final prefs = await _instance;
-    await prefs.setDouble(_keyAttendanceTarget, value);
   }
 
   Future<bool> getNotifyClassStart() async {

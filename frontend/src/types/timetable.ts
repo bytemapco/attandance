@@ -102,6 +102,7 @@ export interface OccurrenceQrData {
 }
 
 export interface RegisterStudentItem {
+  record_id?: string | null;
   student_id: string;
   student_name: string;
   enrollment_number: string;
@@ -111,6 +112,8 @@ export interface RegisterStudentItem {
   liveness_score?: number | null;
   evidence_photo_url?: string | null;
   remarks?: string | null;
+  /** The student's own explanation. Only sent while the mark is flagged. */
+  student_note?: string | null;
   verified_at?: string | null;
 }
 

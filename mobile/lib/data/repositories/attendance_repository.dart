@@ -6,7 +6,10 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
+import 'package:smart_attendance_app/core/exceptions.dart';
+import 'package:smart_attendance_app/core/offline_window.dart';
 import 'package:smart_attendance_app/data/api/dio_client.dart';
+import 'package:smart_attendance_app/data/api/network_errors.dart';
 import 'package:smart_attendance_app/data/api/student_api.dart';
 import 'package:smart_attendance_app/data/local/hive_service.dart';
 import 'package:smart_attendance_app/data/local/pending_count_provider.dart';
@@ -124,6 +127,7 @@ class AttendanceRepository {
     required double accuracy,
     required String imagePath,
     String? className,
+    DateTime? windowClosesAt,
   }) async {
     final savedImagePath = await _saveImageToAppDocs(imagePath);
 
@@ -137,21 +141,17 @@ class AttendanceRepository {
         );
         return OnlineResult(result);
       } on DioException catch (e) {
-        final isNetworkError = [
-          DioExceptionType.connectionTimeout,
-          DioExceptionType.sendTimeout,
-          DioExceptionType.receiveTimeout,
-          DioExceptionType.connectionError,
-        ].contains(e.type);
-        final isServerError =
-            e.response != null && e.response!.statusCode! >= 500;
-        if (!isNetworkError && !isServerError) {
-          throw mapDioError(e);
-        }
+        if (!isTransientNetworkError(e)) throw mapDioError(e);
       }
     }
 
-    // Offline fallback — queue the original payload
+    // The server refuses a mark once the teacher's window has closed, so a mark that cannot be
+    // sent now is only kept while the window is still open.
+    if (windowHasClosed(windowClosesAt, DateTime.now())) {
+      throw const ValidationException(
+        'The attendance window closed before your phone could reach the server, so this mark was not saved.',
+      );
+    }
     final payload = OfflineAttendancePayload(
       sessionId: sessionId,
       latitude: latitude,
@@ -160,6 +160,7 @@ class AttendanceRepository {
       imagePath: savedImagePath,
       capturedAt: DateTime.now(),
       className: className,
+      windowClosesAt: windowClosesAt,
     );
     await _hive.addToQueue(payload);
     _ref.read(pendingCountProvider.notifier).refresh();

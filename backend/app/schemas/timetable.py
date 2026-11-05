@@ -98,3 +98,16 @@ class AttendanceRegisterBulkUpdate(BaseModel):
     occurrence_id: str
     updates: List[AttendanceRegisterItem]
     reason: Optional[str] = Field(None, max_length=500, description="Required to change a register that is already closed")
+
+
+class FlaggedDecisionRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    decision: Literal["APPROVE", "REJECT"]
+    note: Optional[str] = Field(None, max_length=500, description="Required when the register is already closed")
+
+
+class FlaggedDecisionResponse(BaseModel):
+    record_id: str
+    student_id: str
+    status: Literal["APPROVED", "ABSENT"]

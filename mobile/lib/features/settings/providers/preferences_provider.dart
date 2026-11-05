@@ -2,7 +2,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_attendance_app/data/local/preferences_service.dart';
 
 class PreferencesState {
-  final double attendanceTarget;
   final bool notifyClassStart;
   final bool notifyWindowOpen;
   final bool notifySyncDone;
@@ -11,7 +10,6 @@ class PreferencesState {
   final bool isLoading;
 
   const PreferencesState({
-    this.attendanceTarget = 75.0,
     this.notifyClassStart = true,
     this.notifyWindowOpen = true,
     this.notifySyncDone = true,
@@ -21,7 +19,6 @@ class PreferencesState {
   });
 
   PreferencesState copyWith({
-    double? attendanceTarget,
     bool? notifyClassStart,
     bool? notifyWindowOpen,
     bool? notifySyncDone,
@@ -30,7 +27,6 @@ class PreferencesState {
     bool? isLoading,
   }) {
     return PreferencesState(
-      attendanceTarget: attendanceTarget ?? this.attendanceTarget,
       notifyClassStart: notifyClassStart ?? this.notifyClassStart,
       notifyWindowOpen: notifyWindowOpen ?? this.notifyWindowOpen,
       notifySyncDone: notifySyncDone ?? this.notifySyncDone,
@@ -51,14 +47,12 @@ class PreferencesNotifier extends StateNotifier<PreferencesState> {
 
   Future<void> _load() async {
     state = state.copyWith(isLoading: true);
-    final target = await _service.getAttendanceTarget();
     final classStart = await _service.getNotifyClassStart();
     final windowOpen = await _service.getNotifyWindowOpen();
     final syncDone = await _service.getNotifySyncDone();
     final lowAttendance = await _service.getNotifyLowAttendance();
     final threshold = await _service.getLowAttendanceThreshold();
     state = PreferencesState(
-      attendanceTarget: target,
       notifyClassStart: classStart,
       notifyWindowOpen: windowOpen,
       notifySyncDone: syncDone,
@@ -66,11 +60,6 @@ class PreferencesNotifier extends StateNotifier<PreferencesState> {
       lowAttendanceThreshold: threshold,
       isLoading: false,
     );
-  }
-
-  Future<void> setAttendanceTarget(double value) async {
-    await _service.setAttendanceTarget(value);
-    state = state.copyWith(attendanceTarget: value);
   }
 
   Future<void> setNotifyClassStart(bool value) async {

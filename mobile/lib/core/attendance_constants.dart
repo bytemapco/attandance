@@ -5,7 +5,6 @@ const double kMinBrightnessForPhoto = 0.15;
 const double kMinSharpnessForPhoto = 0.1;
 
 const double kOverallGoodPct = 75.0;
-const double kOverallWarningPct = 50.0;
 
 const int kImagePickQuality = 85;
 

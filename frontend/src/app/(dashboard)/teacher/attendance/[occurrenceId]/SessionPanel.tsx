@@ -20,21 +20,33 @@ interface SessionPanelProps {
   fullscreen: boolean;
   onStart: () => void;
   onFullscreenChange: (open: boolean) => void;
+  /** Takes the teacher to the flagged marks waiting for a decision. */
+  onShowFlagged: () => void;
 }
 
 function closingTime(iso?: string | null): string | null {
   return iso ? new Date(iso).toLocaleTimeString("en-IN", { hour: "numeric", minute: "2-digit" }) : null;
 }
 
-function Stat({ icon, label, value }: { icon: React.ReactNode; label: string; value: number }): React.ReactElement {
-  return (
-    <div className="rounded-lg bg-secondary px-3 py-2">
+function Stat({ icon, label, value, onClick }: { icon: React.ReactNode; label: string; value: number; onClick?: () => void }): React.ReactElement {
+  const body = (
+    <>
       <p className="text-lg font-semibold tabular-nums leading-tight text-foreground">{value}</p>
       <p className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground">
         {icon}
         {label}
       </p>
-    </div>
+    </>
+  );
+  if (!onClick) return <div className="rounded-lg bg-secondary px-3 py-2">{body}</div>;
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="cursor-pointer rounded-lg bg-warning-soft px-3 py-2 text-left outline-none hover:bg-warning-soft/70 focus-visible:ring-2 focus-visible:ring-ring"
+    >
+      {body}
+    </button>
   );
 }
 
@@ -53,11 +65,11 @@ function Progress({ counts }: { counts: Counts }): React.ReactElement {
   );
 }
 
-function Stats({ counts }: { counts: Counts }): React.ReactElement {
+function Stats({ counts, onShowFlagged }: { counts: Counts; onShowFlagged: () => void }): React.ReactElement {
   return (
     <div className="grid grid-cols-3 gap-2">
       <Stat icon={<Clock size={12} />} label="Waiting" value={counts.WAITING} />
-      <Stat icon={<AlertTriangle size={12} />} label="To verify" value={counts.FLAGGED} />
+      <Stat icon={<AlertTriangle size={12} />} label="To verify" value={counts.FLAGGED} onClick={counts.FLAGGED > 0 ? onShowFlagged : undefined} />
       <Stat icon={<X size={12} />} label="Absent" value={counts.ABSENT} />
     </div>
   );
@@ -81,7 +93,7 @@ function FullscreenView({ qr, failed, counts, onClose }: { qr: OccurrenceQrData 
 }
 
 export default function SessionPanel({
-  occurrenceId, state, counts, closesAt, starting, fullscreen, onStart, onFullscreenChange,
+  occurrenceId, state, counts, closesAt, starting, fullscreen, onStart, onFullscreenChange, onShowFlagged,
 }: SessionPanelProps): React.ReactElement {
   const live = state === "LIVE";
   const { qr, failed } = useRotatingQr(occurrenceId, live);
@@ -118,7 +130,7 @@ export default function SessionPanel({
         </div>
       )}
       <Progress counts={counts} />
-      <Stats counts={counts} />
+      <Stats counts={counts} onShowFlagged={onShowFlagged} />
       {live && closes && <p className="text-xs text-muted-foreground">Students can mark until {closes}.</p>}
       {state === "COMPLETED" && <p className="text-xs text-muted-foreground">Attendance is submitted and locked.</p>}
       {live && <ShortcutHints />}

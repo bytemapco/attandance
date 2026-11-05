@@ -25,6 +25,11 @@ class AppBottomNav extends StatelessWidget {
         outlinedIcon: Icons.home_outlined,
       ),
       _NavItem(
+        label: 'Timetable',
+        filledIcon: Icons.calendar_month_rounded,
+        outlinedIcon: Icons.calendar_month_outlined,
+      ),
+      _NavItem(
         label: 'History',
         filledIcon: Icons.event_note_rounded,
         outlinedIcon: Icons.event_note_outlined,

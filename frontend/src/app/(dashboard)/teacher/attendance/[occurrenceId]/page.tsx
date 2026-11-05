@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 import toast from "react-hot-toast";
 import api, { getApiErrorMessage } from "@/lib/api";
@@ -8,72 +8,41 @@ import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import ErrorState from "@/components/ui/ErrorState";
 import PageSkeleton from "@/components/ui/PageSkeleton";
 import ReasonDialog from "@/components/ui/ReasonDialog";
-import type { OccurrenceRegisterData } from "@/types";
 import { occurrenceState } from "../occurrenceState";
 import RegisterGrid from "./RegisterGrid";
-import { changedStudents, displayStatus, tally, type Edits, type MarkStatus } from "./registerStatus";
+import { changedStudents, displayStatus, flaggedForReview, pendingFlagsText, tally, type MarkStatus } from "./registerStatus";
+import ReviewQueue, { showReviewQueue } from "./ReviewQueue";
+import ReviewReasonDialog from "./ReviewReasonDialog";
 import SessionHeader from "./SessionHeader";
 import SessionPanel from "./SessionPanel";
+import { useFlaggedReview } from "./useFlaggedReview";
+import { useRegisterData } from "./useRegisterData";
 import { useSessionShortcuts } from "./useSessionShortcuts";
-
-const LIVE_REFRESH_MS = 5000;
+import { useWarnBeforeLeaving } from "./useWarnBeforeLeaving";
 
 type Busy = "save" | "stop" | "start" | null;
 
 export default function OccurrenceAttendancePage(): React.ReactElement {
   const { occurrenceId } = useParams<{ occurrenceId: string }>();
-  const [register, setRegister] = useState<OccurrenceRegisterData | null>(null);
-  const [edits, setEdits] = useState<Edits>({});
-  const [failed, setFailed] = useState(false);
+  const { base, register, edits, setEdits, failed, load, refresh } = useRegisterData(occurrenceId);
   const [busy, setBusy] = useState<Busy>(null);
   const [confirmStop, setConfirmStop] = useState(false);
   const [correcting, setCorrecting] = useState(false);
   const [askReason, setAskReason] = useState(false);
   const [fullscreen, setFullscreen] = useState(false);
-  const base = `/faculty/occurrences/${occurrenceId}`;
-
-  const load = useCallback(async (): Promise<void> => {
-    try {
-      const { data } = await api.get<OccurrenceRegisterData>(`${base}/register`);
-      setRegister(data);
-      setEdits({});
-      setFailed(false);
-    } catch (err: unknown) {
-      setFailed(true);
-      toast.error(getApiErrorMessage(err, "Could not load the attendance register"));
-    }
-  }, [base]);
-
-  useEffect(() => {
-    void load();
-  }, [load]);
 
   const state = register ? occurrenceState(register) : "NOT_STARTED";
   const locked = state === "COMPLETED" || state === "CANCELLED";
   const live = state === "LIVE";
   const editable = live || correcting;
 
-  useEffect(() => {
-    if (!live) return;
-    const timer = setInterval(() => {
-      void api
-        .get<OccurrenceRegisterData>(`${base}/register`)
-        .then(({ data }) => setRegister(data))
-        .catch(() => undefined);
-    }, LIVE_REFRESH_MS);
-    return () => clearInterval(timer);
-  }, [live, base]);
-
   const students = useMemo(() => register?.students ?? [], [register]);
   const changed = useMemo(() => changedStudents(students, edits, locked), [students, edits, locked]);
   const counts = useMemo(() => tally(students, edits, locked), [students, edits, locked]);
+  const flagged = useMemo(() => flaggedForReview(students, edits), [students, edits]);
+  const review = useFlaggedReview({ base, locked, refresh });
 
-  useEffect(() => {
-    if (changed.length === 0) return;
-    const warn = (e: BeforeUnloadEvent): void => e.preventDefault();
-    window.addEventListener("beforeunload", warn);
-    return () => window.removeEventListener("beforeunload", warn);
-  }, [changed.length]);
+  useWarnBeforeLeaving(changed.length > 0);
 
   const saveChanges = (reason?: string): Promise<unknown> =>
     api.put(`${base}/register`, {
@@ -144,7 +113,7 @@ export default function OccurrenceAttendancePage(): React.ReactElement {
     });
 
   useSessionShortcuts({
-    enabled: !!register && !confirmStop,
+    enabled: !!register && !confirmStop && !review.needsReason,
     onSave: save,
     onStop: () => live && setConfirmStop(true),
     onMarkRemaining: markRemainingPresent,
@@ -162,6 +131,7 @@ export default function OccurrenceAttendancePage(): React.ReactElement {
         state={state}
         changedCount={changed.length}
         waitingCount={counts.WAITING}
+        flaggedCount={counts.FLAGGED}
         saving={busy === "save"}
         correcting={correcting}
         onMarkRemaining={markRemainingPresent}
@@ -180,21 +150,25 @@ export default function OccurrenceAttendancePage(): React.ReactElement {
           fullscreen={fullscreen}
           onStart={() => void run("start", () => api.post(`${base}/start`), "Attendance started")}
           onFullscreenChange={setFullscreen}
+          onShowFlagged={showReviewQueue}
         />
-        <RegisterGrid
-          students={students}
-          edits={edits}
-          counts={counts}
-          locked={locked || state === "NOT_STARTED"}
-          editable={editable}
-          shortcutsEnabled={!confirmStop && !fullscreen}
-          onMark={markStudent}
-        />
+        <div className="flex flex-col gap-4 lg:min-h-0">
+          <ReviewQueue items={flagged} deciding={review.deciding} onDecide={review.decide} />
+          <RegisterGrid
+            students={students}
+            edits={edits}
+            counts={counts}
+            locked={locked || state === "NOT_STARTED"}
+            editable={editable}
+            shortcutsEnabled={!confirmStop && !fullscreen && !review.needsReason}
+            onMark={markStudent}
+          />
+        </div>
       </div>
       <ConfirmDialog
         isOpen={confirmStop}
         title="Stop and lock attendance"
-        message={`${counts.WAITING} student${counts.WAITING === 1 ? "" : "s"} still waiting will be recorded absent (or on leave if their leave is approved), and the register will be locked.${changed.length ? ` Your ${changed.length} unsaved change${changed.length === 1 ? "" : "s"} will be saved first.` : ""}`}
+        message={`${counts.WAITING} student${counts.WAITING === 1 ? "" : "s"} still waiting will be recorded absent (or on leave if their leave is approved), and the register will be locked.${pendingFlagsText(counts.FLAGGED)}${changed.length ? ` Your ${changed.length} unsaved change${changed.length === 1 ? "" : "s"} will be saved first.` : ""}`}
         confirmLabel="Stop & lock"
         loading={busy === "stop"}
         onConfirm={stop}
@@ -207,6 +181,15 @@ export default function OccurrenceAttendancePage(): React.ReactElement {
           loading={busy === "save"}
           onConfirm={(reason) => void saveCorrection(reason)}
           onCancel={() => setAskReason(false)}
+        />
+      )}
+      {review.needsReason && (
+        <ReviewReasonDialog
+          student={review.needsReason.student}
+          decision={review.needsReason.decision}
+          loading={review.deciding !== null}
+          onConfirm={(reason) => void review.confirmReason(reason)}
+          onCancel={review.cancelReason}
         />
       )}
     </div>

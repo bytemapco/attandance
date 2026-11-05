@@ -25,6 +25,10 @@ class OfflineAttendancePayload extends HiveObject {
   @HiveField(6)
   final double? accuracy;
 
+  /// When the teacher's attendance window closes. Null for marks queued before this was saved.
+  @HiveField(7)
+  final DateTime? windowClosesAt;
+
   OfflineAttendancePayload({
     required this.sessionId,
     required this.latitude,
@@ -33,5 +37,6 @@ class OfflineAttendancePayload extends HiveObject {
     required this.capturedAt,
     this.className,
     this.accuracy,
+    this.windowClosesAt,
   });
 }

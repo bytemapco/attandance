@@ -125,7 +125,11 @@ class AttendanceNotifier extends StateNotifier<AttendanceVerificationState> {
   }
 
   /// Confirm the reviewed submission — saves the attendance record.
-  Future<void> confirm(String sessionId) async {
+  Future<void> confirm(
+    String sessionId, {
+    String? className,
+    DateTime? windowClosesAt,
+  }) async {
     final analysis = state.analysisResult;
     if (analysis == null) {
       state = state.copyWith(
@@ -146,6 +150,8 @@ class AttendanceNotifier extends StateNotifier<AttendanceVerificationState> {
         longitude: state.longitude!,
         accuracy: state.accuracy!,
         imagePath: state.imagePath!,
+        className: className,
+        windowClosesAt: windowClosesAt,
       );
       _lastSubmittedSessionId = sessionId;
       state = state.copyWith(result: result, step: VerificationStep.done);

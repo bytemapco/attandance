@@ -9,6 +9,7 @@ from app.db.client import db
 from app.repositories.student_repository import StudentRepository
 from app.services.ai_orchestrator import AIOrchestrator
 from app.services.gamification_service import GamificationService
+from app.services.occurrence_window import window_is_open
 from app.services.s3_service import s3_service
 from app.services.system_config_service import SystemConfigService
 from app.utils.geofencing import GPSCoordinate, calculate_haversine_distance, is_within_geofence
@@ -53,19 +54,6 @@ async def open_for_student(student: Student, occurrence_id: str):
 def already_marked(existing: Optional[AttendanceRecord]) -> bool:
     """A teacher-created ABSENT placeholder can still be upgraded by the student."""
     return bool(existing and existing.status != "ABSENT")
-
-
-def window_is_open(occurrence) -> bool:
-    expires = occurrence.verificationExpires
-    if expires is not None and expires.tzinfo is None:
-        expires = expires.replace(tzinfo=timezone.utc)
-    return bool(
-        occurrence.verificationActive
-        and expires
-        and expires > datetime.now(timezone.utc)
-        and not occurrence.isAttendanceLocked
-        and occurrence.status != "CANCELLED"
-    )
 
 
 def require_open_window(occurrence) -> None:
