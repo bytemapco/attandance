@@ -1,0 +1,19 @@
+[Unit]
+Description=SAHAJ web (Next.js standalone)
+After=network-online.target sahaj-backend.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=jarvis
+WorkingDirectory=/home/jarvis/SharedDrive/bytemap/attendance/frontend
+Environment=NODE_ENV=production
+Environment=PORT=3011
+Environment=HOSTNAME=0.0.0.0
+ExecStart=/home/jarvis/.nvm/versions/node/v24.16.0/bin/node server.js
+Restart=on-failure
+RestartSec=3
+TimeoutStopSec=15
+
+[Install]
+WantedBy=multi-user.target

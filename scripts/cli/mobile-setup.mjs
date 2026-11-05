@@ -17,7 +17,7 @@ function ensureMobileEnv(mobileDir) {
   } else {
     fs.writeFileSync(
       envPath,
-      "API_BASE_URL=https://attendance-backend.bytemap.in/api/v1\n",
+      "API_BASE_URL=https://sahaj-backend.bytemap.in/api/v1\n",
       "utf-8"
     );
   }

@@ -1,0 +1,1 @@
+jarvis ALL=(root) NOPASSWD: /usr/bin/systemctl restart sahaj-backend, /usr/bin/systemctl restart sahaj-frontend

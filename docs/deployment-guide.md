@@ -1,93 +1,72 @@
 # Server Deployment & Operations Guide
 
-This guide covers the host environment, PM2 process management, and day-to-day operations for the **SAHAJ Platform** deployed on `jarvis` (`100.101.187.9`).
+How SAHAJ runs on the `jarvis` host (Tailscale `100.101.187.9`, LAN `192.168.31.187`): systemd services behind a Cloudflare tunnel.
 
 ---
 
-## 1. Host Architecture & Layout
+## 1. Layout
 
-All project artifacts are scoped strictly inside:
+Everything for the app lives in `/home/jarvis/SharedDrive/bytemap/attendance/`:
 ```text
-/home/jarvis/SharedDrive/bytemap/attendance/
 ├── backend/
-│   ├── .env                    # Sourced from PRODUCTION_BACKEND_ENV (0600)
-│   ├── venv/                   # Python 3.11 dedicated virtualenv
-│   ├── main.py                 # FastAPI application entrypoint
-│   ├── app/                    # Application source code
-│   ├── prisma/                 # Prisma schema and engines
-│   └── requirements.txt        # Python dependencies
-├── frontend/
-│   ├── .env                    # Sourced from PRODUCTION_FRONTEND_ENV (0600)
-│   ├── server.js               # Next.js standalone server entrypoint
-│   └── .next/                  # Pre-compiled static assets and standalone chunk
-└── ecosystem.config.cjs        # PM2 process configuration
+│   ├── .env          # written by CD from PRODUCTION_BACKEND_ENV (0600)
+│   ├── venv/         # Python 3.11 virtualenv
+│   ├── main.py       # FastAPI entrypoint
+│   └── prisma/       # schema
+└── frontend/
+    ├── .env          # written by CD from PRODUCTION_FRONTEND_ENV (0600)
+    └── server.js     # Next.js standalone server
 ```
 
----
+## 2. Services
 
-## 2. Process Configuration (`ecosystem.config.cjs`)
+| Unit | Command | Port |
+| :--- | :--- | :--- |
+| `sahaj-backend` | `venv/bin/uvicorn main:app --host 0.0.0.0 --port 8011 --workers 1` | 8011 |
+| `sahaj-frontend` | `node server.js` (Node 24 from nvm) | 3011 |
 
-Services are managed natively via PM2:
+Unit files are in [deploy/systemd/](../deploy/systemd/). They live in `/etc/systemd/system/`, are enabled at boot, and restart on failure after 3 seconds.
+`/etc/sudoers.d/sahaj-deploy` ([deploy/sudoers/sahaj-deploy](../deploy/sudoers/sahaj-deploy)) lets `jarvis` run only `systemctl restart sahaj-backend` and `systemctl restart sahaj-frontend` without a password, which is what CD uses.
 
-| Service Name | Working Directory | Runtime / Command | Port | Auto-Restart |
-| :--- | :--- | :--- | :--- | :--- |
-| `sahaj-backend` | `.../backend` | `venv/bin/uvicorn main:app --host 0.0.0.0 --port 8011 --workers 1` | `8011` | Yes (delay: 3s) |
-| `sahaj-frontend` | `.../frontend` | `node server.js` | `3011` | Yes (delay: 3s) |
-
----
-
-## 3. Operations Runbook
-
-### Checking Service Status
+Install or change a unit:
 ```bash
-# View live status of PM2 processes
-pm2 status
-# Or shorthand
-pm2 list
+sudo cp deploy/systemd/sahaj-backend.service /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable --now sahaj-backend
 ```
 
-### Inspecting Application Logs
+## 3. Public hostnames
+
+One Cloudflare tunnel (`jarvis`, config `/etc/cloudflared/config.yml`, service `cloudflared`) serves several apps. Sahaj uses:
+
+| Hostname | Target |
+| :--- | :--- |
+| `sahaj.bytemap.in` | `http://127.0.0.1:3011` |
+| `sahaj-backend.bytemap.in` | `http://127.0.0.1:8011` |
+
+Other hostnames in the same file belong to other apps on this host. Leave them alone. After editing the file: `cloudflared tunnel ingress validate` then `sudo systemctl restart cloudflared`.
+A new hostname also needs a DNS record: `cloudflared tunnel route dns jarvis <hostname>`.
+
+The hostnames are set in three places: `cd.yml` (`NEXT_PUBLIC_API_URL`, `NEXT_PUBLIC_WS_URL`), the `FRONTEND_URL` line of the `PRODUCTION_BACKEND_ENV` secret (it is the CORS allow-list), and `scripts/cli/mobile-setup.mjs`.
+
+## 4. Runbook
+
 ```bash
-# Stream live logs for both services
-pm2 logs
-
-# View last 50 lines for backend only
-pm2 logs sahaj-backend --lines 50 --nostream
-
-# View last 50 lines for frontend only
-pm2 logs sahaj-frontend --lines 50 --nostream
+systemctl status sahaj-backend sahaj-frontend
+journalctl -u sahaj-backend -n 50 --no-pager      # last 50 lines
+journalctl -u sahaj-frontend -f                   # follow
+sudo systemctl restart sahaj-backend              # or sahaj-frontend
+curl -sS http://127.0.0.1:8011/health | jq .
 ```
 
-### Restarting / Reloading Services
-```bash
-# Reload services with updated environment variables
-pm2 startOrReload ecosystem.config.cjs --update-env
+## 5. Troubleshooting
 
-# Restart a specific process
-pm2 restart sahaj-backend
-pm2 restart sahaj-frontend
-
-# Save process list so it persists across host reboots
-pm2 save
-```
-
----
-
-## 4. Troubleshooting Common Issues
-
-### A. Backend Startup & AI Engine Cold Start
-- **Behavior**: Cold-starts take ~15–20 seconds because TensorFlow and DeepFace initialize face detection weights on CPU upon first boot.
-- **Handling**: The CD pipeline includes a 45-second retry window (`--retry 15 --retry-delay 3 --retry-connrefused`) before validating `/health`.
-
-### B. Prisma Generator Path
-- **Behavior**: `prisma-client-py` is installed in `backend/venv/bin/prisma-client-py`.
-- **Handling**: When running manual migrations, ensure `backend/venv/bin` is in `$PATH`:
+- **Slow backend start.** TensorFlow and DeepFace load on boot, so `/health` can take up to a minute to answer. CD waits up to 2 minutes for it.
+- **Database.** The backend's Postgres and S3 come from the `aakash` Docker stack on this host (`localhost:7001`). Do not stop or prune that stack. Redis is the host `redis-server`.
+- **Schema changes.** CD runs `scripts/backfill_tenant_ids.py` and then `prisma db push` **without** `--accept-data-loss`. A change that would drop data stops the deploy. Run it by hand only after checking what is dropped:
   ```bash
   export PATH="/home/jarvis/SharedDrive/bytemap/attendance/backend/venv/bin:$PATH"
   cd /home/jarvis/SharedDrive/bytemap/attendance/backend
-  prisma db push --accept-data-loss
+  prisma db push
   ```
-
-### C. Redis & Degraded Cache Mode
-- **Behavior**: If Redis is unreachable or credentials are being rotated, the API boots in degraded mode. The database, S3 storage, and AI engine remain fully operational.
-- **Verification**: Run `curl -sS http://127.0.0.1:8011/health | jq .` to verify service sub-component health.
+- **Degraded cache.** If Redis is down the API still starts; the database, storage and AI checks stay up. `/health` shows each part.

@@ -14,7 +14,7 @@ concurrency:
 
 jobs:
   deploy:
-    name: Build & Deploy via PM2
+    name: Build & Deploy via systemd
     runs-on: ubuntu-latest
 
     steps:
@@ -39,8 +39,8 @@ jobs:
       - name: Build Frontend Standalone
         working-directory: frontend
         env:
-          NEXT_PUBLIC_API_URL: https://attendance-backend.bytemap.in/api/v1
-          NEXT_PUBLIC_WS_URL: wss://attendance-backend.bytemap.in/ws/connect
+          NEXT_PUBLIC_API_URL: https://sahaj-backend.bytemap.in/api/v1
+          NEXT_PUBLIC_WS_URL: wss://sahaj-backend.bytemap.in/ws/connect
           NEXT_PUBLIC_DEFAULT_TENANT_ID: default-institution
         run: |
           npm ci
@@ -60,7 +60,7 @@ jobs:
           oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
           tags: tag:ci
 
-      - name: Deploy to jarvis via PM2
+      - name: Deploy to jarvis via systemd
         env:
           SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           SSH_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
@@ -93,12 +93,12 @@ jobs:
             /tmp/deploy_envs/frontend.env "$VPS_USER@$VPS_HOST:/home/jarvis/SharedDrive/bytemap/attendance/frontend/.env"
           rm -rf /tmp/deploy_envs
 
-          # Transfer deployment bundles and PM2 configuration
+          # Transfer deployment bundles
           scp -i ~/.ssh/deploy_key -o StrictHostKeyChecking=yes \
-            frontend-bundle.tar.gz backend-bundle.tar.gz ecosystem.config.cjs \
+            frontend-bundle.tar.gz backend-bundle.tar.gz \
             "$VPS_USER@$VPS_HOST:/home/jarvis/SharedDrive/bytemap/attendance/"
 
-          # Deploy bundles and orchestrate with PM2
+          # Deploy bundles and restart the systemd services
           ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=yes "$VPS_USER@$VPS_HOST" \
             "set -euo pipefail
              export PATH=\"/home/jarvis/SharedDrive/bytemap/attendance/backend/venv/bin:/home/jarvis/.local/bin:/home/linuxbrew/.linuxbrew/bin:\$PATH\"
@@ -121,7 +121,7 @@ jobs:
              fi
              pip install --upgrade pip
              pip install -r backend/requirements.txt
-             (cd backend && python scripts/backfill_tenant_ids.py && prisma generate && prisma db push --accept-data-loss)
+             (cd backend && python scripts/backfill_tenant_ids.py && prisma generate && prisma db push)
 
              # Ensure local redis-server is active if installed
              if command -v redis-server >/dev/null 2>&1; then
@@ -131,14 +131,14 @@ jobs:
                fi
              fi
 
-             # Start or reload services via PM2
-             pm2 startOrReload ecosystem.config.cjs --update-env
-             pm2 save
+             # Restart the systemd services (sudoers allows exactly these two restarts)
+             sudo -n systemctl restart sahaj-backend
+             sudo -n systemctl restart sahaj-frontend
 
-             # Verify services are responding with retry tolerance for model loading
+             # Verify services respond; the backend needs time to load the face models
              echo 'Waiting for services initialization...'
-             curl --retry 15 --retry-delay 3 --retry-connrefused -fsS http://127.0.0.1:8011/health || { echo 'Backend health check failed'; pm2 logs sahaj-backend --lines 40 --nostream; exit 1; }
-             curl --retry 8 --retry-delay 2 --retry-connrefused -fsS -I http://127.0.0.1:3011/ || { echo 'Frontend health check failed'; pm2 logs sahaj-frontend --lines 40 --nostream; exit 1; }
-             pm2 list"
+             curl --retry 40 --retry-delay 3 --retry-all-errors --retry-connrefused -fsS http://127.0.0.1:8011/health || { echo 'Backend health check failed'; journalctl -u sahaj-backend -n 40 --no-pager; exit 1; }
+             curl --retry 15 --retry-delay 2 --retry-all-errors --retry-connrefused -fsS -I http://127.0.0.1:3011/ || { echo 'Frontend health check failed'; journalctl -u sahaj-frontend -n 40 --no-pager; exit 1; }
+             systemctl is-active sahaj-backend sahaj-frontend"
 
           rm -f ~/.ssh/deploy_key ~/.ssh/known_hosts
