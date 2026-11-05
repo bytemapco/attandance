@@ -5,7 +5,8 @@ from prisma.models import Teacher, User
 
 from app.api.dependencies import RoleChecker, get_current_teacher, get_current_user, get_tenant_context
 from app.core.datetime_utils import get_ist_today
-from app.schemas.timetable import AttendanceRegisterBulkUpdate
+from app.schemas.timetable import AttendanceRegisterBulkUpdate, FlaggedDecisionRequest, FlaggedDecisionResponse
+from app.services import flagged_review_service
 from app.services.occurrence_register_service import OccurrenceRegisterService
 from app.services.teacher_schedule_service import TeacherScheduleService
 
@@ -82,6 +83,20 @@ async def update_occurrence_register(
         updates=payload.updates,
         reason=payload.reason,
     )
+
+
+@router.post("/occurrences/{occurrence_id}/flagged/{record_id}/resolve", response_model=FlaggedDecisionResponse)
+async def resolve_flagged_mark(
+    occurrence_id: str,
+    record_id: str,
+    payload: FlaggedDecisionRequest,
+    tenant_id: str = Depends(get_tenant_context),
+    current_user: User = Depends(RoleChecker(["TEACHER", "ADMIN"])),
+) -> FlaggedDecisionResponse:
+    result = await flagged_review_service.resolve_flagged(
+        tenant_id, current_user, occurrence_id, record_id, payload.decision, payload.note
+    )
+    return FlaggedDecisionResponse(**result)
 
 
 @router.get("/weekly-timetable")

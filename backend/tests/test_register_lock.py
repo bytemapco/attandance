@@ -25,7 +25,7 @@ def fake_db(monkeypatch):
     fake.attendancerecord.update = AsyncMock()
     fake.attendanceauditlog.create = AsyncMock()
     monkeypatch.setattr(module, "db", fake)
-    monkeypatch.setattr(module, "_authorize_register_access", AsyncMock())
+    monkeypatch.setattr(module, "authorize_register_access", AsyncMock())
     return fake
 
 
