@@ -97,9 +97,13 @@ class TimetableDay {
 
   factory TimetableDay.fromJson(Map<String, dynamic> json) => TimetableDay(
     date: parseServerDay(json['date'] as String),
-    entries: (json['entries'] as List<dynamic>)
-        .map((e) => TimetableEntry.fromJson(e as Map<String, dynamic>))
-        .toList(),
+    // The server sends a day in time order; sorting here keeps "current or next class" correct
+    // even if that ever changes. "HH:MM" sorts correctly as text.
+    entries:
+        (json['entries'] as List<dynamic>)
+            .map((e) => TimetableEntry.fromJson(e as Map<String, dynamic>))
+            .toList()
+          ..sort((a, b) => a.startTime.compareTo(b.startTime)),
   );
 }
 

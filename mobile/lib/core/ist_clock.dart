@@ -19,6 +19,14 @@ DateTime istWallTime(DateTime date, String hhmm) {
   );
 }
 
+/// "09:00" as "9:00 AM".
+String formatClockTime(String hhmm) {
+  final parts = hhmm.split(':');
+  final hour = int.parse(parts[0]);
+  final hour12 = hour % 12 == 0 ? 12 : hour % 12;
+  return '$hour12:${parts[1]} ${hour < 12 ? 'AM' : 'PM'}';
+}
+
 /// The date part of an IST moment, with no time.
 DateTime istDay(DateTime ist) => DateTime.utc(ist.year, ist.month, ist.day);
 

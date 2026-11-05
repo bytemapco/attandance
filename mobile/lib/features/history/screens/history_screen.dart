@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_attendance_app/app/theme.dart';
+import 'package:smart_attendance_app/features/analytics/providers/analytics_provider.dart';
 import 'package:smart_attendance_app/features/history/providers/history_provider.dart';
-import 'package:smart_attendance_app/features/history/widgets/history_calendar_card.dart';
-import 'package:smart_attendance_app/features/history/widgets/history_course_card.dart';
-import 'package:smart_attendance_app/features/history/widgets/history_header.dart';
-import 'package:smart_attendance_app/features/history/widgets/history_list_tab.dart';
-import 'package:smart_attendance_app/features/history/widgets/history_segmented_tabs.dart';
+import 'package:smart_attendance_app/features/history/widgets/class_detail_sheet.dart';
+import 'package:smart_attendance_app/features/history/widgets/history_filter_bar.dart';
+import 'package:smart_attendance_app/features/history/widgets/history_list.dart';
 import 'package:smart_attendance_app/shared/widgets/screen_background.dart';
-import 'package:smart_attendance_app/shared/widgets/app_button.dart';
-import 'package:smart_attendance_app/shared/widgets/surface_card.dart';
-import 'package:smart_attendance_app/shared/widgets/shimmer_placeholder.dart';
 import 'package:smart_attendance_app/shared/widgets/smart_pull_to_refresh.dart';
 
 class HistoryScreen extends ConsumerStatefulWidget {
@@ -21,31 +17,24 @@ class HistoryScreen extends ConsumerStatefulWidget {
 }
 
 class _HistoryScreenState extends ConsumerState<HistoryScreen> {
-  HistoryViewMode _mode = HistoryViewMode.calendar;
-
   @override
   void initState() {
     super.initState();
     Future.microtask(() {
-      if (mounted) ref.read(historyProvider.notifier).fetch();
+      if (!mounted) return;
+      ref.read(historyProvider.notifier).fetch();
+      // The subject filter lists the student's subjects, which analytics already knows.
+      if (!ref.read(analyticsProvider).hasData) {
+        ref.read(analyticsProvider.notifier).fetch();
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final hState = ref.watch(historyProvider);
-    final reduceMotion = MediaQuery.disableAnimationsOf(context);
-    final pct = hState.data?.overallAttendancePercentage ?? 0;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final pctClean = (pct.isNaN || pct.isInfinite) ? 0.0 : pct;
-
-    final historyList = hState.data?.history ?? [];
-    final firstItem = historyList.isNotEmpty ? historyList.first : null;
-    final courseTitle = firstItem?.subject ?? 'All Enrolled Subjects';
-    final classCode = firstItem != null && firstItem.className.contains(':')
-        ? firstItem.className.split(':').first.trim()
-        : (firstItem?.className ?? 'Overall');
-    final courseSubtitle = '$classCode • Attendance Log';
+    final state = ref.watch(historyProvider);
+    final notifier = ref.read(historyProvider.notifier);
+    final subjects = ref.watch(analyticsProvider).data?.subjects ?? const [];
 
     return ScreenBackground(
       child: SafeArea(
@@ -53,111 +42,49 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 600),
             child: SmartPullToRefresh(
-              onRefresh: () => ref.read(historyProvider.notifier).fetch(),
+              onRefresh: notifier.fetch,
               child: ListView(
                 physics: const AlwaysScrollableScrollPhysics(
                   parent: BouncingScrollPhysics(),
                 ),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 14,
-                ),
+                padding: const EdgeInsets.fromLTRB(16, 14, 16, 24),
                 children: [
-                  // Screen header with "Attendance Log" & circular overall gauge
-                  HistoryHeader(percentage: pctClean),
-                  const SizedBox(height: 16),
-
-                  // Segmented tab switcher ("Calendar" | "List View")
-                  HistorySegmentedTabs(
-                    mode: _mode,
-                    onChanged: (m) => setState(() => _mode = m),
-                    isDark: isDark,
-                  ),
-                  const SizedBox(height: 14),
-
-                  // Course selector dropdown card
-                  HistoryCourseCard(
-                    courseTitle: courseTitle,
-                    courseSubtitle: courseSubtitle,
-                  ),
-                  const SizedBox(height: 14),
-
-                  // Main content body with smooth cross-fade transition
-                  if (hState.errorMessage != null && hState.data == null)
-                    _buildErrorCard(hState.errorMessage!, isDark)
-                  else if (hState.isLoading && hState.data == null)
-                    const ShimmerCalendarPlaceholder()
-                  else
-                    AnimatedSwitcher(
-                      duration: reduceMotion
-                          ? Duration.zero
-                          : const Duration(milliseconds: 240),
-                      switchInCurve: Curves.easeOutCubic,
-                      switchOutCurve: Curves.easeInCubic,
-                      transitionBuilder: (child, animation) {
-                        return FadeTransition(
-                          opacity: animation,
-                          child: SlideTransition(
-                            position: Tween<Offset>(
-                              begin: const Offset(0.0, 0.02),
-                              end: Offset.zero,
-                            ).animate(animation),
-                            child: child,
-                          ),
-                        );
-                      },
-                      child: _mode == HistoryViewMode.calendar
-                          ? KeyedSubtree(
-                              key: const ValueKey('calendar_mode'),
-                              child: HistoryCalendarCard(
-                                grouped: hState.groupedByDate,
-                                history: historyList,
-                              ),
-                            )
-                          : KeyedSubtree(
-                              key: const ValueKey('list_mode'),
-                              child: HistoryListTab(hState: hState),
-                            ),
+                  Text(
+                    'History',
+                    style: TextStyle(
+                      color: SasColors.textPrimaryOf(context),
+                      fontSize: 24,
+                      fontWeight: FontWeight.w600,
                     ),
-
-                  const SizedBox(height: 24),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    state.isBlockingError || state.isInitialLoading
+                        ? 'Every class and how it went'
+                        : '${state.total} ${state.total == 1 ? 'class' : 'classes'}'
+                              '${state.filter.isEmpty ? '' : ' match'}',
+                    style: TextStyle(
+                      color: SasColors.textMutedOf(context),
+                      fontSize: 13,
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  HistoryFilterBar(
+                    filter: state.filter,
+                    subjects: subjects,
+                    onChanged: notifier.setFilter,
+                  ),
+                  const SizedBox(height: 14),
+                  HistoryList(
+                    state: state,
+                    onRetry: notifier.fetch,
+                    onLoadMore: notifier.loadMore,
+                    onOpen: (entry) => showClassDetailSheet(context, entry),
+                  ),
                 ],
               ),
             ),
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildErrorCard(String error, bool isDark) {
-    return SurfaceCard(
-      borderColor: SasColors.danger.withValues(alpha: 0.30),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8),
-        child: Column(
-          children: [
-            const Icon(
-              Icons.cloud_off_rounded,
-              size: 36,
-              color: SasColors.danger,
-            ),
-            const SizedBox(height: 10),
-            Text(
-              error,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: isDark ? SasColors.mutedOnDark : SasColors.textSecondary,
-                fontSize: 13,
-              ),
-            ),
-            const SizedBox(height: 14),
-            AppButton(
-              label: 'Retry',
-              icon: Icons.refresh_rounded,
-              onPressed: () => ref.read(historyProvider.notifier).fetch(),
-            ),
-          ],
         ),
       ),
     );

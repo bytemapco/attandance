@@ -20,11 +20,11 @@ import 'package:smart_attendance_app/features/leave/screens/leave_requests_scree
 import 'package:smart_attendance_app/features/notifications/screens/notifications_screen.dart';
 import 'package:smart_attendance_app/features/profile/screens/profile_screen.dart';
 import 'package:smart_attendance_app/features/registration/screens/face_registration_screen.dart';
-import 'package:smart_attendance_app/features/settings/screens/goals_screen.dart';
 import 'package:smart_attendance_app/features/settings/screens/help_screen.dart';
 import 'package:smart_attendance_app/features/settings/screens/notification_prefs_screen.dart';
 import 'package:smart_attendance_app/features/settings/screens/sync_status_screen.dart';
 import 'package:smart_attendance_app/features/smart_pass/screens/smart_pass_screen.dart';
+import 'package:smart_attendance_app/features/timetable/screens/timetable_screen.dart';
 
 List<RouteBase> buildAppRoutes({
   required GlobalKey<NavigatorState> rootNavKey,
@@ -61,6 +61,13 @@ List<RouteBase> buildAppRoutes({
           path: '/home',
           pageBuilder: (_, state) =>
               NoTransitionPage(key: state.pageKey, child: const HomeScreen()),
+        ),
+        GoRoute(
+          path: '/timetable',
+          pageBuilder: (_, state) => NoTransitionPage(
+            key: state.pageKey,
+            child: const TimetableScreen(),
+          ),
         ),
         GoRoute(
           path: '/history',
@@ -137,19 +144,12 @@ List<RouteBase> buildAppRoutes({
     ),
     GoRoute(
       parentNavigatorKey: rootNavKey,
-      path: '/subject/:classId',
+      path: '/subject/:courseSectionId',
       pageBuilder: (context, state) => slideRightPage(
         key: state.pageKey,
-        child: SubjectDetailScreen(classId: state.pathParameters['classId']!),
-        reduceMotion: MediaQuery.disableAnimationsOf(context),
-      ),
-    ),
-    GoRoute(
-      parentNavigatorKey: rootNavKey,
-      path: '/settings/goals',
-      pageBuilder: (context, state) => slideRightPage(
-        key: state.pageKey,
-        child: const GoalsScreen(),
+        child: SubjectDetailScreen(
+          courseSectionId: state.pathParameters['courseSectionId']!,
+        ),
         reduceMotion: MediaQuery.disableAnimationsOf(context),
       ),
     ),

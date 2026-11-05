@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:smart_attendance_app/app/theme.dart';
-import 'package:smart_attendance_app/core/attendance_utils.dart';
+import 'package:smart_attendance_app/core/attendance_constants.dart';
 import 'package:smart_attendance_app/data/local/notification_service.dart';
+import 'package:smart_attendance_app/domain/models/analytics.dart';
+import 'package:smart_attendance_app/features/analytics/providers/analytics_provider.dart';
 import 'package:smart_attendance_app/features/auth/providers/auth_provider.dart';
-import 'package:smart_attendance_app/features/history/providers/history_provider.dart';
 import 'package:smart_attendance_app/features/home/providers/session_provider.dart';
 import 'package:smart_attendance_app/features/home/widgets/home_compliance_card.dart';
 import 'package:smart_attendance_app/features/home/widgets/home_header.dart';
@@ -29,7 +30,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     Future.microtask(() {
       if (mounted) {
         ref.read(sessionProvider.notifier).startPolling();
-        ref.read(historyProvider.notifier).fetch();
+        ref.read(analyticsProvider.notifier).fetch();
       }
     });
   }
@@ -55,15 +56,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   Widget build(BuildContext context) {
     final user = ref.watch(authProvider.select((s) => s.user));
     final sessionState = ref.watch(sessionProvider);
-    final historyState = ref.watch(historyProvider);
-    final rawPct = historyState.data?.overallAttendancePercentage ?? 0;
-    final overallPct = (rawPct.isNaN || rawPct.isInfinite)
-        ? 0.0
-        : rawPct.toDouble();
-
-    final historyList = historyState.data?.history ?? [];
-    final streakDays = calculateStreak(historyList);
-    final classesThisWeek = computeWeekPresent(historyList);
+    final analytics = ref.watch(analyticsProvider).data;
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final unreadCount = ref.watch(
@@ -114,7 +107,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                   onRefresh: () async {
                     await Future.wait([
                       ref.read(sessionProvider.notifier).fetchSessions(),
-                      ref.read(historyProvider.notifier).fetch(),
+                      ref.read(analyticsProvider.notifier).fetch(),
                     ]);
                   },
                   child: ListView(
@@ -136,16 +129,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
 
                       // Hero Term Compliance Gradient Card (0% with Circular Gauge)
                       HomeComplianceCard(
-                        percentage: overallPct,
+                        percentage: analytics?.overall.percentage,
+                        threshold: analytics?.threshold ?? kOverallGoodPct,
+                        standing: analytics?.overall.standing ?? Standing.noData,
                         onTap: () => context.go('/analytics'),
                       ),
                       const SizedBox(height: 14),
 
                       // Streak & Classes this week pills
                       HomeStatPillsRow(
-                        streakDays: streakDays,
-                        classesThisWeek: classesThisWeek,
-                        onTapStreak: () => context.go('/history'),
+                        streakDays: analytics?.currentStreak ?? 0,
+                        classesThisWeek: analytics?.thisWeek?.attended ?? 0,
+                        onTapStreak: () => context.go('/analytics'),
                         onTapClasses: () => context.go('/history'),
                       ),
                       const SizedBox(height: 14),
@@ -155,7 +150,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                         sessions: sessionState.sessions,
                         isLoading: sessionState.isLoading,
                         errorMessage: sessionState.errorMessage,
-                        onViewAll: () => context.go('/history'),
+                        onViewAll: () => context.go('/timetable'),
                         onSmartPass: () => context.push('/smart-pass'),
                         onFaceMatch: () {
                           final activeSessionId = sessionState.sessions
