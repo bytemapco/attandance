@@ -176,7 +176,7 @@ async def run_wipe_and_init(target_host: str, target_db: str) -> None:
                 print(f"  ✗ Failed to truncate {t}: {e}")
 
         print("\n[2/2] Provisioning default Super Admin & System Configuration...")
-        super_email = os.getenv("SUPERADMIN_EMAIL", "superadmin@attendance.system")
+        super_email = os.getenv("SUPERADMIN_EMAIL", "superadmin.vit@yopmail.com")
         super_pass = os.getenv("SUPERADMIN_PASSWORD", "Sahaj@2026")
 
         hashed_pwd = hash_password(super_pass)

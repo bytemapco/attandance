@@ -7,7 +7,8 @@
 #
 # Actions: seed (super admin, then a fictional college; the logins are saved to credentials.txt), create the super
 # admin alone, reset (empty the database, keep the schema), and start the local backend.
-# One password, typed when asked, is used for every account. Resetting the server saves a backup first.
+# Seeding asks for no credentials: it uses a yopmail super admin address and one random password for every account.
+# Resetting the server saves a backup first.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -85,19 +86,17 @@ confirm() {
   [ "$answer" = "$1" ]
 }
 
-# Asks for the login of the first account. The password is typed hidden and never stored.
-ask_super_admin() {
-  local again
-  read -r -p "Super admin email: " SAHAJ_EMAIL
-  read -r -s -p "Password (min 8 characters): " SAHAJ_SECRET; echo
-  read -r -s -p "Repeat password: " again; echo
-  [ "$SAHAJ_SECRET" = "$again" ] && [ "${#SAHAJ_SECRET}" -ge 8 ] && [ -n "$SAHAJ_EMAIL" ] || { say "${RED}Email missing, passwords differ, or shorter than 8.${OFF}"; return 1; }
+# The login of the first account: a fixed yopmail address and a new random password each time.
+new_super_admin_login() {
+  SAHAJ_EMAIL="superadmin.vit@yopmail.com"
+  SAHAJ_SECRET="$("$PY" -c 'import secrets; print(secrets.token_urlsafe(12))')"
   export SAHAJ_EMAIL SAHAJ_SECRET
 }
 
 create_super_admin() {
-  ask_super_admin || return 1
+  new_super_admin_login
   backend_script create_super_admin.py
+  say "${GREEN}Login${OFF}  $SAHAJ_EMAIL / $SAHAJ_SECRET   ${DIM}(shown once; not saved)${OFF}"
   unset SAHAJ_SECRET
 }
 
@@ -105,7 +104,7 @@ create_super_admin() {
 # The demo institution gets the same password as the super admin.
 seed() {
   local flags=()
-  ask_super_admin || return 1
+  new_super_admin_login
   if [ "$TARGET" = server ]; then
     if [ "${1:-}" != confirmed ]; then
       say "${YELLOW}This adds fictional people and attendance to the SERVER database.${OFF}"

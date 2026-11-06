@@ -2,7 +2,7 @@
 """Creates the platform's SUPER_ADMIN account if it does not exist. It never changes or deletes anything else.
 
 There is no API for this: a super admin is the first account, so it has to be made in the database.
-Reads SUPERADMIN_EMAIL (default superadmin@attendance.system) and SUPERADMIN_PASSWORD (required, no default)
+Reads SUPERADMIN_EMAIL (default superadmin.vit@yopmail.com) and SUPERADMIN_PASSWORD (required, no default)
 from the environment or backend/.env.
 
 Usage: SUPERADMIN_PASSWORD=... python scripts/create_super_admin.py
@@ -22,7 +22,7 @@ load_dotenv(backend_root / ".env")
 from app.core.security import hash_password  # noqa: E402
 from app.db.client import connect_db, db, disconnect_db  # noqa: E402
 
-DEFAULT_EMAIL = "superadmin@attendance.system"
+DEFAULT_EMAIL = "superadmin.vit@yopmail.com"
 
 
 async def create_if_missing(email: str, password: str) -> str:

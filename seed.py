@@ -7,6 +7,7 @@ Run it with the backend's Python (it needs httpx and faker):
 """
 import argparse
 import os
+import secrets
 import sys
 
 import httpx
@@ -15,14 +16,14 @@ from seedlib import accounts, classes, credentials, daily_use, history, live_cla
 from seedlib.client import Api, Tally, log
 from seedlib.context import Ctx
 
-DEFAULT_PASSWORD = "Sahaj@2026"  # demo accounts only; shared by the college admin, teachers and students
+DEFAULT_PASSWORD = secrets.token_urlsafe(12)  # new each run; shared by every account and saved in credentials.txt
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--base-url", default="http://127.0.0.1:8000", help="API root without /api/v1")
     parser.add_argument("--password", default=DEFAULT_PASSWORD, help="password given to every demo account")
-    parser.add_argument("--super-email", default=os.getenv("SUPERADMIN_EMAIL", "superadmin@attendance.system"))
+    parser.add_argument("--super-email", default=os.getenv("SUPERADMIN_EMAIL", "superadmin.vit@yopmail.com"))
     parser.add_argument("--super-password", default=os.getenv("SUPERADMIN_PASSWORD", DEFAULT_PASSWORD))
     parser.add_argument(
         "--allow-production",
