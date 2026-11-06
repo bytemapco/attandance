@@ -15,8 +15,8 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  deploy:
-    name: Build & Deploy via PM2
+  backend:
+    name: Deploy API to the server via PM2
     runs-on: ubuntu-latest
     # Only a green CI run on a push to this repository's main deploys. A manual run deploys the branch it was started on.
     if: >-
@@ -26,37 +26,10 @@ jobs:
        github.event.workflow_run.head_repository.full_name == github.repository)
 
     steps:
-      - name: Resolve Target Commit SHA
-        id: meta
-        run: |
-          TARGET_SHA="${{ github.event.workflow_run.head_sha || github.sha }}"
-          echo "commit_sha=$TARGET_SHA" >> "$GITHUB_OUTPUT"
-
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          ref: ${{ steps.meta.outputs.commit_sha }}
-
-      - name: Set up Node.js for Frontend Build
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-          cache-dependency-path: frontend/package-lock.json
-
-      - name: Build Frontend Standalone
-        working-directory: frontend
-        env:
-          NEXT_PUBLIC_API_URL: https://sahaj-backend.bytemap.in/api/v1
-          NEXT_PUBLIC_WS_URL: wss://sahaj-backend.bytemap.in/ws/connect
-          NEXT_PUBLIC_DEFAULT_TENANT_ID: default-institution
-          NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: ${{ vars.GOOGLE_MAPS_API_KEY }}
-        run: |
-          npm ci
-          npm run build
-          cp -r public .next/standalone/public
-          cp -r .next/static .next/standalone/.next/static
-          tar -czf ../frontend-bundle.tar.gz -C .next/standalone .
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
       - name: Package Backend Bundle
         run: |
@@ -76,7 +49,6 @@ jobs:
           VPS_HOST: ${{ vars.VPS_HOST || '100.101.187.9' }}
           VPS_USER: ${{ vars.VPS_USER || 'jarvis' }}
           PRODUCTION_BACKEND_ENV: ${{ secrets.PRODUCTION_BACKEND_ENV }}
-          PRODUCTION_FRONTEND_ENV: ${{ secrets.PRODUCTION_FRONTEND_ENV }}
         run: |
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
@@ -84,44 +56,36 @@ jobs:
           printf '%s\n' "$SSH_HOSTS" > ~/.ssh/known_hosts
           chmod 600 ~/.ssh/deploy_key ~/.ssh/known_hosts
 
-          # Prepare environment files locally for secure transfer
+          # Prepare the environment file locally for secure transfer
           mkdir -p /tmp/deploy_envs
           chmod 700 /tmp/deploy_envs
           printf '%s\n' "$PRODUCTION_BACKEND_ENV" > /tmp/deploy_envs/backend.env
-          printf '%s\n' "$PRODUCTION_FRONTEND_ENV" > /tmp/deploy_envs/frontend.env
-          chmod 600 /tmp/deploy_envs/backend.env /tmp/deploy_envs/frontend.env
+          chmod 600 /tmp/deploy_envs/backend.env
 
-          # Ensure deployment directories exist
+          # Ensure the deployment directory exists
           ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=yes "$VPS_USER@$VPS_HOST" \
-            "mkdir -p /home/jarvis/SharedDrive/bytemap/attendance/backend /home/jarvis/SharedDrive/bytemap/attendance/frontend"
+            "mkdir -p /home/jarvis/SharedDrive/bytemap/attendance/backend"
 
-          # Securely transfer environment files
+          # Securely transfer the environment file
           scp -i ~/.ssh/deploy_key -o StrictHostKeyChecking=yes \
             /tmp/deploy_envs/backend.env "$VPS_USER@$VPS_HOST:/home/jarvis/SharedDrive/bytemap/attendance/backend/.env"
-          scp -i ~/.ssh/deploy_key -o StrictHostKeyChecking=yes \
-            /tmp/deploy_envs/frontend.env "$VPS_USER@$VPS_HOST:/home/jarvis/SharedDrive/bytemap/attendance/frontend/.env"
           rm -rf /tmp/deploy_envs
 
-          # Transfer deployment bundles and PM2 configuration
+          # Transfer the bundle and the PM2 configuration
           scp -i ~/.ssh/deploy_key -o StrictHostKeyChecking=yes \
-            frontend-bundle.tar.gz backend-bundle.tar.gz ecosystem.config.cjs \
+            backend-bundle.tar.gz ecosystem.config.cjs \
             "$VPS_USER@$VPS_HOST:/home/jarvis/SharedDrive/bytemap/attendance/"
 
-          # Deploy bundles and orchestrate with PM2
+          # Deploy the bundle and orchestrate with PM2
           ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=yes "$VPS_USER@$VPS_HOST" \
             "set -euo pipefail
              export PATH=\"/home/jarvis/.nvm/versions/node/v24.16.0/bin:/home/jarvis/SharedDrive/bytemap/attendance/backend/venv/bin:/home/jarvis/.local/bin:/home/linuxbrew/.linuxbrew/bin:\$PATH\"
              cd /home/jarvis/SharedDrive/bytemap/attendance
 
-             # Set strict permissions on environment files
-             chmod 600 backend/.env frontend/.env
+             chmod 600 backend/.env
 
-             # Unpack into clean directories so nothing from an earlier build survives (stale chunks, cached pages).
+             # Unpack into a clean directory so nothing from an earlier build survives.
              # Only the environment file and the Python virtualenv are kept.
-             find frontend -mindepth 1 -maxdepth 1 ! -name .env -exec rm -rf {} +
-             tar -xzf frontend-bundle.tar.gz -C frontend/
-             rm -f frontend-bundle.tar.gz
-
              find backend -mindepth 1 -maxdepth 1 ! -name .env ! -name venv -exec rm -rf {} +
              tar -xzf backend-bundle.tar.gz -C backend/
              rm -f backend-bundle.tar.gz
@@ -134,14 +98,61 @@ jobs:
              pip install -r backend/requirements.txt
              (cd backend && prisma generate && prisma db push)
 
-             # Start or reload services via PM2
+             # Start or reload the API via PM2
              pm2 startOrReload ecosystem.config.cjs --update-env
              pm2 save
 
-             # Verify services are responding with retry tolerance for model loading
-             echo 'Waiting for services initialization...'
+             # Verify the API responds, with retry tolerance for model loading
+             echo 'Waiting for the API to start...'
              curl --retry 15 --retry-delay 3 --retry-connrefused -fsS http://127.0.0.1:8011/health || { echo 'Backend health check failed'; pm2 logs sahaj-backend --lines 40 --nostream; exit 1; }
-             curl --retry 8 --retry-delay 2 --retry-connrefused -fsS -I http://127.0.0.1:3011/ || { echo 'Frontend health check failed'; pm2 logs sahaj-frontend --lines 40 --nostream; exit 1; }
              pm2 list"
 
           rm -f ~/.ssh/deploy_key ~/.ssh/known_hosts
+
+  frontend:
+    name: Deploy web app to Vercel
+    runs-on: ubuntu-latest
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.event == 'push' &&
+       github.event.workflow_run.head_repository.full_name == github.repository)
+    defaults:
+      run:
+        working-directory: frontend
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ vars.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ vars.VERCEL_PROJECT_ID }}
+      WEB_URL: ${{ vars.WEB_URL || 'https://sahaj-web-ashy.vercel.app' }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Vercel CLI
+        run: npm install --global vercel@65.12.1
+
+      - name: Pull Vercel project settings
+        run: vercel pull --yes --environment=production --token "$VERCEL_TOKEN"
+
+      - name: Build
+        env:
+          NEXT_PUBLIC_API_URL: https://sahaj-backend.bytemap.in/api/v1
+          NEXT_PUBLIC_WS_URL: wss://sahaj-backend.bytemap.in/ws/connect
+          NEXT_PUBLIC_DEFAULT_TENANT_ID: default-institution
+          NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: ${{ vars.GOOGLE_MAPS_API_KEY }}
+        run: vercel build --prod --token "$VERCEL_TOKEN"
+
+      - name: Deploy to production
+        run: vercel deploy --prebuilt --prod --token "$VERCEL_TOKEN"
+
+      - name: Check the site serves SAHAJ
+        run: curl --retry 8 --retry-delay 5 --retry-all-errors -fsS "$WEB_URL/login" | grep -q "SAHAJ"

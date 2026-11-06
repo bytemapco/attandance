@@ -1,93 +1,54 @@
 # Server Deployment & Operations Guide
 
-This guide covers the host environment, PM2 process management, and day-to-day operations for the **SAHAJ Platform** deployed on `jarvis` (`100.101.187.9`).
+The server `jarvis` (`100.101.187.9`) runs the **API** only. The web app is on Vercel; see [devops-ci-cd.md](devops-ci-cd.md).
 
 ---
 
-## 1. Host Architecture & Layout
+## 1. Layout
 
-All project artifacts are scoped strictly inside:
 ```text
 /home/jarvis/SharedDrive/bytemap/attendance/
 ├── backend/
-│   ├── .env                    # Sourced from PRODUCTION_BACKEND_ENV (0600)
-│   ├── venv/                   # Python 3.11 dedicated virtualenv
-│   ├── main.py                 # FastAPI application entrypoint
-│   ├── app/                    # Application source code
-│   ├── prisma/                 # Prisma schema and engines
-│   └── requirements.txt        # Python dependencies
-├── frontend/
-│   ├── .env                    # Sourced from PRODUCTION_FRONTEND_ENV (0600)
-│   ├── server.js               # Next.js standalone server entrypoint
-│   └── .next/                  # Pre-compiled static assets and standalone chunk
-└── ecosystem.config.cjs        # PM2 process configuration
+│   ├── .env                    # From PRODUCTION_BACKEND_ENV (0600)
+│   ├── venv/                   # Python 3.11 virtualenv
+│   ├── main.py                 # FastAPI entrypoint
+│   ├── app/  prisma/  scripts/
+│   └── requirements.txt
+└── ecosystem.config.cjs        # PM2 configuration
 ```
+
+## 2. Process
+
+| Service | Command | Port |
+| :--- | :--- | :--- |
+| `sahaj-backend` | `venv/bin/uvicorn main:app --host 0.0.0.0 --port 8011 --workers 1` | `8011` |
+
+The API is public at `https://sahaj-backend.bytemap.in` through a Cloudflare Tunnel to port 8011.
 
 ---
 
-## 2. Process Configuration (`ecosystem.config.cjs`)
+## 3. Runbook
 
-Services are managed natively via PM2:
-
-| Service Name | Working Directory | Runtime / Command | Port | Auto-Restart |
-| :--- | :--- | :--- | :--- | :--- |
-| `sahaj-backend` | `.../backend` | `venv/bin/uvicorn main:app --host 0.0.0.0 --port 8011 --workers 1` | `8011` | Yes (delay: 3s) |
-| `sahaj-frontend` | `.../frontend` | `node server.js` | `3011` | Yes (delay: 3s) |
-
----
-
-## 3. Operations Runbook
-
-### Checking Service Status
 ```bash
-# View live status of PM2 processes
-pm2 status
-# Or shorthand
-pm2 list
+pm2 status                                          # process status
+pm2 logs sahaj-backend --lines 50 --nostream        # recent logs
+pm2 startOrReload ecosystem.config.cjs --update-env # reload with new env
+pm2 save                                            # keep the list across reboots
 ```
 
-### Inspecting Application Logs
+## 4. Troubleshooting
+
+### Cold start
+Starting takes 15 to 20 s while TensorFlow and DeepFace load. The deploy waits up to 45 s before checking `/health`.
+
+### Prisma path
+`prisma-client-py` is in `backend/venv/bin`. For manual schema work:
 ```bash
-# Stream live logs for both services
-pm2 logs
-
-# View last 50 lines for backend only
-pm2 logs sahaj-backend --lines 50 --nostream
-
-# View last 50 lines for frontend only
-pm2 logs sahaj-frontend --lines 50 --nostream
+export PATH="/home/jarvis/SharedDrive/bytemap/attendance/backend/venv/bin:$PATH"
+cd /home/jarvis/SharedDrive/bytemap/attendance/backend
+prisma db push
 ```
+`db push` refuses changes that would delete data. Do not add `--accept-data-loss` without a backup.
 
-### Restarting / Reloading Services
-```bash
-# Reload services with updated environment variables
-pm2 startOrReload ecosystem.config.cjs --update-env
-
-# Restart a specific process
-pm2 restart sahaj-backend
-pm2 restart sahaj-frontend
-
-# Save process list so it persists across host reboots
-pm2 save
-```
-
----
-
-## 4. Troubleshooting Common Issues
-
-### A. Backend Startup & AI Engine Cold Start
-- **Behavior**: Cold-starts take ~15–20 seconds because TensorFlow and DeepFace initialize face detection weights on CPU upon first boot.
-- **Handling**: The CD pipeline includes a 45-second retry window (`--retry 15 --retry-delay 3 --retry-connrefused`) before validating `/health`.
-
-### B. Prisma Generator Path
-- **Behavior**: `prisma-client-py` is installed in `backend/venv/bin/prisma-client-py`.
-- **Handling**: When running manual migrations, ensure `backend/venv/bin` is in `$PATH`:
-  ```bash
-  export PATH="/home/jarvis/SharedDrive/bytemap/attendance/backend/venv/bin:$PATH"
-  cd /home/jarvis/SharedDrive/bytemap/attendance/backend
-  prisma db push --accept-data-loss
-  ```
-
-### C. Redis & Degraded Cache Mode
-- **Behavior**: If Redis is unreachable or credentials are being rotated, the API boots in degraded mode. The database, S3 storage, and AI engine remain fully operational.
-- **Verification**: Run `curl -sS http://127.0.0.1:8011/health | jq .` to verify service sub-component health.
+### Redis
+If Redis is unreachable the API starts in degraded mode and the database and storage keep working. `curl -sS http://127.0.0.1:8011/health` shows each part.

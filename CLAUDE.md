@@ -102,6 +102,7 @@ Bug fix → write a failing test first when practical. Attendance logic changes 
 - Work on `dev`; stable, verified releases merge into `main`. Don't commit or push unless asked.
 - **Dual repository for mobile.** Root repo is `bytemapco/attandance`; `./mobile` is its own repo, `bytemapco/attandance_mobile`. Any change under `./mobile` must be committed and pushed to **both** (run the mobile one from inside `./mobile`). Never leave them out of sync.
 - Commit messages: conventional style (`feat(scope):`, `fix(scope):`), one concern per commit.
+- **Every bug fix or new feature ends in a PR.** Branch from `main` as `fix/<short-name>` for a bug fix or `feature/<short-name>` for a feature (another clear prefix such as `chore/` or `refactor/` is fine for other work). Title: `fix: ...` or `feat: ...`. Body: Problem, Root causes (fixes), Changes, Notes, Verification (real results, and what was not run). A change under `./mobile` also gets a matching PR in the mobile repo, linked from the root PR. Open the PR with `gh pr create` after pushing.
 
 ## 7. Communication
 

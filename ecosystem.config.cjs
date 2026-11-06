@@ -15,20 +15,5 @@ module.exports = {
         PORT: '8011',
       },
     },
-    {
-      name: 'sahaj-frontend',
-      cwd: '/home/jarvis/SharedDrive/bytemap/attendance/frontend',
-      script: 'server.js',
-      interpreter: 'node',
-      autorestart: true,
-      restart_delay: 3000,
-      max_restarts: 10,
-      watch: false,
-      env: {
-        NODE_ENV: 'production',
-        PORT: '3011',
-        HOSTNAME: '0.0.0.0',
-      },
-    },
   ],
 };
