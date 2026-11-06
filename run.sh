@@ -50,7 +50,7 @@ if ! healthy; then
   healthy || { echo "Backend did not start; see $LOG" >&2; exit 1; }
 fi
 
-(cd "$BACKEND" && SUPERADMIN_PASSWORD="${SUPERADMIN_PASSWORD:-SuperAdmin@123456}" "$PY" scripts/create_super_admin.py)
+(cd "$BACKEND" && SUPERADMIN_PASSWORD="${SUPERADMIN_PASSWORD:-Sahaj@2026}" "$PY" scripts/create_super_admin.py)
 "$PY" seed.py --base-url "$URL"
 (cd "$BACKEND" && "$PY" scripts/backdate_enrollments.py)
 echo "Logins are in $ROOT/credentials.txt"

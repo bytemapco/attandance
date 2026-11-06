@@ -23,7 +23,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--base-url", default="http://127.0.0.1:8000", help="API root without /api/v1")
     parser.add_argument("--password", default=DEFAULT_PASSWORD, help="password given to every demo account")
     parser.add_argument("--super-email", default=os.getenv("SUPERADMIN_EMAIL", "superadmin@attendance.system"))
-    parser.add_argument("--super-password", default=os.getenv("SUPERADMIN_PASSWORD", "SuperAdmin@123456"))
+    parser.add_argument("--super-password", default=os.getenv("SUPERADMIN_PASSWORD", DEFAULT_PASSWORD))
     parser.add_argument(
         "--allow-production",
         action="store_true",
