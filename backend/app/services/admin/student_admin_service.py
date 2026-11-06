@@ -14,6 +14,8 @@ from app.services.admin.account_setup import (
 from app.services.invitations import send_invitation
 from app.services.admin.listing import ordering, selected, text_search, with_account_status
 from app.services.batch_service import resolve_assignable_batch
+from app.services.class_management.batch_placement import place_in_batch_class
+from app.services.class_management.common import STUDENT_CLASS_INCLUDE, class_semester
 
 logger = get_logger("app.services.admin.student")
 
@@ -23,7 +25,6 @@ SORT_COLUMNS = {
     "last_name": "lastName",
     "enrollment_number": "enrollmentNumber",
     "created_at": "createdAt",
-    "semester": "semester",
 }
 UPDATE_COLUMNS = {
     "enrollment_number": "enrollmentNumber",
@@ -32,10 +33,9 @@ UPDATE_COLUMNS = {
     "phone": "phone",
     "gender": "gender",
     "date_of_birth": "dateOfBirth",
-    "semester": "semester",
     "department_id": "departmentId",
 }
-INCLUDE = {"user": True, "department": True}
+INCLUDE = {"user": True, "department": True, "classMemberships": STUDENT_CLASS_INCLUDE}
 
 
 def _response(student, invitation_sent: Optional[bool] = None) -> StudentResponse:
@@ -51,7 +51,7 @@ def _response(student, invitation_sent: Optional[bool] = None) -> StudentRespons
         date_of_birth=student.dateOfBirth,
         department_id=student.departmentId,
         department_name=student.department.name if student.department else "",
-        semester=student.semester,
+        semester=class_semester(student),
         batch=student.batch,
         batch_id=student.batchId,
         invitation_sent=invitation_sent,
@@ -77,7 +77,6 @@ class StudentAdminService:
             "phone": data.phone,
             "gender": data.gender,
             "dateOfBirth": data.date_of_birth,
-            "semester": data.semester,
             "batchId": batch.id,
             "batch": batch.code,
             "departmentId": data.department_id,
@@ -88,6 +87,8 @@ class StudentAdminService:
                 data={"userId": user_id, **{k: v for k, v in profile.items() if v is not None}}, include=INCLUDE
             ),
         )
+        if await place_in_batch_class(tenant_id, student.id, batch.id):
+            student = await db.student.find_unique(where={"id": student.id}, include=INCLUDE)
 
         invitation_sent: Optional[bool] = None
         if data.send_invite:
@@ -115,7 +116,9 @@ class StudentAdminService:
         if selected(department_id):
             where["departmentId"] = department_id
         if semester is not None and semester > 0:
-            where["semester"] = semester
+            where["classMemberships"] = {
+                "some": {"status": "ACTIVE", "group": {"is": {"semester": semester}}}
+            }
         if selected(batch_id):
             where["batchId"] = batch_id
         with_account_status(where, status)
@@ -146,6 +149,9 @@ class StudentAdminService:
         if "department_id" in data or "batch_id" in data:
             update_data.update(await StudentAdminService._batch_update_fields(existing, data, tenant_id))
         student = await db.student.update(where={"id": id}, data=update_data, include=INCLUDE)
+        if student.batchId != existing.batchId:
+            await place_in_batch_class(tenant_id, student.id, student.batchId)
+            student = await db.student.find_unique(where={"id": id}, include=INCLUDE)
         return _response(student)
 
     @staticmethod
@@ -165,11 +171,9 @@ class StudentAdminService:
         try:
             rows = await db.query_raw(
                 """
-                SELECT DISTINCT s.semester as val
-                FROM students s
-                LEFT JOIN users u ON s.user_id = u.id
-                WHERE (u.tenant_id = $1 OR s.tenant_id = $1)
-                  AND s.semester IS NOT NULL AND s.semester > 0
+                SELECT DISTINCT g.semester AS val
+                FROM student_groups g
+                WHERE g.tenant_id = $1 AND g.status = 'ACTIVE'
                 ORDER BY val ASC
                 """,
                 tenant_id,

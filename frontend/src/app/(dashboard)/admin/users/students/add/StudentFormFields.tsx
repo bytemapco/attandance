@@ -19,10 +19,6 @@ const GENDER_OPTIONS = [
   { value: "O", label: "Other" },
 ];
 
-const SEMESTER_OPTIONS = Array.from({ length: 8 }, (_, i) => ({
-  value: String(i + 1),
-  label: `Semester ${i + 1}`,
-}));
 
 export default function StudentFormFields({
   register,
@@ -94,19 +90,6 @@ export default function StudentFormFields({
             value={typeof field.value === "string" ? field.value : ""}
             onChange={field.onChange}
             error={errors.batch_id?.message}
-          />
-        )}
-      />
-      <Controller
-        control={control}
-        name="semester"
-        render={({ field }) => (
-          <SelectField
-            label="Semester *"
-            options={[{ value: "", label: "— Select Semester —" }, ...SEMESTER_OPTIONS]}
-            value={field.value !== undefined && field.value !== null ? String(field.value) : ""}
-            onChange={(val) => field.onChange(val ? Number(val) : undefined)}
-            error={errors.semester?.message}
           />
         )}
       />

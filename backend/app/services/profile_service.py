@@ -7,10 +7,13 @@ from prisma.models import User
 from app.db.client import db
 from app.repositories.student_repository import StudentRepository
 from app.schemas.auth import StudentProfileBrief, TeacherProfileBrief, UserProfileResponse
+from app.services.class_management.common import STUDENT_CLASS_INCLUDE, class_semester
 
 
 async def _student_profile(user: User) -> Optional[StudentProfileBrief]:
-    student = await db.student.find_unique(where={"userId": user.id}, include={"department": True})
+    student = await db.student.find_unique(
+        where={"userId": user.id}, include={"department": True, "classMemberships": STUDENT_CLASS_INCLUDE}
+    )
     if not student:
         return None
     embedding = await StudentRepository().get_face_embedding(student.id)
@@ -21,7 +24,7 @@ async def _student_profile(user: User) -> Optional[StudentProfileBrief]:
         last_name=student.lastName,
         phone=student.phone,
         gender=student.gender,
-        semester=student.semester,
+        semester=class_semester(student),
         batch=student.batch,
         batch_id=student.batchId,
         department_id=student.departmentId,

@@ -117,6 +117,8 @@ Admin page for creating and managing classes across departments and batches. A c
 
 **Enrolment sync:** When class roster changes (add/move/remove), CourseEnrollment rows for that class's sections are auto-synced (source=CLASS). Backlog/manual enrollments are never touched. Students added to a class later enroll in all existing sections.
 
+**Batch placement:** a student created, imported or moved to another batch joins the active class of that batch (`services/class_management/batch_placement.py`), leaving the old class. A batch with no class leaves the student in none, and they see no timetable until an admin creates the class. A student has no semester of their own: it is the semester of their class (`class_semester`), so add, edit and import forms take none. `students.semester` is an unused column, kept because `db push` cannot drop a populated column without data-loss approval.
+
 **Teacher propagation:** TimetableRule.teacherId and future (SCHEDULED/unlocked) ClassOccurrence.facultyId are updated when a teacher is changed. Past (CONDUCTED) classes keep the original teacher.
 
 **Atomicity in create:** If class creation fails (e.g., student already in another class), the StudentGroup is rolled back so no orphan exists. Validated in tests.

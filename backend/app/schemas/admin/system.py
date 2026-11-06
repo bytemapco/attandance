@@ -41,7 +41,7 @@ class AdminStatsResponse(BaseModel):
 class StudentFilterFacetsResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    semesters: list[int] = Field(default_factory=list, description="Unique active semesters found in student records")
+    semesters: list[int] = Field(default_factory=list, description="Semesters of the institution's active classes")
 
 
 

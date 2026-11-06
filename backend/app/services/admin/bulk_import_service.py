@@ -11,6 +11,7 @@ from app.services.admin.bulk_import_common import (
     reject_if_taken,
     run_import,
 )
+from app.services.class_management.batch_placement import place_in_batch_class
 
 DEFAULT_DEPARTMENT = {"name": "General Academics", "code": "GEN"}
 DEFAULT_DESIGNATION = {"name": "Lecturer", "code": "LEC"}
@@ -42,15 +43,15 @@ async def _import_student(item, tenant_id: str, row: int) -> Invite:
         "lastName": item.last_name,
         "gender": item.gender,
         "phone": item.phone,
-        "semester": item.semester,
         "batchId": batch_id,
         "batch": batch_code,
         "departmentId": department.id,
     }
-    user, _ = await create_user_with_profile(
+    user, student = await create_user_with_profile(
         user_record(item.email, "STUDENT", tenant_id, password, must_change),
         lambda user_id: db.student.create(data={"userId": user_id, **{k: v for k, v in profile.items() if v is not None}}),
     )
+    await place_in_batch_class(tenant_id, student.id, batch_id)
     name = f"{item.first_name} {item.last_name}".strip() or "Student"
     return Invite(row, user.id, user.email, name, "STUDENT", "Enrollment Number", item.enrollment_number,
                   password if must_change else None)

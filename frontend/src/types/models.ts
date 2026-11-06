@@ -7,7 +7,6 @@ export interface StudentCreate {
   phone?: string;
   gender?: string;
   date_of_birth?: string;
-  semester?: number;
   batch_id: string;
   department_id: string;
 }

@@ -5,6 +5,7 @@ import 'package:smart_attendance_app/app/theme.dart';
 import 'package:smart_attendance_app/core/attendance_constants.dart';
 import 'package:smart_attendance_app/data/local/notification_service.dart';
 import 'package:smart_attendance_app/domain/models/analytics.dart';
+import 'package:smart_attendance_app/domain/models/timetable.dart';
 import 'package:smart_attendance_app/features/analytics/providers/analytics_provider.dart';
 import 'package:smart_attendance_app/features/auth/providers/auth_provider.dart';
 import 'package:smart_attendance_app/features/home/providers/session_provider.dart';
@@ -12,6 +13,7 @@ import 'package:smart_attendance_app/features/home/widgets/home_compliance_card.
 import 'package:smart_attendance_app/features/home/widgets/home_header.dart';
 import 'package:smart_attendance_app/features/home/widgets/home_stat_pills_row.dart';
 import 'package:smart_attendance_app/features/home/widgets/home_today_classes_card.dart';
+import 'package:smart_attendance_app/features/timetable/providers/timetable_provider.dart';
 import 'package:smart_attendance_app/shared/widgets/smart_pull_to_refresh.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -36,8 +38,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
       if (mounted) {
         _sessions.startPolling();
         ref.read(analyticsProvider.notifier).fetch();
+        ref.read(timetableProvider.notifier).goToToday();
       }
     });
+  }
+
+  Future<void> _mark(TimetableEntry entry) async {
+    // The attendance screen reads the campus location from the loaded classes.
+    await _sessions.fetchSessions();
+    if (mounted) context.push('/verify/${entry.occurrenceId}');
   }
 
   @override
@@ -54,6 +63,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
       _sessions.stopPolling();
     } else if (state == AppLifecycleState.resumed) {
       _sessions.startPolling();
+      ref.read(timetableProvider.notifier).goToToday();
     }
   }
 
@@ -62,6 +72,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     final user = ref.watch(authProvider.select((s) => s.user));
     final sessionState = ref.watch(sessionProvider);
     final analytics = ref.watch(analyticsProvider).data;
+    final timetable = ref.watch(timetableProvider).load;
+    final now = DateTime.now();
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final unreadCount = ref.watch(
@@ -113,6 +125,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                     await Future.wait([
                       ref.read(sessionProvider.notifier).fetchSessions(),
                       ref.read(analyticsProvider.notifier).fetch(),
+                      ref.read(timetableProvider.notifier).goToToday(),
                     ]);
                   },
                   child: ListView(
@@ -136,7 +149,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                       HomeComplianceCard(
                         percentage: analytics?.overall.percentage,
                         threshold: analytics?.threshold ?? kOverallGoodPct,
-                        standing: analytics?.overall.standing ?? Standing.noData,
+                        standing:
+                            analytics?.overall.standing ?? Standing.noData,
                         onTap: () => context.go('/analytics'),
                       ),
                       const SizedBox(height: 14),
@@ -150,11 +164,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                       ),
                       const SizedBox(height: 14),
 
-                      // Today's Classes Card with in-card action buttons
                       HomeTodayClassesCard(
-                        sessions: sessionState.sessions,
-                        isLoading: sessionState.isLoading,
-                        errorMessage: sessionState.errorMessage,
+                        classes: sessionState,
+                        timetable: timetable,
+                        clock: now,
+                        onMark: _mark,
                         onViewAll: () => context.go('/timetable'),
                         onSmartPass: () => context.push('/smart-pass'),
                         onFaceMatch: () {
@@ -169,7 +183,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                           }
                         },
                         onRetry: () =>
-                            ref.read(sessionProvider.notifier).fetchSessions(),
+                            ref.read(timetableProvider.notifier).goToToday(),
                       ),
                       const SizedBox(height: 20),
                     ],
