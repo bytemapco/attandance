@@ -12,11 +12,15 @@ def names(role):
 
 
 def test_a_teacher_is_never_offered_an_admin_only_tool():
-    assert names(TEACHER).isdisjoint({"institution_stats", "setup_checks", "attendance_trend", "approvals_backlog", "find_teachers"})
+    assert names(TEACHER).isdisjoint({"institution_stats", "setup_checks", "attendance_trend", "approvals_backlog", "find_teachers",
+        "create_departments", "create_subjects", "create_classrooms", "create_batches", "create_class", "set_class_semester",
+        "add_subject_to_class", "add_schedule", "import_students", "import_teachers", "find_substitutes", "assign_substitute",
+        "proxy_watch", "find_setup_items", "list_all_classes", "class_overview"})
 
 
 def test_an_admin_is_never_offered_a_teacher_only_tool():
-    assert names(ADMIN).isdisjoint({"my_schedule", "class_register", "my_flagged_records", "my_classes", "pending_approvals"})
+    assert names(ADMIN).isdisjoint({"my_schedule", "class_register", "my_flagged_records", "my_classes", "pending_approvals",
+        "start_attendance", "stop_attendance", "mark_attendance", "resolve_flagged_marks", "decide_leaves", "decide_device_changes"})
 
 
 def test_both_roles_can_look_up_and_get_help():
@@ -56,3 +60,12 @@ def test_every_guide_points_at_a_page_that_exists():
     assert guides()
     for guide in guides():
         assert (FRONTEND_PAGES / guide.page.lstrip("/")).is_dir(), guide.page
+
+
+def test_every_write_tool_is_for_exactly_one_role_and_none_can_touch_policy_or_biometrics():
+    forbidden = ("config", "policy", "threshold", "face", "biometric", "password", "token", "geofence", "campus")
+    for tool in registry.TOOLS.values():
+        if tool.writes:
+            assert len(tool.roles) == 1 or tool.name == "send_message", tool.name
+        assert not any(word in tool.name for word in forbidden), tool.name
+        assert not any(word in " ".join(tool.params.model_fields) for word in ("password", "token")), tool.name
