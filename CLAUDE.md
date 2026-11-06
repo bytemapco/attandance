@@ -110,6 +110,14 @@ Bug fix → write a failing test first when practical. Attendance logic changes 
 - State assumptions you made. Offer a recommendation, not a menu of options.
 - Push back if a request conflicts with the PRD, the invariants above, or looks over-engineered.
 
+## 7a. Assistant (teachers and admins)
+
+A chat agent over the existing services. Design in [docs/assistant.md](docs/assistant.md). Rules when changing it:
+- A tool is a thin wrapper over an existing service. No tool takes a tenant, user or role argument; they come from the signed-in `Principal`.
+- A tool that changes data has a `preview` and runs only from `proposals.confirm`. Never run a write from the model loop.
+- Every call goes through `gateway.call_tool`. Tests use a scripted model; never call the real model in tests.
+- Nothing biometric, no passwords or tokens, and no attendance policy settings are exposed to the assistant.
+
 ## 8. Class Management Feature (Implemented Oct 2026)
 
 Admin page for creating and managing classes across departments and batches. A class is a `StudentGroup` (department + batch) with a plain `semester` number (1–8) that an admin edits. There is no academic year, semester table, class term, or promotion. See [docs/SUMMARY.md](docs/SUMMARY.md) for the feature overview.

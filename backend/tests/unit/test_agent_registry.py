@@ -1,0 +1,58 @@
+from pathlib import Path
+
+from app.services.agent import registry
+from app.services.agent.tools.help_tool import best_guides, guides
+from app.services.agent.types import ADMIN, TEACHER
+
+FRONTEND_PAGES = Path(__file__).resolve().parents[3] / "frontend" / "src" / "app" / "(dashboard)"
+
+
+def names(role):
+    return {tool.name for tool in registry.tools_for(role)}
+
+
+def test_a_teacher_is_never_offered_an_admin_only_tool():
+    assert names(TEACHER).isdisjoint({"institution_stats", "setup_checks", "attendance_trend", "approvals_backlog", "find_teachers"})
+
+
+def test_an_admin_is_never_offered_a_teacher_only_tool():
+    assert names(ADMIN).isdisjoint({"my_schedule", "class_register", "my_flagged_records", "my_classes", "pending_approvals"})
+
+
+def test_both_roles_can_look_up_and_get_help():
+    assert {"find_classes", "find_students", "how_do_i", "send_message"} <= names(TEACHER) & names(ADMIN)
+
+
+def test_only_tools_with_a_preview_write_and_they_declare_what_a_person_may_edit():
+    for tool in registry.TOOLS.values():
+        assert tool.writes == (tool.preview is not None)
+        assert tool.editable <= set(tool.params.model_fields)
+        if not tool.writes:
+            assert not tool.editable
+
+
+def test_every_tool_describes_itself_and_gives_the_model_a_schema():
+    for tool in registry.TOOLS.values():
+        assert tool.description.strip()
+        assert tool.params.model_json_schema()["type"] == "object"
+
+
+def test_no_tool_lets_the_model_choose_the_institution():
+    for tool in registry.TOOLS.values():
+        assert not {"tenant_id", "tenantId", "user_id", "role"} & set(tool.params.model_fields), tool.name
+
+
+def test_a_guide_is_found_for_the_question_in_the_persons_own_role():
+    assert best_guides("how do I review flagged scans", "TEACHER")[0].page == "/teacher/review"
+    assert best_guides("how do I create a class", "ADMIN")[0].page == "/admin/class-management"
+
+
+def test_a_teacher_never_gets_an_admin_page_and_an_admin_never_a_teacher_page():
+    assert all(g.page.startswith("/teacher") for g in best_guides("set the campus location radius", "TEACHER"))
+    assert all(g.page.startswith("/admin") for g in best_guides("start the class and review flagged", "ADMIN"))
+
+
+def test_every_guide_points_at_a_page_that_exists():
+    assert guides()
+    for guide in guides():
+        assert (FRONTEND_PAGES / guide.page.lstrip("/")).is_dir(), guide.page

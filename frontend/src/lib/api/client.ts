@@ -15,10 +15,18 @@ function currentTenantId(): string {
   return tenantId || user?.tenant_id || user?.tenant_slug || remembered || DEFAULT_TENANT_ID;
 }
 
-function attachSession(config: InternalAxiosRequestConfig): InternalAxiosRequestConfig {
+/** The headers every authenticated request carries. A streaming call, which axios cannot do, sends the same ones. */
+export function sessionHeaders(): Record<string, string> {
   const { token } = useAuthStore.getState();
-  if (token) config.headers.Authorization = `Bearer ${token}`;
-  config.headers["X-Tenant-ID"] = currentTenantId();
+  const headers: Record<string, string> = { "X-Tenant-ID": currentTenantId() };
+  if (token) headers.Authorization = `Bearer ${token}`;
+  return headers;
+}
+
+function attachSession(config: InternalAxiosRequestConfig): InternalAxiosRequestConfig {
+  Object.entries(sessionHeaders()).forEach(([name, value]) => {
+    config.headers[name] = value;
+  });
   return config;
 }
 

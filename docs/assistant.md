@@ -1,0 +1,60 @@
+# SAHAJ Assistant
+
+A chat panel for teachers and institution admins. It answers from the institution's own data and prepares changes that a person confirms. Students and the platform super admin do not have it.
+
+## How it works
+
+One chat message:
+
+1. The API checks the login, the institution's switch, the per-minute message limit and the daily token budget.
+2. The model (Gemini, function calling) is shown only the tools of the person's role.
+3. When the model asks for a tool, the **gateway** checks the role, validates the arguments, runs the tool against the person's own institution, and records the call.
+4. A read tool returns data to the model and tables or links to the screen.
+5. A write tool does not run. It stores a **proposal** and shows a card. The change runs only when the same person presses Confirm, once.
+
+The model never supplies the institution, user or role. They come from the signed-in account. No tool has a `tenant_id` argument; a test fails if one is added.
+
+## Safeguards
+
+| Rule | Where |
+|---|---|
+| Teacher or admin role only; the institution must have accepted the data notice | `services/agent/access.py` |
+| One door for every tool call; denied and failed calls are logged too | `gateway.py`, table `agent_tool_calls` |
+| Writes need a Confirm; one confirmation wins; proposals expire in 30 minutes; the person may edit only the fields a tool lists | `proposals.py` |
+| A proposal is re-checked at confirm time, in case the data changed | `proposals.confirm` |
+| Face data, photos, passwords and tokens are not available to any tool | tool list in `registry.py` |
+| Attendance rules (minimum percentage, window, location) cannot be changed by the assistant | no such tool |
+| Per-user rate limit and per-institution daily token budget | `budget.py`, Redis |
+| Tool results are data, not instructions (prompt-injection note) | `prompts.py` |
+
+## Data notice (PRD §8)
+
+The assistant sends the question and the attendance details a tool returns, such as student names, roll numbers and attendance, to Google's Gemini service. An institution admin must accept this notice once before anyone at the institution can chat (`POST /agent/notice/accept`, stored in `tenants.settings.aiAssistant`). The notice tells the institution to have its data officer or legal adviser approve the processing. The morning briefing does not call the model, so it sends nothing outside the server.
+
+## Setup
+
+Set `GEMINI_API_KEY` in the production secret (`PRODUCTION_BACKEND_ENV`). Without it the assistant reports that it is not set up. Optional: `GEMINI_MODEL` (default `gemini-3.5-flash`), `AGENT_MESSAGES_PER_MINUTE`, `AGENT_DAILY_TOKEN_BUDGET`.
+
+The client talks to the `v1beta` API (function calling is not offered on `v1`) and gives up after 40 s with no retry, so a person is told at once. A provider rate limit (HTTP 429) shows as "busy, try again in a minute". Free-tier keys have very low limits (a few requests a minute, and per-day caps on some models), so production needs a paid key. Models newer than 3.5 did not answer for the test key, so check the model with your own key before changing the default.
+
+The morning briefing is a cron job in the existing `sahaj-worker` (07:30 India time). It needs no extra process.
+
+## Stage 1 tools (read, and messages with a Confirm)
+
+| Tool | Role | What it does |
+|---|---|---|
+| `my_schedule`, `class_register`, `my_classes` | teacher | Own classes, a day's register, ids |
+| `my_flagged_records` | teacher | Flagged scans waiting for review, with reasons |
+| `pending_approvals` | teacher | Own students' leave and device requests |
+| `students_below_minimum`, `at_risk_students`, `exam_eligibility` | both | Under the minimum, or dropping over 14 days; Excel link. Lists only; it never applies condonation |
+| `attendance_trend` | admin | Each class now versus the period before |
+| `institution_stats`, `setup_checks`, `approvals_backlog` | admin | Headline numbers, what is left to set up, what is waiting |
+| `find_classes`, `find_students`, `find_teachers` | both (teachers: own students) | Names to ids |
+| `how_do_i` | both | Steps from `services/agent/knowledge/*.md`, with a page link |
+| `send_message` | both | Prepares an in-app notification; sent on Confirm. No e-mail |
+
+Leave and device-change requests are decided by teachers in this product, so the admin sees the backlog but does not decide them.
+
+## Tests
+
+`tests/unit/test_agent_*.py` (gateway, loop, registry, guides) use a scripted model. `tests/integration/test_agent_*.py` run the real API, database and Redis with a scripted model (`agent_world.py`). Nothing calls Gemini. Web: `src/__tests__/lib/agent-chat.test.ts`, `src/__tests__/components/agent-panel.test.tsx`.

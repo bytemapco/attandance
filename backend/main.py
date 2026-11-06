@@ -24,6 +24,7 @@ from app.services.s3_service import s3_service
 from app.services.connection_manager import manager as connection_manager
 from app.services.scheduler import session_scheduler
 from app.api import (
+    agent,
     auth,
     student,
     teacher,
@@ -123,6 +124,7 @@ app.include_router(timetable.router, prefix=settings.API_V1_STR)
 app.include_router(faculty_register.router, prefix=settings.API_V1_STR)
 app.include_router(faculty_sessions.router, prefix=settings.API_V1_STR)
 app.include_router(reports.router, prefix=settings.API_V1_STR)
+app.include_router(agent.router, prefix=settings.API_V1_STR)
 
 
 register_db_error_handlers(app)

@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuthStore } from "@/store/authStore";
+import AgentLauncher from "@/components/agent/AgentLauncher";
 import Sidebar from "@/components/navigation/Sidebar";
 import Header from "@/components/navigation/Header";
 import PageSkeleton from "@/components/ui/PageSkeleton";
@@ -73,6 +74,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           {children}
         </main>
       </div>
+      <AgentLauncher />
     </div>
   );
 }

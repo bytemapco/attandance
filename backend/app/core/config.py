@@ -86,5 +86,11 @@ class Settings(BaseSettings):
         default=True, description="Automatically fallback to CPU if GPU driver/libraries are unavailable"
     )
 
+    # Assistant (agentic chat for teachers and tenant admins)
+    GEMINI_API_KEY: str = Field(default="", description="Gemini API key. Empty turns the assistant off.")
+    GEMINI_MODEL: str = "gemini-3.5-flash"
+    AGENT_MESSAGES_PER_MINUTE: int = Field(default=12, description="Chat messages one user may send per minute")
+    AGENT_DAILY_TOKEN_BUDGET: int = Field(default=500_000, description="Model tokens one institution may use per day")
+
 
 settings = Settings()
