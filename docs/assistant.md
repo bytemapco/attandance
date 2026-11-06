@@ -58,3 +58,33 @@ Leave and device-change requests are decided by teachers in this product, so the
 ## Tests
 
 `tests/unit/test_agent_*.py` (gateway, loop, registry, guides) use a scripted model. `tests/integration/test_agent_*.py` run the real API, database and Redis with a scripted model (`agent_world.py`). Nothing calls Gemini. Web: `src/__tests__/lib/agent-chat.test.ts`, `src/__tests__/components/agent-panel.test.tsx`.
+
+## Stage 2 tools (teacher actions, every one waits for Confirm)
+
+| Tool | What it does | Rules kept |
+|---|---|---|
+| `start_attendance` | Opens attendance for a class today, or starts an unscheduled one from its subject | Own class only, not closed, not cancelled, same day |
+| `stop_attendance` | Closes the register; unmarked students become absent, or excused on approved leave | Own class only; the card shows how many will be marked |
+| `mark_attendance` | Sets students PRESENT, ABSENT, EXCUSED or LATE for one class | Enrolled students only; a closed register needs a reason; each change is audited |
+| `resolve_flagged_marks` | Approves or rejects flagged marks; the student is told | Own class only; a closed register needs a note |
+| `decide_leaves` | Approves or rejects pending leave of the teacher's students | Own students only; approval excuses closed classes in those dates |
+| `decide_device_changes` | Approves or rejects new-phone requests | Own students only; the card reminds the teacher to check it is the student's phone |
+
+These call the same services as the web screens, so audit rows, notifications and streak updates are identical.
+
+## Stage 3 tools (admin setup agent, every write waits for Confirm)
+
+| Tool | What it does | Rules kept |
+|---|---|---|
+| `create_departments`, `create_subjects`, `create_classrooms` | Adds many at once | Existing codes or names (any letter case) and repeats in the list are refused before anything is saved; same code in another institution is fine |
+| `create_batches` | Adds batches A-1, A-2... to a department section | Numbers continue from the last one |
+| `create_class` | Creates a class for a batch and semester | Batch's students who are in no class join it, as the web form does; one active class per batch |
+| `set_class_semester` | Changes a class's semester number | Students move with the class; no promotion step |
+| `add_subject_to_class` | Adds a subject with its teacher | Same subject twice and other institutions' teachers are refused; students are enrolled |
+| `add_schedule` | Adds weekly slots to a subject | Times validated; overlaps inside the request refused; teacher and class clashes (and a switched-off Saturday) are checked on Confirm, and the message says how many slots were already added |
+| `import_students`, `import_teachers` | Imports rows the admin pasted from a sheet; the model maps odd column headers | A dry run lists rows that will be skipped (unknown department or batch, duplicate e-mail or roll, repeats); licence seats checked; the model cannot set passwords; each new person gets the normal invitation e-mail |
+| `find_substitutes`, `assign_substitute` | Free teachers for an absent teacher's classes, then covers one class | Same-department teachers first; a teacher with an overlapping class, a closed class, or another institution's teacher is refused; the covering teacher is told; audited |
+| `proxy_watch` | Several students on one phone, repeated new-phone requests, most flagged marks | Leads only, never proof; device ids are never shown |
+| `find_setup_items`, `list_all_classes`, `class_overview` | Lookups that give the ids setup tools need | Own institution only |
+
+Invitation e-mails from an import are the product's normal ones. The assistant sends no e-mail of its own.
