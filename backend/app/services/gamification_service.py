@@ -1,11 +1,11 @@
-from typing import List
+from typing import Dict, Iterable, List
 
 from app.core.logging_config import get_logger
 from app.db.client import db
 from app.repositories.student_repository import StudentRepository
 from app.services.attendance_percentage import ATTENDED_STATUSES, attendance_percentage
 from app.services.leaderboard_cache_service import LeaderboardCacheService
-from app.services.student_class_ledger import HeldClass, held_classes
+from app.services.student_class_ledger import HeldClass, held_classes, held_classes_for
 
 logger = get_logger("app.gamification")
 
@@ -49,26 +49,41 @@ class GamificationService:
         self.student_repo = StudentRepository()
         self.leaderboard_service = LeaderboardCacheService()
 
-    async def update_streak(self, student_id: str, attendance_status: str) -> dict:
-        """Helper to compatibility-wrap recalculate_student_streak."""
-        return await self.recalculate_student_streak(student_id)
-
     async def recalculate_student_streak(self, student_id: str) -> dict:
-        """Recalculate the streak from the classes held so far."""
-        student = await self.student_repo.get_by_id(student_id)
-        if not student:
-            return {"error": "Student not found"}
+        """Recalculate one student's streak from the classes held so far."""
+        return (await self.recalculate_streaks([student_id])).get(student_id, {"error": "Student not found"})
 
-        classes = await held_classes(student_id, student.tenantId)
+    async def recalculate_streaks(self, student_ids: Iterable[str]) -> Dict[str, dict]:
+        """Recalculates several students' streaks with a fixed number of queries, however many students there are.
+        A streak is only written when it changed."""
+        ids = list(dict.fromkeys(student_ids))
+        if not ids:
+            return {}
+        students = await db.student.find_many(where={"id": {"in": ids}})
+        tenants = {s.tenantId for s in students}
+        classes: Dict[str, list] = {}
+        for tenant_id in tenants:
+            in_tenant = [s.id for s in students if s.tenantId == tenant_id]
+            classes.update(await held_classes_for(in_tenant, tenant_id))
         leaves = await db.leaverequest.find_many(
-            where={"studentId": student_id, "tenantId": student.tenantId, "status": "APPROVED"}
+            where={"studentId": {"in": [s.id for s in students]}, "tenantId": {"in": list(tenants)}, "status": "APPROVED"}
         )
-        leave_ranges = [(leave.startDate.date(), leave.endDate.date()) for leave in leaves]
-        current, highest = _streaks(classes, leave_ranges, student.highestStreak or 0)
+        leave_ranges: Dict[str, list] = {s.id: [] for s in students}
+        for leave in leaves:
+            leave_ranges[leave.studentId].append((leave.startDate.date(), leave.endDate.date()))
 
-        await self.student_repo.update_streak(student_id, current, highest)
-        await self.leaderboard_service.update_score(student_id, current, highest)
-        return {"current_streak": current, "highest_streak": highest}
+        results: Dict[str, dict] = {}
+        changed: Dict[str, tuple] = {}
+        scores: Dict[str, tuple] = {}
+        for student in students:
+            current, highest = _streaks(classes[student.id], leave_ranges[student.id], student.highestStreak or 0)
+            if (current, highest) != (student.currentStreak, student.highestStreak):
+                changed[student.id] = (current, highest)
+            scores[student.id] = (student.tenantId, current, highest)
+            results[student.id] = {"current_streak": current, "highest_streak": highest}
+        await self.student_repo.update_streaks(changed)
+        await self.leaderboard_service.update_scores(scores)
+        return results
 
     async def get_student_stats(self, student_id: str) -> dict:
         student = await self.student_repo.get_by_id(student_id)

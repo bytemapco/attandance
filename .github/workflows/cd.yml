@@ -105,6 +105,10 @@ jobs:
              # Verify the API responds, with retry tolerance for model loading
              echo 'Waiting for the API to start...'
              curl --retry 15 --retry-delay 3 --retry-connrefused -fsS http://127.0.0.1:8011/health || { echo 'Backend health check failed'; pm2 logs sahaj-backend --lines 40 --nostream; exit 1; }
+
+             # The e-mail worker must be running too, or queued mail would pile up unsent
+             sleep 5
+             pm2 describe sahaj-worker | grep -q ' online ' || { echo 'E-mail worker is not online'; pm2 logs sahaj-worker --lines 40 --nostream; exit 1; }
              pm2 list"
 
           rm -f ~/.ssh/deploy_key ~/.ssh/known_hosts

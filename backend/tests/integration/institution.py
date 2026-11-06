@@ -1,4 +1,5 @@
 """An institution with one signed-in admin, for the tests that call the real API."""
+import asyncio
 import uuid
 
 from app.core.security import hash_password
@@ -15,7 +16,8 @@ class Institution:
             self.slug = cursor.fetchone()[0]
         self.email = f"{uuid.uuid4().hex[:10]}@example.com"
         seed.insert(
-            "users", email=self.email, hashed_password=hash_password(PASSWORD), tenant_id=self.tenant_id, role=role
+            "users", email=self.email, hashed_password=asyncio.run(hash_password(PASSWORD)),
+            tenant_id=self.tenant_id, role=role,
         )
 
     @property

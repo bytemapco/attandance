@@ -1,3 +1,4 @@
+from contextlib import asynccontextmanager
 from datetime import date, datetime, timezone
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, MagicMock
@@ -32,19 +33,52 @@ def occurrence(enrollments, marked=()):
 
 @pytest.fixture
 def fake(monkeypatch):
+    """A database whose transaction records the writes in order. `taken_by` lists students whose own mark landed
+    first, so the bulk insert skips them as the real one does."""
     calls = []
+    state = SimpleNamespace(taken_by=set(), transactions=0)
+
+    async def create_many(data, skip_duplicates=False):
+        assert skip_duplicates is True
+        written = [r for r in data if r["studentId"] not in state.taken_by]
+        calls.append(("records", written))
+        return len(written)
+
+    async def find_many(where):
+        wanted = set(where["id"]["in"])
+        return [SimpleNamespace(id=r["id"]) for kind, rows in calls if kind == "records" for r in rows if r["id"] in wanted]
+
+    async def audit_many(data):
+        calls.append(("audit", data))
+
+    async def lock(where, data):
+        calls.append(("lock", data))
+
+    tx = MagicMock()
+    tx.attendancerecord.create_many = create_many
+    tx.attendancerecord.find_many = find_many
+    tx.attendanceauditlog.create_many = audit_many
+    tx.classoccurrence.update = lock
+
+    @asynccontextmanager
+    async def transaction():
+        state.transactions += 1
+        yield tx
+
     db = MagicMock()
-    db.attendancerecord.create = AsyncMock(side_effect=lambda data: calls.append(("record", data)) or SimpleNamespace(id=f"rec-{data['studentId']}"))
-    db.attendanceauditlog.create = AsyncMock(side_effect=lambda data: calls.append(("audit", data)))
-    db.classoccurrence.update = AsyncMock(side_effect=lambda **kw: calls.append(("lock", kw["data"])))
+    db.tx = transaction
     monkeypatch.setattr(module, "db", db)
     refresh = AsyncMock()
     monkeypatch.setattr(module, "refresh_streaks", refresh)
-    return SimpleNamespace(calls=calls, refresh=refresh)
+    return SimpleNamespace(calls=calls, refresh=refresh, state=state)
 
 
 def records(fake):
-    return {data["studentId"]: data for kind, data in fake.calls if kind == "record"}
+    return {r["studentId"]: r for kind, rows in fake.calls if kind == "records" for r in rows}
+
+
+def audit_entries(fake):
+    return [a for kind, rows in fake.calls if kind == "audit" for a in rows]
 
 
 async def test_students_without_a_mark_become_absent_and_the_class_locks(fake):
@@ -61,9 +95,40 @@ async def test_students_without_a_mark_become_absent_and_the_class_locks(fake):
 async def test_the_class_is_locked_only_after_every_record_is_written(fake):
     await module.close_occurrence("t1", occurrence([enrollment("s1")]), "user-1")
 
-    assert [kind for kind, _ in fake.calls] == ["record", "audit", "lock"]
+    assert [kind for kind, _ in fake.calls] == ["records", "audit", "lock"]
     lock = fake.calls[-1][1]
     assert lock["isAttendanceLocked"] is True and lock["lockedById"] == "user-1" and lock["lockedAt"] is not None
+
+
+async def test_records_audit_entries_and_the_lock_are_one_transaction(fake):
+    await module.close_occurrence("t1", occurrence([enrollment("s1"), enrollment("s2")]), "user-1")
+
+    assert fake.state.transactions == 1
+
+
+async def test_the_number_of_writes_does_not_grow_with_the_class(fake):
+    await module.close_occurrence("t1", occurrence([enrollment(f"s{i}") for i in range(60)]), "user-1")
+
+    assert [kind for kind, _ in fake.calls] == ["records", "audit", "lock"]
+    assert len(records(fake)) == 60 and len(audit_entries(fake)) == 60
+
+
+async def test_every_audit_entry_points_at_the_record_it_describes(fake):
+    await module.close_occurrence("t1", occurrence([enrollment("s1"), enrollment("s2")]), "user-1")
+
+    record_ids = {r["id"] for r in records(fake).values()}
+    assert {a["attendanceRecordId"] for a in audit_entries(fake)} == record_ids
+    assert all(a["previousStatus"] == "ABSENT" and a["newStatus"] == "ABSENT" for a in audit_entries(fake))
+
+
+async def test_a_student_who_marked_themselves_a_moment_ago_keeps_their_record_and_gets_no_audit_entry(fake):
+    fake.state.taken_by = {"s2"}
+
+    created = await module.close_occurrence("t1", occurrence([enrollment("s1"), enrollment("s2")]), "user-1")
+
+    assert created == 1
+    assert set(records(fake)) == {"s1"}
+    assert len(audit_entries(fake)) == 1
 
 
 async def test_a_student_on_approved_leave_is_excused_not_absent(fake):
@@ -91,10 +156,16 @@ async def test_a_student_who_joined_after_the_class_is_not_marked_absent(fake):
     assert created == 0 and records(fake) == {}
 
 
+async def test_a_class_with_nobody_to_mark_still_locks(fake):
+    await module.close_occurrence("t1", occurrence([], marked=["s1"]), "user-1")
+
+    assert [kind for kind, _ in fake.calls] == ["lock"]
+
+
 async def test_automatic_close_says_so_in_the_audit_trail(fake):
     await module.close_occurrence("t1", occurrence([enrollment("s1")]), "user-1", auto=True)
 
-    audit = next(data for kind, data in fake.calls if kind == "audit")
+    audit = audit_entries(fake)[0]
     assert "closed automatically" in audit["reason"] and audit["changedById"] == "user-1"
 
 

@@ -1,12 +1,9 @@
-from fastapi import Depends, HTTPException, Request, status
+from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from prisma.models import User, Student, Teacher
 
-from app.core.config import settings
 from app.core.logging_config import get_logger
 from app.core.security import decode_session_token
-from app.core.redis_scripts import atomic_incr_expire
-from app.db.redis import safe_redis
 from app.repositories.user_repository import UserRepository
 from app.repositories.student_repository import StudentRepository
 from app.repositories.teacher_repository import TeacherRepository
@@ -124,22 +121,3 @@ async def get_tenant_context(current_user: User = Depends(get_current_user)) -> 
     return tid
 
 
-async def auth_rate_limit(request: Request) -> None:
-    if settings.ENVIRONMENT == "development":
-        return
-    r = safe_redis()
-    if not r:
-        return
-    ip = request.client.host if request.client and request.client.host else "unknown"
-    key = f"ratelimit:auth:{ip}"
-    try:
-        count = await atomic_incr_expire(r, key, 60)
-        if count > 10:
-            raise HTTPException(
-                status_code=status.HTTP_429_TOO_MANY_REQUESTS, detail="Too many requests. Please try again later."
-            )
-    except HTTPException:
-        raise
-    except Exception as err:
-        logger.warning("Auth rate limit error: %s", err)
-        return

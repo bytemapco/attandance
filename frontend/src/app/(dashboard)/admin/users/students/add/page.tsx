@@ -73,9 +73,9 @@ export default function AddStudentPage(): React.ReactElement {
       };
       const { data: created } = await api.post<StudentResponse>("/admin/users/student", payload);
       if (created.invitation_sent === false) {
-        toast.error("Student created, but the invitation email could not be sent. Check SMTP settings, then trigger a password reset.");
+        toast.error("Student created, but the invitation email could not be queued. Trigger a password reset to send them a link.");
       } else if (created.invitation_sent) {
-        toast.success("Student created and temporary password sent via email");
+        toast.success("Student created. The invitation email is on its way.");
       } else {
         toast.success("Student created.");
       }

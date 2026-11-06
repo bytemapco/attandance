@@ -3,8 +3,9 @@ import logging
 from fastapi import APIRouter, Depends, Request, status
 from prisma.models import User
 
-from app.api.dependencies import get_current_user, auth_rate_limit
+from app.api.dependencies import get_current_user
 from app.core.logging_config import get_logger
+from app.core.rate_limit import limit_auth_attempts
 from app.schemas.log import LogEvent
 from app.schemas.common import MessageResponse
 
@@ -19,7 +20,7 @@ async def ingest_log(
     request: Request,
     current_user: User = Depends(get_current_user),
 ) -> MessageResponse:
-    await auth_rate_limit(request)
+    await limit_auth_attempts(request, "client-log", current_user.id)
     logger.log(
         getattr(logging, log_event.level.upper(), logging.INFO),
         "[%s] [%s] (user:%s) %s",

@@ -70,7 +70,7 @@ class TenantProvisioningService:
             admin_user = await db.user.create(
                 data={
                     "email": a["email"],
-                    "hashedPassword": hash_password(plain_pwd),
+                    "hashedPassword": await hash_password(plain_pwd),
                     "role": a["role"],
                     "mustChangePassword": must_change,
                     "tenantId": tenant.id,

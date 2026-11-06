@@ -6,7 +6,7 @@ from app.core.logging_config import get_logger
 from app.db.client import db
 from app.repositories.student_repository import taught_by
 from app.schemas.teacher import DeviceChangeResponse
-from app.services.email_service import email_service
+from app.services.email_queue import enqueue_email
 
 logger = get_logger("app.services.device_change_review")
 
@@ -76,13 +76,14 @@ class DeviceChangeReviewService:
         if student and student.user:
             try:
                 name = f"{student.firstName or ''} {student.lastName or ''}".strip() or "Student"
-                await email_service.send_device_change_reviewed_email(
+                await enqueue_email(
+                    "send_device_change_reviewed_email",
                     to_email=student.user.email,
                     recipient_name=name,
                     enrollment_number=student.enrollmentNumber,
                     status=new_status,
                 )
             except Exception as e:
-                logger.warning("Failed to dispatch device change reviewed email: %s", e)
+                logger.warning("Failed to queue the device change reviewed email: %s", e)
 
         return True

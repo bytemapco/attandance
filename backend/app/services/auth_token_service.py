@@ -65,7 +65,7 @@ class AuthTokenService:
                 detail="This account has been disabled. Contact your administrator.",
             )
 
-        hashed = hash_password(password)
+        hashed = await hash_password(password)
         await db.user.update(
             where={"id": user_id},
             data={"hashedPassword": hashed, "isActive": True, "mustChangePassword": False},
@@ -138,7 +138,7 @@ class AuthTokenService:
             )
 
         user_id = data["user_id"]
-        hashed = hash_password(new_password)
+        hashed = await hash_password(new_password)
         await db.user.update(
             where={"id": user_id},
             data={"hashedPassword": hashed, "mustChangePassword": False},

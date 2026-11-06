@@ -179,7 +179,7 @@ async def run_wipe_and_init(target_host: str, target_db: str) -> None:
         super_email = os.getenv("SUPERADMIN_EMAIL", "superadmin.vit@yopmail.com")
         super_pass = os.getenv("SUPERADMIN_PASSWORD", "Sahaj@2026")
 
-        hashed_pwd = hash_password(super_pass)
+        hashed_pwd = await hash_password(super_pass)
 
         await db.user.create(
             data={

@@ -19,6 +19,7 @@ hardware_manager.initialize(
 )
 from app.db.client import connect_db, disconnect_db
 from app.db.redis import connect_redis, disconnect_redis
+from app.services.email_queue import close_queue
 from app.services.s3_service import s3_service
 from app.services.connection_manager import manager as connection_manager
 from app.services.scheduler import session_scheduler
@@ -70,6 +71,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     logger.info("Shutting down...")
     session_scheduler.stop()
     connection_manager.stop_heartbeat()
+    await close_queue()
     await disconnect_db()
     await disconnect_redis()
     logger.info("Shutdown complete")

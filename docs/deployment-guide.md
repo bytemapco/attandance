@@ -22,6 +22,9 @@ The server `jarvis` (`100.101.187.9`) runs the **API** only. The web app is on V
 | Service | Command | Port |
 | :--- | :--- | :--- |
 | `sahaj-backend` | `venv/bin/uvicorn main:app --host 0.0.0.0 --port 8011 --workers 1` | `8011` |
+| `sahaj-worker` | `venv/bin/arq app.worker.WorkerSettings` | none |
+
+`sahaj-worker` sends the e-mails the API queues in Redis (invitations and device-change notices), retrying a failed send up to 4 times with a growing delay. If it is stopped, requests still succeed and the mail waits in the queue until it starts again. Check the queue with `redis-cli zcard arq:queue`.
 
 The API is public at `https://sahaj-backend.bytemap.in` through a Cloudflare Tunnel to port 8011.
 
@@ -31,7 +34,8 @@ The API is public at `https://sahaj-backend.bytemap.in` through a Cloudflare Tun
 
 ```bash
 pm2 status                                          # process status
-pm2 logs sahaj-backend --lines 50 --nostream        # recent logs
+pm2 logs sahaj-backend --lines 50 --nostream        # recent API logs
+pm2 logs sahaj-worker --lines 50 --nostream         # recent e-mail worker logs
 pm2 startOrReload ecosystem.config.cjs --update-env # reload with new env
 pm2 save                                            # keep the list across reboots
 ```

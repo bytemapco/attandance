@@ -1,97 +1,87 @@
-from datetime import date, datetime
-from typing import List
-from prisma.errors import UniqueViolationError
+from datetime import date, datetime, timedelta
+from typing import Dict, Iterator, List
+
 from app.db.client import db
 from app.services.system_config_service import SystemConfigService
+
+SATURDAY = 6
 
 
 def _to_dt(d: date) -> datetime:
     return datetime(d.year, d.month, d.day, 0, 0, 0)
 
 
-async def _find_existing(rule, target_dt: datetime):
-    return await db.classoccurrence.find_unique(
-        where={
-            "courseSectionId_date_startTime": {
-                "courseSectionId": rule.courseSectionId,
-                "date": target_dt,
-                "startTime": rule.startTime,
-            }
-        }
-    )
+def _days(first: date, last: date) -> Iterator[date]:
+    for offset in range((last - first).days + 1):
+        yield first + timedelta(days=offset)
 
 
-async def _create_or_existing(rule, target_dt: datetime, data: dict):
-    """Several teachers can open the same day at once. The request that loses the race takes the row the winner made."""
-    try:
-        return await db.classoccurrence.create(data=data)
-    except UniqueViolationError:
-        existing = await _find_existing(rule, target_dt)
-        if existing is None:
-            raise
-        return existing
+def _applies(rule, day: date) -> bool:
+    if rule.dayOfWeek != day.isoweekday() or rule.effectiveFrom.date() > day:
+        return False
+    return rule.effectiveUntil is None or rule.effectiveUntil.date() >= day
+
+
+def _faculty_of(rule):
+    if rule.teacherId:
+        return rule.teacherId
+    primary = rule.courseSection.faculties if rule.courseSection else None
+    return primary[0].teacherId if primary else None
+
+
+def _new_occurrence(tenant_id: str, rule, day: date, faculty_id: str) -> Dict:
+    section = rule.courseSection
+    return {
+        "tenantId": tenant_id,
+        "courseSectionId": rule.courseSectionId,
+        "timetableRuleId": rule.id,
+        "date": _to_dt(day),
+        "startTime": rule.startTime,
+        "endTime": rule.endTime,
+        "classroomId": rule.classroomId or (section.defaultRoomId if section else None),
+        "facultyId": faculty_id,
+        "status": "SCHEDULED",
+    }
 
 
 class OccurrenceGenerator:
     @staticmethod
-    async def generate_occurrences_for_date(tenant_id: str, target_date: date) -> List[dict]:
-        target_dt = _to_dt(target_date)
-        day_of_week = target_date.isoweekday()
+    async def generate(tenant_id: str, first_day: date, last_day: date) -> int:
+        """Makes the dated class for every weekly rule that applies between two days (inclusive) and has none yet.
 
-        if day_of_week == 6:
-            config = await SystemConfigService().get_config(tenant_id=tenant_id)
-            if not config.saturdayEnabled:
-                return []
+        Three queries for the whole range, however many days and rules it holds. Several teachers can open the same
+        day at once: the bulk insert skips a class another request has just made. Returns how many it made.
+        """
+        saturday_off = False
+        if any(day.isoweekday() == SATURDAY for day in _days(first_day, last_day)):
+            saturday_off = not (await SystemConfigService().get_config(tenant_id=tenant_id)).saturdayEnabled
 
         rules = await db.timetablerule.find_many(
             where={
                 "tenantId": tenant_id,
-                "dayOfWeek": day_of_week,
                 "isActive": True,
-                "effectiveFrom": {"lte": target_dt},
-                "OR": [{"effectiveUntil": None}, {"effectiveUntil": {"gte": target_dt}}],
+                "effectiveFrom": {"lte": _to_dt(last_day)},
+                "OR": [{"effectiveUntil": None}, {"effectiveUntil": {"gte": _to_dt(first_day)}}],
             },
-            include={
-                "courseSection": {
-                    "include": {
-                        "faculties": {"where": {"isPrimary": True}},
-                        "subject": True,
-                    }
-                },
-            },
+            include={"courseSection": {"include": {"faculties": {"where": {"isPrimary": True}}}}},
         )
-
-        created_occurrences = []
-        for rule in rules:
-            existing = await _find_existing(rule, target_dt)
-            if existing:
-                created_occurrences.append(existing)
-                continue
-
-            faculty_id = rule.teacherId
-            if not faculty_id and rule.courseSection and rule.courseSection.faculties:
-                faculty_id = rule.courseSection.faculties[0].teacherId
-
-            if not faculty_id:
-                continue
-
-            room_id = rule.classroomId or (rule.courseSection.defaultRoomId if rule.courseSection else None)
-
-            occurrence = await _create_or_existing(
-                rule,
-                target_dt,
-                {
-                    "tenantId": tenant_id,
-                    "courseSectionId": rule.courseSectionId,
-                    "timetableRuleId": rule.id,
-                    "date": target_dt,
-                    "startTime": rule.startTime,
-                    "endTime": rule.endTime,
-                    "classroomId": room_id,
-                    "facultyId": faculty_id,
-                    "status": "SCHEDULED",
-                },
+        if not rules:
+            return 0
+        existing = {
+            (o.courseSectionId, o.date.date(), o.startTime)
+            for o in await db.classoccurrence.find_many(
+                where={"tenantId": tenant_id, "date": {"gte": _to_dt(first_day), "lte": _to_dt(last_day)}}
             )
-            created_occurrences.append(occurrence)
+        }
 
-        return created_occurrences
+        missing: List[Dict] = []
+        for day in _days(first_day, last_day):
+            if saturday_off and day.isoweekday() == SATURDAY:
+                continue
+            for rule in rules:
+                faculty_id = _faculty_of(rule)
+                if faculty_id and _applies(rule, day) and (rule.courseSectionId, day, rule.startTime) not in existing:
+                    missing.append(_new_occurrence(tenant_id, rule, day, faculty_id))
+        if not missing:
+            return 0
+        return await db.classoccurrence.create_many(data=missing, skip_duplicates=True)

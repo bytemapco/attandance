@@ -73,7 +73,7 @@ class StudentResponse(BaseModel):
     department_name: str = Field(..., description="Resolved department name")
     semester: Optional[int] = Field(None, description="Semester of the student's class; null while in no class")
     batch: Optional[str] = Field(None, description="Batch code, e.g. CE-A-1")
-    invitation_sent: Optional[bool] = Field(None, description="Whether the invite email was delivered; null when no invite was requested")
+    invitation_sent: Optional[bool] = Field(None, description="Whether the invite email was queued for delivery; null when no invite was requested")
     batch_id: Optional[str] = Field(None, description="Batch UUID")
     is_active: bool = Field(True, description="Account active status")
 

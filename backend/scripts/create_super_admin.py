@@ -30,7 +30,7 @@ async def create_if_missing(email: str, password: str) -> str:
     if existing:
         return f"{email} already exists (role {existing.role}); nothing changed."
     await db.user.create(
-        data={"email": email, "hashedPassword": hash_password(password), "role": "SUPER_ADMIN", "isActive": True}
+        data={"email": email, "hashedPassword": await hash_password(password), "role": "SUPER_ADMIN", "isActive": True}
     )
     return f"Created super admin {email}."
 

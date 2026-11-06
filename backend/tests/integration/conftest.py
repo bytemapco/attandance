@@ -9,6 +9,7 @@ import sys
 import uuid
 from datetime import date, datetime
 from pathlib import Path
+from types import SimpleNamespace
 from urllib.parse import urlparse
 
 import psycopg2
@@ -121,6 +122,22 @@ class Seed:
 @pytest.fixture
 def seed(conn) -> Seed:
     return Seed(conn)
+
+
+@pytest.fixture
+def query_counter(monkeypatch):
+    """Counts the queries the application sends to the database. Reset `.count` before the call being measured."""
+    from prisma.engine.query import QueryEngine
+
+    counter = SimpleNamespace(count=0)
+    original = QueryEngine.query
+
+    async def counting(self, content, *, tx_id):
+        counter.count += 1
+        return await original(self, content, tx_id=tx_id)
+
+    monkeypatch.setattr(QueryEngine, "query", counting)
+    return counter
 
 
 @pytest.fixture(scope="module")

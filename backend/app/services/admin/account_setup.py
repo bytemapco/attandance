@@ -38,10 +38,10 @@ def initial_credentials(password: Optional[str] = None) -> tuple[str, bool]:
     return (password or generate_temporary_password(), not password)
 
 
-def user_record(email: str, role: str, tenant_id: str, password: str, must_change: bool) -> dict:
+async def user_record(email: str, role: str, tenant_id: str, password: str, must_change: bool) -> dict:
     return {
         "email": email,
-        "hashedPassword": hash_password(password),
+        "hashedPassword": await hash_password(password),
         "role": role,
         "mustChangePassword": must_change,
         "tenantId": tenant_id,

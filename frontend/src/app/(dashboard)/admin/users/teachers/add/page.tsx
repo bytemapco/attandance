@@ -67,9 +67,9 @@ export default function AddTeacherPage(): React.ReactElement {
       };
       const { data: created } = await api.post<TeacherResponse>("/admin/users/teacher", payload);
       if (created.invitation_sent === false) {
-        toast.error("Teacher created, but the invitation email could not be sent. Check SMTP settings, then trigger a password reset.");
+        toast.error("Teacher created, but the invitation email could not be queued. Trigger a password reset to send them a link.");
       } else if (created.invitation_sent) {
-        toast.success("Teacher created and temporary password sent via email");
+        toast.success("Teacher created. The invitation email is on its way.");
       } else {
         toast.success("Teacher created.");
       }
