@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
-# SAHAJ operations menu, run from your machine. It never creates sample data.
+# SAHAJ operations menu, run from your machine.
 #
 #   ./run.sh            pick a target, see its status, then choose an action
 #   ./run.sh local      your local backend, using backend/.env (development)
 #   ./run.sh server     the hosted backend, over SSH (production)
 #
-# Actions: create the super admin (the first account), reset (empty the database, keep the schema),
-# and start the local backend. Resetting the server saves a backup first and asks for the database name.
+# Actions: seed (super admin, then a fictional college; the logins are saved to credentials.txt), create the super
+# admin alone, reset (empty the database, keep the schema), and start the local backend.
+# One password, typed when asked, is used for every account. Resetting the server saves a backup first.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -100,6 +101,28 @@ create_super_admin() {
   unset SAHAJ_SECRET
 }
 
+# Creates the super admin, loads the fictional college through the API, and saves one login per role.
+# The demo institution gets the same password as the super admin.
+seed() {
+  local flags=()
+  ask_super_admin || return 1
+  if [ "$TARGET" = server ]; then
+    if [ "${1:-}" != confirmed ]; then
+      say "${YELLOW}This adds fictional people and attendance to the SERVER database.${OFF}"
+      confirm "seed server" || { say "Cancelled."; return 1; }
+    fi
+    flags+=(--allow-production)
+  else
+    start_local_backend
+  fi
+  backend_script create_super_admin.py
+  "$PY" "$ROOT/seed.py" --base-url "$URL" --password "$SAHAJ_SECRET" \
+    --super-email "$SAHAJ_EMAIL" --super-password "$SAHAJ_SECRET" "${flags[@]}"
+  backend_script backdate_enrollments.py vidyasagar-pune
+  unset SAHAJ_SECRET
+  say "${GREEN}Done.${OFF} The logins are saved in $ROOT/credentials.txt"
+}
+
 # Empties the target's database after you type its name. The server is backed up first.
 reset() {
   local info db_name backup=()
@@ -122,15 +145,19 @@ start_local_backend() {
 menu() {
   while true; do
     show_target
-    say "  1) create super admin   the first account, needed after a reset"
-    say "  2) reset                empty the database"
-    [ "$TARGET" = local ] && say "  3) start local backend"
+    say "  1) seed                 super admin and a fictional college; saves credentials.txt"
+    say "  2) create super admin   the first account only"
+    say "  3) reset                empty the database"
+    say "  4) reset and seed       start from a clean fictional college"
+    [ "$TARGET" = local ] && say "  5) start local backend"
     say "  r) refresh status     t) change target     q) quit"
     read -r -p "> " action
     case "$action" in
-      1) create_super_admin || true ;;
-      2) reset || true ;;
-      3) if [ "$TARGET" = local ]; then start_local_backend; else say "Pick one of the options above."; fi ;;
+      1) seed || true ;;
+      2) create_super_admin || true ;;
+      3) reset || true ;;
+      4) if reset; then seed confirmed; fi ;;
+      5) if [ "$TARGET" = local ]; then start_local_backend; else say "Pick one of the options above."; fi ;;
       r) ;;
       t) choose_target ;;
       q) exit 0 ;;
