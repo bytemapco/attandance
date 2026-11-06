@@ -1,7 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import api from "@/lib/api";
+import useSWR from "swr";
 import type { SetupStatus } from "@/types/setupStatus";
 
 interface UseSetupStatus {
@@ -13,25 +12,14 @@ interface UseSetupStatus {
 
 /** Loads the institution's setup progress. `refresh` re-reads it after the admin changes something. */
 export function useSetupStatus(): UseSetupStatus {
-  const [status, setStatus] = useState<SetupStatus | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [failed, setFailed] = useState(false);
+  const { data, error, isLoading, mutate } = useSWR<SetupStatus>("/admin/setup-status");
 
-  const refresh = useCallback(async (): Promise<void> => {
-    try {
-      const { data } = await api.get<SetupStatus>("/admin/setup-status");
-      setStatus(data);
-      setFailed(false);
-    } catch {
-      setFailed(true);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    void refresh();
-  }, [refresh]);
-
-  return { status, loading, failed, refresh };
+  return {
+    status: data ?? null,
+    loading: isLoading,
+    failed: Boolean(error) && !data,
+    refresh: async () => {
+      await mutate();
+    },
+  };
 }

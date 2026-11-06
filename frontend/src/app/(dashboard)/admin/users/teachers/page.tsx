@@ -1,23 +1,25 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Plus, Upload } from "lucide-react";
-import api from "@/lib/api";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import Button from "@/components/ui/Button";
 import DataTable from "@/components/ui/DataTable";
 import TableToolbar, { type ToolbarFilterConfig } from "@/components/ui/TableToolbar";
 import Pagination from "@/components/ui/Pagination";
 import BulkImportModal from "@/components/admin/BulkImportModal";
+import { useDepartments, useDesignations } from "@/hooks/useReferenceData";
 import { useTableQuery } from "@/hooks/useTableQuery";
 import { teacherColumns } from "./TeacherColumns";
-import type { TeacherResponse, DepartmentResponse } from "@/types";
+import type { TeacherResponse } from "@/types";
 
 export default function TeachersPage(): React.ReactElement {
   const router = useRouter();
-  const [departments, setDepartments] = useState<{ value: string; label: string }[]>([]);
-  const [designations, setDesignations] = useState<{ value: string; label: string }[]>([]);
+  const { items: departmentList } = useDepartments();
+  const { items: designationList } = useDesignations();
+  const departments = useMemo(() => departmentList.map((d) => ({ value: d.id, label: d.name })), [departmentList]);
+  const designations = useMemo(() => designationList.map((d) => ({ value: d.id, label: d.name })), [designationList]);
   const [isBulkImportOpen, setIsBulkImportOpen] = useState(false);
 
   // Filter States
@@ -55,27 +57,6 @@ export default function TeachersPage(): React.ReactElement {
   });
 
   const hasFilters = searchQuery.trim() !== "" || department !== "all" || designation !== "all" || status !== "all";
-
-  useEffect(() => {
-    async function loadMetadata(): Promise<void> {
-      try {
-        const [deptRes, desigRes] = await Promise.allSettled([
-          api.get<DepartmentResponse[]>("/admin/departments"),
-          api.get<{ id: string; name: string }[]>("/admin/designations"),
-        ]);
-        if (deptRes.status === "fulfilled") {
-          setDepartments(deptRes.value.data.map((d) => ({ value: d.id, label: d.name })));
-        }
-        if (desigRes.status === "fulfilled") {
-          setDesignations(desigRes.value.data.map((d) => ({ value: d.id, label: d.name })));
-        }
-      } catch {
-        setDepartments([]);
-        setDesignations([]);
-      }
-    }
-    void loadMetadata();
-  }, []);
 
   const handleResetAll = (): void => {
     setSearchQuery("");

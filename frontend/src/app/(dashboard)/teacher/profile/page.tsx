@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
+import useSWR from "swr";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Building, Briefcase, Award, Shield, Lock } from "lucide-react";
@@ -15,8 +16,7 @@ import { changePasswordSchema, ChangePasswordFormData } from "@/lib/validations/
 import type { UserProfile } from "@/types";
 
 export default function TeacherProfilePage(): React.ReactElement {
-  const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { data: profile, error, isLoading: loading } = useSWR<UserProfile>("/auth/me");
 
   const {
     register,
@@ -34,18 +34,8 @@ export default function TeacherProfilePage(): React.ReactElement {
   });
 
   useEffect(() => {
-    async function loadProfile() {
-      try {
-        const { data } = await api.get<UserProfile>("/auth/me");
-        setProfile(data);
-      } catch (err: unknown) {
-        toast.error(getApiErrorMessage(err, "Failed to load profile"));
-      } finally {
-        setLoading(false);
-      }
-    }
-    void loadProfile();
-  }, []);
+    if (error) toast.error(getApiErrorMessage(error, "Failed to load profile"));
+  }, [error]);
 
   const handleChangePassword = async (formData: ChangePasswordFormData) => {
     try {

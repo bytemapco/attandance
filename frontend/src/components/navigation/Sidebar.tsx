@@ -18,7 +18,7 @@ interface SidebarProps {
 export default function Sidebar({ isOpen, onClose }: SidebarProps): React.JSX.Element {
   const user = useAuthStore((s) => s.user);
   const role = user?.role;
-  const { unreadCount } = useNotifications(25000);
+  const { unreadCount } = useNotifications();
 
   const homeHref =
     role === "SUPER_ADMIN"

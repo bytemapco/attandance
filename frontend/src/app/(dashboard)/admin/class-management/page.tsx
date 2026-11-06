@@ -1,18 +1,23 @@
 "use client";
 
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Plus, AlertCircle, ChevronRight } from "lucide-react";
 import toast from "react-hot-toast";
+import useSWR from "swr";
 
-import api, { getApiErrorMessage } from "@/lib/api";
+import { getApiErrorMessage } from "@/lib/api";
+import { useDebounce } from "@/hooks/useDebounce";
+import { useDepartments } from "@/hooks/useReferenceData";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import Button from "@/components/ui/Button";
 import DataTable, { type TableColumn } from "@/components/ui/DataTable";
 import TableToolbar, { type ToolbarFilterConfig } from "@/components/ui/TableToolbar";
-import type { ClassSummary, DepartmentResponse } from "@/types";
+import type { ClassSummary } from "@/types";
 
 type ClassRow = ClassSummary & Record<string, unknown>;
+
+const NO_CLASSES: ClassRow[] = [];
 
 const SEMESTER_FILTER = [
   { value: "all", label: "All semesters" },
@@ -21,48 +26,26 @@ const SEMESTER_FILTER = [
 
 export default function ClassManagementPage(): React.ReactElement {
   const router = useRouter();
-  const [classes, setClasses] = useState<ClassRow[]>([]);
-  const [departments, setDepartments] = useState<DepartmentResponse[]>([]);
+  const { items: departments, failed: departmentsFailed } = useDepartments();
   const [departmentId, setDepartmentId] = useState("all");
   const [semester, setSemester] = useState("all");
   const [search, setSearch] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const typedSearch = useDebounce(search, 350);
+
+  const { data, error: loadError, isLoading: loading, mutate } = useSWR<ClassRow[]>([
+    "/admin/class-management/classes",
+    {
+      department_id: departmentId && departmentId !== "all" ? departmentId : undefined,
+      semester_number: semester && semester !== "all" ? Number(semester) : undefined,
+      search: typedSearch.trim() || undefined,
+    },
+  ]);
+  const classes = data ?? NO_CLASSES;
+  const error = loadError ? getApiErrorMessage(loadError, "Failed to load classes") : null;
 
   useEffect(() => {
-    async function loadFilters(): Promise<void> {
-      try {
-        const deptRes = await api.get<DepartmentResponse[]>("/admin/departments");
-        setDepartments(deptRes.data);
-      } catch (err: unknown) {
-        toast.error(getApiErrorMessage(err, "Failed to load filters"));
-      }
-    }
-    void loadFilters();
-  }, []);
-
-  const fetchClasses = useCallback(async (): Promise<void> => {
-    setLoading(true);
-    setError(null);
-    try {
-      const { data } = await api.get<ClassSummary[]>("/admin/class-management/classes", {
-        params: {
-          department_id: departmentId && departmentId !== "all" ? departmentId : undefined,
-          semester_number: semester && semester !== "all" ? Number(semester) : undefined,
-          search: search.trim() || undefined,
-        },
-      });
-      setClasses(data as ClassRow[]);
-    } catch (err: unknown) {
-      setError(getApiErrorMessage(err, "Failed to load classes"));
-    } finally {
-      setLoading(false);
-    }
-  }, [departmentId, semester, search]);
-
-  useEffect(() => {
-    void fetchClasses();
-  }, [fetchClasses]);
+    if (departmentsFailed) toast.error("Failed to load filters");
+  }, [departmentsFailed]);
 
   const hasFilters = search.trim() !== "" || departmentId !== "all" || semester !== "all";
 
@@ -198,7 +181,7 @@ export default function ClassManagementPage(): React.ReactElement {
           data={classes}
           loading={loading}
           error={error}
-          onRetry={() => void fetchClasses()}
+          onRetry={() => void mutate()}
           emptyMessage={
             hasFilters
               ? "No classes match these filters."

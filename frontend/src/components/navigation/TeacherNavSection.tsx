@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import api from "@/lib/api";
+import useSWR from "swr";
 import { FLAGGED_CHANGED_EVENT } from "@/lib/flaggedEvents";
+import { FLAGGED_POLL_MS } from "@/lib/polling";
 import { cn } from "@/lib/utils";
 import { teacherLinks, teacherReportLinks } from "./sidebarNav";
 
@@ -15,27 +16,15 @@ interface TeacherNavSectionProps {
 
 export default function TeacherNavSection({ unreadCount, onClose }: TeacherNavSectionProps): React.JSX.Element {
   const pathname = usePathname();
-  const [flaggedCount, setFlaggedCount] = useState(0);
+  const { data: flagged, mutate } = useSWR<unknown[]>("/faculty/flagged", { refreshInterval: FLAGGED_POLL_MS });
+  const flaggedCount = Array.isArray(flagged) ? flagged.length : 0;
 
+  // A decision made on the attendance page updates the count at once.
   useEffect(() => {
-    let isMounted = true;
-    const fetchFlagged = async () => {
-      try {
-        const { data } = await api.get<unknown[]>("/faculty/flagged");
-        if (isMounted) setFlaggedCount(Array.isArray(data) ? data.length : 0);
-      } catch { /* Polling error ignored */ }
-    };
-    void fetchFlagged();
-    const interval = setInterval(() => void fetchFlagged(), 60_000);
-    // A decision made on the attendance page updates the count at once.
-    const onChanged = (): void => void fetchFlagged();
+    const onChanged = (): void => void mutate();
     window.addEventListener(FLAGGED_CHANGED_EVENT, onChanged);
-    return () => {
-      isMounted = false;
-      clearInterval(interval);
-      window.removeEventListener(FLAGGED_CHANGED_EVENT, onChanged);
-    };
-  }, []);
+    return () => window.removeEventListener(FLAGGED_CHANGED_EVENT, onChanged);
+  }, [mutate]);
 
   return (
     <>

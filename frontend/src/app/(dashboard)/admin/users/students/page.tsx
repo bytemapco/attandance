@@ -1,25 +1,30 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Plus, Upload } from "lucide-react";
-import api from "@/lib/api";
+import useSWR from "swr";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import Button from "@/components/ui/Button";
 import DataTable from "@/components/ui/DataTable";
 import TableToolbar, { type ToolbarFilterConfig } from "@/components/ui/TableToolbar";
 import Pagination from "@/components/ui/Pagination";
 import BulkImportModal from "@/components/admin/BulkImportModal";
+import { useBatches, useDepartments } from "@/hooks/useReferenceData";
 import { useTableQuery } from "@/hooks/useTableQuery";
 import { studentColumns } from "./StudentColumns";
 import { useStudentFacets } from "./useStudentFacets";
-import type { BatchResponse, StudentResponse, DepartmentResponse, StudentFilterFacetsResponse } from "@/types";
+import type { StudentResponse, StudentFilterFacetsResponse } from "@/types";
+
+const NO_FACETS: StudentFilterFacetsResponse = { semesters: [] };
 
 export default function StudentsPage(): React.ReactElement {
   const router = useRouter();
-  const [departments, setDepartments] = useState<{ value: string; label: string }[]>([]);
-  const [facets, setFacets] = useState<StudentFilterFacetsResponse>({ semesters: [] });
-  const [batchFilterOptions, setBatchFilterOptions] = useState<{ value: string; label: string }[]>([]);
+  const { items: departmentList } = useDepartments();
+  const { items: batchList } = useBatches();
+  const { data: facets = NO_FACETS } = useSWR<StudentFilterFacetsResponse>("/admin/users/students/facets");
+  const departments = useMemo(() => departmentList.map((d) => ({ value: d.id, label: d.name })), [departmentList]);
+  const batchFilterOptions = useMemo(() => batchList.map((b) => ({ value: b.id, label: b.code })), [batchList]);
   const [isBulkImportOpen, setIsBulkImportOpen] = useState(false);
 
   const [department, setDepartment] = useState<string>("all");
@@ -58,28 +63,6 @@ export default function StudentsPage(): React.ReactElement {
   });
 
   const hasFilters = searchQuery.trim() !== "" || department !== "all" || semester !== "all" || batch !== "all" || status !== "all";
-
-  useEffect(() => {
-    async function loadMetadata(): Promise<void> {
-      try {
-        const [deptRes, facetRes] = await Promise.allSettled([
-          api.get<DepartmentResponse[]>("/admin/departments"),
-          api.get<StudentFilterFacetsResponse>("/admin/users/students/facets"),
-        ]);
-        const batchRes = await api.get<BatchResponse[]>("/admin/batches").catch(() => ({ data: [] as BatchResponse[] }));
-        setBatchFilterOptions(batchRes.data.map((b) => ({ value: b.id, label: b.code })));
-        if (deptRes.status === "fulfilled") {
-          setDepartments(deptRes.value.data.map((d) => ({ value: d.id, label: d.name })));
-        }
-        if (facetRes.status === "fulfilled") {
-          setFacets(facetRes.value.data);
-        }
-      } catch {
-        setDepartments([]);
-      }
-    }
-    void loadMetadata();
-  }, []);
 
   const { semesterOptions } = useStudentFacets({
     facets,

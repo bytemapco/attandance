@@ -1,7 +1,10 @@
 import { act, renderHook } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { SWRConfig } from "swr";
 import { usePlatformWebSocket } from "@/hooks/usePlatformWebSocket";
+import { swrDefaults } from "@/lib/api/swr";
 import { WS_URL } from "@/lib/config";
+import { HEARTBEAT_MS } from "@/lib/polling";
 import { useAuthStore } from "@/store/authStore";
 import { FakeSocket } from "../fakes/FakeSocket";
 import { makeUser } from "../helpers";
@@ -14,7 +17,7 @@ const { replace, router, toast, apiGet } = vi.hoisted(() => {
 
 vi.mock("next/navigation", () => ({ useRouter: () => router }));
 vi.mock("react-hot-toast", () => ({ default: toast }));
-vi.mock("@/lib/api", () => ({ default: { get: apiGet } }));
+vi.mock("@/lib/api/client", () => ({ default: { get: apiGet } }));
 
 const latest = FakeSocket.latest;
 
@@ -34,9 +37,14 @@ afterEach(() => {
   apiGet.mockReset();
 });
 
+// A fresh cache per test, and no request merging, so each test counts its own calls.
+function withSwr({ children }: { children: React.ReactNode }): React.ReactElement {
+  return <SWRConfig value={{ ...swrDefaults, provider: () => new Map(), dedupingInterval: 0 }}>{children}</SWRConfig>;
+}
+
 function connectedHook() {
   useAuthStore.getState().login("jwt-1", makeUser());
-  const hook = renderHook(() => usePlatformWebSocket());
+  const hook = renderHook(() => usePlatformWebSocket(), { wrapper: withSwr });
   act(() => latest().open());
   return hook;
 }
@@ -147,36 +155,59 @@ describe("losing the connection", () => {
   });
 });
 
-describe("checking the institution is still active", () => {
-  it("asks the server every 10 seconds", () => {
-    connectedHook();
+async function elapse(ms: number): Promise<void> {
+  await act(async () => {
+    await vi.advanceTimersByTimeAsync(ms);
+  });
+}
 
-    act(() => {
-      vi.advanceTimersByTime(30000);
-    });
+function showTab(state: "visible" | "hidden"): void {
+  vi.spyOn(document, "visibilityState", "get").mockReturnValue(state);
+}
+
+describe("checking the institution is still active", () => {
+  it("checks once on arrival, then every two minutes while the tab is visible", async () => {
+    connectedHook();
+    await elapse(0);
+    expect(apiGet).toHaveBeenCalledTimes(1);
+
+    await elapse(HEARTBEAT_MS * 2);
 
     expect(apiGet).toHaveBeenCalledTimes(3);
-    expect(apiGet).toHaveBeenCalledWith("/auth/me");
+    expect(apiGet).toHaveBeenCalledWith("/auth/me", { params: undefined });
   });
 
-  it("asks again when the tab regains focus", () => {
+  it("does not poll at all while the tab is hidden", async () => {
     connectedHook();
+    await elapse(0);
+    showTab("hidden");
+
+    await elapse(HEARTBEAT_MS * 5);
+
+    expect(apiGet).toHaveBeenCalledTimes(1);
+  });
+
+  it("checks again when the user comes back to the tab, but not more than once every 30 seconds", async () => {
+    connectedHook();
+    await elapse(0);
+    await elapse(31_000);
 
     act(() => {
       window.dispatchEvent(new Event("focus"));
+      window.dispatchEvent(new Event("focus"));
     });
+    await elapse(0);
 
-    expect(apiGet).toHaveBeenCalledOnce();
+    expect(apiGet).toHaveBeenCalledTimes(2);
   });
 
-  it("stops asking once the user is signed out", () => {
+  it("stops asking once the user is signed out", async () => {
     const { unmount } = connectedHook();
+    await elapse(0);
     unmount();
 
-    act(() => {
-      vi.advanceTimersByTime(30000);
-    });
+    await elapse(HEARTBEAT_MS * 3);
 
-    expect(apiGet).not.toHaveBeenCalled();
+    expect(apiGet).toHaveBeenCalledTimes(1);
   });
 });

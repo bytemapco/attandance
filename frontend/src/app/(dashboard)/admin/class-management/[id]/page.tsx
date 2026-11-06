@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import useSWR from "swr";
 import { useParams, useRouter } from "next/navigation";
 import {
   ArrowLeft,
@@ -31,25 +32,17 @@ const SEMESTER_NUMBERS = Array.from({ length: 8 }, (_, i) => i + 1);
 export default function ClassDetailPage(): React.ReactElement {
   const router = useRouter();
   const { id } = useParams<{ id: string }>();
-  const [cls, setCls] = useState<ClassDetail | null>(null);
-  const [error, setError] = useState<string | null>(null);
   const [tab, setTab] = useState<TabKey>("students");
 
-  const load = useCallback(async (): Promise<void> => {
-    try {
-      const { data } = await api.get<ClassDetail>(`/admin/class-management/classes/${id}`);
-      setCls(data);
-      setError(null);
-    } catch (err: unknown) {
-      const message = getApiErrorMessage(err, "Failed to load class");
-      setError(message);
-      toast.error(message);
-    }
-  }, [id]);
+  const { data: cls, error: loadError, mutate } = useSWR<ClassDetail>(`/admin/class-management/classes/${id}`);
+  const error = loadError && !cls ? getApiErrorMessage(loadError, "Failed to load class") : null;
 
   useEffect(() => {
-    void load();
-  }, [load]);
+    if (error) toast.error(error);
+  }, [error]);
+
+  // A child that changed the class hands back the new version, which replaces the cached one at once.
+  const setCls = (updated: ClassDetail): void => void mutate(updated, { revalidate: false });
 
   async function changeSemester(semesterNumber: number): Promise<void> {
     try {
@@ -63,7 +56,7 @@ export default function ClassDetailPage(): React.ReactElement {
     }
   }
 
-  if (error) return <ErrorState message={error} onRetry={() => void load()} />;
+  if (error) return <ErrorState message={error} onRetry={() => void mutate()} />;
   if (!cls) return <PageSkeleton />;
 
   const incompleteSubjects = cls.sections.filter((s) => !s.teacher_id || s.schedule.length === 0).length;

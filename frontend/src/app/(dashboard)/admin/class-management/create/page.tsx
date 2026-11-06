@@ -5,8 +5,10 @@ import { useRouter } from "next/navigation";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
+import useSWR from "swr";
 
 import api, { getApiErrorMessage, applyValidationErrorsToForm } from "@/lib/api";
+import { useDepartments } from "@/hooks/useReferenceData";
 import {
   classCreateSchema,
   studentsForClass,
@@ -20,14 +22,12 @@ import SelectField from "@/components/ui/SelectField";
 import Button from "@/components/ui/Button";
 import { useDepartmentBatches } from "@/components/admin/batches/useDepartmentBatches";
 import StudentSelectionList from "./StudentSelectionList";
-import type { ClassDetail, DepartmentResponse, StudentResponse } from "@/types";
+import type { ClassDetail, StudentResponse } from "@/types";
 
 const SEMESTERS = Array.from({ length: 8 }, (_, i) => ({ value: String(i + 1), label: `Semester ${i + 1}` }));
 
 export default function CreateClassPage(): React.ReactElement {
   const router = useRouter();
-  const [departments, setDepartments] = useState<DepartmentResponse[]>([]);
-  const [students, setStudents] = useState<StudentResponse[]>([]);
   const [selected, setSelected] = useState<Set<string>>(new Set());
 
   const {
@@ -41,29 +41,25 @@ export default function CreateClassPage(): React.ReactElement {
     defaultValues: { department_id: "", semester_number: 1, batch_id: "" },
   });
   const departmentId = useWatch({ control, name: "department_id" });
-  const semester = Number(useWatch({ control, name: "semester_number" }));
   const batchId = useWatch({ control, name: "batch_id" });
   const { batches } = useDepartmentBatches(departmentId || undefined);
 
+  const { items: departments, failed: departmentsFailed } = useDepartments();
+  const { data: studentPage, error: studentsError } = useSWR<StudentResponse[] | { items: StudentResponse[] }>(
+    "/admin/users/students?page_size=1000"
+  );
+  const students = useMemo(
+    () => (Array.isArray(studentPage) ? studentPage : studentPage?.items ?? []),
+    [studentPage]
+  );
+
   useEffect(() => {
-    async function loadOptions(): Promise<void> {
-      try {
-        const [deptRes, studentRes] = await Promise.all([
-          api.get<DepartmentResponse[]>("/admin/departments"),
-          api.get<StudentResponse[] | { items: StudentResponse[] }>("/admin/users/students?page_size=1000"),
-        ]);
-        setDepartments(deptRes.data);
-        setStudents(Array.isArray(studentRes.data) ? studentRes.data : studentRes.data.items ?? []);
-      } catch (err: unknown) {
-        toast.error(getApiErrorMessage(err, "Failed to load departments and students"));
-      }
-    }
-    void loadOptions();
-  }, []);
+    if (departmentsFailed || studentsError) toast.error("Failed to load departments and students");
+  }, [departmentsFailed, studentsError]);
 
   const matching = useMemo(
-    () => (batchId ? studentsForClass(students, departmentId, semester, batchId) : []),
-    [students, departmentId, semester, batchId]
+    () => (batchId ? studentsForClass(students, departmentId, batchId) : []),
+    [students, departmentId, batchId]
   );
 
   useEffect(() => {
@@ -162,7 +158,7 @@ export default function CreateClassPage(): React.ReactElement {
             </p>
           )}
           {batchId && matching.length === 0 && (
-            <p className="text-xs text-warning">No students in this batch for the selected semester.</p>
+            <p className="text-xs text-warning">No students in this batch yet.</p>
           )}
           {matching.length > 0 && (
             <StudentSelectionList students={matching} selected={selected} onToggle={toggle} onToggleAll={toggleAll} />

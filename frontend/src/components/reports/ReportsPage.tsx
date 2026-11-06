@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { Download } from "lucide-react";
-import api, { getApiErrorMessage } from "@/lib/api";
+import useSWR from "swr";
+import { getApiErrorMessage } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { downloadReport, type ExportFormat } from "@/lib/reports";
 import { useReport } from "@/hooks/useReport";
@@ -29,8 +30,8 @@ interface ReportsPageProps {
 }
 
 export default function ReportsPage({ description }: ReportsPageProps): React.ReactElement {
-  const [filters, setFilters] = useState<ReportFilters | null>(null);
-  const [loadError, setLoadError] = useState<string | null>(null);
+  const { data: filters, error: filtersError, mutate: loadFilters } = useSWR<ReportFilters>("/reports/filters");
+  const loadError = filtersError && !filters ? getApiErrorMessage(filtersError, "Could not load your classes") : null;
   const [tab, setTab] = useState<ReportTab>("shortage");
   const [classId, setClassId] = useState("");
   const [sectionId, setSectionId] = useState("");
@@ -38,20 +39,9 @@ export default function ReportsPage({ description }: ReportsPageProps): React.Re
   const [dateTo, setDateTo] = useState("");
   const [exporting, setExporting] = useState<ExportFormat | null>(null);
 
-  const loadFilters = useCallback(async (): Promise<void> => {
-    try {
-      const { data } = await api.get<ReportFilters>("/reports/filters");
-      setFilters(data);
-      setClassId((current) => current || data.classes[0]?.id || "");
-      setLoadError(null);
-    } catch (err: unknown) {
-      setLoadError(getApiErrorMessage(err, "Could not load your classes"));
-    }
-  }, []);
-
   useEffect(() => {
-    void loadFilters();
-  }, [loadFilters]);
+    if (filters) setClassId((current) => current || filters.classes[0]?.id || "");
+  }, [filters]);
 
   const subjects = useMemo(() => (filters?.subjects ?? []).filter((s) => s.class_id === classId), [filters, classId]);
   const firstSubject = subjects[0]?.section_id ?? "";

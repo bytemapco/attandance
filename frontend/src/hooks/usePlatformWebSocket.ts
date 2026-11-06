@@ -3,9 +3,10 @@
 import { useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import useSWR from "swr";
 import { useAuthStore } from "@/store/authStore";
-import api from "@/lib/api";
 import { WS_URL } from "@/lib/config";
+import { HEARTBEAT_MS } from "@/lib/polling";
 
 type WsMessage = {
   type?: string;
@@ -22,8 +23,8 @@ const MAX_RECONNECT_ATTEMPTS = 5;
 /**
  * Enterprise-grade real-time platform listener:
  * 1. WebSocket Push: Instant server-push on tenant suspension (4403) and broadcasts.
- * 2. Focus & Visibility Sync: Instantly re-verifies institutional status when user switches tabs.
- * 3. Periodic Pulse: 10s background check guaranteeing active eviction without user interaction.
+ * 2. Focus & Visibility Sync: re-verifies institutional status when the user returns to the tab.
+ * 3. Periodic Pulse: a slow background check while the tab is visible, as a fallback for a missed push.
  */
 export function usePlatformWebSocket(): void {
   const { token, isAuthenticated, setSuspended, logout } = useAuthStore();
@@ -127,32 +128,7 @@ export function usePlatformWebSocket(): void {
     };
   }, [isAuthenticated, token, connect]);
 
-  // Tab switch & visibility change heartbeat verification
-  useEffect(() => {
-    if (!isAuthenticated || !token) return;
-
-    const checkStatus = async (): Promise<void> => {
-      try {
-        await api.get("/auth/me");
-      } catch {
-        // api.ts interceptor automatically redirects to /suspended on 403
-      }
-    };
-
-    const handleVisibilityChange = (): void => {
-      if (document.visibilityState === "visible") {
-        void checkStatus();
-      }
-    };
-
-    window.addEventListener("focus", handleVisibilityChange);
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-    const interval = setInterval(() => void checkStatus(), 10000);
-
-    return (): void => {
-      window.removeEventListener("focus", handleVisibilityChange);
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
-      clearInterval(interval);
-    };
-  }, [isAuthenticated, token]);
+  // Fallback check for a suspension or sign-out the WebSocket did not deliver. SWR runs it on return to the tab
+  // and every couple of minutes, and not at all while the tab is hidden. A 403 or 401 is handled by the API client.
+  useSWR(isAuthenticated && token ? "/auth/me" : null, { refreshInterval: HEARTBEAT_MS });
 }

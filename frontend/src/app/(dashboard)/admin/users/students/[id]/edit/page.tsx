@@ -6,7 +6,9 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { User, GraduationCap, Save, X } from "lucide-react";
 import toast from "react-hot-toast";
+import useSWR from "swr";
 import api, { getApiErrorMessage, applyValidationErrorsToForm } from "@/lib/api";
+import { useDepartments } from "@/hooks/useReferenceData";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import PageHeader from "@/components/ui/PageHeader";
 import Card from "@/components/ui/Card";
@@ -15,14 +17,16 @@ import Button from "@/components/ui/Button";
 import PageSkeleton from "@/components/ui/PageSkeleton";
 import EditStudentFormFields from "./EditStudentFormFields";
 import { studentUpdateSchema, StudentUpdateFormData } from "@/lib/validations/student";
-import type { StudentResponse, DepartmentResponse } from "@/types";
+import type { StudentResponse } from "@/types";
 
 export default function EditStudentPage(): React.ReactElement {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
-  const [student, setStudent] = useState<StudentResponse | null>(null);
-  const [departments, setDepartments] = useState<DepartmentResponse[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: student, error: studentError, isLoading: loading } = useSWR<StudentResponse>(
+    `/admin/users/students/${id}`,
+    { revalidateOnFocus: false }
+  );
+  const { items: departments } = useDepartments();
   const [saving, setSaving] = useState(false);
 
   const {
@@ -55,37 +59,26 @@ export default function EditStudentPage(): React.ReactElement {
     prevDepartmentRef.current = departmentId;
   }, [departmentId, setValue]);
 
+  // The form is filled once, from the first copy that arrives, so a background refresh never overwrites edits.
+  const filledFor = useRef<string | null>(null);
   useEffect(() => {
-    async function fetchStudentAndDeps(): Promise<void> {
-      try {
-        const [studentRes, depsRes] = await Promise.all([
-          api.get<StudentResponse>(`/admin/users/students/${id}`),
-          api.get<DepartmentResponse[]>("/admin/departments").catch(() => ({ data: [] })),
-        ]);
-        setDepartments(depsRes.data);
-        const found = studentRes.data;
-        if (found) {
-          setStudent(found);
-          reset({
-            enrollment_number: found.enrollment_number,
-            first_name: found.first_name || "",
-            last_name: found.last_name || "",
-            phone: found.phone ?? "",
-            gender: found.gender ?? "",
-            date_of_birth: found.date_of_birth ? new Date(found.date_of_birth).toISOString().split("T")[0] : "",
-            batch_id: found.batch_id ?? "",
-            department_id: found.department_id ?? "",
-          });
-        }
-      } catch {
-        toast.error("Failed to load student data");
-      } finally {
-        setLoading(false);
-      }
-    }
+    if (!student || filledFor.current === student.id) return;
+    filledFor.current = student.id;
+    reset({
+      enrollment_number: student.enrollment_number,
+      first_name: student.first_name || "",
+      last_name: student.last_name || "",
+      phone: student.phone ?? "",
+      gender: student.gender ?? "",
+      date_of_birth: student.date_of_birth ? new Date(student.date_of_birth).toISOString().split("T")[0] : "",
+      batch_id: student.batch_id ?? "",
+      department_id: student.department_id ?? "",
+    });
+  }, [student, reset]);
 
-    void fetchStudentAndDeps();
-  }, [id, reset]);
+  useEffect(() => {
+    if (studentError) toast.error("Failed to load student data");
+  }, [studentError]);
 
   async function onSubmit(formData: StudentUpdateFormData): Promise<void> {
     setSaving(true);

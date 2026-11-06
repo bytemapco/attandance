@@ -1,7 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import toast from "react-hot-toast";
-import api, { getApiErrorMessage } from "@/lib/api";
-import type { ClassroomResponse, SubjectResponse, TeacherResponse } from "@/types";
+import useSWR from "swr";
+import { useClassrooms, useSubjects } from "@/hooks/useReferenceData";
+import type { ClassroomResponse, TeacherResponse } from "@/types";
 
 interface Option {
   value: string;
@@ -17,27 +18,19 @@ interface SlotOptions {
 
 /** Subjects of the class's department, all teachers and all rooms, for the class time dialog. */
 export function useSlotOptions(departmentId: string): SlotOptions {
-  const [subjects, setSubjects] = useState<SubjectResponse[]>([]);
-  const [teachers, setTeachers] = useState<TeacherResponse[]>([]);
-  const [rooms, setRooms] = useState<ClassroomResponse[]>([]);
+  const { items: subjects, failed: subjectsFailed } = useSubjects();
+  const { items: rooms, failed: roomsFailed } = useClassrooms();
+  const { data: teacherPage, error: teachersError } = useSWR<TeacherResponse[] | { items: TeacherResponse[] }>(
+    "/admin/users/teachers?page_size=1000"
+  );
+  const teachers = useMemo(
+    () => (Array.isArray(teacherPage) ? teacherPage : teacherPage?.items ?? []),
+    [teacherPage]
+  );
 
   useEffect(() => {
-    async function load(): Promise<void> {
-      try {
-        const [subjectRes, teacherRes, roomRes] = await Promise.all([
-          api.get<SubjectResponse[]>("/admin/subjects"),
-          api.get<TeacherResponse[] | { items: TeacherResponse[] }>("/admin/users/teachers?page_size=1000"),
-          api.get<ClassroomResponse[]>("/admin/classrooms"),
-        ]);
-        setSubjects(subjectRes.data);
-        setTeachers(Array.isArray(teacherRes.data) ? teacherRes.data : teacherRes.data.items ?? []);
-        setRooms(roomRes.data);
-      } catch (err: unknown) {
-        toast.error(getApiErrorMessage(err, "Could not load subjects, teachers and rooms"));
-      }
-    }
-    void load();
-  }, []);
+    if (subjectsFailed || roomsFailed || teachersError) toast.error("Could not load subjects, teachers and rooms");
+  }, [subjectsFailed, roomsFailed, teachersError]);
 
   return useMemo(
     () => ({

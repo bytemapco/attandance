@@ -101,19 +101,20 @@ describe("reason", () => {
 });
 
 describe("studentsForClass", () => {
+  // A student with no class has no semester yet (it is the class's), so the list must not depend on it.
   const students = [
-    { id: 1, department_id: "d1", semester: 3, batch_id: "b1" },
-    { id: 2, department_id: "d1", semester: 3, batch_id: "b2" },
+    { id: 1, department_id: "d1", semester: null, batch_id: "b1" },
+    { id: 2, department_id: "d1", semester: null, batch_id: "b2" },
     { id: 3, department_id: "d1", semester: 4, batch_id: "b1" },
-    { id: 4, department_id: "d2", semester: 3, batch_id: "b1" },
+    { id: 4, department_id: "d2", semester: null, batch_id: "b1" },
   ];
 
-  it("keeps students of the same department and semester", () => {
-    expect(studentsForClass(students, "d1", 3).map((s) => s.id)).toEqual([1, 2]);
+  it("keeps the students of the same department, whatever their semester", () => {
+    expect(studentsForClass(students, "d1").map((s) => s.id)).toEqual([1, 2, 3]);
   });
 
   it("narrows to a batch when one is given", () => {
-    expect(studentsForClass(students, "d1", 3, "b2").map((s) => s.id)).toEqual([2]);
+    expect(studentsForClass(students, "d1", "b1").map((s) => s.id)).toEqual([1, 3]);
   });
 });
 

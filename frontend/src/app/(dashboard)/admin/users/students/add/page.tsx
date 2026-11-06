@@ -14,11 +14,12 @@ import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
 import StudentFormFields from "./StudentFormFields";
 import { studentFormSchema, StudentFormData } from "@/lib/validations/student";
-import type { DepartmentResponse, StudentResponse } from "@/types";
+import { useDepartments } from "@/hooks/useReferenceData";
+import type { StudentResponse } from "@/types";
 
 export default function AddStudentPage(): React.ReactElement {
   const router = useRouter();
-  const [departments, setDepartments] = useState<DepartmentResponse[]>([]);
+  const { items: departments } = useDepartments();
   const [loading, setLoading] = useState(false);
 
   const {
@@ -51,18 +52,6 @@ export default function AddStudentPage(): React.ReactElement {
     if (prevDepartmentRef.current && prevDepartmentRef.current !== departmentId) setValue("batch_id", "");
     prevDepartmentRef.current = departmentId;
   }, [departmentId, setValue]);
-
-  useEffect(() => {
-    async function fetchDepartments(): Promise<void> {
-      try {
-        const { data } = await api.get<DepartmentResponse[]>("/admin/departments");
-        setDepartments(data);
-      } catch {
-        // Handled silently
-      }
-    }
-    void fetchDepartments();
-  }, []);
 
   async function onSubmit(formData: StudentFormData): Promise<void> {
     setLoading(true);

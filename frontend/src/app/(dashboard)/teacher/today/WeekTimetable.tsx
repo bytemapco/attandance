@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import useSWR from "swr";
 import api, { getApiErrorMessage } from "@/lib/api";
 import { classAction, classStatus, countByStatus } from "@/lib/teacher/classStatus";
 import { buildTimetable } from "@/lib/teacher/timetableGrid";
@@ -14,13 +15,12 @@ import StatusSummary from "./StatusSummary";
 import TimetableGrid from "./TimetableGrid";
 import TimetableToolbar from "./TimetableToolbar";
 
+const NO_CLASSES: DailyOccurrenceItem[] = [];
+
 /** The teacher's week: what is done, what is pending, and what is coming. */
 export default function WeekTimetable(): React.ReactElement {
   const router = useRouter();
   const [selected, setSelected] = useState(() => todayIso());
-  const [classes, setClasses] = useState<DailyOccurrenceItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [failed, setFailed] = useState(false);
   const [openingId, setOpeningId] = useState<string | null>(null);
   const [now, setNow] = useState(() => Date.now());
   const today = todayIso(new Date(now));
@@ -29,35 +29,22 @@ export default function WeekTimetable(): React.ReactElement {
   const first = days[0];
   const last = days[days.length - 1];
 
-  const load = useCallback(async (quiet: boolean): Promise<void> => {
-    if (!quiet) setLoading(true);
-    try {
-      const { data } = await api.get<DailyOccurrenceItem[]>("/faculty/daily-schedule", {
-        params: { target_date: first, end_date: last },
-      });
-      setClasses(data);
-      setNow(Date.now());
-      setFailed(false);
-    } catch (err: unknown) {
-      if (!quiet) setFailed(true);
-      toast.error(getApiErrorMessage(err, "Could not load your timetable"));
-    } finally {
-      setLoading(false);
-    }
-  }, [first, last]);
+  // Attendance is taken on another page, so SWR re-reads the week quietly when the teacher comes back to this tab.
+  const { data, error, isLoading: loading, mutate } = useSWR<DailyOccurrenceItem[]>([
+    "/faculty/daily-schedule",
+    { target_date: first, end_date: last },
+  ]);
+  const classes = data ?? NO_CLASSES;
+  const failed = Boolean(error) && !data;
+  const load = (): void => void mutate();
 
   useEffect(() => {
-    void load(false);
-  }, [load]);
+    if (data) setNow(Date.now());
+  }, [data]);
 
-  // Attendance is taken on another page, so refresh quietly when the teacher comes back to this tab.
   useEffect(() => {
-    const refresh = (): void => {
-      if (document.visibilityState === "visible") void load(true);
-    };
-    document.addEventListener("visibilitychange", refresh);
-    return () => document.removeEventListener("visibilitychange", refresh);
-  }, [load]);
+    if (error) toast.error(getApiErrorMessage(error, "Could not load your timetable"));
+  }, [error]);
 
   // Keep the clock moving, so a live class turns done and a new day starts without a reload.
   useEffect(() => {
@@ -100,7 +87,7 @@ export default function WeekTimetable(): React.ReactElement {
       />
 
       {loading && <PageSkeleton />}
-      {!loading && failed && <ErrorState message="Your timetable could not be loaded." onRetry={() => void load(false)} />}
+      {!loading && failed && <ErrorState message="Your timetable could not be loaded." onRetry={load} />}
 
       {!loading && !failed && classes.length === 0 && (
         <p className="rounded-lg border border-dashed border-border-strong px-4 py-10 text-center text-sm text-muted-foreground">
