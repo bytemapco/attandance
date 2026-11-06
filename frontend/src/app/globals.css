@@ -200,31 +200,6 @@
   }
 }
 
-/* Leaflet map */
-.leaflet-container {
-  background: var(--muted) !important;
-  border-radius: 8px;
-}
-
-.leaflet-control-zoom {
-  border: 1px solid var(--border) !important;
-  border-radius: 6px !important;
-  overflow: hidden;
-  box-shadow: none !important;
-}
-
-.leaflet-control-zoom a {
-  background: var(--card) !important;
-  color: var(--primary) !important;
-  border-color: var(--border) !important;
-  transition: background-color 0.15s ease;
-}
-
-.leaflet-control-zoom a:hover {
-  background: var(--secondary) !important;
-  color: var(--primary) !important;
-}
-
 /* Live attendance QR: bar drains over one rotation */
 @keyframes qr-countdown {
   from { transform: scaleX(1); }

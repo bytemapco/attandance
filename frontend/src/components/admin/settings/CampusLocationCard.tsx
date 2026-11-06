@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useCallback, useState } from "react";
-import dynamic from "next/dynamic";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
@@ -19,11 +18,10 @@ import type { SystemConfig } from "@/types/systemConfig";
 import ErrorState from "@/components/ui/ErrorState";
 import PageSkeleton from "@/components/ui/PageSkeleton";
 import RangeSlider from "@/components/ui/RangeSlider";
+import GeofenceMap from "@/components/location/GeofenceMap";
 import LocationSearchBar from "@/components/location/LocationSearchBar";
+import MapsProvider from "@/components/location/MapsProvider";
 import { useCampusLocationSettings } from "./useCampusLocationSettings";
-
-// The map depends on `window` (Leaflet), so it is client-only.
-const GeofenceMap = dynamic(() => import("@/components/location/GeofenceMap"), { ssr: false });
 
 const DEFAULT_RADIUS_METERS = 50;
 
@@ -166,34 +164,31 @@ export default function CampusLocationCard({
 
   return (
     <div className="flex flex-col gap-4">
-      {/* Search Bar */}
-      <div>
+      <MapsProvider>
         <LocationSearchBar
           className="w-full"
           onSelectLocation={(lat, lng) => placePin(lat, lng)}
         />
-      </div>
 
-      {/* Map canvas with a fixed height, so it renders inside any parent */}
-      <div className="h-[22rem] overflow-hidden rounded-lg border border-border bg-surface sm:h-[26rem]">
-        {hasPin ? (
-          <div className="h-full w-full">
+        {/* Map canvas with a fixed height, so it renders inside any parent */}
+        <div className="h-[22rem] overflow-hidden rounded-lg border border-border bg-surface sm:h-[26rem]">
+          {hasPin ? (
             <GeofenceMap
               lat={latitude}
               lng={longitude}
               radius={radius}
               onLocationChange={(lat, lng) => placePin(lat, lng)}
             />
-          </div>
-        ) : (
-          <div className="flex h-full min-h-[180px] flex-col items-center justify-center gap-2 px-6 text-center">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary text-accent-strong">
-              <MapPin size={20} aria-hidden />
+          ) : (
+            <div className="flex h-full min-h-[180px] flex-col items-center justify-center gap-2 px-6 text-center">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary text-accent-strong">
+                <MapPin size={20} aria-hidden />
+              </div>
+              <p className="text-xs text-muted-foreground">Search to set the campus.</p>
             </div>
-            <p className="text-xs text-muted-foreground">Search or click the map to set the campus.</p>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      </MapsProvider>
 
       {/* Attendance Radius Slider */}
       {hasPin && (

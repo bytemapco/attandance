@@ -1,6 +1,6 @@
 /**
- * Brand colors for places that cannot read CSS variables: Leaflet path options,
- * SVG strings injected as HTML, and the QR code. Keep in step with --primary,
+ * Brand colors for places that cannot read CSS variables: Google Maps shapes and
+ * pins, SVG strings injected as HTML, and the QR code. Keep in step with --primary,
  * --accent and --card in app/globals.css. Everywhere else use the Tailwind tokens.
  */
 export const BRAND_COLORS = {

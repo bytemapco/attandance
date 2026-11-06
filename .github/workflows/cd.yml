@@ -50,6 +50,7 @@ jobs:
           NEXT_PUBLIC_API_URL: https://sahaj-backend.bytemap.in/api/v1
           NEXT_PUBLIC_WS_URL: wss://sahaj-backend.bytemap.in/ws/connect
           NEXT_PUBLIC_DEFAULT_TENANT_ID: default-institution
+          NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: ${{ vars.GOOGLE_MAPS_API_KEY }}
         run: |
           npm ci
           npm run build
