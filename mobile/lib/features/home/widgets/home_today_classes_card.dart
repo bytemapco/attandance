@@ -2,79 +2,60 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:smart_attendance_app/app/theme.dart';
 import 'package:smart_attendance_app/app/typography.dart';
+import 'package:smart_attendance_app/core/ist_clock.dart';
+import 'package:smart_attendance_app/domain/models/timetable.dart';
 import 'package:smart_attendance_app/features/home/providers/session_provider.dart';
 import 'package:smart_attendance_app/features/home/widgets/home_active_session_card.dart';
+import 'package:smart_attendance_app/features/home/widgets/home_classes_states.dart';
 import 'package:smart_attendance_app/features/home/widgets/home_empty_classes.dart';
-import 'package:smart_attendance_app/shared/widgets/surface_card.dart';
-import 'package:smart_attendance_app/shared/widgets/shimmer_placeholder.dart';
+import 'package:smart_attendance_app/features/timetable/widgets/timetable_class_card.dart';
+import 'package:smart_attendance_app/shared/load_state.dart';
 
-/// Section showing Today's Classes header and active class card matching reference design.
+/// Today's timetable. While a class has attendance open, its quick actions sit above the list.
 class HomeTodayClassesCard extends StatelessWidget {
-  final List<ClassSession> sessions;
+  /// Every class the student is enrolled in; the live one drives the quick actions.
+  final SessionState classes;
+  final LoadState<StudentTimetable> timetable;
+  final DateTime clock;
   final VoidCallback onViewAll;
   final VoidCallback onSmartPass;
   final VoidCallback onFaceMatch;
+  final ValueChanged<TimetableEntry> onMark;
   final VoidCallback? onRetry;
-  final bool isLoading;
-  final String? errorMessage;
 
   const HomeTodayClassesCard({
     super.key,
-    required this.sessions,
+    required this.classes,
+    required this.timetable,
+    required this.clock,
     required this.onViewAll,
     required this.onSmartPass,
     required this.onFaceMatch,
+    required this.onMark,
     this.onRetry,
-    this.isLoading = false,
-    this.errorMessage,
   });
+
+  List<TimetableEntry> get _todayEntries =>
+      timetable.data?.dayFor(istDay(istNow(clock)))?.entries ?? const [];
+
+  /// Nothing has answered yet: the timetable has not loaded, or the class list is still loading.
+  bool get _loading =>
+      classes.isLoading ||
+      (!timetable.hasData && timetable.errorMessage == null);
+
+  /// The server answered and the student is enrolled in nothing.
+  bool get _inNoClass =>
+      classes.sessions.isEmpty && classes.errorMessage == null;
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final primaryTextColor = isDark
-        ? SasColors.ivory
-        : SasColors.ink;
-    final subtitleColor = isDark
-        ? SasColors.mutedOnDark
-        : SasColors.textMuted;
-
-    final activeSession =
-        sessions.where((s) => s.isActive).firstOrNull ?? sessions.firstOrNull;
-
-    final isSessionOn = activeSession?.isActive ?? false;
-
-    final courseCode = activeSession != null
-        ? (activeSession.className.contains(':')
-              ? activeSession.className.split(':').first.trim()
-              : activeSession.className)
-        : 'Class';
-
-    final courseTitle = activeSession != null
-        ? (activeSession.className.contains(':')
-              ? activeSession.className.split(':').sublist(1).join(':').trim()
-              : activeSession.subject.isNotEmpty
-              ? activeSession.subject
-              : activeSession.className)
-        : 'Scheduled Class';
-
-    final teacherName = activeSession?.teacherName.isNotEmpty == true
-        ? activeSession!.teacherName
-        : 'Instructor';
-
-    final String timeText;
-    if (activeSession?.sessionEndTime != null) {
-      timeText = DateFormat('h:mm a').format(activeSession!.sessionEndTime!);
-    } else {
-      timeText = 'Time unavailable';
-    }
-
-    final formattedDate = DateFormat('EEE, MMM d').format(DateTime.now());
+    final primaryTextColor = isDark ? SasColors.ivory : SasColors.ink;
+    final subtitleColor = isDark ? SasColors.mutedOnDark : SasColors.textMuted;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Section Header Row: Today's Classes on Left, Calendar + Date on Right
         Padding(
           padding: const EdgeInsets.only(left: 2, right: 2, bottom: 12),
           child: Row(
@@ -98,7 +79,7 @@ class HomeTodayClassesCard extends StatelessWidget {
                   ),
                   const SizedBox(width: 6),
                   Text(
-                    formattedDate,
+                    DateFormat('EEE, MMM d').format(clock),
                     style: SasTypography.style(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
@@ -110,67 +91,48 @@ class HomeTodayClassesCard extends StatelessWidget {
             ],
           ),
         ),
-
-        // Active Session Card or Empty State
-        if (sessions.isEmpty && isLoading)
-          const _ClassesLoadingState()
-        else if (sessions.isEmpty && errorMessage != null)
-          _ClassesErrorState(message: errorMessage!, onRetry: onRetry)
-        else if (sessions.isEmpty)
-          const HomeEmptyClasses()
-        else
-          HomeActiveSessionCard(
-            courseCode: courseCode,
-            courseTitle: courseTitle,
-            teacherName: teacherName,
-            timeText: timeText,
-            isSessionOn: isSessionOn,
-            onTap: onViewAll,
-            onViewAll: onViewAll,
-            onSmartPass: onSmartPass,
-            onFaceMatch: onFaceMatch,
-          ),
+        ..._body(),
       ],
     );
   }
-}
 
-class _ClassesLoadingState extends StatelessWidget {
-  const _ClassesLoadingState();
-
-  @override
-  Widget build(BuildContext context) {
-    return const ShimmerPlaceholder(itemCount: 1, itemHeight: 116);
+  List<Widget> _body() {
+    final entries = _todayEntries;
+    if (entries.isEmpty && _loading) return const [HomeClassesLoading()];
+    if (entries.isEmpty && timetable.isBlockingError) {
+      return [
+        HomeClassesError(message: timetable.errorMessage!, onRetry: onRetry),
+      ];
+    }
+    final live = classes.sessions.where((s) => s.isActive).firstOrNull;
+    return [
+      if (live != null) ...[_liveCard(live), const SizedBox(height: 12)],
+      if (entries.isEmpty) HomeEmptyClasses(inAClass: !_inNoClass),
+      for (final entry in entries) ...[
+        TimetableClassCard(
+          entry: entry,
+          clock: clock,
+          onMark: () => onMark(entry),
+        ),
+        const SizedBox(height: 10),
+      ],
+    ];
   }
-}
 
-class _ClassesErrorState extends StatelessWidget {
-  const _ClassesErrorState({required this.message, this.onRetry});
-
-  final String message;
-  final VoidCallback? onRetry;
-
-  @override
-  Widget build(BuildContext context) {
-    final textColor = SasColors.textPrimaryOf(context);
-    return SurfaceCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Semantics(
-            liveRegion: true,
-            child: Text(message, style: TextStyle(color: textColor)),
-          ),
-          if (onRetry != null) ...[
-            const SizedBox(height: 8),
-            TextButton.icon(
-              onPressed: onRetry,
-              icon: const Icon(Icons.refresh_rounded),
-              label: const Text('Retry'),
-            ),
-          ],
-        ],
-      ),
+  Widget _liveCard(ClassSession live) {
+    final ends = live.sessionEndTime;
+    return HomeActiveSessionCard(
+      courseCode: live.className,
+      courseTitle: live.subject.isNotEmpty ? live.subject : live.className,
+      teacherName: live.teacherName.isNotEmpty
+          ? live.teacherName
+          : 'Instructor',
+      timeText: ends == null ? 'Open now' : DateFormat('h:mm a').format(ends),
+      isSessionOn: true,
+      onTap: onViewAll,
+      onViewAll: onViewAll,
+      onSmartPass: onSmartPass,
+      onFaceMatch: onFaceMatch,
     );
   }
 }
