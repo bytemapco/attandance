@@ -9,6 +9,7 @@ from prisma.models import Tenant, User
 from app.core.config import settings
 from app.db.client import db
 from app.repositories.teacher_repository import TeacherRepository
+from app.services.agent.key_pool import parse_keys
 from app.services.agent.types import ADMIN, ADMIN_ROLES, TEACHER, Principal
 
 NOTICE_KEY = "aiAssistant"
@@ -58,7 +59,7 @@ async def assistant_status(principal: Principal) -> dict:
     notice = notice_of(tenant)
     return {
         "role": principal.role.lower(),
-        "model_configured": bool(settings.GEMINI_API_KEY),
+        "model_configured": bool(parse_keys(settings.GEMINI_API_KEY)),
         "notice_accepted": notice is not None,
         "accepted_at": notice["acceptedAt"] if notice else None,
         "can_accept_notice": principal.role == ADMIN,
@@ -67,7 +68,7 @@ async def assistant_status(principal: Principal) -> dict:
 
 async def require_ready(principal: Principal) -> None:
     """The assistant runs only when a key is set and the institution's admin has accepted the data notice."""
-    if not settings.GEMINI_API_KEY:
+    if not parse_keys(settings.GEMINI_API_KEY):
         raise refuse(status.HTTP_503_SERVICE_UNAVAILABLE, "The assistant is not set up on this server.")
     if notice_of(await _tenant(principal.tenant_id)) is None:
         raise refuse(status.HTTP_403_FORBIDDEN, NOTICE_REQUIRED)

@@ -43,4 +43,10 @@ def test_a_model_turn_with_provider_data_is_sent_back_unchanged():
 def test_the_client_uses_the_api_version_that_allows_function_calling():
     llm = GeminiLlm("test-key", "any-model")
 
-    assert llm._client._api_client._http_options.api_version == "v1beta"
+    assert llm._clients["test-key"]._api_client._http_options.api_version == "v1beta"
+
+
+def test_one_client_is_made_for_each_key_in_the_comma_separated_setting():
+    llm = GeminiLlm("key-one, key-two,key-one", "any-model")
+
+    assert list(llm._clients) == ["key-one", "key-two"]
