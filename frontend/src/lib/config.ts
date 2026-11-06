@@ -1,5 +1,5 @@
 const LOCAL_API_URL = "http://localhost:8000/api/v1";
-const LOCAL_WS_URL = "ws://localhost:8000/ws/connect";
+const LOCAL_WS_URL = "ws://localhost:8000/api/v1/ws/connect";
 const LOCAL_HOST = "localhost";
 
 export const AUTH_STORAGE_KEY = "sas-auth-storage";
