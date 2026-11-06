@@ -1,12 +1,7 @@
 library;
 
-/// Local backend the app talks to. 10.0.2.2 is the Android emulator's alias for
-/// the host machine. Override at build time if the backend runs elsewhere:
-///   flutter run --dart-define=API_BASE_URL=http://10.0.2.2:8000/api/v1
-const String kApiBaseUrl = String.fromEnvironment(
-  'API_BASE_URL',
-  defaultValue: 'http://10.0.2.2:8000/api/v1',
-);
+/// The deployed SAHAJ backend. The app talks to nothing else.
+const String kApiBaseUrl = 'https://sahaj-backend.bytemap.in/api/v1';
 
 const String kHiveBoxProfile = 'sas_profile';
 const String kHiveBoxOfflineQueue = 'sas_offline_queue';

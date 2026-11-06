@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -12,30 +11,10 @@ import 'package:smart_attendance_app/data/local/hive_service.dart';
 import 'package:smart_attendance_app/data/local/notification_service.dart';
 import 'package:smart_attendance_app/utils/logger.dart';
 
-class AppHttpOverrides extends HttpOverrides {
-  @override
-  HttpClient createHttpClient(SecurityContext? context) {
-    final client = super.createHttpClient(context);
-    if (!kReleaseMode) {
-      client.badCertificateCallback =
-          (X509Certificate cert, String host, int port) {
-            if (host == 'localhost' ||
-                host == '10.0.2.2' ||
-                host == '127.0.0.1') {
-              return true;
-            }
-            return false;
-          };
-    }
-    return client;
-  }
-}
-
 Future<void> main() async {
   await runZonedGuarded(
     () async {
       WidgetsFlutterBinding.ensureInitialized();
-      HttpOverrides.global = AppHttpOverrides();
 
       try {
         await dotenv.load(fileName: ".env");

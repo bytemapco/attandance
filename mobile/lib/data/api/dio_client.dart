@@ -1,7 +1,4 @@
-import 'dart:io';
 import 'package:dio/dio.dart';
-import 'package:dio/io.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_attendance_app/core/constants.dart';
 import 'package:smart_attendance_app/core/exceptions.dart';
@@ -20,24 +17,6 @@ final dioProvider = Provider<Dio>((ref) {
       receiveTimeout: const Duration(milliseconds: kReceiveTimeout),
       headers: {'Accept': 'application/json'},
     ),
-  );
-
-  dio.httpClientAdapter = IOHttpClientAdapter(
-    createHttpClient: () {
-      final client = HttpClient();
-      client.badCertificateCallback =
-          (X509Certificate cert, String host, int port) {
-            if (!kDebugMode) return false;
-            final reqHost = host.toLowerCase();
-            if (reqHost == 'localhost' ||
-                reqHost == '10.0.2.2' ||
-                reqHost.startsWith('127.0.0.1')) {
-              return true;
-            }
-            return false;
-          };
-      return client;
-    },
   );
 
   final storage = ref.read(secureStorageProvider);

@@ -3,28 +3,6 @@ import fs from "node:fs";
 import path from "node:path";
 import { logger } from "./logger.mjs";
 
-function ensureMobileEnv(mobileDir) {
-  const envPath = path.join(mobileDir, ".env");
-  const envExamplePath = path.join(mobileDir, ".env.example");
-
-  if (fs.existsSync(envPath)) {
-    logger.info("Mobile .env already exists. Skipping creation.");
-    return;
-  }
-
-  if (fs.existsSync(envExamplePath)) {
-    fs.copyFileSync(envExamplePath, envPath);
-  } else {
-    fs.writeFileSync(
-      envPath,
-      "API_BASE_URL=http://10.0.2.2:8000/api/v1\n",
-      "utf-8"
-    );
-  }
-
-  logger.success("Created mobile/.env configuration.");
-}
-
 export function setupMobile(rootDir) {
   const mobileDir = path.join(rootDir, "mobile");
   if (!fs.existsSync(mobileDir)) {
@@ -33,7 +11,6 @@ export function setupMobile(rootDir) {
   }
 
   logger.info("Setting up Mobile App (Flutter 3.x + Riverpod + Hive)...");
-  ensureMobileEnv(mobileDir);
 
   logger.info("Verifying Flutter installation...");
   try {
