@@ -20,7 +20,6 @@ class StudentBulkItem(BaseModel):
     last_name: str = Field(..., min_length=1, max_length=100)
     department_id: str = Field(..., min_length=1, max_length=64)
     gender: Optional[GenderCode] = None
-    semester: Optional[int] = Field(None, ge=1, le=8)
     batch_code: Optional[str] = Field(None, max_length=50, description="Batch code within the department, e.g. CE-A-1")
     phone: Optional[str] = Field(None, max_length=20)
     password: Optional[str] = Field(None, min_length=6, max_length=100)

@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 from fastapi import HTTPException, status
 from app.db.client import db
 from app.schemas.class_management import (
@@ -27,6 +27,15 @@ CLASS_INCLUDE = {
         },
     },
 }
+
+
+STUDENT_CLASS_INCLUDE = {"where": {"status": "ACTIVE"}, "include": {"group": True}}
+
+
+def class_semester(student) -> Optional[int]:
+    """The semester of the class the student is in, or None while they are in no class."""
+    member = next(iter(student.classMemberships or []), None)
+    return member.group.semester if member else None
 
 
 def class_code(department_code: str, batch: str) -> str:

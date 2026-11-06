@@ -14,6 +14,7 @@ from app.schemas.admin import (
 from app.schemas.pagination import PaginatedResponse
 from app.schemas.student import StudentCreate, StudentResponse, StudentUpdate
 from app.services.admin_service import AdminService
+from app.services.class_management.common import STUDENT_CLASS_INCLUDE, class_semester
 
 router = APIRouter()
 
@@ -97,7 +98,7 @@ async def get_student_by_id(
 ):
     student = await db.student.find_first(
         where={"id": id, "user": {"is": {"tenantId": tenant_id}}},
-        include={"user": True, "department": True},
+        include={"user": True, "department": True, "classMemberships": STUDENT_CLASS_INCLUDE},
     )
     if not student:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Student not found")
@@ -113,7 +114,7 @@ async def get_student_by_id(
         date_of_birth=student.dateOfBirth,
         department_id=student.departmentId,
         department_name=student.department.name if student.department else None,
-        semester=student.semester,
+        semester=class_semester(student),
         batch=student.batch,
         batch_id=student.batchId,
     )

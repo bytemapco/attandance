@@ -13,6 +13,8 @@ from urllib.parse import urlparse
 
 import psycopg2
 import pytest
+import redis as redis_sync
+from fastapi.testclient import TestClient
 
 BACKEND = Path(__file__).resolve().parents[2]
 UPDATED_AT_TABLES = {
@@ -119,3 +121,20 @@ class Seed:
 @pytest.fixture
 def seed(conn) -> Seed:
     return Seed(conn)
+
+
+@pytest.fixture(scope="module")
+def client(database_url):
+    if not os.environ.get("TEST_REDIS_URL"):
+        pytest.skip("TEST_REDIS_URL is not set; the API tests need Redis.")
+    from main import app
+
+    with TestClient(app) as test_client:
+        yield test_client
+
+
+@pytest.fixture(autouse=True)
+def fresh_rate_limits():
+    url = os.environ.get("TEST_REDIS_URL")
+    if url:
+        redis_sync.Redis.from_url(url).flushdb()

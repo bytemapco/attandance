@@ -57,12 +57,12 @@ def teachers(ctx: Ctx) -> None:
 def _student_rows(ctx: Ctx) -> list[tuple[dict, str]]:
     """(row, class code) for every student, in roll order."""
     out = []
-    for code, (dept, _letter, semester, _room, roster) in data.CLASSES.items():
+    for code, (dept, _letter, _semester, _room, roster) in data.CLASSES.items():
         for s in roster:
             out.append(({
                 "email": data.email_for(s["first"], s["last"]), "enrollment_number": s["enrollment"],
                 "first_name": s["first"], "last_name": s["last"], "department_id": ctx.departments[dept],
-                "gender": s["gender"], "semester": semester, "phone": _mobile(),
+                "gender": s["gender"], "phone": _mobile(),
             }, code))
     return out
 
