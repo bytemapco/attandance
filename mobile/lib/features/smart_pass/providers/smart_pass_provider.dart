@@ -43,8 +43,35 @@ class SmartPassNotifier extends StateNotifier<SmartPassState> {
   final DeviceService _deviceService;
   final LocationService _locationService;
 
+  /// The class QR code lives only a few seconds, so the GPS fix is taken while the camera is open,
+  /// before the scan. Waiting for it after the scan used up the code's lifetime.
+  static const Duration _fixMaxAge = Duration(seconds: 60);
+
+  Position? _fix;
+  DateTime? _fixAt;
+  Future<Position>? _fixing;
+
   SmartPassNotifier(this._api, this._deviceService, this._locationService)
     : super(const SmartPassState());
+
+  Future<Position> _currentFix() {
+    final fix = _fix;
+    final at = _fixAt;
+    if (fix != null && at != null && DateTime.now().difference(at) < _fixMaxAge) {
+      return Future.value(fix);
+    }
+    return _fixing ??= _locationService
+        .getHighlyAccuratePosition()
+        .then((position) {
+          _fix = position;
+          _fixAt = DateTime.now();
+          return position;
+        })
+        .whenComplete(() => _fixing = null);
+  }
+
+  /// Starts the GPS fix early. A failure is reported again when the student scans.
+  void prepareLocation() => _currentFix().ignore();
 
   Future<void> scanAndVerifyPass(String qrToken) async {
     final trimmed = qrToken.trim();
@@ -63,11 +90,11 @@ class SmartPassNotifier extends StateNotifier<SmartPassState> {
     try {
       final deviceUuid = await _deviceService.getDeviceUUID();
 
-      // The server checks the campus fence with the fresh fix and its accuracy. Never send a stale
+      // The server checks the campus fence with a recent fix and its accuracy. Never send an old
       // or guessed position.
       final Position position;
       try {
-        position = await _locationService.getHighlyAccuratePosition();
+        position = await _currentFix();
       } on LocationException catch (e) {
         state = state.copyWith(isLoading: false, errorMessage: e.message);
         return;

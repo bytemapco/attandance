@@ -62,6 +62,9 @@ class _SmartPassScreenState extends ConsumerState<SmartPassScreen>
         _permissionStatus = status;
         _checkingPermission = false;
       });
+      if (status.hasLocationAccess) {
+        ref.read(smartPassProvider.notifier).prepareLocation();
+      }
     }
   }
 
@@ -71,6 +74,9 @@ class _SmartPassScreenState extends ConsumerState<SmartPassScreen>
         .requestLocationPermission();
     if (mounted) {
       setState(() => _permissionStatus = status);
+      if (status.hasLocationAccess) {
+        ref.read(smartPassProvider.notifier).prepareLocation();
+      }
     }
   }
 
