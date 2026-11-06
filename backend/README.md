@@ -43,7 +43,7 @@ backend/
 │   └── utils/              geofencing helpers
 ├── models/                 face liveness and background-check model files
 ├── prisma/                 schema.prisma and SQL migrations
-├── scripts/                reset_database, run_migrations, check_services, check_ai_device, backdate_enrollments
+├── scripts/                create_super_admin, wipe_data, reset_database, run_migrations, check_services, check_ai_device
 └── tests/                  pytest suite (mocked Prisma client)
 ```
 
@@ -60,7 +60,7 @@ env -i HOME=$HOME PATH=$PWD/.venv/bin:/usr/bin:/bin VIRTUAL_ENV=$PWD/.venv .venv
 uvicorn main:app --reload --port 8000
 ```
 
-From the repository root, `./run.sh` starts the backend and fills it with demo data. It writes one login per role to `credentials.txt`.
+From the repository root, `./run.sh` is a menu for a local or hosted target: it shows the target's status, creates the super admin (the first account), empties the database, and starts the local backend. It creates no sample data.
 
 ## Database
 

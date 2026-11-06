@@ -58,7 +58,7 @@ To mark attendance, student selfie submissions undergo three automated verificat
 │   │   ├── db/               # Prisma database client & session management
 │   │   ├── middleware/       # RBAC role checker and error envelope middlewares
 │   │   └── services/         # Business logic (admin, teacher, biometric, outlier scanner, etc.)
-│   ├── prisma/               # Database schema and seed scripts
+│   ├── prisma/               # Database schema and migrations
 │   ├── tests/                # Pytest suite: unit/ (mocked) and integration/ (real PostgreSQL + Redis)
 │   └── main.py               # FastAPI application entrypoint
 ├── frontend/                 # Next.js 16 web application (Admin & Teacher portals)
