@@ -89,6 +89,7 @@ export default function ProposalCard({ proposal }: { proposal: ProposalData }): 
     <section className="mt-2 rounded-md border border-primary/40 bg-card p-3" aria-label="Confirm this change">
       <h4 className="text-sm font-semibold text-foreground">{proposal.summary}</h4>
       {recipients.length > 0 && <p className="mt-1 text-xs text-muted-foreground">To: {recipients.join(", ")}</p>}
+      {typeof proposal.details.note === "string" && <p className="mt-2 text-xs text-muted-foreground">{proposal.details.note}</p>}
       {table && <TableBlock {...table} />}
       <div className="mt-3 space-y-2">
         {Object.entries(edits).map(([name, value]) => (

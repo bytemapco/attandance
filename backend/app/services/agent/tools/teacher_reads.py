@@ -49,17 +49,20 @@ async def class_register(principal: Principal, args: RegisterArgs) -> ToolResult
     counts: dict[str, int] = {}
     for student in register["students"]:
         counts[student["status"]] = counts.get(student["status"], 0) + 1
-    absent = [[s["student_name"], s["enrollment_number"]] for s in register["students"] if s["status"] == "ABSENT"]
-    flagged = [[s["student_name"], s["enrollment_number"], s["remarks"] or ""] for s in register["students"] if s["status"] == "FLAGGED"]
+    absent = [s for s in register["students"] if s["status"] == "ABSENT"]
+    flagged = [s for s in register["students"] if s["status"] == "FLAGGED"]
     ui = []
     if absent:
-        ui.append(table("Absent", ["Name", "Roll"], absent))
+        ui.append(table("Absent", ["Name", "Roll"], [[s["student_name"], s["enrollment_number"]] for s in absent]))
     if flagged:
-        ui.append(table("Flagged", ["Name", "Roll", "Reason"], flagged))
+        ui.append(table("Flagged", ["Name", "Roll", "Reason"], [[s["student_name"], s["enrollment_number"], s["remarks"] or ""] for s in flagged]))
     data = {
         "class": register["class_code"], "subject": register["course_name"], "time": register["time_range"],
         "date": str(register["date"]), "status": str(register["status"]), "locked": register["is_attendance_locked"],
-        "counts": counts, "absent": capped(absent), "flagged": capped(flagged),
+        "counts": counts,
+        "absent": capped([{"student_id": s["student_id"], "name": s["student_name"], "roll": s["enrollment_number"]} for s in absent]),
+        "flagged": capped([{"student_id": s["student_id"], "record_id": s["record_id"], "name": s["student_name"],
+                            "roll": s["enrollment_number"], "reason": s["remarks"]} for s in flagged]),
     }
     return ToolResult(data, ui)
 
