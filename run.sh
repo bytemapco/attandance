@@ -5,8 +5,8 @@
 #   ./run.sh local      go straight to your local backend
 #   ./run.sh server     go straight to the server
 #
-# Actions: status, seed (creates the super admin, then fictional college data), and reset (local only).
-# The server's database cannot be wiped from here: scripts/reset_database.py refuses production on purpose.
+# Actions: seed (super admin, then fictional college data), reset (empty the database, keep the schema) and both.
+# Resetting the server backs the database up first and asks you to type the database name.
 # One password is used for every demo account, the super admin included. Override it with SAHAJ_PASSWORD.
 set -euo pipefail
 
@@ -99,8 +99,10 @@ confirm() {
 seed() {
   local flags=()
   if [ "$TARGET" = server ]; then
-    say "${YELLOW}This adds demo people and attendance to the SERVER database.${OFF}"
-    confirm "" "seed server" || { say "Cancelled."; return; }
+    if [ "${1:-}" != confirmed ]; then
+      say "${YELLOW}This adds demo people and attendance to the SERVER database.${OFF}"
+      confirm "" "seed server" || { say "Cancelled."; return 1; }
+    fi
     flags+=(--allow-production)
   else
     start_local_backend
@@ -111,42 +113,32 @@ seed() {
   say "${GREEN}Done.${OFF} One login per role is in $ROOT/credentials.txt"
 }
 
-env_value() {
-  "$PY" - "$1" <<'EOF'
-import sys
-from dotenv import dotenv_values
-print(dotenv_values("backend/.env").get(sys.argv[1], ""))
-EOF
-}
-
-reset_local() {
-  say "${YELLOW}This erases the local database.${OFF}"
-  confirm "" "reset local" || { say "Cancelled."; return; }
-  local db_name
-  pkill -f "[u]vicorn main:app" || true
-  db_name="$(env_value DATABASE_URL | "$PY" -c 'import sys; from urllib.parse import urlparse; print(urlparse(sys.stdin.read().strip()).path.lstrip("/"))')"
-  (cd "$BACKEND" && "$PY" scripts/reset_database.py --force-destructive-wipe --confirm-target-db="$db_name")
-  "$PY" - "$(env_value REDIS_URL)" <<'EOF'
-import sys
-import redis
-client = redis.Redis.from_url(sys.argv[1])
-for key in client.scan_iter("tenant:resolved:*"):
-    client.delete(key)
-EOF
+# Empties the target's database after you type its name. The server is backed up first.
+reset() {
+  local info db_name backup=()
+  info="$(backend_script wipe_data.py --show)"
+  db_name="${info%% *}"
+  say "${YELLOW}This empties every table in: $info  (target: $TARGET)${OFF}"
+  confirm "" "$db_name" || { say "Cancelled."; return 1; }
+  [ "$TARGET" = server ] && backup=(--backup "~/sahaj-backups/$(date +%Y%m%d-%H%M%S).sql.gz")
+  backend_script wipe_data.py --confirm-db "$db_name" "${backup[@]}"
+  backend_script create_super_admin.py
   rm -f "$ROOT/credentials.txt"
-  say "${GREEN}Local database wiped.${OFF}"
+  say "${GREEN}Database emptied; the super admin is back.${OFF}"
 }
 
 menu() {
   while true; do
     show_target
-    say "  1) seed    create the super admin and the demo college"
-    [ "$TARGET" = local ] && say "  2) reset   wipe the local database"
+    say "  1) seed             add the demo college"
+    say "  2) reset            empty the database"
+    say "  3) reset and seed   start from a clean demo"
     say "  r) refresh status     t) change target     q) quit"
     read -r -p "> " action
     case "$action" in
-      1) seed ;;
-      2) if [ "$TARGET" = local ]; then reset_local; else say "Reset is not available for the server."; fi ;;
+      1) seed || true ;;
+      2) reset || true ;;
+      3) if reset; then seed confirmed; fi ;;
       r) ;;
       t) choose_target ;;
       q) exit 0 ;;
