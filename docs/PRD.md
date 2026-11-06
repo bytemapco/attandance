@@ -213,6 +213,7 @@ Tenant provisioning, license seat accounting, license requests, suspension, plat
 - Data minimization: store the embedding and only the evidence needed for flagged review. Encrypt at rest. Access to evidence is role-restricted and logged.
 - A data processing agreement per tenant, and a published privacy notice. Breach-response runbook.
 - Data residency: India region.
+- **AI assistant (teachers and admins).** It sends student names, roll numbers and attendance details to a third-party model (Gemini) to answer a question. Decision: this runs only after an institution admin accepts a data notice, no biometric data, photos, passwords or tokens ever reach it, every change it prepares needs a person's confirmation, and every tool call is logged. Counsel must confirm the legal position before production use (open question 6). See [assistant.md](assistant.md).
 
 ---
 
