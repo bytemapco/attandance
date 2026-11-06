@@ -22,7 +22,7 @@ async def get_daily_schedule(
 ):
     query_date = target_date or get_ist_today()
     resolved_tenant = tenant_id or current_teacher.tenantId
-    occurrences = await OccurrenceRegisterService.get_daily_schedule(
+    schedule = await OccurrenceRegisterService.get_daily_schedule(
         tenant_id=resolved_tenant,
         faculty_id=current_teacher.id,
         target_date=query_date,
@@ -53,10 +53,10 @@ async def get_daily_schedule(
             ),
             "start_time": o.startTime,
             "end_time": o.endTime,
-            "present_count": len([r for r in o.attendanceRecords if r.status == "PRESENT"]),
-            "total_enrolled": len(o.courseSection.enrollments) if o.courseSection and o.courseSection.enrollments else 0,
+            "present_count": schedule.present_counts.get(o.id, 0),
+            "total_enrolled": schedule.enrolled_counts.get(o.courseSectionId, 0),
         }
-        for o in occurrences
+        for o in schedule.occurrences
     ]
 
 

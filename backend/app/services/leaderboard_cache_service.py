@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Dict, Optional, Tuple
 from app.core.logging_config import get_logger
 from app.db.client import db
 from app.db.redis import safe_redis
@@ -18,19 +18,25 @@ class LeaderboardCacheService:
     def __init__(self):
         self.student_repo = StudentRepository()
 
-    async def update_score(self, student_id: str, current_streak: int, highest_streak: int) -> None:
-        """Update a student's score in the Redis leaderboard."""
+    async def update_scores(self, streaks: Dict[str, Tuple[Optional[str], int, int]]) -> None:
+        """Updates several students' scores in the Redis leaderboard at once.
+
+        `streaks` maps a student id to (tenant id, current streak, highest streak). One grouped count and one
+        Redis pipeline, however many students there are.
+        """
+        redis = safe_redis()
+        if not redis or not streaks:
+            return
         try:
-            student = await self.student_repo.get_by_id(student_id)
-            tenant_id = getattr(student, "tenantId", None) if student else None
-            cache_key = f"leaderboard:{tenant_id or 'global'}:points"
-
-            redis = safe_redis()
-            if not redis:
-                return
-
-            attended = await db.attendancerecord.count(where={"studentId": student_id, **ATTENDED_FILTER})
-            await redis.zadd(cache_key, {student_id: float(_points(attended, highest_streak, current_streak))})
+            counts = await db.attendancerecord.group_by(
+                by=["studentId"], count=True, where={"studentId": {"in": list(streaks)}, **ATTENDED_FILTER}
+            )
+            attended = {row["studentId"]: row["_count"]["_all"] for row in counts}
+            async with redis.pipeline(transaction=False) as pipe:
+                for student_id, (tenant_id, current, highest) in streaks.items():
+                    cache_key = f"leaderboard:{tenant_id or 'global'}:points"
+                    pipe.zadd(cache_key, {student_id: float(_points(attended.get(student_id, 0), highest, current))})
+                await pipe.execute()
         except Exception as e:
             logger.warning("Failed to update leaderboard cache: %s", e)
 

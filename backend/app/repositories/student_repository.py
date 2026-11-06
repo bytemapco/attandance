@@ -1,4 +1,4 @@
-from typing import List
+from typing import Dict, List, Tuple
 
 from prisma.models import Student
 from app.db.client import db
@@ -43,9 +43,18 @@ class StudentRepository:
             return [float(x) for x in cleaned.split(",")] if cleaned else []
         return None
 
-    async def update_streak(self, student_id: str, current_streak: int, highest_streak: int) -> bool:
-        await db.student.update(
-            where={"id": student_id},
-            data={"currentStreak": current_streak, "highestStreak": highest_streak},
+    async def update_streaks(self, streaks: Dict[str, Tuple[int, int]]) -> None:
+        """Writes many students' (current, highest) streaks in one statement."""
+        if not streaks:
+            return
+        await db.execute_raw(
+            """
+            UPDATE students AS s
+            SET current_streak = v.current_streak, highest_streak = v.highest_streak, updated_at = now()
+            FROM unnest($1::text[], $2::int[], $3::int[]) AS v(id, current_streak, highest_streak)
+            WHERE s.id = v.id
+            """,
+            list(streaks),
+            [current for current, _ in streaks.values()],
+            [highest for _, highest in streaks.values()],
         )
-        return True

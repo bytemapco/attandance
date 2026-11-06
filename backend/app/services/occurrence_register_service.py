@@ -1,5 +1,6 @@
-from datetime import date, datetime, timedelta
-from typing import List, Optional
+from dataclasses import dataclass
+from datetime import date, datetime
+from typing import Dict, List, Optional, Set
 from fastapi import HTTPException, status
 from prisma.models import User
 from app.db.client import db
@@ -25,6 +26,33 @@ async def authorize_register_access(occurrence, user: User) -> None:
 MAX_SCHEDULE_RANGE_DAYS = 31
 
 
+@dataclass(frozen=True)
+class DailySchedule:
+    """A teacher's classes with the two headcounts the schedule shows, counted by the database."""
+
+    occurrences: list
+    present_counts: Dict[str, int]
+    enrolled_counts: Dict[str, int]
+
+
+async def _present_counts(occurrence_ids: List[str]) -> Dict[str, int]:
+    if not occurrence_ids:
+        return {}
+    rows = await db.attendancerecord.group_by(
+        by=["occurrenceId"], count=True, where={"occurrenceId": {"in": occurrence_ids}, "status": "PRESENT"}
+    )
+    return {row["occurrenceId"]: row["_count"]["_all"] for row in rows}
+
+
+async def _enrolled_counts(section_ids: Set[str]) -> Dict[str, int]:
+    if not section_ids:
+        return {}
+    rows = await db.courseenrollment.group_by(
+        by=["courseSectionId"], count=True, where={"courseSectionId": {"in": list(section_ids)}}
+    )
+    return {row["courseSectionId"]: row["_count"]["_all"] for row in rows}
+
+
 def validate_schedule_range(start: date, end: date) -> None:
     if end < start:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="end_date must be on or after the start date.")
@@ -40,21 +68,20 @@ class OccurrenceRegisterService:
     async def get_daily_schedule(tenant_id: str, faculty_id: str, target_date: date, end_date: Optional[date] = None):
         last_date = end_date or target_date
         validate_schedule_range(target_date, last_date)
-        for offset in range((last_date - target_date).days + 1):
-            await OccurrenceGenerator.generate_occurrences_for_date(tenant_id, target_date + timedelta(days=offset))
-        return await db.classoccurrence.find_many(
+        await OccurrenceGenerator.generate(tenant_id, target_date, last_date)
+        occurrences = await db.classoccurrence.find_many(
             where={
                 "tenantId": tenant_id,
                 "date": {"gte": _to_dt(target_date), "lte": _to_dt(last_date)},
                 "OR": [{"facultyId": faculty_id}, {"substituteFacultyId": faculty_id}],
             },
-            include={
-                "courseSection": {"include": {"subject": True, "enrollments": True}},
-                "classroom": True,
-                "faculty": {"include": {"user": True}},
-                "attendanceRecords": True,
-            },
+            include={"courseSection": {"include": {"subject": True}}, "classroom": True, "faculty": True},
             order=[{"date": "asc"}, {"startTime": "asc"}],
+        )
+        return DailySchedule(
+            occurrences=occurrences,
+            present_counts=await _present_counts([o.id for o in occurrences]),
+            enrolled_counts=await _enrolled_counts({o.courseSectionId for o in occurrences}),
         )
 
     @staticmethod

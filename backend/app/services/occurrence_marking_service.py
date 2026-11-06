@@ -172,7 +172,7 @@ async def finish_face_mark(student: Student, occurrence, existing, data: dict, i
     if not flagged:
         _discard_image(image_path)
     try:
-        await GamificationService().update_streak(student.id, "Flagged" if flagged else "Present")
+        await GamificationService().recalculate_student_streak(student.id)
     except Exception as exc:
         logger.warning("Streak update failed: %s", exc)
     return record

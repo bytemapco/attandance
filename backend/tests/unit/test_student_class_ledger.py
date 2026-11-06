@@ -5,11 +5,11 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 
 from app.services import student_class_ledger as module
-from app.services.student_class_ledger import HeldClass, held_classes
+from app.services.student_class_ledger import HeldClass, held_classes, held_classes_for
 
 
-def enrollment(section, since):
-    return SimpleNamespace(courseSectionId=section, enrolledAt=datetime.fromisoformat(since))
+def enrollment(section, since, student="stu-1"):
+    return SimpleNamespace(studentId=student, courseSectionId=section, enrolledAt=datetime.fromisoformat(since))
 
 
 def occurrence(oid, section, day):
@@ -73,12 +73,36 @@ async def test_the_recorded_status_is_attached_to_its_class(fake_db):
         occurrence("o-2", "sec-1", "2026-10-06T00:00:00"),
     ]
     fake_db.attendancerecord.find_many.return_value = [
-        SimpleNamespace(occurrenceId="o-1", status="PRESENT"),
-        SimpleNamespace(occurrenceId="o-2", status="ABSENT"),
+        SimpleNamespace(studentId="stu-1", occurrenceId="o-1", status="PRESENT"),
+        SimpleNamespace(studentId="stu-1", occurrenceId="o-2", status="ABSENT"),
     ]
 
     result = await held_classes("stu-1", "tenant-1")
 
     assert [h.status for h in result] == ["PRESENT", "ABSENT"]
     where = fake_db.attendancerecord.find_many.await_args.kwargs["where"]
-    assert where["studentId"] == "stu-1" and where["tenantId"] == "tenant-1"
+    assert where["studentId"] == {"in": ["stu-1"]} and where["tenantId"] == "tenant-1"
+
+
+async def test_many_students_cost_the_same_four_queries_and_each_gets_their_own_classes(fake_db):
+    fake_db.courseenrollment.find_many.return_value = [
+        enrollment("sec-1", "2026-10-01T00:00:00", "stu-a"),
+        enrollment("sec-1", "2026-10-01T00:00:00", "stu-b"),
+        enrollment("sec-2", "2026-10-01T00:00:00", "stu-b"),
+    ]
+    fake_db.classoccurrence.find_many.return_value = [
+        occurrence("o-2", "sec-2", "2026-10-06T00:00:00"),
+        occurrence("o-1", "sec-1", "2026-10-05T00:00:00"),
+    ]
+    fake_db.attendancerecord.find_many.return_value = [
+        SimpleNamespace(studentId="stu-a", occurrenceId="o-1", status="PRESENT"),
+        SimpleNamespace(studentId="stu-b", occurrenceId="o-1", status="ABSENT"),
+    ]
+
+    result = await held_classes_for(["stu-a", "stu-b", "stu-c"], "tenant-1")
+
+    assert result["stu-a"] == [HeldClass(date(2026, 10, 5), "PRESENT")]
+    assert result["stu-b"] == [HeldClass(date(2026, 10, 6), None), HeldClass(date(2026, 10, 5), "ABSENT")]
+    assert result["stu-c"] == []
+    for table in (fake_db.courseenrollment, fake_db.classoccurrence, fake_db.attendancerecord):
+        assert table.find_many.await_count == 1
