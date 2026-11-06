@@ -3,7 +3,10 @@ from typing import Optional
 
 from app.services.agent.tools import (
     admin_insights,
+    approval_actions,
     approvals,
+    attendance_actions,
+    class_actions,
     help_tool,
     lookups,
     messaging,
@@ -12,7 +15,10 @@ from app.services.agent.tools import (
 )
 from app.services.agent.types import Tool
 
-_MODULES = (teacher_reads, report_tools, admin_insights, approvals, lookups, messaging, help_tool)
+_MODULES = (
+    teacher_reads, report_tools, admin_insights, approvals, lookups, messaging, help_tool,
+    class_actions, attendance_actions, approval_actions,
+)
 TOOLS: dict[str, Tool] = {tool.name: tool for module in _MODULES for tool in module.TOOLS}
 
 

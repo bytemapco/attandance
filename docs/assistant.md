@@ -58,3 +58,16 @@ Leave and device-change requests are decided by teachers in this product, so the
 ## Tests
 
 `tests/unit/test_agent_*.py` (gateway, loop, registry, guides) use a scripted model. `tests/integration/test_agent_*.py` run the real API, database and Redis with a scripted model (`agent_world.py`). Nothing calls Gemini. Web: `src/__tests__/lib/agent-chat.test.ts`, `src/__tests__/components/agent-panel.test.tsx`.
+
+## Stage 2 tools (teacher actions, every one waits for Confirm)
+
+| Tool | What it does | Rules kept |
+|---|---|---|
+| `start_attendance` | Opens attendance for a class today, or starts an unscheduled one from its subject | Own class only, not closed, not cancelled, same day |
+| `stop_attendance` | Closes the register; unmarked students become absent, or excused on approved leave | Own class only; the card shows how many will be marked |
+| `mark_attendance` | Sets students PRESENT, ABSENT, EXCUSED or LATE for one class | Enrolled students only; a closed register needs a reason; each change is audited |
+| `resolve_flagged_marks` | Approves or rejects flagged marks; the student is told | Own class only; a closed register needs a note |
+| `decide_leaves` | Approves or rejects pending leave of the teacher's students | Own students only; approval excuses closed classes in those dates |
+| `decide_device_changes` | Approves or rejects new-phone requests | Own students only; the card reminds the teacher to check it is the student's phone |
+
+These call the same services as the web screens, so audit rows, notifications and streak updates are identical.

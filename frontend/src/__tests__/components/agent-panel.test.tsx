@@ -156,3 +156,17 @@ describe("a prepared change", () => {
     expect(confirmProposal).not.toHaveBeenCalled();
   });
 });
+
+describe("a prepared change with a warning", () => {
+  it("shows the note and the preview table before Confirm", async () => {
+    reply({
+      type: "proposal", id: "p2", tool: "decide_device_changes", summary: "Approve 1 device request",
+      details: { note: "Approve only if you know this is the student's own new phone.", table: { title: "Device requests", columns: ["Student"], rows: [["Asha"]] } },
+      editable: {}, expires_at: "2030-01-01T00:00:00Z",
+    });
+    await open();
+    await ask("approve the phone");
+    expect(await screen.findByText(/own new phone/)).toBeInTheDocument();
+    expect(screen.getByRole("region", { name: "Device requests" })).toHaveTextContent("Asha");
+  });
+});

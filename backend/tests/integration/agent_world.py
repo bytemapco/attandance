@@ -3,7 +3,7 @@ import json
 from datetime import datetime
 
 from app.core.security import create_access_token
-from app.services.agent.llm import LlmTurn, ToolCall
+from app.services.agent.llm import LlmTurn, ToolCall, set_llm
 
 
 class ScriptedModel:
@@ -61,7 +61,8 @@ class World:
     def scalar(self, sql: str, *params):
         with self.conn.cursor() as cursor:
             cursor.execute(sql, params)
-            return cursor.fetchone()[0]
+            row = cursor.fetchone()
+            return row[0] if row else None
 
     def student_user(self, student_id: str) -> str:
         return self.scalar("SELECT user_id FROM students WHERE id = %s", student_id)
@@ -84,3 +85,20 @@ class World:
 
 def events(response) -> list[dict]:
     return [json.loads(line) for line in response.text.splitlines() if line.strip()]
+
+
+CHAT = "/api/v1/agent/chat"
+ACCEPT = "/api/v1/agent/notice/accept"
+
+
+def propose(client, world, headers, tool: str, **args):
+    """The model calls one write tool; returns (the confirmation card or None, what the model was told)."""
+    client.post(ACCEPT, headers=world.admin)
+    model = ScriptedModel(calls(tool, **args), says("Check the card"))
+    set_llm(model)
+    reply = events(client.post(CHAT, json={"message": "do it"}, headers=headers))
+    return next((e for e in reply if e["type"] == "proposal"), None), model.tool_results[0]
+
+
+def confirm(client, headers, card, edits=None):
+    return client.post(f"/api/v1/agent/proposals/{card['id']}/confirm", json={"edits": edits or {}}, headers=headers)
