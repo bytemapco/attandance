@@ -1,8 +1,10 @@
 """The model behind the assistant. The loop talks to `Llm`; only `GeminiLlm` knows about Gemini."""
 from dataclasses import dataclass, field
+from functools import lru_cache
 from typing import Any, Optional, Protocol
 
 from app.core.config import settings
+from app.services.agent.key_pool import KeyPool, parse_keys
 from app.services.agent.types import Tool
 
 
@@ -38,7 +40,7 @@ def _schema(tool: Tool) -> dict[str, Any]:
 class GeminiLlm:
     """History items: {"role": "user", "text"}, {"role": "model", "text", "raw"}, {"role": "tool", "results"}."""
 
-    def __init__(self, api_key: str, model: str) -> None:
+    def __init__(self, api_keys: str, model: str) -> None:
         from google import genai
         from google.genai import types
 
@@ -49,7 +51,8 @@ class GeminiLlm:
             timeout=REQUEST_TIMEOUT_MS,
             retry_options=types.HttpRetryOptions(attempts=1),
         )
-        self._client = genai.Client(api_key=api_key, http_options=options)
+        self._clients = {key: genai.Client(api_key=key, http_options=options) for key in parse_keys(api_keys)}
+        self._pool = KeyPool(list(self._clients))
         self._model = model
 
     @staticmethod
@@ -80,8 +83,9 @@ class GeminiLlm:
             automatic_function_calling=types.AutomaticFunctionCallingConfig(disable=True),
             temperature=0.2,
         )
-        response = await self._client.aio.models.generate_content(
-            model=self._model, contents=self._contents(history), config=config
+        contents = self._contents(history)
+        response = await self._pool.run(
+            lambda key: self._clients[key].aio.models.generate_content(model=self._model, contents=contents, config=config)
         )
         calls = [ToolCall(call.name, dict(call.args or {})) for call in (response.function_calls or [])]
         usage = response.usage_metadata
@@ -103,5 +107,11 @@ def set_llm(llm: Optional[Llm]) -> None:
     _override = llm
 
 
+@lru_cache(maxsize=4)
+def _gemini(api_keys: str, model: str) -> GeminiLlm:
+    """One client per key set, kept for the process, so the key pool remembers which keys are resting."""
+    return GeminiLlm(api_keys, model)
+
+
 def get_llm() -> Llm:
-    return _override or GeminiLlm(settings.GEMINI_API_KEY, settings.GEMINI_MODEL)
+    return _override or _gemini(settings.GEMINI_API_KEY, settings.GEMINI_MODEL)
