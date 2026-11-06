@@ -33,9 +33,9 @@ The assistant sends the question and the attendance details a tool returns, such
 
 ## Setup
 
-Set `GEMINI_API_KEY` in the production secret (`PRODUCTION_BACKEND_ENV`). Without it the assistant reports that it is not set up. Optional: `GEMINI_MODEL` (default `gemini-3.5-flash`), `AGENT_MESSAGES_PER_MINUTE`, `AGENT_DAILY_TOKEN_BUDGET`.
+Set `GEMINI_API_KEY` in the production secret (`PRODUCTION_BACKEND_ENV`). It takes several keys separated by commas. A request uses the last key that worked. When a key hits its limit (HTTP 429), that key rests for 60 seconds and the same request goes to the next key at once. When every key is resting, the person is told to try again in a minute. Other errors are not retried on another key. Without a key the assistant reports that it is not set up. Optional: `GEMINI_MODEL` (default `gemini-3.5-flash`), `AGENT_MESSAGES_PER_MINUTE`, `AGENT_DAILY_TOKEN_BUDGET`.
 
-The client talks to the `v1beta` API (function calling is not offered on `v1`) and gives up after 40 s with no retry, so a person is told at once. A provider rate limit (HTTP 429) shows as "busy, try again in a minute". Free-tier keys have very low limits (a few requests a minute, and per-day caps on some models), so production needs a paid key. Models newer than 3.5 did not answer for the test key, so check the model with your own key before changing the default.
+The client talks to the `v1beta` API (function calling is not offered on `v1`) and gives up after 40 s with no retry, so a person is told at once. When every key is at its limit (HTTP 429) it shows as "busy, try again in a minute". Free-tier keys have very low limits (a few requests a minute, and per-day caps on some models), so production needs a paid key. Models newer than 3.5 did not answer for the test key, so check the model with your own key before changing the default.
 
 The morning briefing is a cron job in the existing `sahaj-worker` (07:30 India time). It needs no extra process.
 
