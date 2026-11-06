@@ -15,5 +15,19 @@ module.exports = {
         PORT: '8011',
       },
     },
+    {
+      name: 'sahaj-worker',
+      cwd: '/home/jarvis/SharedDrive/bytemap/attendance/backend',
+      script: '/home/jarvis/SharedDrive/bytemap/attendance/backend/venv/bin/arq',
+      args: 'app.worker.WorkerSettings',
+      interpreter: 'none',
+      autorestart: true,
+      restart_delay: 3000,
+      max_restarts: 10,
+      watch: false,
+      env: {
+        PYTHONPATH: '.',
+      },
+    },
   ],
 };

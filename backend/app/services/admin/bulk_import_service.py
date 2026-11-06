@@ -48,7 +48,7 @@ async def _import_student(item, tenant_id: str, row: int) -> Invite:
         "departmentId": department.id,
     }
     user, student = await create_user_with_profile(
-        user_record(item.email, "STUDENT", tenant_id, password, must_change),
+        await user_record(item.email, "STUDENT", tenant_id, password, must_change),
         lambda user_id: db.student.create(data={"userId": user_id, **{k: v for k, v in profile.items() if v is not None}}),
     )
     await place_in_batch_class(tenant_id, student.id, batch_id)
@@ -110,7 +110,7 @@ async def _import_teacher(item, tenant_id: str, row: int, defaults: _TeacherDefa
         "designationId": designation_id,
     }
     user, _ = await create_user_with_profile(
-        user_record(item.email, "TEACHER", tenant_id, password, must_change),
+        await user_record(item.email, "TEACHER", tenant_id, password, must_change),
         lambda user_id: db.teacher.create(data={"userId": user_id, **{k: v for k, v in profile.items() if v is not None}}),
     )
     name = f"{item.first_name} {item.last_name}".strip() or "Faculty"

@@ -25,7 +25,7 @@ class TenantAdminService:
         user = await db.user.create(
             data={
                 "email": email,
-                "hashedPassword": hash_password(plain_pwd),
+                "hashedPassword": await hash_password(plain_pwd),
                 "role": role,
                 "mustChangePassword": True,
                 "tenantId": tenant_id,

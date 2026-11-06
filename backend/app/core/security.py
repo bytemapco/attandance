@@ -1,3 +1,4 @@
+import asyncio
 import secrets
 from datetime import datetime, timedelta, timezone
 from typing import Any
@@ -8,17 +9,29 @@ import jwt
 from app.core.config import settings
 
 
-def hash_password(password: str) -> str:
-    return bcrypt.hashpw(password.encode(), bcrypt.gensalt(rounds=12)).decode()
+BCRYPT_ROUNDS = 12
 
 
-def verify_password(plain_password: str, hashed_password: str) -> bool:
-    if not isinstance(plain_password, str) or not isinstance(hashed_password, str):
-        return False
+def _hash(password: str) -> str:
+    return bcrypt.hashpw(password.encode(), bcrypt.gensalt(rounds=BCRYPT_ROUNDS)).decode()
+
+
+def _verify(plain_password: str, hashed_password: str) -> bool:
     try:
         return bcrypt.checkpw(plain_password.encode(), hashed_password.encode())
     except (ValueError, TypeError, AttributeError):
         return False
+
+
+async def hash_password(password: str) -> str:
+    """bcrypt is about 250 ms of CPU, so it runs in a worker thread (it releases the GIL) and never stalls the event loop."""
+    return await asyncio.to_thread(_hash, password)
+
+
+async def verify_password(plain_password: str, hashed_password: str) -> bool:
+    if not isinstance(plain_password, str) or not isinstance(hashed_password, str):
+        return False
+    return await asyncio.to_thread(_verify, plain_password, hashed_password)
 
 
 def create_access_token(

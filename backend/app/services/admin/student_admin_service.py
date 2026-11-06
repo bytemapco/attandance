@@ -82,7 +82,7 @@ class StudentAdminService:
             "departmentId": data.department_id,
         }
         user, student = await create_user_with_profile(
-            user_record(data.email, "STUDENT", tenant_id, password, must_change),
+            await user_record(data.email, "STUDENT", tenant_id, password, must_change),
             lambda user_id: db.student.create(
                 data={"userId": user_id, **{k: v for k, v in profile.items() if v is not None}}, include=INCLUDE
             ),

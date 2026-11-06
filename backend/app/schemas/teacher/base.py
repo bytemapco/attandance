@@ -73,4 +73,4 @@ class TeacherResponse(BaseModel):
     designation: str = Field(..., description="Resolved designation name")
     phone: Optional[str] = Field(None, description="Contact phone number")
     is_active: bool = Field(True, description="Account active status")
-    invitation_sent: Optional[bool] = Field(None, description="Whether the invite email was delivered; null when no invite was requested")
+    invitation_sent: Optional[bool] = Field(None, description="Whether the invite email was queued for delivery; null when no invite was requested")

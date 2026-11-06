@@ -4,6 +4,7 @@ An email is unique across the platform. A student's enrollment number and a teac
 only unique inside one institution, so the same ID can belong to people at different institutions.
 """
 
+import asyncio
 from typing import List, Optional
 
 from fastapi import HTTPException, status
@@ -33,9 +34,10 @@ async def find_candidate_users(identifier: str, tenant_slug: Optional[str] = Non
     return [by_email] if by_email else []
 
 
-def pick_user_by_password(candidates: List[User], password: str) -> Optional[User]:
+async def pick_user_by_password(candidates: List[User], password: str) -> Optional[User]:
     """The one candidate whose password matches. Two matches means the ID cannot be told apart."""
-    matches = [user for user in candidates if verify_password(password, user.hashedPassword)]
+    results = await asyncio.gather(*(verify_password(password, user.hashedPassword) for user in candidates))
+    matches = [user for user, matched in zip(candidates, results) if matched]
     if len(matches) > 1:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=AMBIGUOUS_ID_MESSAGE)
     return matches[0] if matches else None

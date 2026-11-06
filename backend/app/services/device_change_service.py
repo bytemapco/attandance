@@ -8,7 +8,7 @@ from app.db.redis import safe_redis
 from app.repositories.student_repository import StudentRepository
 from app.schemas.auth import DeviceChangeRequestCreate
 from app.schemas.teacher import DeviceChangeResponse
-from app.services.email_service import email_service
+from app.services.email_queue import enqueue_email
 from app.services.login_identity import find_candidate_users, pick_user_by_password
 from app.services.device_change_review_service import DeviceChangeReviewService
 
@@ -36,7 +36,7 @@ class DeviceChangeService:
                 logger.warning("Redis device change rate limit error: %s", exc)
 
         candidates = await find_candidate_users(data.email.strip(), data.tenant_slug)
-        user = pick_user_by_password(candidates, data.password)
+        user = await pick_user_by_password(candidates, data.password)
         if not user or user.role != "STUDENT":
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials or not a student account")
         student = await self.student_repo.get_by_user_id(user.id)
@@ -85,7 +85,8 @@ class DeviceChangeService:
 
         try:
             name = f"{student.firstName or ''} {student.lastName or ''}".strip() or "Student"
-            await email_service.send_device_change_requested_email(
+            await enqueue_email(
+                "send_device_change_requested_email",
                 to_email=user.email,
                 recipient_name=name,
                 enrollment_number=student.enrollmentNumber,
@@ -93,7 +94,7 @@ class DeviceChangeService:
                 reason=data.reason,
             )
         except Exception as e:
-            logger.warning("Failed to dispatch device change requested email: %s", e)
+            logger.warning("Failed to queue the device change requested email: %s", e)
 
     async def get_pending_requests(self, teacher: Teacher) -> List[DeviceChangeResponse]:
         return await DeviceChangeReviewService.get_pending_requests(teacher)

@@ -1,3 +1,5 @@
+import asyncio
+import time
 from datetime import timedelta
 
 import jwt
@@ -16,17 +18,40 @@ from app.core.security import (
 
 
 class TestPasswords:
-    def test_a_hash_verifies_only_against_its_own_password(self):
-        hashed = hash_password("Correct-Horse-9")
-        assert verify_password("Correct-Horse-9", hashed) is True
-        assert verify_password("correct-horse-9", hashed) is False
+    async def test_a_hash_verifies_only_against_its_own_password(self):
+        hashed = await hash_password("Correct-Horse-9")
+        assert await verify_password("Correct-Horse-9", hashed) is True
+        assert await verify_password("correct-horse-9", hashed) is False
 
-    def test_the_same_password_gets_a_different_hash_each_time(self):
-        assert hash_password("same") != hash_password("same")
+    async def test_the_same_password_gets_a_different_hash_each_time(self):
+        assert await hash_password("same") != await hash_password("same")
 
     @pytest.mark.parametrize("plain, hashed", [(None, "x"), ("x", None), (1, 2), ("x", "not-a-bcrypt-hash")])
-    def test_bad_input_is_a_failed_check_not_an_exception(self, plain, hashed):
-        assert verify_password(plain, hashed) is False
+    async def test_bad_input_is_a_failed_check_not_an_exception(self, plain, hashed):
+        assert await verify_password(plain, hashed) is False
+
+    async def test_hashing_does_not_freeze_the_event_loop(self):
+        """While four hashes run (about a second of CPU), a ticker must keep getting the loop. Run in the loop
+        thread, bcrypt would hold it for a quarter of a second at a time."""
+        longest_gap = 0.0
+        stop = asyncio.Event()
+
+        async def ticker():
+            nonlocal longest_gap
+            last = time.perf_counter()
+            while not stop.is_set():
+                await asyncio.sleep(0.005)
+                now = time.perf_counter()
+                longest_gap = max(longest_gap, now - last)
+                last = now
+
+        watcher = asyncio.create_task(ticker())
+        await asyncio.sleep(0.05)
+        await asyncio.gather(*(hash_password(f"password-{i}") for i in range(4)))
+        stop.set()
+        await watcher
+
+        assert longest_gap < 0.1
 
 
 class TestTokens:

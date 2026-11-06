@@ -29,7 +29,7 @@ flowchart TD
 
 ### CD (`cd.yml`)
 - Triggers: when CI finishes on `main` (only a green push run deploys), and manual run. One deploy at a time (`production-deploy`, no cancelling).
-- **`backend` job:** packages the API, copies it and `PRODUCTION_BACKEND_ENV` to the server over Tailscale and SSH, runs `prisma db push`, reloads PM2, and requires `http://127.0.0.1:8011/health` to return 200. On failure it prints the last PM2 log lines.
+- **`backend` job:** packages the API, copies it and `PRODUCTION_BACKEND_ENV` to the server over Tailscale and SSH, runs `prisma db push`, reloads PM2 (the API and the e-mail worker), and requires `http://127.0.0.1:8011/health` to return 200 and `sahaj-worker` to be online. On failure it prints the last PM2 log lines.
 - **`frontend` job:** installs the Vercel CLI, runs `vercel pull`, `vercel build --prod` and `vercel deploy --prebuilt --prod`, then requires `$WEB_URL/login` to answer with the SAHAJ page. The public web address is `https://sahaj-web-ashy.vercel.app` unless the variable `WEB_URL` says otherwise.
 
 ---

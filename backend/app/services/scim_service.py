@@ -121,7 +121,7 @@ class SCIMService:
         plain_pwd = generate_temporary_password()
         user_data = {
             "email": email.strip().lower(),
-            "hashedPassword": hash_password(plain_pwd),
+            "hashedPassword": await hash_password(plain_pwd),
             "role": role,
             "isActive": scim_payload.get("active", True),
             "mustChangePassword": True,

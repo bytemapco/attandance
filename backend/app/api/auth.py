@@ -4,8 +4,9 @@ from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from prisma.models import User
 
-from app.api.dependencies import get_current_user, reusable_oauth2, auth_rate_limit
+from app.api.dependencies import get_current_user, reusable_oauth2
 from app.core.logging_config import get_logger
+from app.core.rate_limit import limit_auth_attempts
 from app.core.security import decode_access_token
 from app.core.url_resolver import resolve_frontend_url
 from app.schemas.auth import (
@@ -35,7 +36,7 @@ router = APIRouter(prefix="/auth", tags=["Authentication"])
 
 @router.post("/login", response_model=Token)
 async def login(login_data: UserLogin, request: Request, auth_service: AuthService = Depends()) -> Token:
-    await auth_rate_limit(request)
+    await limit_auth_attempts(request, "login", f"{login_data.tenant_slug or ''}:{login_data.email}")
     token = await auth_service.authenticate(login_data)
     if not token:
         logger.warning("Failed login: %s", login_data.email)
@@ -83,7 +84,7 @@ async def request_device_change(
     request: Request,
     device_change_service: DeviceChangeService = Depends(),
 ) -> MessageResponse:
-    await auth_rate_limit(request)
+    await limit_auth_attempts(request, "device-change", data.email)
     await device_change_service.request_device_change(data)
     return MessageResponse(status="success", message="Device change request submitted successfully.")
 
@@ -94,7 +95,7 @@ async def forgot_password(
     request: Request,
     auth_service: AuthService = Depends(),
 ) -> MessageResponse:
-    await auth_rate_limit(request)
+    await limit_auth_attempts(request, "forgot-password", data.email)
     frontend_url = resolve_frontend_url(request)
     await auth_service.request_password_reset(data.email, frontend_url=frontend_url)
     return MessageResponse(
@@ -108,7 +109,7 @@ async def reset_password(
     request: Request,
     auth_service: AuthService = Depends(),
 ) -> MessageResponse:
-    await auth_rate_limit(request)
+    await limit_auth_attempts(request, "reset-password", data.token)
     await auth_service.reset_password(token=data.token, new_password=data.new_password)
     return MessageResponse(
         status="success", message="Password reset successfully. You can now login with your new credentials."
@@ -144,7 +145,7 @@ async def complete_onboarding(
     request: Request,
     auth_service: AuthService = Depends(),
 ) -> MessageResponse:
-    await auth_rate_limit(request)
+    await limit_auth_attempts(request, "onboarding", data.token)
     await auth_service.complete_onboarding(token=data.token, password=data.password)
     return MessageResponse(status="success", message="Account onboarding completed. You may now login.")
 

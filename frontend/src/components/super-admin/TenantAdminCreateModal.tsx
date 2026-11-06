@@ -42,9 +42,9 @@ export default function TenantAdminCreateModal({
         role: "TENANT_ADMIN",
       });
       if (createdAdmin.invitation_sent) {
-        toast.success(`Administrator created. Invitation sent to ${createdAdmin.email}`);
+        toast.success(`Administrator created. The invitation to ${createdAdmin.email} is on its way.`);
       } else {
-        toast.error(`Administrator created, but the invitation could not be sent to ${createdAdmin.email}. Check SMTP settings, then use Send Password Reset.`);
+        toast.error(`Administrator created, but the invitation to ${createdAdmin.email} could not be queued. Use Send Password Reset.`);
       }
       setName("");
       setEmail("");

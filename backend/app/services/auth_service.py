@@ -71,7 +71,7 @@ class AuthService:
 
         await reject_if_locked(redis, login_key)
         candidates = await find_candidate_users(identifier, login_data.tenant_slug)
-        user = pick_user_by_password(candidates, login_data.password)
+        user = await pick_user_by_password(candidates, login_data.password)
         if not user:
             await count_failure(redis, login_key)
             return None
@@ -133,13 +133,13 @@ class AuthService:
 
         must_change = getattr(user, "mustChangePassword", False)
         if not must_change:
-            if not current_password or not verify_password(current_password, user.hashedPassword):
+            if not current_password or not await verify_password(current_password, user.hashedPassword):
                 raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Current password is incorrect.")
         elif current_password:
-            if not verify_password(current_password, user.hashedPassword):
+            if not await verify_password(current_password, user.hashedPassword):
                 raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Temporary password is incorrect.")
 
-        hashed = hash_password(new_password)
+        hashed = await hash_password(new_password)
         await db.user.update(
             where={"id": user_id},
             data={"hashedPassword": hashed, "mustChangePassword": False},

@@ -17,7 +17,11 @@ def fake_db(monkeypatch):
     fake.student.find_many = AsyncMock(return_value=[])
     fake.teacher.find_many = AsyncMock(return_value=[])
     monkeypatch.setattr(login_identity, "db", fake)
-    monkeypatch.setattr(login_identity, "verify_password", lambda plain, hashed: plain == hashed)
+
+    async def same_text(plain, hashed):
+        return plain == hashed
+
+    monkeypatch.setattr(login_identity, "verify_password", same_text)
     return fake
 
 
@@ -65,19 +69,19 @@ async def test_unknown_id_with_an_institution_code_does_not_fall_back_to_email(f
     repo.get_by_email.assert_not_awaited()
 
 
-def test_password_picks_the_right_account_when_an_id_is_shared(fake_db):
+async def test_password_picks_the_right_account_when_an_id_is_shared(fake_db):
     candidates = [user("u-a", "pw-a"), user("u-b", "pw-b")]
 
-    assert login_identity.pick_user_by_password(candidates, "pw-b").id == "u-b"
+    assert (await login_identity.pick_user_by_password(candidates, "pw-b")).id == "u-b"
 
 
-def test_wrong_password_matches_nobody(fake_db):
-    assert login_identity.pick_user_by_password([user("u-a", "pw-a")], "nope") is None
+async def test_wrong_password_matches_nobody(fake_db):
+    assert await login_identity.pick_user_by_password([user("u-a", "pw-a")], "nope") is None
 
 
-def test_two_accounts_with_the_same_password_asks_for_the_institution_code(fake_db):
+async def test_two_accounts_with_the_same_password_asks_for_the_institution_code(fake_db):
     with pytest.raises(HTTPException) as caught:
-        login_identity.pick_user_by_password([user("u-a", "same"), user("u-b", "same")], "same")
+        await login_identity.pick_user_by_password([user("u-a", "same"), user("u-b", "same")], "same")
 
     assert caught.value.status_code == 409
     assert "institution code" in caught.value.detail
