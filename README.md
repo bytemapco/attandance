@@ -59,7 +59,7 @@ To mark attendance, student selfie submissions undergo three automated verificat
 │   │   ├── middleware/       # RBAC role checker and error envelope middlewares
 │   │   └── services/         # Business logic (admin, teacher, biometric, outlier scanner, etc.)
 │   ├── prisma/               # Database schema and seed scripts
-│   ├── tests/                # Pytest test suite (73 tests)
+│   ├── tests/                # Pytest suite: unit/ (mocked) and integration/ (real PostgreSQL + Redis)
 │   └── main.py               # FastAPI application entrypoint
 ├── frontend/                 # Next.js 16 web application (Admin & Teacher portals)
 │   ├── src/

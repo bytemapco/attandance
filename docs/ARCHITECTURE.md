@@ -522,7 +522,7 @@ async def mark_attendance(
 - Mock Prisma client
 - Test services independently
 - Verify tenant isolation
-- 73 tests, 100% coverage of core logic
+- Unit tests with mocked dependencies, plus integration tests against a real PostgreSQL and Redis
 
 ```python
 # Example test
