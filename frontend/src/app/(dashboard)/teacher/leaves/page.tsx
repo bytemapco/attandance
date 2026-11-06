@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowRight, FileText, Image as ImageIcon, Eye } from "lucide-react";
-import api from "@/lib/api";
+import useSWR from "swr";
 import { useDebounce } from "@/hooks/useDebounce";
 import PageHeader from "@/components/ui/PageHeader";
 import DataTable, { type TableColumn } from "@/components/ui/DataTable";
@@ -14,30 +14,16 @@ import SearchInput from "@/components/ui/SearchInput";
 import Pagination from "@/components/ui/Pagination";
 import type { PendingLeaveItem } from "@/types";
 
+const NO_LEAVES: PendingLeaveItem[] = [];
+
 export default function LeavesPage(): React.JSX.Element {
   const router = useRouter();
-  const [leaves, setLeaves] = useState<PendingLeaveItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data, isLoading: loading } = useSWR<PendingLeaveItem[]>("/teacher/leaves/pending");
+  const leaves = data ?? NO_LEAVES;
   const [searchTerm, setSearchTerm] = useState("");
   const debouncedSearch = useDebounce(searchTerm, 300);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
-
-  useEffect(() => {
-    let mounted = true;
-    async function fetchLeaves(): Promise<void> {
-      try {
-        const { data } = await api.get<PendingLeaveItem[]>("/teacher/leaves/pending");
-        if (mounted) setLeaves(data);
-      } catch {
-        if (mounted) setLeaves([]);
-      } finally {
-        if (mounted) setLoading(false);
-      }
-    }
-    void fetchLeaves();
-    return () => { mounted = false; };
-  }, []);
 
   const columns: TableColumn<PendingLeaveItem & Record<string, unknown>>[] = [
     { 

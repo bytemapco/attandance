@@ -1,54 +1,39 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import useSWR from "swr";
 import toast from "react-hot-toast";
-import api, { getApiErrorMessage } from "@/lib/api";
+import { getApiErrorMessage } from "@/lib/api";
+import { LIVE_REGISTER_POLL_MS } from "@/lib/polling";
 import type { OccurrenceRegisterData } from "@/types";
 import { occurrenceState } from "../occurrenceState";
 import type { Edits } from "./registerStatus";
 
-const LIVE_REFRESH_MS = 5000;
-
-/** Loads a class's register and keeps it fresh while attendance is live. */
+/** Loads a class's register and keeps it fresh while attendance is live (and the tab is visible). */
 export function useRegisterData(occurrenceId: string) {
   const base = `/faculty/occurrences/${occurrenceId}`;
-  const [register, setRegister] = useState<OccurrenceRegisterData | null>(null);
   const [edits, setEdits] = useState<Edits>({});
-  const [failed, setFailed] = useState(false);
+
+  const { data: register = null, error, mutate } = useSWR<OccurrenceRegisterData>(`${base}/register`, {
+    // Only a live class changes under the teacher; SWR also stops this while the tab is hidden.
+    refreshInterval: (current) => (current && occurrenceState(current) === "LIVE" ? LIVE_REGISTER_POLL_MS : 0),
+  });
+  const failed = Boolean(error) && !register;
+
+  useEffect(() => {
+    if (error && !register) toast.error(getApiErrorMessage(error, "Could not load the attendance register"));
+  }, [error, register]);
 
   /** A full reload. It drops the teacher's unsaved edits, so use it after saving. */
   const load = useCallback(async (): Promise<void> => {
-    try {
-      const { data } = await api.get<OccurrenceRegisterData>(`${base}/register`);
-      setRegister(data);
-      setEdits({});
-      setFailed(false);
-    } catch (err: unknown) {
-      setFailed(true);
-      toast.error(getApiErrorMessage(err, "Could not load the attendance register"));
-    }
-  }, [base]);
+    await mutate();
+    setEdits({});
+  }, [mutate]);
 
   /** Fetches the register without touching unsaved edits. */
   const refresh = useCallback(async (): Promise<void> => {
-    try {
-      const { data } = await api.get<OccurrenceRegisterData>(`${base}/register`);
-      setRegister(data);
-    } catch {
-      // The next refresh tries again.
-    }
-  }, [base]);
-
-  useEffect(() => {
-    void load();
-  }, [load]);
-
-  const live = register ? occurrenceState(register) === "LIVE" : false;
-  useEffect(() => {
-    if (!live) return;
-    const timer = setInterval(() => void refresh(), LIVE_REFRESH_MS);
-    return () => clearInterval(timer);
-  }, [live, refresh]);
+    await mutate();
+  }, [mutate]);
 
   return { base, register, edits, setEdits, failed, load, refresh };
 }

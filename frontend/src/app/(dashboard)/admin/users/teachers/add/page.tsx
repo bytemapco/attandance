@@ -14,12 +14,14 @@ import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
 import TeacherFormProfile from "./TeacherFormProfile";
 import { teacherFormSchema, TeacherFormData } from "@/lib/validations/teacher";
-import type { DepartmentResponse, DesignationResponse, TeacherResponse } from "@/types";
+import { useDepartments, useDesignations } from "@/hooks/useReferenceData";
+import type { TeacherResponse } from "@/types";
 
 export default function AddTeacherPage(): React.ReactElement {
   const router = useRouter();
-  const [departments, setDepartments] = useState<DepartmentResponse[]>([]);
-  const [designations, setDesignations] = useState<DesignationResponse[]>([]);
+  const { items: departments, failed: departmentsFailed } = useDepartments();
+  const { items: designations, failed: designationsFailed } = useDesignations();
+  const referenceFailed = departmentsFailed || designationsFailed;
   const [loading, setLoading] = useState(false);
 
   const {
@@ -43,20 +45,8 @@ export default function AddTeacherPage(): React.ReactElement {
   });
 
   useEffect(() => {
-    async function fetchMasterData(): Promise<void> {
-      try {
-        const [deptsRes, desigRes] = await Promise.all([
-          api.get<DepartmentResponse[]>("/admin/departments"),
-          api.get<DesignationResponse[]>("/admin/designations"),
-        ]);
-        setDepartments(deptsRes.data);
-        setDesignations(desigRes.data);
-      } catch {
-        toast.error("Could not load departments/designations.");
-      }
-    }
-    void fetchMasterData();
-  }, []);
+    if (referenceFailed) toast.error("Could not load departments/designations.");
+  }, [referenceFailed]);
 
   async function onSubmit(formData: TeacherFormData): Promise<void> {
     setLoading(true);

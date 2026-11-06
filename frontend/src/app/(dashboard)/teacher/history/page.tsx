@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import api, { getApiErrorMessage } from "@/lib/api";
+import React, { useMemo, useState } from "react";
+import useSWR from "swr";
+import { getApiErrorMessage } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import EmptyState from "@/components/ui/EmptyState";
 import ErrorState from "@/components/ui/ErrorState";
@@ -57,25 +58,11 @@ function Chip({ active, onClick, children }: { active: boolean; onClick: () => v
 }
 
 export default function AttendanceHistoryPage(): React.ReactElement {
-  const [items, setItems] = useState<HistoryItem[] | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const { data: items, error: loadError, mutate } = useSWR<HistoryItem[]>("/faculty/history");
+  const error = loadError && !items ? getApiErrorMessage(loadError, "Could not load attendance history") : null;
   const [sectionId, setSectionId] = useState("");
   const [status, setStatus] = useState<StatusFilter>("all");
   const [shown, setShown] = useState(PAGE_SIZE);
-
-  const load = useCallback(async (): Promise<void> => {
-    try {
-      const { data } = await api.get<HistoryItem[]>("/faculty/history");
-      setItems(data);
-      setError(null);
-    } catch (err: unknown) {
-      setError(getApiErrorMessage(err, "Could not load attendance history"));
-    }
-  }, []);
-
-  useEffect(() => {
-    void load();
-  }, [load]);
 
   const classes = useMemo(() => {
     const seen = new Map<string, string>();
@@ -96,7 +83,7 @@ export default function AttendanceHistoryPage(): React.ReactElement {
     setShown(PAGE_SIZE);
   };
 
-  if (error) return <ErrorState message={error} onRetry={() => void load()} />;
+  if (error) return <ErrorState message={error} onRetry={() => void mutate()} />;
   if (!items) return <PageSkeleton />;
 
   return (

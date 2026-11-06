@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import useSWR from "swr";
 import api, { getApiErrorMessage } from "@/lib/api";
 import EmptyState from "@/components/ui/EmptyState";
 import ErrorState from "@/components/ui/ErrorState";
@@ -10,33 +11,27 @@ import PageSkeleton from "@/components/ui/PageSkeleton";
 import type { ClassSessionStartResult, TeacherClassItem } from "@/types";
 import DashboardClassCard from "./DashboardClassCard";
 
+const NO_CLASSES: TeacherClassItem[] = [];
+
 interface MyClassesProps {
   refreshKey: number;
 }
 
 export default function MyClasses({ refreshKey }: MyClassesProps): React.ReactElement {
   const router = useRouter();
-  const [items, setItems] = useState<TeacherClassItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [failed, setFailed] = useState(false);
+  const { data, error, isLoading: loading, mutate } = useSWR<TeacherClassItem[]>("/faculty/classes");
+  const items = data ?? NO_CLASSES;
+  const failed = Boolean(error) && !data;
   const [startingId, setStartingId] = useState<string | null>(null);
 
-  const load = useCallback(async (): Promise<void> => {
-    try {
-      const { data } = await api.get<TeacherClassItem[]>("/faculty/classes");
-      setItems(data);
-      setFailed(false);
-    } catch (err: unknown) {
-      setFailed(true);
-      toast.error(getApiErrorMessage(err, "Could not load your classes"));
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
   useEffect(() => {
-    void load();
-  }, [load, refreshKey]);
+    if (error) toast.error(getApiErrorMessage(error, "Could not load your classes"));
+  }, [error]);
+
+  // The page asks for a fresh list whenever something it started changes `refreshKey`.
+  useEffect(() => {
+    if (refreshKey) void mutate();
+  }, [refreshKey, mutate]);
 
   async function start(item: TeacherClassItem): Promise<void> {
     setStartingId(item.course_section_id);
@@ -50,7 +45,7 @@ export default function MyClasses({ refreshKey }: MyClassesProps): React.ReactEl
   }
 
   if (loading) return <PageSkeleton />;
-  if (failed) return <ErrorState message="Your classes could not be loaded." onRetry={() => void load()} />;
+  if (failed) return <ErrorState message="Your classes could not be loaded." onRetry={() => void mutate()} />;
   if (items.length === 0) {
     return (
       <EmptyState

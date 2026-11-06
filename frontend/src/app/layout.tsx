@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, Geist_Mono } from "next/font/google";
 import { Toaster } from "react-hot-toast";
+import SwrProvider from "@/components/providers/SwrProvider";
 import "./globals.css";
 
 const plusJakarta = Plus_Jakarta_Sans({
@@ -34,7 +35,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }):
   return (
     <html lang="en">
       <body className={`${plusJakarta.variable} ${geistMono.variable} bg-background text-foreground antialiased min-h-screen font-sans`}>
-        {children}
+        <SwrProvider>{children}</SwrProvider>
         <Toaster
           position="top-right"
           toastOptions={{

@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
+import React from "react";
 import Link from "next/link";
 import { AlertTriangle, ArrowRight } from "lucide-react";
-import api, { getApiErrorMessage } from "@/lib/api";
+import useSWR from "swr";
+import { getApiErrorMessage } from "@/lib/api";
 import Badge from "@/components/ui/Badge";
 import EmptyState from "@/components/ui/EmptyState";
 import ErrorState from "@/components/ui/ErrorState";
@@ -18,24 +19,10 @@ function formatDate(iso: string): string {
 }
 
 export default function ReviewQueuePage(): React.ReactElement {
-  const [items, setItems] = useState<FlaggedRecord[] | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const { data: items, error: loadError, mutate } = useSWR<FlaggedRecord[]>("/faculty/flagged");
+  const error = loadError && !items ? getApiErrorMessage(loadError, "Could not load marks to verify") : null;
 
-  const load = useCallback(async (): Promise<void> => {
-    try {
-      const { data } = await api.get<FlaggedRecord[]>("/faculty/flagged");
-      setItems(data);
-      setError(null);
-    } catch (err: unknown) {
-      setError(getApiErrorMessage(err, "Could not load marks to verify"));
-    }
-  }, []);
-
-  useEffect(() => {
-    void load();
-  }, [load]);
-
-  if (error) return <ErrorState message={error} onRetry={() => void load()} />;
+  if (error) return <ErrorState message={error} onRetry={() => void mutate()} />;
   if (!items) return <PageSkeleton />;
 
   return (

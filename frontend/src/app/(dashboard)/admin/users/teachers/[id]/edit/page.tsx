@@ -1,12 +1,14 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { User, Briefcase, Save, X } from "lucide-react";
 import toast from "react-hot-toast";
+import useSWR from "swr";
 import api, { getApiErrorMessage, applyValidationErrorsToForm } from "@/lib/api";
+import { useDepartments, useDesignations } from "@/hooks/useReferenceData";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import PageHeader from "@/components/ui/PageHeader";
 import Card from "@/components/ui/Card";
@@ -15,15 +17,17 @@ import Button from "@/components/ui/Button";
 import PageSkeleton from "@/components/ui/PageSkeleton";
 import EditTeacherFormFields from "./EditTeacherFormFields";
 import { teacherUpdateSchema, TeacherUpdateFormData } from "@/lib/validations/teacher";
-import type { TeacherResponse, DepartmentResponse, DesignationResponse } from "@/types";
+import type { TeacherResponse } from "@/types";
 
 export default function EditTeacherPage(): React.ReactElement {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
-  const [teacher, setTeacher] = useState<TeacherResponse | null>(null);
-  const [departments, setDepartments] = useState<DepartmentResponse[]>([]);
-  const [designations, setDesignations] = useState<DesignationResponse[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: teacher, error: teacherError, isLoading: loading } = useSWR<TeacherResponse>(
+    `/admin/users/teachers/${id}`,
+    { revalidateOnFocus: false }
+  );
+  const { items: departments } = useDepartments();
+  const { items: designations } = useDesignations();
   const [saving, setSaving] = useState(false);
 
   const {
@@ -45,38 +49,24 @@ export default function EditTeacherPage(): React.ReactElement {
     },
   });
 
+  // The form is filled once, from the first copy that arrives, so a background refresh never overwrites edits.
+  const filledFor = useRef<string | null>(null);
   useEffect(() => {
-    async function fetchData(): Promise<void> {
-      try {
-        const [teacherRes, depsRes, desigsRes] = await Promise.all([
-          api.get<TeacherResponse>(`/admin/users/teachers/${id}`),
-          api.get<DepartmentResponse[]>("/admin/departments").catch(() => ({ data: [] })),
-          api.get<DesignationResponse[]>("/admin/designations").catch(() => ({ data: [] })),
-        ]);
-        setDepartments(depsRes.data);
-        setDesignations(desigsRes.data);
-        
-        const found = teacherRes.data;
-        if (found) {
-          setTeacher(found);
-          reset({
-            employee_id: found.employee_id,
-            first_name: found.first_name,
-            last_name: found.last_name,
-            phone: found.phone ?? "",
-            department_id: found.department_id,
-            designation_id: found.designation_id,
-          });
-        }
-      } catch {
-        toast.error("Failed to load teacher data");
-      } finally {
-        setLoading(false);
-      }
-    }
+    if (!teacher || filledFor.current === teacher.id) return;
+    filledFor.current = teacher.id;
+    reset({
+      employee_id: teacher.employee_id,
+      first_name: teacher.first_name,
+      last_name: teacher.last_name,
+      phone: teacher.phone ?? "",
+      department_id: teacher.department_id,
+      designation_id: teacher.designation_id,
+    });
+  }, [teacher, reset]);
 
-    void fetchData();
-  }, [id, reset]);
+  useEffect(() => {
+    if (teacherError) toast.error("Failed to load teacher data");
+  }, [teacherError]);
 
   async function onSubmit(formData: TeacherUpdateFormData): Promise<void> {
     setSaving(true);

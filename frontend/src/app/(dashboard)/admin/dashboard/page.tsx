@@ -1,12 +1,12 @@
 "use client";
 
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { 
   Users, GraduationCap, BookOpen, ShieldCheck, RefreshCw, Megaphone 
 } from "lucide-react";
-import api from "@/lib/api";
+import useSWR from "swr";
 import toast from "react-hot-toast";
 import Button from "@/components/ui/Button";
 import PageHeader from "@/components/ui/PageHeader";
@@ -18,9 +18,7 @@ import type { AdminStatsResponse } from "@/types";
 
 export default function AdminDashboardPage(): React.ReactElement {
   const router = useRouter();
-  const [stats, setStats] = useState<AdminStatsResponse | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
+  const { data: stats, error, isLoading: loading, isValidating: refreshing, mutate } = useSWR<AdminStatsResponse>("/admin/stats");
 
   const todayStr = new Intl.DateTimeFormat("en-US", {
     weekday: "long",
@@ -29,26 +27,12 @@ export default function AdminDashboardPage(): React.ReactElement {
     year: "numeric",
   }).format(new Date());
 
-  const fetchDashboardData = useCallback(async (): Promise<void> => {
-    try {
-      const statsRes = await api.get<AdminStatsResponse>("/admin/stats");
-      setStats(statsRes.data);
-    } catch {
-      toast.error("Failed to load dashboard metrics");
-      setStats(null);
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
-    }
-  }, []);
-
   useEffect(() => {
-    void fetchDashboardData();
-  }, [fetchDashboardData]);
+    if (error) toast.error("Failed to load dashboard metrics");
+  }, [error]);
 
-  const handleRefresh = async () => {
-    setRefreshing(true);
-    await fetchDashboardData();
+  const handleRefresh = async (): Promise<void> => {
+    await mutate();
   };
 
   if (loading) return <PageSkeleton />;

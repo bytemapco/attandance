@@ -2,6 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
+import useSWR from "swr";
 import api, { getApiErrorMessage } from "@/lib/api";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
@@ -19,24 +20,20 @@ function displayName(student: StudentResponse): string {
 }
 
 export default function AddStudentsPanel({ cls, onUpdated, onClose }: AddStudentsPanelProps): React.ReactElement {
-  const [students, setStudents] = useState<StudentResponse[]>([]);
+  const { data: studentPage, error: studentsError } = useSWR<StudentResponse[] | { items: StudentResponse[] }>(
+    "/admin/users/students?page_size=1000"
+  );
+  const students = useMemo(
+    () => (Array.isArray(studentPage) ? studentPage : studentPage?.items ?? []),
+    [studentPage]
+  );
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    async function load(): Promise<void> {
-      try {
-        const { data } = await api.get<StudentResponse[] | { items: StudentResponse[] }>(
-          "/admin/users/students?page_size=1000"
-        );
-        setStudents(Array.isArray(data) ? data : data.items ?? []);
-      } catch (err: unknown) {
-        toast.error(getApiErrorMessage(err, "Failed to load students"));
-      }
-    }
-    void load();
-  }, []);
+    if (studentsError) toast.error(getApiErrorMessage(studentsError, "Failed to load students"));
+  }, [studentsError]);
 
   const candidates = useMemo(() => {
     const inClass = new Set(cls.members.map((m) => m.student_id));

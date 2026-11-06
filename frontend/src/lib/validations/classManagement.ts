@@ -15,17 +15,10 @@ export const reasonSchema = z.object({
 
 interface StudentFilterFields {
   department_id?: string | null;
-  semester?: number | null;
   batch_id?: string | null;
 }
 
-export function studentsForClass<T extends StudentFilterFields>(
-  students: T[],
-  departmentId: string,
-  semester: number,
-  batchId?: string
-): T[] {
-  return students.filter(
-    (s) => s.department_id === departmentId && s.semester === semester && (!batchId || s.batch_id === batchId)
-  );
+/** The students a new class starts with: those of its department and batch. A student's semester is the class's. */
+export function studentsForClass<T extends StudentFilterFields>(students: T[], departmentId: string, batchId?: string): T[] {
+  return students.filter((s) => s.department_id === departmentId && (!batchId || s.batch_id === batchId));
 }

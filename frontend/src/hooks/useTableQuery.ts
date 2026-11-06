@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useMemo } from "react";
+import useSWR from "swr";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import api, { getApiErrorMessage } from "@/lib/api";
+import { getApiErrorMessage } from "@/lib/api";
 import { useDebounce } from "./useDebounce";
 import type { PaginatedResponse } from "@/types";
 
@@ -42,12 +43,6 @@ export function useTableQuery<T>({
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">(initialSortOrder);
   const [filterValue, setFilterValue] = useState(initialFilter);
 
-  const [data, setData] = useState<T[]>([]);
-  const [totalItems, setTotalItems] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const abortControllerRef = useRef<AbortController | null>(null);
-
   // Sync state changes with URL query parameters
   useEffect(() => {
     const params = new URLSearchParams();
@@ -63,60 +58,26 @@ export function useTableQuery<T>({
     router.replace(newUrl, { scroll: false });
   }, [debouncedQuery, currentPage, pageSize, sortBy, sortOrder, filterValue, pathname, router, defaultPageSize]);
 
-  const serializedExtraParams = JSON.stringify(extraParams || {});
-
-  const fetchData = useCallback(async (): Promise<void> => {
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-    }
-    const controller = new AbortController();
-    abortControllerRef.current = controller;
-
-    setLoading(true);
-    setError(null);
-    try {
-      const params: Record<string, string | number> = {
-        page: currentPage,
-        page_size: pageSize,
-        sort_by: sortBy,
-        sort_order: sortOrder,
-      };
-      if (debouncedQuery.trim()) params.q = debouncedQuery.trim();
-      if (filterValue && filterValue !== "all") params[filterKey] = filterValue;
-      if (extraParams) {
-        Object.entries(extraParams).forEach(([k, v]) => {
-          if (v !== undefined && v !== "" && v !== "all") {
-            params[k] = v;
-          }
-        });
-      }
-
-      const res = await api.get<PaginatedResponse<T>>(endpoint, {
-        params,
-        signal: controller.signal,
-      });
-
-      setData(res.data.items || []);
-      setTotalItems(res.data.total_items || 0);
-      setError(null);
-    } catch (err: unknown) {
-      if ((err as { name?: string })?.name !== "CanceledError") {
-        setData([]);
-        setTotalItems(0);
-        setError(getApiErrorMessage(err, "Failed to load data. Please try again."));
-      }
-    } finally {
-      setLoading(false);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [endpoint, currentPage, pageSize, sortBy, sortOrder, debouncedQuery, filterValue, filterKey, serializedExtraParams]);
-
-  useEffect(() => {
-    void fetchData();
-    return () => {
-      if (abortControllerRef.current) abortControllerRef.current.abort();
+  const params = useMemo(() => {
+    const query: Record<string, string | number> = {
+      page: currentPage,
+      page_size: pageSize,
+      sort_by: sortBy,
+      sort_order: sortOrder,
     };
-  }, [fetchData]);
+    if (debouncedQuery.trim()) query.q = debouncedQuery.trim();
+    if (filterValue && filterValue !== "all") query[filterKey] = filterValue;
+    for (const [name, value] of Object.entries(extraParams ?? {})) {
+      if (value !== undefined && value !== "" && value !== "all") query[name] = value;
+    }
+    return query;
+  }, [currentPage, pageSize, sortBy, sortOrder, debouncedQuery, filterValue, filterKey, extraParams]);
+
+  // Pages already visited, and the page just left, come from the cache while the new one loads.
+  const { data: page, error, isLoading, mutate } = useSWR<PaginatedResponse<T>>([endpoint, params]);
+  const data = useMemo(() => page?.items ?? [], [page]);
+  const totalItems = page?.total_items ?? 0;
+  const loading = isLoading;
 
   const handleSearch = (val: string) => {
     setSearchQuery(val);
@@ -137,7 +98,7 @@ export function useTableQuery<T>({
     data,
     totalItems,
     loading,
-    error,
+    error: error ? getApiErrorMessage(error, "Failed to load data. Please try again.") : null,
     searchQuery,
     currentPage,
     pageSize,
@@ -152,6 +113,8 @@ export function useTableQuery<T>({
       setFilterValue(val);
       setCurrentPage(1);
     },
-    refetch: fetchData,
+    refetch: async (): Promise<void> => {
+      await mutate();
+    },
   };
 }

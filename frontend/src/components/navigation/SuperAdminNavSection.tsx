@@ -13,7 +13,7 @@ interface SuperAdminNavSectionProps {
 
 export default function SuperAdminNavSection({ onClose }: SuperAdminNavSectionProps): React.ReactElement {
   const pathname = usePathname();
-  const { unreadCount } = useNotifications(25000);
+  const { unreadCount } = useNotifications();
 
   return (
     <div>

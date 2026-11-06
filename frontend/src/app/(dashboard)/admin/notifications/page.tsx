@@ -27,7 +27,7 @@ export default function AdminNotificationsPage(): React.JSX.Element {
     deleteSelected,
     deleteAll,
     refetch,
-  } = useNotifications(20000);
+  } = useNotifications();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());

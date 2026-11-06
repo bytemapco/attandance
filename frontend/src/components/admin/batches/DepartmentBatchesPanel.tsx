@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Plus, Trash2, Archive, RotateCcw } from "lucide-react";
 import toast from "react-hot-toast";
+import useSWR from "swr";
 import api, { getApiErrorMessage } from "@/lib/api";
 import Button from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
@@ -18,28 +19,22 @@ const SECTIONS = Array.from({ length: 26 }, (_, i) => {
 
 type BatchRow = BatchResponse & Record<string, unknown>;
 
+const NO_BATCHES: BatchResponse[] = [];
+
 export default function DepartmentBatchesPanel({ department }: { department: DepartmentResponse }): React.ReactElement {
-  const [batches, setBatches] = useState<BatchResponse[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data, error, isLoading: loading, mutate } = useSWR<BatchResponse[]>(`/admin/departments/${department.id}/batches`);
+  const batches = data ?? NO_BATCHES;
   const [section, setSection] = useState("A");
   const [saving, setSaving] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<BatchResponse | null>(null);
   const [deleting, setDeleting] = useState(false);
-
-  const fetchBatches = useCallback(async (): Promise<void> => {
-    try {
-      const { data } = await api.get<BatchResponse[]>(`/admin/departments/${department.id}/batches`);
-      setBatches(data);
-    } catch (err: unknown) {
-      toast.error(getApiErrorMessage(err, "Failed to load batches"));
-    } finally {
-      setLoading(false);
-    }
-  }, [department.id]);
+  const fetchBatches = async (): Promise<void> => {
+    await mutate();
+  };
 
   useEffect(() => {
-    void fetchBatches();
-  }, [fetchBatches]);
+    if (error) toast.error(getApiErrorMessage(error, "Failed to load batches"));
+  }, [error]);
 
   const nextCode = useMemo(() => {
     const numbers = batches.filter((b) => b.section === section).map((b) => b.number);

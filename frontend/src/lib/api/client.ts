@@ -1,4 +1,5 @@
-import axios, { type AxiosError, type InternalAxiosRequestConfig } from "axios";
+import axios, { type AxiosError, type AxiosResponse, type InternalAxiosRequestConfig } from "axios";
+import { revalidateAfterWrite } from "@/lib/api/cache";
 import { DEFAULT_TENANT_ID, TENANT_STORAGE_KEY, getApiBaseUrl } from "@/lib/config";
 import { useAuthStore } from "@/store/authStore";
 
@@ -62,7 +63,12 @@ const api = axios.create({
   timeout: REQUEST_TIMEOUT_MS,
 });
 
+function refreshReadsAfterWrite(response: AxiosResponse): AxiosResponse {
+  if (response.config.method !== "get") revalidateAfterWrite(response.config.url);
+  return response;
+}
+
 api.interceptors.request.use(attachSession);
-api.interceptors.response.use((response) => response, handleResponseError);
+api.interceptors.response.use(refreshReadsAfterWrite, handleResponseError);
 
 export default api;
