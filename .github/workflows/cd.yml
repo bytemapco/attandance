@@ -115,11 +115,13 @@ jobs:
              # Set strict permissions on environment files
              chmod 600 backend/.env frontend/.env
 
-             # Unpack frontend bundle
+             # Unpack into clean directories so nothing from an earlier build survives (stale chunks, cached pages).
+             # Only the environment file and the Python virtualenv are kept.
+             find frontend -mindepth 1 -maxdepth 1 ! -name .env -exec rm -rf {} +
              tar -xzf frontend-bundle.tar.gz -C frontend/
              rm -f frontend-bundle.tar.gz
 
-             # Unpack backend bundle
+             find backend -mindepth 1 -maxdepth 1 ! -name .env ! -name venv -exec rm -rf {} +
              tar -xzf backend-bundle.tar.gz -C backend/
              rm -f backend-bundle.tar.gz
 
