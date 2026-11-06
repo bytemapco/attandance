@@ -24,15 +24,22 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--password", default=DEFAULT_PASSWORD, help="password given to every demo account")
     parser.add_argument("--super-email", default=os.getenv("SUPERADMIN_EMAIL", "superadmin@attendance.system"))
     parser.add_argument("--super-password", default=os.getenv("SUPERADMIN_PASSWORD", "SuperAdmin@123456"))
+    parser.add_argument(
+        "--allow-production",
+        action="store_true",
+        help="seed an API that reports production or staging. Demo accounts share one password, so use it knowingly",
+    )
     return parser.parse_args()
 
 
-def refuse_production(base_url: str) -> None:
+def refuse_production(base_url: str, allow_production: bool) -> None:
     try:
         health = httpx.get(f"{base_url.rstrip('/')}/health", timeout=15).json()
     except (httpx.HTTPError, ValueError) as err:
         raise SystemExit(f"Cannot reach the API at {base_url}: {err}")
     environment = str(health.get("environment", "")).lower()
+    if allow_production and environment:
+        return
     if environment in ("", "production", "prod", "staging"):
         raise SystemExit(f"Refusing to seed: the API reports environment '{environment or 'unknown'}'.")
 
@@ -46,7 +53,7 @@ def print_summary(tally: Tally) -> None:
 
 def main() -> int:
     args = parse_args()
-    refuse_production(args.base_url)
+    refuse_production(args.base_url, args.allow_production)
     tally = Tally()
     api = Api(args.base_url.rstrip("/") + "/api/v1", tally)
     ctx = Ctx(api, args.password, args.super_email, args.super_password)
