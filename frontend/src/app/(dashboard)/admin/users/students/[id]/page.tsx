@@ -15,6 +15,7 @@ import type { StudentResponse } from "@/types";
 const GENDER_LABELS: Record<string, string> = { M: "Male", F: "Female", O: "Other" };
 const NOT_PROVIDED = "Not provided";
 const NOT_ASSIGNED = "Not assigned";
+const NOT_IN_A_CLASS = "Not in a class yet";
 
 function fullNameOf(student: StudentResponse): string {
   if (student.first_name && student.last_name) return `${student.first_name} ${student.last_name}`;
@@ -86,7 +87,7 @@ export default function StudentDetailPage(): React.ReactElement {
         <InfoRow
           icon={Layers}
           label="Current Semester"
-          value={student.semester ? `Semester ${student.semester}` : NOT_ASSIGNED}
+          value={student.semester ? `Semester ${student.semester}` : NOT_IN_A_CLASS}
         />
         <InfoRow
           icon={GraduationCap}

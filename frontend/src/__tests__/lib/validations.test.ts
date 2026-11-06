@@ -8,7 +8,7 @@ import {
 } from "@/lib/validations/auth";
 import { classCreateSchema, reasonSchema, studentsForClass } from "@/lib/validations/classManagement";
 import { leaveRequestSchema } from "@/lib/validations/leave";
-import { studentFormSchema } from "@/lib/validations/student";
+import { studentFormSchema, studentUpdateSchema } from "@/lib/validations/student";
 import { geofenceSchema, teacherFormSchema } from "@/lib/validations/teacher";
 
 function firstMessage(result: { success: boolean; error?: { issues: { message: string }[] } }): string | undefined {
@@ -147,7 +147,6 @@ describe("student form", () => {
     last_name: "Rao",
     department_id: "d1",
     batch_id: "b1",
-    semester: 3,
     phone: "9876543210",
     gender: "F",
     date_of_birth: "2006-01-02",
@@ -157,8 +156,9 @@ describe("student form", () => {
     expect(studentFormSchema.safeParse(valid).success).toBe(true);
   });
 
-  it.each([0, 9])("rejects semester %i", (semester) => {
-    expect(studentFormSchema.safeParse({ ...valid, semester }).success).toBe(false);
+  it("takes no semester: it comes from the student's class", () => {
+    expect(studentFormSchema.parse({ ...valid, semester: 3 })).not.toHaveProperty("semester");
+    expect(studentUpdateSchema.parse({ ...valid, semester: 3 })).not.toHaveProperty("semester");
   });
 
   it("rejects a short enrollment number and a missing batch", () => {

@@ -43,7 +43,6 @@ export default function EditStudentPage(): React.ReactElement {
       phone: "",
       gender: "",
       date_of_birth: "",
-      semester: undefined,
       batch_id: "",
       department_id: "",
     },
@@ -74,7 +73,6 @@ export default function EditStudentPage(): React.ReactElement {
             phone: found.phone ?? "",
             gender: found.gender ?? "",
             date_of_birth: found.date_of_birth ? new Date(found.date_of_birth).toISOString().split("T")[0] : "",
-            semester: found.semester ?? undefined,
             batch_id: found.batch_id ?? "",
             department_id: found.department_id ?? "",
           });
@@ -99,7 +97,6 @@ export default function EditStudentPage(): React.ReactElement {
         phone: formData.phone || undefined,
         gender: formData.gender || undefined,
         date_of_birth: formData.date_of_birth ? new Date(formData.date_of_birth).toISOString() : undefined,
-        semester: formData.semester !== undefined && formData.semester !== null ? Number(formData.semester) : undefined,
         batch_id: formData.batch_id,
         department_id: formData.department_id,
       });

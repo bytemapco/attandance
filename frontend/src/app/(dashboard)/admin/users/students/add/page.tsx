@@ -39,7 +39,6 @@ export default function AddStudentPage(): React.ReactElement {
       phone: "",
       gender: "",
       date_of_birth: "",
-      semester: undefined,
       batch_id: "",
       department_id: "",
       send_invite: true,

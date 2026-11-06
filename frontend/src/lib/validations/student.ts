@@ -23,11 +23,6 @@ export const studentFormSchema = z.object({
     .max(100, "Last name cannot exceed 100 characters"),
   department_id: z.string().min(1, "Please select a department"),
   batch_id: z.string().min(1, "Please select a batch"),
-  semester: z.coerce
-    .number()
-    .int()
-    .min(1, "Semester must be between 1 and 8")
-    .max(8, "Semester must be between 1 and 8"),
   phone: z
     .string()
     .trim()
@@ -59,7 +54,6 @@ export const studentUpdateSchema = z.object({
   phone: z.string().trim().max(20, "Phone number cannot exceed 20 characters").optional().or(z.literal("")),
   gender: z.string().optional().or(z.literal("")),
   date_of_birth: z.string().optional().or(z.literal("")),
-  semester: z.union([z.number().int().min(1).max(8), z.literal(""), z.undefined()]).optional(),
   batch_id: z.string().min(1, "Please select a batch"),
   department_id: z.string().min(1, "Please select a department"),
 });
