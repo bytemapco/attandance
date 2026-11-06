@@ -133,7 +133,7 @@ jobs:
       - name: Production build
         env:
           NEXT_PUBLIC_API_URL: /api/v1
-          NEXT_PUBLIC_WS_URL: /ws/connect
+          NEXT_PUBLIC_WS_URL: /api/v1/ws/connect
         run: npm run build
 
   mobile:
