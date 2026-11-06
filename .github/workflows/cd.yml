@@ -124,7 +124,7 @@ jobs:
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
       VERCEL_ORG_ID: ${{ vars.VERCEL_ORG_ID }}
       VERCEL_PROJECT_ID: ${{ vars.VERCEL_PROJECT_ID }}
-      WEB_URL: ${{ vars.WEB_URL || 'https://sahaj-web.vercel.app' }}
+      WEB_URL: ${{ vars.WEB_URL || 'https://sahaj-web-ashy.vercel.app' }}
 
     steps:
       - name: Checkout repository
@@ -154,5 +154,5 @@ jobs:
       - name: Deploy to production
         run: vercel deploy --prebuilt --prod --token "$VERCEL_TOKEN"
 
-      - name: Check the site responds
-        run: curl --retry 8 --retry-delay 5 --retry-all-errors -fsS -o /dev/null "$WEB_URL/login"
+      - name: Check the site serves SAHAJ
+        run: curl --retry 8 --retry-delay 5 --retry-all-errors -fsS "$WEB_URL/login" | grep -q "SAHAJ"
