@@ -23,7 +23,7 @@ LOCAL_HOSTS = ("localhost", "127.0.0.1", "0.0.0.0", "testserver")
 LOCAL_ENVIRONMENTS = ("development", "test")
 
 RESERVED_PLATFORM_SUBDOMAINS = (
-    "www", "api", "app", "admin", "backend", "attendance", "attendance-backend", "auth", "cdn", "static", "mail",
+    "www", "api", "app", "admin", "backend", "attendance", "auth", "cdn", "static", "mail",
 )
 
 # Paths that do not require tenant resolution

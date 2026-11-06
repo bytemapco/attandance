@@ -117,7 +117,7 @@ class TestSubdomain:
             ("localhost:3000", None),
             ("example.com", None),
             ("www.example.com", None),
-            ("attendance-backend.bytemap.in", None),
+            ("sahaj-backend.bytemap.in", None),
             ("acme-backend.bytemap.in", None),
             ("www.acme.sahaj.example.com", "acme"),
             ("", None),
