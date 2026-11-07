@@ -9,6 +9,8 @@ import type { TeacherClassItem } from "@/types";
 
 interface DashboardClassCardProps {
   item: TeacherClassItem;
+  /** When the class meets today. Empty when the list is not limited to today. */
+  times?: string;
   starting: boolean;
   onStart: () => void;
   onOpen: (occurrenceId: string) => void;
@@ -18,7 +20,7 @@ function closesAt(iso: string): string {
   return new Intl.DateTimeFormat("en-IN", { hour: "numeric", minute: "2-digit" }).format(new Date(iso));
 }
 
-export default function DashboardClassCard({ item, starting, onStart, onOpen }: DashboardClassCardProps): React.ReactElement {
+export default function DashboardClassCard({ item, times, starting, onStart, onOpen }: DashboardClassCardProps): React.ReactElement {
   const liveId = item.live_occurrence_id;
   const meta = [item.class_code, item.semester ? `Sem ${item.semester}` : null, item.department_name]
     .filter(Boolean)
@@ -36,6 +38,11 @@ export default function DashboardClassCard({ item, starting, onStart, onOpen }: 
         <h3 className="text-base font-semibold tracking-tight text-foreground">{item.subject_name}</h3>
         <p className="mt-0.5 text-xs text-muted-foreground">{meta}</p>
         <dl className="mt-3 space-y-1.5 text-xs text-muted-foreground">
+          {times && (
+            <div className="flex items-center gap-2 font-medium text-foreground">
+              <Clock size={13} /> {times}
+            </div>
+          )}
           <div className="flex items-center gap-2">
             <Users size={13} /> {item.student_count} student{item.student_count === 1 ? "" : "s"}
           </div>
