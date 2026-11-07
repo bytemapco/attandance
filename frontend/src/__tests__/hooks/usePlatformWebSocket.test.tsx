@@ -49,6 +49,11 @@ function connectedHook() {
   return hook;
 }
 
+/** What the server pushes when an announcement or a personal notification is created. */
+function pushed(id: string, overrides: Record<string, unknown> = {}) {
+  return { event: "NOTIFICATION_RECEIVED", data: { id, kind: "announcement", title: "Notice", message: "", type: "info", ...overrides } };
+}
+
 describe("connecting", () => {
   it("does nothing while signed out", () => {
     renderHook(() => usePlatformWebSocket());
@@ -70,6 +75,46 @@ describe("connecting", () => {
     unmount();
 
     expect(socket.closedWith).toEqual({ code: 1000, reason: "component_unmount" });
+  });
+
+  it("keeps one socket when the page re-renders", () => {
+    const { rerender } = connectedHook();
+
+    rerender();
+    rerender();
+
+    expect(FakeSocket.instances).toHaveLength(1);
+  });
+
+  it("does not reconnect after the page closed it itself, when the browser reports the close", () => {
+    const { unmount } = connectedHook();
+    const socket = latest();
+
+    unmount();
+    act(() => socket.drop(1000, "component_unmount")); // a real socket reports its own close afterwards
+    act(() => {
+      vi.advanceTimersByTime(60_000);
+    });
+
+    expect(FakeSocket.instances).toHaveLength(1);
+  });
+
+  it("does not let a socket that was replaced bring one back", () => {
+    connectedHook();
+    const first = latest();
+
+    act(() => first.drop());
+    act(() => {
+      vi.advanceTimersByTime(5000);
+    });
+    expect(FakeSocket.instances).toHaveLength(2);
+
+    act(() => first.drop()); // a late close from the first socket
+    act(() => {
+      vi.advanceTimersByTime(60_000);
+    });
+
+    expect(FakeSocket.instances).toHaveLength(2);
   });
 });
 
@@ -93,16 +138,50 @@ describe("messages from the server", () => {
     expect(replace).toHaveBeenCalledWith("/login");
   });
 
-  it("shows a notification as a toast and tells the rest of the page", () => {
+  it("shows a new notification as a toast and tells the rest of the page", () => {
     connectedHook();
     const heard = vi.fn();
     window.addEventListener("app:notification_received", heard);
 
-    act(() => latest().receive({ type: "notification", title: "Holiday", message: "Closed on Friday" }));
+    act(() => latest().receive(pushed("n-toast-1", { title: "Holiday", message: "Closed on Friday" })));
 
     expect(toast).toHaveBeenCalledWith("Holiday: Closed on Friday", { duration: 6000 });
     expect(heard).toHaveBeenCalledOnce();
     window.removeEventListener("app:notification_received", heard);
+  });
+
+  it("announces the same notification once, however many times it arrives", () => {
+    connectedHook();
+
+    act(() => {
+      latest().receive(pushed("n-twice-1"));
+      latest().receive(pushed("n-twice-1"));
+    });
+
+    expect(toast).toHaveBeenCalledOnce();
+  });
+
+  it("does not toast the person who sent the announcement, but still tells the page", () => {
+    connectedHook();
+    const heard = vi.fn();
+    window.addEventListener("app:notification_received", heard);
+
+    act(() => latest().receive(pushed("n-own-1", { sender_id: useAuthStore.getState().user?.id })));
+
+    expect(toast).not.toHaveBeenCalled();
+    expect(heard).toHaveBeenCalledOnce();
+    window.removeEventListener("app:notification_received", heard);
+  });
+
+  it("ignores a push that has no id, and the old message shapes", () => {
+    connectedHook();
+
+    act(() => {
+      latest().receive({ event: "NOTIFICATION_RECEIVED", data: { title: "No id" } });
+      latest().receive({ type: "notification", title: "Old shape", message: "x" });
+    });
+
+    expect(toast).not.toHaveBeenCalled();
   });
 
   it("ignores messages that are not JSON", () => {

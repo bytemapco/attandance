@@ -4,6 +4,7 @@ import React from "react";
 import { Megaphone, Send, RotateCcw } from "lucide-react";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
+import ScheduleField from "@/components/announcements/ScheduleField";
 import BroadcastTargetSection from "@/components/admin/BroadcastTargetSection";
 import type { NotificationBroadcastCreate } from "@/types/notification";
 
@@ -87,13 +88,17 @@ export default function CampusBroadcastForm({
 
       <BroadcastTargetSection formData={formData} onChange={onChange} />
 
+      <Card className="p-5 bg-card border border-border">
+        <ScheduleField value={formData.publish_at} onChange={(publish_at) => onChange({ ...formData, publish_at })} />
+      </Card>
+
       <div className="flex items-center justify-between gap-3 pt-1">
         <Button type="button" variant="secondary" icon={<RotateCcw size={14} />} onClick={onReset} disabled={submitting}>
           Reset draft
         </Button>
 
         <Button type="submit" icon={<Send size={14} />} loading={submitting}>
-          Send announcement
+          {formData.publish_at ? "Schedule announcement" : "Send announcement"}
         </Button>
       </div>
     </form>

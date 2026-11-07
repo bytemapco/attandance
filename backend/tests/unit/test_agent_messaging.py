@@ -110,7 +110,8 @@ class TestSend:
 
         assert result.data["sent"] == 2 and notify.await_count == 2
         first = notify.call_args_list[0].kwargs
-        assert (first["user_id"], first["tenant_id"], first["role"], first["category"]) == ("u0", "tenant-1", "STUDENT", "message")
+        assert (first["user_id"], first["tenant_id"], first["category"]) == ("u0", "tenant-1", "message")
+        assert "role" not in first
 
     async def test_the_model_cannot_ask_for_an_e_mail(self):
         assert "also_email" not in SendMessageArgs.model_fields

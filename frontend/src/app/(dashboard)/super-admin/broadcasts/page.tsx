@@ -15,6 +15,7 @@ import type { GlobalBroadcastRequest } from "@/types/tenant";
 const INITIAL_FORM: GlobalBroadcastRequest = {
   title: "",
   message: "",
+  target_role: "ALL",
   type: "info",
   category: "system",
 };
@@ -77,15 +78,16 @@ export default function SuperAdminBroadcastsPage(): React.ReactElement {
 
     try {
       setSubmitting(true);
-      await superAdminService.createBroadcast({
+      const result = await superAdminService.createBroadcast({
         title: form.title.trim(),
         message: form.message.trim(),
-        target_role: form.target_role || undefined,
+        target_role: form.target_role,
         type: form.type,
         category: form.category,
+        publish_at: form.publish_at,
       });
 
-      toast.success("Announcement sent");
+      toast.success(result.status === "scheduled" ? "Announcement scheduled" : "Announcement sent");
       setForm(INITIAL_FORM);
       setRefreshTrigger((prev) => prev + 1);
     } catch (err) {

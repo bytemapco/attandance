@@ -1,7 +1,7 @@
 import asyncio
 import json
 import uuid
-from typing import Any, Dict, Optional
+from typing import AbstractSet, Any, Dict, Optional
 from app.core.logging_config import get_logger
 
 logger = get_logger("app.realtime_bus")
@@ -19,7 +19,7 @@ class RealtimeBus:
         event_type: str,
         message: Dict[str, Any],
         target_id: Optional[str] = None,
-        target_role: Optional[str] = None,
+        target_roles: Optional[AbstractSet[str]] = None,
         tenant_id: Optional[str] = None,
     ) -> None:
         """Publish real-time event to distributed Redis PubSub channel."""
@@ -34,7 +34,7 @@ class RealtimeBus:
                     "origin_worker": _WORKER_ID,
                     "event_type": event_type,
                     "target_id": target_id,
-                    "target_role": target_role,
+                    "target_roles": None if target_roles is None else sorted(target_roles),
                     "tenant_id": tenant_id,
                     "message": message,
                 }
@@ -88,13 +88,13 @@ class RealtimeBus:
                     event_type = data.get("event_type")
                     payload = data.get("message", {})
                     target_id = data.get("target_id")
-                    target_role = data.get("target_role")
+                    roles = data.get("target_roles")
                     tenant_id = data.get("tenant_id")
 
                     if event_type == "personal" and target_id:
                         await manager.deliver_personal_message(payload, target_id)
                     elif event_type == "broadcast":
-                        await manager.deliver_broadcast(payload, target_role, tenant_id=tenant_id)
+                        await manager.deliver_broadcast(payload, None if roles is None else frozenset(roles), tenant_id=tenant_id)
 
             except asyncio.CancelledError:
                 break

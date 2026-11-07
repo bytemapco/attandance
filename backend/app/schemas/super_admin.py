@@ -134,21 +134,24 @@ class PlatformHealthResponse(BaseModel):
 class GlobalBroadcastRequest(BaseModel):
     title: str = Field(..., min_length=3, max_length=150)
     message: str = Field(..., min_length=5, max_length=1000)
-    target_role: Optional[str] = Field(None, pattern=r"^(ALL|SUPER_ADMIN|ADMIN|TENANT_ADMIN|TEACHER|STUDENT)$")
-    target_tenant_id: Optional[str] = None
+    target_role: Literal["ALL", "TEACHER", "STUDENT", "ADMIN"] = "ALL"
+    target_tenant_id: Optional[str] = Field(None, description="One institution. Empty means all of them.")
     type: str = Field(default="info", pattern=r"^(info|warning|critical|success)$")
     category: str = Field(default="system", pattern=r"^(system|maintenance|security|update)$")
+    publish_at: Optional[datetime] = Field(None, description="Show it from this time. Empty means now.")
 
 
 class BroadcastHistoryItem(BaseModel):
     id: str
-    timestamp: datetime
+    publish_at: datetime
     title: str
-    description: str
-    severity: str
-    actor: str
-    target: str
-    delivered_count: int = 0
+    message: str
+    type: str
+    audience: str
+    tenant_name: Optional[str] = None
+    sender: Optional[str] = None
+    audience_count: int = 0
+    status: Literal["sent", "scheduled"]
 
 
 class PaginatedBroadcastHistory(BaseModel):

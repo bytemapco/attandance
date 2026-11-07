@@ -4,6 +4,7 @@ import React from "react";
 import { Send, Radio, Info, AlertTriangle, AlertCircle, CheckCircle2 } from "lucide-react";
 import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
+import ScheduleField from "@/components/announcements/ScheduleField";
 import type { GlobalBroadcastRequest } from "@/types/tenant";
 import {
   Select,
@@ -20,10 +21,9 @@ interface BroadcastFormProps {
   submitting: boolean;
 }
 
-const AUDIENCE_OPTIONS = [
+const AUDIENCE_OPTIONS: Array<{ value: GlobalBroadcastRequest["target_role"]; label: string }> = [
   { value: "ALL", label: "All users" },
-  { value: "SUPER_ADMIN", label: "Super admins" },
-  { value: "TENANT_ADMIN", label: "Institution admins" },
+  { value: "ADMIN", label: "Institution admins" },
   { value: "TEACHER", label: "Faculty" },
   { value: "STUDENT", label: "Students" },
 ];
@@ -101,8 +101,8 @@ export default function BroadcastForm({
           <div className="space-y-1.5">
             <label className="text-xs font-semibold text-muted-foreground">Audience</label>
             <Select
-              value={form.target_role || "ALL"}
-              onValueChange={(val) => onChange({ target_role: val === "ALL" ? undefined : val })}
+              value={form.target_role}
+              onValueChange={(val) => onChange({ target_role: val as GlobalBroadcastRequest["target_role"] })}
             >
               <SelectTrigger className="w-full h-9 bg-card border-border text-xs rounded-lg text-foreground">
                 <SelectValue placeholder="Audience" />
@@ -175,6 +175,8 @@ export default function BroadcastForm({
           />
         </div>
 
+        <ScheduleField value={form.publish_at} onChange={(publish_at) => onChange({ publish_at })} />
+
         {/* Submit */}
         <div className="pt-2 flex justify-end">
           <Button
@@ -185,7 +187,7 @@ export default function BroadcastForm({
             className="gap-2 text-xs font-semibold px-4"
           >
             <Send size={13} />
-            <span>Send Announcement</span>
+            <span>{form.publish_at ? "Schedule Announcement" : "Send Announcement"}</span>
           </Button>
         </div>
       </form>

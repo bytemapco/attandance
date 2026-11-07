@@ -66,7 +66,7 @@ async def send_daily_briefings(ctx: dict[str, Any]) -> int:
         admins = await db.user.find_many(where={"tenantId": tenant.id, "role": {"in": ADMIN_ROLES}, "isActive": True})
         for admin in admins:
             await create_in_app_notification(
-                title=briefing["title"], message=message, user_id=admin.id, role=admin.role,
+                title=briefing["title"], message=message, user_id=admin.id,
                 tenant_id=tenant.id, category="briefing",
             )
         sent += 1

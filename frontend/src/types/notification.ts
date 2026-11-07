@@ -11,12 +11,14 @@ export type NotificationCategory =
 
 export interface NotificationItem {
   id: string;
+  /** Written for this person, or shared with a group (an announcement). */
+  kind: "personal" | "announcement";
   user_id?: string | null;
-  role?: string | null;
   title: string;
   message: string;
   type: NotificationType;
-  category: NotificationCategory;
+  /** The assistant and the daily briefing add categories of their own. */
+  category: NotificationCategory | string;
   link?: string | null;
   is_read: boolean;
   created_at: string;
@@ -28,13 +30,27 @@ export interface NotificationListResponse {
   unread_count: number;
 }
 
+export type Audience = "ALL" | "TEACHER" | "STUDENT" | "ADMIN";
+
 export interface NotificationBroadcastCreate {
   title: string;
   message: string;
-  target_role?: "ALL" | "TEACHER" | "STUDENT" | "ADMIN";
+  target_role: Audience;
   type?: NotificationType;
   category?: NotificationCategory;
   link?: string | null;
+  /** Show it from this moment (ISO, UTC). Empty means now. */
+  publish_at?: string;
+}
+
+/** What the server pushes the moment an announcement or a personal notification is created. */
+export interface LiveNotification {
+  id: string;
+  kind: NotificationItem["kind"];
+  sender_id?: string | null;
+  title: string;
+  message: string;
+  type: NotificationType;
 }
 
 export type NotificationFilterTab =

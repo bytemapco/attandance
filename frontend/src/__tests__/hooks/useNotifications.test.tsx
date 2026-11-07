@@ -18,7 +18,7 @@ vi.mock("react-hot-toast", () => ({ default: toast }));
 
 function item(id: string, isRead = false): NotificationItem {
   return {
-    id, user_id: "u1", role: null, title: `Title ${id}`, message: "", type: "info", category: "system",
+    id, kind: "personal", user_id: "u1", title: `Title ${id}`, message: "", type: "info", category: "system",
     link: null, is_read: isRead, created_at: "2026-11-06T10:00:00Z",
   };
 }
@@ -84,16 +84,29 @@ describe("notifications", () => {
     expect(toast.error).toHaveBeenCalledOnce();
   });
 
-  it("shows a notification pushed over the WebSocket without asking the server", async () => {
+  it("reads the list again when a notification is pushed, and shows what the server has", async () => {
     const { result } = await mounted();
-    apiGet.mockClear();
+    apiGet.mockClear().mockResolvedValue(listOf([item("n3"), item("n1"), item("n2")]));
 
     act(() => {
-      window.dispatchEvent(new CustomEvent("app:notification_received", { detail: { id: "rt-1", title: "Live", type: "success" } }));
+      window.dispatchEvent(new CustomEvent("app:notification_received", { detail: { id: "n3", title: "Live", type: "success" } }));
     });
 
-    await waitFor(() => expect(result.current.notifications[0].id).toBe("rt-1"));
+    await waitFor(() => expect(result.current.notifications.map((n) => n.id)).toEqual(["n3", "n1", "n2"]));
     expect(result.current.unreadCount).toBe(3);
-    expect(apiGet).not.toHaveBeenCalled();
+    expect(apiGet).toHaveBeenCalledTimes(1);
+  });
+
+  it("never shows the same notification twice when the push and the next read both bring it", async () => {
+    const { result } = await mounted();
+    apiGet.mockClear().mockResolvedValue(listOf([item("n1"), item("n2")]));
+
+    act(() => {
+      window.dispatchEvent(new CustomEvent("app:notification_received", { detail: { id: "n1", title: "Live", type: "info" } }));
+    });
+
+    await waitFor(() => expect(apiGet).toHaveBeenCalled());
+    expect(result.current.notifications.map((n) => n.id)).toEqual(["n1", "n2"]);
+    expect(result.current.unreadCount).toBe(2);
   });
 });

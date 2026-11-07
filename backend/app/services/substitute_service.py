@@ -85,7 +85,7 @@ async def assign_substitute(tenant_id: str, occurrence_id: str, teacher_id: str,
     )
     await create_in_app_notification(
         title="You are covering a class", message=f"{label} on {occurrence.date.date().isoformat()}.",
-        user_id=teacher.userId, role="TEACHER", tenant_id=tenant_id, category="schedule", link="/teacher/today",
+        user_id=teacher.userId, tenant_id=tenant_id, category="schedule", link="/teacher/today",
     )
     return occurrence, teacher
 
