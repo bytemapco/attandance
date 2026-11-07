@@ -31,6 +31,7 @@ cryptography>=44.0.0
 # --- AI / Machine Learning ---
 tensorflow>=2.16.1
 tf_keras>=2.16.0
+keras>=3.13.2
 deepface>=0.0.93
 werkzeug>=3.1.0
 huggingface-hub>=0.28.0

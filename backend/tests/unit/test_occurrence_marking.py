@@ -17,7 +17,7 @@ STUDENT = SimpleNamespace(id="stu-1", tenantId="tenant-1", userId="user-1")
 OCCURRENCE = SimpleNamespace(id="occ-1", tenantId="tenant-1", courseSectionId="sec-1")
 
 
-def scores(face=0.9, liveness=0.9, background=0.9, background_counted=True):
+def scores(face=0.9, liveness=0.95, background=0.9, background_counted=True):
     return {"face": face, "liveness": liveness, "background": background, "background_counted": background_counted}
 
 
@@ -48,6 +48,12 @@ class TestScoreProblems:
 
     def test_low_liveness_is_flagged(self):
         assert _score_problems(scores(liveness=0.49)) == ["Liveness below threshold."]
+
+    def test_liveness_just_under_the_threshold_is_flagged(self):
+        assert _score_problems(scores(liveness=0.92)) == ["Liveness below threshold."]
+
+    def test_the_liveness_threshold_itself_passes(self):
+        assert _score_problems(scores(liveness=0.93)) == []
 
     def test_a_background_check_that_is_switched_off_is_ignored(self):
         assert _score_problems(scores(background=None, background_counted=False)) == []
@@ -117,7 +123,7 @@ class TestEvaluateFace:
         data, _ = await self.evaluate()
 
         assert data["status"] == "PRESENT" and data["method"] == "AI_BIOMETRIC"
-        assert data["faceScore"] == 0.9 and data["livenessScore"] == 0.9
+        assert data["faceScore"] == 0.9 and data["livenessScore"] == 0.95
         assert data["evidencePhotoUrl"] is None and data["remarks"] is None
 
     async def test_any_problem_flags_the_mark_and_keeps_the_evidence(self, pipeline):

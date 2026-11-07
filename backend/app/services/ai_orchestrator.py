@@ -78,7 +78,7 @@ class AIOrchestrator:
         if model is None:
             return None
         with _liveness_lock:
-            processed = self._preprocess_liveness(cv2.cvtColor(face_crop, cv2.COLOR_RGB2BGR))
+            processed = self._preprocess_liveness(face_crop)
             return float(model.predict(processed, verbose=0)[0][0])
 
     def _run_background_inference(self, img: np.ndarray) -> Optional[float]:

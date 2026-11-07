@@ -1,0 +1,18 @@
+{
+  "model_path": "weights/liveness_mobilenetv2_final.keras",
+  "threshold": 0.9297026991844177,
+  "img_size": [
+    224,
+    224
+  ],
+  "class_names": [
+    "Spoof",
+    "Real"
+  ],
+  "preprocessing": "tf.keras.applications.mobilenet_v2.preprocess_input",
+  "test_metrics": {
+    "accuracy": 0.969735182849937,
+    "roc_auc": 0.9933916891111966,
+    "pr_auc": 0.9662066646597219
+  }
+}

@@ -9,11 +9,10 @@ logger = get_logger("app.ai.models")
 BASE_MODELS_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../models"))
 LIVENESS_REPO = "prathamrajbhar/smart-attendance-liveness-detection"
 BACKGROUND_REPO = "prathamrajbhar/smart-attendance-background-validation"
-LIVENESS_FILENAME = "liveness_mobilenet_v2.h5"
+LIVENESS_FILENAME = "liveness_mobilenetv2_final.keras"
 BACKGROUND_FILENAME = "background_mobilenet_v1.h5"
 
-LIVENESS_MODEL_PATH_V2 = os.path.join(BASE_MODELS_DIR, "liveness_detection", "liveness_mobilenet_v2.h5")
-LIVENESS_MODEL_PATH_V1 = os.path.join(BASE_MODELS_DIR, "liveness_detection", "liveness_mobilenet_v1.h5")
+LIVENESS_MODEL_PATH = os.path.join(BASE_MODELS_DIR, "liveness_detection", LIVENESS_FILENAME)
 BACKGROUND_MODEL_PATH = os.path.join(BASE_MODELS_DIR, "background_validation", "background_mobilenet_v1.h5")
 
 _liveness_lock = threading.Lock()
@@ -41,17 +40,11 @@ def ensure_model_downloaded(repo_id: str, filename: str, local_path: str) -> str
 
 
 def load_liveness_model(model_path: str) -> Optional[object]:
+    # The .keras file is saved by Keras 3. tf.keras is Keras 2 here (TF_USE_LEGACY_KERAS is set for DeepFace), so use keras directly.
     try:
-        import tensorflow as tf
+        import keras
 
-        base = tf.keras.applications.MobileNetV2(input_shape=(224, 224, 3), include_top=False, weights=None)
-        output = base.output
-        output = tf.keras.layers.GlobalAveragePooling2D(name="global_average_pooling2d_3")(output)
-        output = tf.keras.layers.Dropout(0.001, name="dropout_3")(output)
-        predictions = tf.keras.layers.Dense(1, activation="sigmoid", name="dense_3")(output)
-        model = tf.keras.models.Model(inputs=base.input, outputs=predictions)
-        model.load_weights(model_path, by_name=True)
-        return model
+        return keras.models.load_model(model_path, compile=False)
     except Exception as exc:
         logger.warning("Could not load liveness model: %s", exc)
         return None
@@ -62,12 +55,7 @@ def get_liveness_model() -> Optional[object]:
     if _liveness_model is not None:
         return _liveness_model
     try:
-        path = (
-            LIVENESS_MODEL_PATH_V2
-            if os.path.exists(LIVENESS_MODEL_PATH_V2)
-            else (LIVENESS_MODEL_PATH_V1 if os.path.exists(LIVENESS_MODEL_PATH_V1) else LIVENESS_MODEL_PATH_V2)
-        )
-        final_path = ensure_model_downloaded(LIVENESS_REPO, LIVENESS_FILENAME, path)
+        final_path = ensure_model_downloaded(LIVENESS_REPO, LIVENESS_FILENAME, LIVENESS_MODEL_PATH)
         _liveness_model = load_liveness_model(final_path)
     except Exception as exc:
         logger.warning("Liveness model initialization failed: %s", exc)

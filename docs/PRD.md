@@ -135,7 +135,7 @@ Counting formula (documented and tested): `percentage = (PRESENT + LATE_counted 
 ## 6. Attendance capture reliability (primary focus)
 
 ### 6.1 How capture works today (from code)
-The student submits a selfie plus GPS. The server checks, in order: active session, geofence, registered face embedding, duplicate, then AI scores (face ≥ 0.60 and liveness ≥ 0.50, background ≥ 0.50) → `Present` or `Flagged`. Flagged items go to teacher review. Device binding is by `device_uuid`. An offline Smart Pass QR exists as a fallback.
+The student submits a selfie plus GPS. The server checks, in order: active session, geofence, registered face embedding, duplicate, then AI scores (face ≥ 0.60 and liveness ≥ 0.93, background ≥ 0.50) → `Present` or `Flagged`. Flagged items go to teacher review. Device binding is by `device_uuid`. An offline Smart Pass QR exists as a fallback.
 
 ### 6.2 Weaknesses found and recommended fixes
 
