@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from prisma.models import User
@@ -9,18 +10,11 @@ from app.schemas.notification import (
     NotificationBulkDeleteRequest,
     NotificationListResponse,
 )
-from app.services.notification_service import (
-    broadcast_announcement,
-    delete_all_user_notifications,
-    delete_multiple_notifications,
-    delete_notification,
-    get_user_notifications,
-    mark_all_notifications_read,
-    mark_notification_read,
-)
+from app.services.announcements import inbox
+from app.services.announcements.publisher import publish
 
 router = APIRouter(prefix="/notifications", tags=["notifications"])
-require_admin = RoleChecker(["ADMIN"])
+require_broadcast_sender = RoleChecker(["ADMIN", "TEACHER"])
 
 
 @router.get("", response_model=NotificationListResponse)
@@ -31,17 +25,8 @@ async def list_notifications(
     page_size: int = Query(10, ge=1, le=100),
     current_user: User = Depends(get_current_user),
 ):
-    """Retrieve notifications for the current authenticated user + active role broadcasts."""
-    tenant_id = getattr(current_user, "tenantId", None)
-    return await get_user_notifications(
-        user_id=current_user.id,
-        user_role=current_user.role,
-        tenant_id=tenant_id,
-        unread_only=unread_only,
-        category=category,
-        page=page,
-        page_size=page_size,
-    )
+    """The person's own notifications and the announcements they may see, newest first."""
+    return await inbox.list_inbox(current_user, unread_only, category, page, page_size)
 
 
 @router.patch("/{notification_id}/read", response_model=ActionSuccessResponse)
@@ -49,10 +34,9 @@ async def mark_read(
     notification_id: str,
     current_user: User = Depends(get_current_user),
 ):
-    """Mark a specific notification as read."""
-    success = await mark_notification_read(notification_id, current_user.id)
-    if not success:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Notification not found or update failed")
+    """Mark one notification or announcement as read, for the current person only."""
+    if not await inbox.mark_read(current_user, notification_id):
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Notification not found")
     return ActionSuccessResponse(success=True, message="Notification marked as read")
 
 
@@ -60,8 +44,7 @@ async def mark_read(
 async def mark_all_read(
     current_user: User = Depends(get_current_user),
 ):
-    """Mark all notifications for the current authenticated user as read."""
-    count = await mark_all_notifications_read(current_user.id, current_user.role)
+    count = await inbox.mark_all_read(current_user)
     return ActionSuccessResponse(success=True, message=f"{count} notifications marked as read")
 
 
@@ -70,8 +53,8 @@ async def bulk_delete_notifications(
     payload: NotificationBulkDeleteRequest,
     current_user: User = Depends(get_current_user),
 ):
-    """Delete multiple notifications by ID."""
-    count = await delete_multiple_notifications(payload.ids, current_user.id)
+    """Remove several notifications or announcements from the current person's list."""
+    count = await inbox.remove(current_user, payload.ids)
     return ActionSuccessResponse(success=True, message=f"{count} notifications deleted")
 
 
@@ -79,8 +62,7 @@ async def bulk_delete_notifications(
 async def clear_all_notifications(
     current_user: User = Depends(get_current_user),
 ):
-    """Delete all notifications for the current user."""
-    count = await delete_all_user_notifications(current_user.id, current_user.role)
+    count = await inbox.remove_all(current_user)
     return ActionSuccessResponse(success=True, message=f"{count} notifications cleared")
 
 
@@ -89,14 +71,9 @@ async def remove_notification(
     notification_id: str,
     current_user: User = Depends(get_current_user),
 ):
-    """Delete a notification."""
-    success = await delete_notification(notification_id, current_user.id)
-    if not success:
+    if not await inbox.remove(current_user, [notification_id]):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Notification not found")
     return ActionSuccessResponse(success=True, message="Notification deleted")
-
-
-require_broadcast_sender = RoleChecker(["ADMIN", "TEACHER"])
 
 
 @router.post("/broadcast", response_model=ActionSuccessResponse, dependencies=[Depends(require_broadcast_sender)])
@@ -104,27 +81,22 @@ async def broadcast_notification(
     payload: NotificationBroadcastCreate,
     current_user: User = Depends(get_current_user),
 ):
-    """Endpoint for Admins and Faculty Teachers to broadcast announcements to students or campus-wide."""
-    tenant_id = getattr(current_user, "tenantId", None)
-    if current_user.role == "TEACHER":
-        if not tenant_id:
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="Teachers must be assigned to an institution to broadcast announcements.",
-            )
-        if payload.target_role and payload.target_role not in ("STUDENT", "ALL"):
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="Teachers may only broadcast announcements to students within their institution.",
-            )
+    """An admin announces to their institution; a teacher announces to the institution's students."""
+    if not current_user.tenantId:
+        raise HTTPException(status.HTTP_403_FORBIDDEN, "You must belong to an institution to make an announcement.")
+    if current_user.role == "TEACHER" and payload.target_role != "STUDENT":
+        raise HTTPException(status.HTTP_403_FORBIDDEN, "Teachers may only announce to students within their institution.")
 
-    await broadcast_announcement(
+    announcement = await publish(
+        current_user,
         title=payload.title,
         message=payload.message,
-        target_role=payload.target_role,
-        tenant_id=tenant_id,
+        audience=payload.target_role,
+        tenant_id=current_user.tenantId,
         type=payload.type,
         category=payload.category,
         link=payload.link,
+        publish_at=payload.publish_at,
     )
-    return ActionSuccessResponse(success=True, message="Broadcast announcement dispatched successfully")
+    scheduled = announcement.publishAt > datetime.now(timezone.utc)
+    return ActionSuccessResponse(success=True, message="Announcement scheduled" if scheduled else "Announcement sent")

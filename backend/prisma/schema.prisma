@@ -123,6 +123,7 @@ model Tenant {
   auditLogs       AuditLog[]
   licenseRequests LicenseRequest[]
   notifications   Notification[]
+  announcements   Announcement[]
   systemConfig    SystemConfiguration?
 
   courseSections    CourseSection[]
@@ -161,6 +162,8 @@ model User {
   student                    Student?
   teacher                    Teacher?
   notifications              Notification[]
+  announcementsSent          Announcement[]   @relation("AnnouncementSender")
+  announcementReads          AnnouncementRead[]
   licenseRequestsAsRequester LicenseRequest[] @relation("LicenseRequester")
   licenseRequestsAsProcessor LicenseRequest[] @relation("LicenseProcessor")
   attendanceAudits           AttendanceAuditLog[]
@@ -447,6 +450,58 @@ model Notification {
   @@index([tenantId, createdAt])
   @@index([userId, isRead])
   @@map("notifications")
+}
+
+enum AnnouncementAudience {
+  ALL
+  STUDENT
+  TEACHER
+  ADMIN
+}
+
+/// A message to a group of people, from the platform owner or from an institution. It is stored once; who has
+/// read or removed it is in announcement_reads. A null tenantId means every institution.
+model Announcement {
+  id            String               @id @default(uuid())
+  tenantId      String?              @map("tenant_id")
+  senderId      String?              @map("sender_id")
+  audience      AnnouncementAudience @default(ALL)
+  title         String
+  message       String
+  type          String               @default("info")
+  category      String               @default("system")
+  link          String?
+  /// People can see it from this moment. In the future for a scheduled announcement.
+  publishAt     DateTime             @default(now()) @map("publish_at")
+  /// Set when connected people were told it exists. The worker finds announcements that are due but not pushed.
+  pushedAt      DateTime?            @map("pushed_at")
+  /// How many people it was meant for when it was sent.
+  audienceCount Int                  @default(0) @map("audience_count")
+  createdAt     DateTime             @default(now()) @map("created_at")
+
+  tenant Tenant?              @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  sender User?                @relation("AnnouncementSender", fields: [senderId], references: [id], onDelete: SetNull)
+  reads  AnnouncementRead[]
+
+  @@index([tenantId, publishAt])
+  @@index([pushedAt, publishAt])
+  @@map("announcements")
+}
+
+/// One row per person who has read or removed an announcement. No row means unread.
+model AnnouncementRead {
+  announcementId String    @map("announcement_id")
+  userId         String    @map("user_id")
+  readAt         DateTime  @default(now()) @map("read_at")
+  /// The person removed it from their list.
+  dismissedAt    DateTime? @map("dismissed_at")
+
+  announcement Announcement @relation(fields: [announcementId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([announcementId, userId])
+  @@index([userId])
+  @@map("announcement_reads")
 }
 
 // ==============================================================================

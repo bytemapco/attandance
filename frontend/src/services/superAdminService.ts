@@ -8,6 +8,7 @@ import type {
   GlobalUser,
   SuperAdminAuditLog,
   PlatformHealth,
+  BroadcastResult,
   GlobalBroadcastRequest,
   PaginatedBroadcasts,
   LicenseRequestItem,
@@ -150,8 +151,8 @@ export const superAdminService = {
     return data;
   },
 
-  async createBroadcast(payload: GlobalBroadcastRequest): Promise<{ status: string; delivered_count: number; title: string }> {
-    const { data } = await api.post<{ status: string; delivered_count: number; title: string }>("/super-admin/broadcast", payload);
+  async createBroadcast(payload: GlobalBroadcastRequest): Promise<BroadcastResult> {
+    const { data } = await api.post<BroadcastResult>("/super-admin/broadcast", payload);
     return data;
   },
 

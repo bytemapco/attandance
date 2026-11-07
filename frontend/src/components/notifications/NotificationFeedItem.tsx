@@ -62,8 +62,10 @@ const CATEGORY_MAP: Record<NotificationCategory, { icon: React.ReactNode; badgeC
   },
 };
 
-function getCategoryConfig(category: NotificationCategory) {
-  return CATEGORY_MAP[category] || CATEGORY_MAP.system;
+/** The assistant and the daily briefing add categories of their own; those look like a system notice. */
+function getCategoryConfig(category: string) {
+  const known: Partial<Record<string, (typeof CATEGORY_MAP)[NotificationCategory]>> = CATEGORY_MAP;
+  return known[category] ?? CATEGORY_MAP.system;
 }
 
 function formatRelativeTime(dateStr: string): string {

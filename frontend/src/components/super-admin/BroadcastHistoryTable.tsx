@@ -7,6 +7,13 @@ import Card from "@/components/ui/Card";
 import Badge, { type BadgeVariant } from "@/components/ui/Badge";
 import type { BroadcastHistoryItem } from "@/types/tenant";
 
+const AUDIENCE_LABELS: Record<BroadcastHistoryItem["audience"], string> = {
+  ALL: "Everyone",
+  ADMIN: "Institution admins",
+  TEACHER: "Faculty",
+  STUDENT: "Students",
+};
+
 interface BroadcastHistoryTableProps {
   refreshTrigger?: number;
   onCountChange?: (count: number) => void;
@@ -41,28 +48,23 @@ export default function BroadcastHistoryTable({
     void fetchHistory();
   }, [fetchHistory, refreshTrigger]);
 
-  const getSeverityBadge = (severity: string): { variant: BadgeVariant; icon: React.ReactElement } => {
-    switch (severity.toUpperCase()) {
-      case "CRITICAL":
-      case "ERROR":
+  const getSeverityBadge = (type: BroadcastHistoryItem["type"]): { variant: BadgeVariant; icon: React.ReactElement } => {
+    switch (type) {
+      case "critical":
         return { variant: "danger", icon: <AlertCircle size={11} className="text-destructive" /> };
-      case "WARNING":
+      case "warning":
         return { variant: "warning", icon: <AlertTriangle size={11} className="text-warning" /> };
-      case "SUCCESS":
+      case "success":
         return { variant: "success", icon: <CheckCircle2 size={11} className="text-success" /> };
-      case "INFO":
       default:
         return { variant: "info", icon: <Info size={11} className="text-info" /> };
     }
   };
 
-  const formatActor = (actor: string): string => {
-    if (!actor) return "System";
-    if (actor.includes("@")) {
-      const namePart = actor.split("@")[0].split(".")[0];
-      return namePart.charAt(0).toUpperCase() + namePart.slice(1);
-    }
-    return actor;
+  const formatSender = (sender: string | null): string => {
+    if (!sender) return "Platform";
+    const namePart = sender.split("@")[0].split(".")[0];
+    return namePart.charAt(0).toUpperCase() + namePart.slice(1);
   };
 
   return (
@@ -118,47 +120,54 @@ export default function BroadcastHistoryTable({
                 <th className="py-2.5 px-3">Title</th>
                 <th className="py-2.5 px-3">Audience</th>
                 <th className="py-2.5 px-3">Severity</th>
-                <th className="py-2.5 px-3">Delivered</th>
+                <th className="py-2.5 px-3">Recipients</th>
                 <th className="py-2.5 px-3">Sender</th>
-                <th className="py-2.5 px-3 text-right">Date</th>
+                <th className="py-2.5 px-3 text-right">Shown from</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border/60 text-xs">
               {items.map((item) => {
-                const badge = getSeverityBadge(item.severity);
+                const badge = getSeverityBadge(item.type);
                 return (
                   <tr key={item.id} className="hover:bg-secondary/30 transition-colors">
                     <td className="py-3 px-3 max-w-[280px]">
                       <div className="font-semibold text-foreground truncate">{item.title}</div>
                       <div className="text-xs text-muted-foreground truncate mt-0.5">
-                        {item.description}
+                        {item.message}
                       </div>
                     </td>
                     <td className="py-3 px-3 whitespace-nowrap">
                       <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
                         <Users size={11} className="text-muted-foreground" />
-                        <span>{item.target ? item.target.replace(/_/g, " ") : "All users"}</span>
+                        <span>
+                          {AUDIENCE_LABELS[item.audience]} · {item.tenant_name ?? "All institutions"}
+                        </span>
                       </span>
                     </td>
                     <td className="py-3 px-3 whitespace-nowrap">
                       <Badge variant={badge.variant} className="gap-1 text-xs">
                         {badge.icon}
-                        <span>{item.severity}</span>
+                        <span className="capitalize">{item.type}</span>
                       </Badge>
                     </td>
                     <td className="py-3 px-3 whitespace-nowrap text-foreground text-xs">
-                      {item.delivered_count > 0 ? `${item.delivered_count} users` : "—"}
+                      {item.audience_count > 0 ? `${item.audience_count} people` : "—"}
                     </td>
                     <td className="py-3 px-3 whitespace-nowrap text-muted-foreground text-xs truncate max-w-[140px]">
-                      {formatActor(item.actor)}
+                      {formatSender(item.sender)}
                     </td>
                     <td className="py-3 px-3 whitespace-nowrap text-right text-muted-foreground text-xs font-mono">
-                      {new Date(item.timestamp).toLocaleString(undefined, {
+                      {new Date(item.publish_at).toLocaleString(undefined, {
                         month: "short",
                         day: "numeric",
                         hour: "2-digit",
                         minute: "2-digit",
                       })}
+                      {item.status === "scheduled" && (
+                        <Badge variant="neutral" className="ml-2 text-xs">
+                          Scheduled
+                        </Badge>
+                      )}
                     </td>
                   </tr>
                 );

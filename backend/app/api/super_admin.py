@@ -203,4 +203,4 @@ async def create_global_broadcast(
     data: GlobalBroadcastRequest,
     current_user: User = Depends(get_current_user),
 ):
-    return await SuperAdminService.create_global_broadcast(data.model_dump(), actor=current_user.email)
+    return await SuperAdminService.create_global_broadcast(data.model_dump(), current_user)

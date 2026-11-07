@@ -156,21 +156,31 @@ export interface PlatformHealth {
 export interface GlobalBroadcastRequest {
   title: string;
   message: string;
-  target_role?: string;
+  target_role: "ALL" | "ADMIN" | "TEACHER" | "STUDENT";
   target_tenant_id?: string;
   type: "info" | "warning" | "critical" | "success";
   category: "system" | "maintenance" | "security" | "update";
+  /** Show it from this moment (ISO, UTC). Empty means now. */
+  publish_at?: string;
+}
+
+export interface BroadcastResult {
+  status: "sent" | "scheduled";
+  audience_count: number;
+  title: string;
 }
 
 export interface BroadcastHistoryItem {
   id: string;
-  timestamp: string;
+  publish_at: string;
   title: string;
-  description: string;
-  severity: "INFO" | "WARNING" | "CRITICAL" | "ERROR";
-  actor: string;
-  target: string;
-  delivered_count: number;
+  message: string;
+  type: GlobalBroadcastRequest["type"];
+  audience: GlobalBroadcastRequest["target_role"];
+  tenant_name: string | null;
+  sender: string | null;
+  audience_count: number;
+  status: BroadcastResult["status"];
 }
 
 export interface PaginatedBroadcasts {
