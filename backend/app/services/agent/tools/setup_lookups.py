@@ -69,8 +69,9 @@ class OverviewArgs(BaseModel):
 async def class_overview(principal: Principal, args: OverviewArgs) -> ToolResult:
     detail = await class_service.get_class(principal.tenant_id, args.class_id)
     sections = [{"section_id": s.id, "subject": s.subject_name, "teacher": s.teacher_name, "students": s.enrolled_count,
-                 "slots": [f"{DAYS[x.day_of_week]} {x.start_time}-{x.end_time}" for x in s.schedule]} for s in detail.sections]
-    rows = [[s["subject"], s["teacher"] or "-", ", ".join(s["slots"]) or "-"] for s in sections]
+                 "slots": [{"rule_id": x.id, "when": f"{DAYS[x.day_of_week]} {x.start_time}-{x.end_time}"} for x in s.schedule]}
+                for s in detail.sections]
+    rows = [[s["subject"], s["teacher"] or "-", ", ".join(x["when"] for x in s["slots"]) or "-"] for s in sections]
     ui = [table(f"{detail.code}, semester {detail.semester_number}", ["Subject", "Teacher", "Timetable"], rows)] if rows else []
     return ToolResult({"class": detail.code, "semester": detail.semester_number, "students": detail.member_count,
                        "subjects": capped(sections)}, ui)

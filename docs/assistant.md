@@ -23,7 +23,7 @@ The model never supplies the institution, user or role. They come from the signe
 | Writes need a Confirm; one confirmation wins; proposals expire in 30 minutes; the person may edit only the fields a tool lists | `proposals.py` |
 | A proposal is re-checked at confirm time, in case the data changed | `proposals.confirm` |
 | Face data, photos, passwords and tokens are not available to any tool | tool list in `registry.py` |
-| Attendance rules (minimum percentage, window, location) cannot be changed by the assistant | no such tool |
+| Attendance rules (minimum percentage, window, Saturday, location) change only on a Confirm card, and each change is audited; face and AI check settings are never exposed | `settings_actions.py` |
 | Per-user rate limit and per-institution daily token budget | `budget.py`, Redis |
 | Tool results are data, not instructions (prompt-injection note) | `prompts.py` |
 
@@ -88,3 +88,12 @@ These call the same services as the web screens, so audit rows, notifications an
 | `find_setup_items`, `list_all_classes`, `class_overview` | Lookups that give the ids setup tools need | Own institution only |
 
 Invitation e-mails from an import are the product's normal ones. The assistant sends no e-mail of its own.
+
+## Stage 4 tools (admin, every write waits for Confirm)
+
+| Tool | What it does | Rules kept |
+|---|---|---|
+| `update_institution_settings` | Changes minimum %, attendance window, Saturday, location check, location radius or campus coordinates | Only these fields; face and AI check settings are not reachable; the card shows now and becomes; one audit row (`UPDATE_SYSTEM_CONFIG`) per change |
+| `update_master_item`, `delete_master_item`, `change_batch`, `create_designations` | Edit, remove or archive departments, subjects, classrooms, designations, batches | Existing codes and names refused; a record in use cannot be deleted |
+| `update_student`, `update_teacher` | Corrects a person's details; a batch change moves the student's class | Roll and employee ids stay unique; another institution's records are not found |
+| `change_class_students`, `change_subject_teacher`, `remove_subject_from_class`, `remove_schedule_slots` | Class members, a subject's teacher, a subject removed, timetable slots removed | A clash, a student in another class or attendance already taken is refused before the card |

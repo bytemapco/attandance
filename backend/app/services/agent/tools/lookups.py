@@ -5,7 +5,7 @@ from pydantic import BaseModel, Field
 
 from app.db.client import db
 from app.repositories.student_repository import taught_by
-from app.services.agent.tools.common import ADMIN_ONLY, BOTH, capped, table, teacher_id_of
+from app.services.agent.tools.common import ADMIN_ONLY, BOTH, capped, teacher_id_of
 from app.services.agent.types import Principal, Tool, ToolResult
 from app.services.reports.loader import load_filters
 
@@ -23,8 +23,7 @@ async def find_classes(principal: Principal, args: FindClassesArgs) -> ToolResul
     subjects = [s for s in filters.subjects if needle in f"{s.class_code} {s.subject_name} {s.subject_code}".lower()]
     classes_out = [{"class_id": c.id, "class": c.code, "department": c.department_name, "semester": c.semester} for c in classes]
     subjects_out = [{"section_id": s.section_id, "class_id": s.class_id, "class": s.class_code, "subject": s.subject_name} for s in subjects]
-    ui = [table("Classes", ["Class", "Department", "Semester"], [[c["class"], c["department"], c["semester"]] for c in classes_out])] if classes_out else []
-    return ToolResult({"classes": capped(classes_out), "subjects": capped(subjects_out), "minimum_percent": filters.threshold}, ui)
+    return ToolResult({"classes": capped(classes_out), "subjects": capped(subjects_out), "minimum_percent": filters.threshold})
 
 
 class FindPeopleArgs(BaseModel):
@@ -46,8 +45,7 @@ async def find_students(principal: Principal, args: FindPeopleArgs) -> ToolResul
         where.update(taught_by(principal.teacher.id))
     students = await db.student.find_many(where=where, take=FOUND_LIMIT, order={"enrollmentNumber": "asc"})
     rows = [{"student_id": s.id, "name": _name(s), "roll": s.enrollmentNumber} for s in students]
-    ui = [table("Students found", ["Name", "Roll"], [[r["name"], r["roll"]] for r in rows])] if rows else []
-    return ToolResult({"students": rows}, ui)
+    return ToolResult({"students": rows})
 
 
 async def find_teachers(principal: Principal, args: FindPeopleArgs) -> ToolResult:
@@ -59,8 +57,7 @@ async def find_teachers(principal: Principal, args: FindPeopleArgs) -> ToolResul
         take=FOUND_LIMIT, order={"employeeId": "asc"},
     )
     rows = [{"teacher_id": t.id, "name": _name(t), "employee_id": t.employeeId} for t in teachers]
-    ui = [table("Teachers found", ["Name", "Employee id"], [[r["name"], r["employee_id"]] for r in rows])] if rows else []
-    return ToolResult({"teachers": rows}, ui)
+    return ToolResult({"teachers": rows})
 
 
 TOOLS = [

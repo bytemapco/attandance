@@ -6,7 +6,7 @@ from urllib.parse import urlencode
 from fastapi import HTTPException
 from pydantic import BaseModel, Field
 
-from app.services.agent.tools.common import BOTH, ADMIN_ONLY, capped, link, pct, recent_window, report_query, table, teacher_id_of
+from app.services.agent.tools.common import BOTH, capped, link, pct, recent_window, report_query, table, teacher_id_of
 from app.services.agent.types import Principal, Tool, ToolResult
 from app.services.reports import service
 from app.services.reports.loader import load_filters
@@ -128,6 +128,7 @@ TOOLS = [
          ScopeArgs, BOTH, at_risk_students),
     Tool("exam_eligibility", "The list of students under the minimum for a class, with an Excel download. Does not decide condonation.",
          ScopeArgs, BOTH, exam_eligibility),
-    Tool("attendance_trend", "How each class's attendance changed over the last N days versus the N days before, worst drop first.",
-         TrendArgs, ADMIN_ONLY, attendance_trend),
+    Tool("attendance_trend", "How each class's attendance changed over the last N days versus the N days before, worst drop first. "
+         "Teachers: own classes.",
+         TrendArgs, BOTH, attendance_trend),
 ]

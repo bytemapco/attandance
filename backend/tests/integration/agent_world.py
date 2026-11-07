@@ -14,18 +14,18 @@ class ScriptedModel:
         self.tools_offered: list[list[str]] = []
         self.tool_results: list[dict] = []
 
-    async def generate(self, system, history, tools):
+    async def stream(self, system, history, tools):
         self.tools_offered.append([t.name for t in tools])
         if history and history[-1]["role"] == "tool":
             self.tool_results.extend(r["response"] for r in history[-1]["results"])
-        return self.turns.pop(0)
+        yield self.turns.pop(0)
 
 
 def says(text: str) -> LlmTurn:
     return LlmTurn(text=text, tokens=10)
 
 
-def calls(name: str, **args) -> LlmTurn:
+def calls(name: str, /, **args) -> LlmTurn:
     return LlmTurn(calls=[ToolCall(name, args)], tokens=10)
 
 
@@ -98,6 +98,31 @@ def propose(client, world, headers, tool: str, **args):
     set_llm(model)
     reply = events(client.post(CHAT, json={"message": "do it"}, headers=headers))
     return next((e for e in reply if e["type"] == "proposal"), None), model.tool_results[0]
+
+
+def ask(client, world, headers, tool, **args):
+    """The model calls one read tool; returns what the model was told."""
+    client.post(ACCEPT, headers=world.admin)
+    model = ScriptedModel(calls(tool, **args), says("done"))
+    set_llm(model)
+    events(client.post(CHAT, json={"message": "go"}, headers=headers))
+    return model.tool_results[0]
+
+
+def count(world, table, where="tenant_id = %s", *params):
+    return world.scalar(f"SELECT count(*) FROM {table} WHERE {where}", *(params or (world.tenant_id,)))
+
+
+def batch(seed, world, code="A-1"):
+    """Batch codes carry the department code, like CE-A-1."""
+    prefix = world.scalar("SELECT code FROM departments WHERE id = %s", world.department_id)
+    return seed.insert("batches", tenant_id=world.tenant_id, department_id=world.department_id, section=code[0],
+                       number=int(code[-1]), code=f"{prefix}-{code}", status="ACTIVE")
+
+
+def make_primary(conn, world):
+    with conn.cursor() as cursor:
+        cursor.execute("UPDATE course_faculties SET is_primary = true WHERE course_section_id = %s", (world.section_id,))
 
 
 def confirm(client, headers, card, edits=None):

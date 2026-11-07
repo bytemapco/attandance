@@ -17,9 +17,10 @@ class ScheduleArgs(BaseModel):
     date_to: Optional[date] = Field(None, description="Last day, YYYY-MM-DD. Defaults to date_from.")
 
 
-async def my_schedule(principal: Principal, args: ScheduleArgs) -> ToolResult:
+async def schedule_of(principal: Principal, teacher_id: str, args: ScheduleArgs) -> ToolResult:
+    """A teacher's classes for a day or range. An admin reads any teacher's the same way."""
     first = args.date_from or get_ist_today()
-    schedule = await OccurrenceRegisterService.get_daily_schedule(principal.tenant_id, principal.teacher.id, first, args.date_to)
+    schedule = await OccurrenceRegisterService.get_daily_schedule(principal.tenant_id, teacher_id, first, args.date_to)
     rows = [
         {
             "occurrence_id": o.id,
@@ -38,6 +39,10 @@ async def my_schedule(principal: Principal, args: ScheduleArgs) -> ToolResult:
                 [[r["date"], r["time"], r["class"], r["subject"], r["room"] or "-", r["status"],
                   f"{r['present']}/{r['enrolled']}"] for r in rows])] if rows else []
     return ToolResult({"classes": capped(rows)}, ui)
+
+
+async def my_schedule(principal: Principal, args: ScheduleArgs) -> ToolResult:
+    return await schedule_of(principal, principal.teacher.id, args)
 
 
 class RegisterArgs(BaseModel):

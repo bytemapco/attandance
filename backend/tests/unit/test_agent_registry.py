@@ -12,10 +12,19 @@ def names(role):
 
 
 def test_a_teacher_is_never_offered_an_admin_only_tool():
-    assert names(TEACHER).isdisjoint({"institution_stats", "setup_checks", "attendance_trend", "approvals_backlog", "find_teachers",
-        "create_departments", "create_subjects", "create_classrooms", "create_batches", "create_class", "set_class_semester",
-        "add_subject_to_class", "add_schedule", "import_students", "import_teachers", "find_substitutes", "assign_substitute",
-        "proxy_watch", "find_setup_items", "list_all_classes", "class_overview"})
+    assert names(TEACHER).isdisjoint({"institution_stats", "setup_checks", "approvals_backlog", "find_teachers",
+        "create_departments", "create_subjects", "create_classrooms", "create_designations", "create_batches", "create_class",
+        "set_class_semester", "add_subject_to_class", "add_schedule", "import_students", "import_teachers", "find_substitutes",
+        "assign_substitute", "proxy_watch", "find_setup_items", "list_all_classes", "class_overview",
+        "update_master_item", "delete_master_item", "change_batch", "update_student", "update_teacher", "change_class_students",
+        "change_subject_teacher", "remove_subject_from_class", "remove_schedule_slots",
+        "teacher_profile", "teacher_schedule", "institution_settings", "audit_trail", "update_institution_settings"})
+
+
+def test_an_admin_can_edit_and_remove_what_they_can_create():
+    assert {"create_designations", "update_master_item", "delete_master_item", "change_batch", "update_student", "update_teacher",
+            "change_class_students", "change_subject_teacher", "remove_subject_from_class", "remove_schedule_slots",
+            "teacher_profile", "teacher_schedule", "institution_settings", "audit_trail", "update_institution_settings"} <= names(ADMIN)
 
 
 def test_an_admin_is_never_offered_a_teacher_only_tool():
@@ -24,7 +33,8 @@ def test_an_admin_is_never_offered_a_teacher_only_tool():
 
 
 def test_both_roles_can_look_up_and_get_help():
-    assert {"find_classes", "find_students", "how_do_i", "send_message"} <= names(TEACHER) & names(ADMIN)
+    assert {"find_classes", "find_students", "how_do_i", "send_message", "my_notifications", "student_attendance",
+            "class_attendance", "attendance_trend"} <= names(TEACHER) & names(ADMIN)
 
 
 def test_only_tools_with_a_preview_write_and_they_declare_what_a_person_may_edit():
@@ -69,3 +79,10 @@ def test_every_write_tool_is_for_exactly_one_role_and_none_can_touch_policy_or_b
             assert len(tool.roles) == 1 or tool.name == "send_message", tool.name
         assert not any(word in tool.name for word in forbidden), tool.name
         assert not any(word in " ".join(tool.params.model_fields) for word in ("password", "token")), tool.name
+
+
+def test_every_tool_has_a_plain_step_label():
+    from app.services.agent.labels import LABELS
+
+    assert set(registry.TOOLS) <= set(LABELS)
+    assert all(text[0].isupper() and not text.endswith(".") for text in LABELS.values())

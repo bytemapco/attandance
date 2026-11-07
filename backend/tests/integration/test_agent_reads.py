@@ -162,3 +162,13 @@ def test_how_do_i_answers_from_the_guides_with_a_link(client, seed, conn):
 
     assert told["guides"][0]["page"] == "/teacher/review"
     assert {"type": "ui", "kind": "link", "label": "Review flagged attendance", "path": "/teacher/review"} in shown
+
+
+@pytest.mark.parametrize("tool,args", [("find_classes", {}), ("find_students", {"text": "st"}), ("find_teachers", {"text": "te"})])
+def test_a_lookup_helps_the_model_pick_an_id_and_shows_the_person_no_table(client, seed, conn, tool, args):
+    world = World(seed, conn)
+
+    told, shown = ask(client, world, world.admin, tool, **args)
+
+    assert "error" not in told
+    assert not any(event.get("kind") == "table" for event in shown)

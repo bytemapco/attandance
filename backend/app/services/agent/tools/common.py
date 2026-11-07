@@ -28,6 +28,12 @@ def capped(rows: list[Any]) -> dict[str, Any]:
     return {"rows": rows[:MODEL_ROWS], "total": len(rows), "truncated": len(rows) > MODEL_ROWS}
 
 
+def full_name(person: Any) -> str:
+    """A student or teacher's name; a student may have none on file, so fall back to the roll number."""
+    name = f"{person.firstName or ''} {person.lastName or ''}".strip()
+    return name or getattr(person, "enrollmentNumber", "")
+
+
 def teacher_id_of(principal: Principal) -> Optional[str]:
     """A teacher's reports are limited to their own classes; an admin's are not."""
     return principal.teacher.id if principal.teacher else None

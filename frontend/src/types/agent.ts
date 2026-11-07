@@ -33,6 +33,9 @@ export type AgentBlock = TableBlockData | LinkBlockData | ProposalData;
 export type AgentStreamEvent =
   | { type: "conversation"; id: string }
   | { type: "tool"; name: string; label: string }
+  /** More of the answer, as the model writes it. */
+  | { type: "delta"; text: string }
+  /** The whole answer. It replaces what the deltas built up. */
   | { type: "text"; text: string }
   | { type: "error"; message: string }
   | AgentBlock;
@@ -42,8 +45,8 @@ export interface ChatMessage {
   role: "user" | "assistant";
   text: string;
   blocks: AgentBlock[];
-  /** The tool the assistant is using right now, shown while it works. */
-  working: string | null;
+  /** What the assistant looked up, in order. */
+  steps: string[];
   failed: boolean;
 }
 
