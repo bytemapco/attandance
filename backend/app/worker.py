@@ -1,4 +1,5 @@
-"""The background worker: sends the e-mails the API has queued. Run with `arq app.worker.WorkerSettings`."""
+"""The background worker: sends the e-mails the API has queued, the daily briefings, and pushes scheduled
+announcements. Run with `arq app.worker.WorkerSettings`."""
 from typing import Any, Dict
 from zoneinfo import ZoneInfo
 
@@ -10,6 +11,7 @@ from app.core.logging_config import get_logger
 from app.db.client import connect_db, disconnect_db
 from app.db.redis import connect_redis, disconnect_redis
 from app.services.agent.briefing import send_daily_briefings
+from app.services.announcements.publisher import push_due
 from app.services.email_queue import EMAIL_JOB, QUEUED_EMAILS
 from app.services.email_service import email_service
 
@@ -36,6 +38,12 @@ async def deliver_email(ctx: Dict[str, Any], method: str, arguments: Dict[str, A
     raise Retry(defer=attempt * RETRY_DELAY_SECONDS)
 
 
+async def push_due_announcements(ctx: Dict[str, Any]) -> int:
+    """Tells connected people about scheduled announcements as they come due. Without this they would find
+    them only when their inbox next refreshes."""
+    return await push_due()
+
+
 async def startup(ctx: Dict[str, Any]) -> None:
     """The briefing reads the database and uses Redis, so the worker connects to both."""
     await connect_db()
@@ -51,7 +59,10 @@ class WorkerSettings:
     on_startup = startup
     on_shutdown = shutdown
     functions = [func(deliver_email, name=EMAIL_JOB)]
-    cron_jobs = [cron(send_daily_briefings, hour=BRIEFING_HOUR, minute=BRIEFING_MINUTE, timeout=BRIEFING_TIMEOUT_SECONDS)]
+    cron_jobs = [
+        cron(send_daily_briefings, hour=BRIEFING_HOUR, minute=BRIEFING_MINUTE, timeout=BRIEFING_TIMEOUT_SECONDS),
+        cron(push_due_announcements),  # every minute
+    ]
     timezone = ZoneInfo("Asia/Kolkata")
     redis_settings = RedisSettings.from_dsn(settings.REDIS_URL)
     max_tries = MAX_TRIES

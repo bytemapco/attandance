@@ -1,7 +1,8 @@
-from typing import Any, Dict, List, Optional
+"""A notification written for one person. A message to a group is an announcement; see `services/announcements`."""
+from typing import Any, Dict, Optional
 
-from app.core.tenancy import is_real_tenant
 from app.core.logging_config import get_logger
+from app.core.tenancy import is_real_tenant
 from app.db.client import db
 from app.services.connection_manager import manager
 
@@ -11,8 +12,8 @@ logger = get_logger("app.notification")
 def _record(notif) -> Dict[str, Any]:
     return {
         "id": notif.id,
+        "kind": "personal",
         "user_id": notif.userId,
-        "role": notif.role,
         "tenant_id": notif.tenantId,
         "title": notif.title,
         "message": notif.message,
@@ -24,186 +25,35 @@ def _record(notif) -> Dict[str, Any]:
     }
 
 
-async def _push_to_clients(record: Dict[str, Any], user_id: Optional[str], role: Optional[str], tenant_id: Optional[str]) -> None:
-    """Delivers a new notification to connected clients. A client that cannot be reached still finds it in its inbox."""
-    payload = {"event": "NOTIFICATION_RECEIVED", "data": {**record, "created_at": record["created_at"].isoformat()}}
-    try:
-        if user_id:
-            await manager.send_personal_message(payload, user_id)
-        else:
-            await manager.broadcast(payload, target_role=role, tenant_id=tenant_id)
-    except Exception as exc:
-        logger.debug("WebSocket notification broadcast skipped: %s", exc)
-
-
 async def create_in_app_notification(
     title: str,
     message: str,
-    user_id: Optional[str] = None,
-    role: Optional[str] = None,
+    user_id: str,
     tenant_id: Optional[str] = None,
     type: str = "info",
     category: str = "system",
     link: Optional[str] = None,
 ) -> Dict[str, Any]:
+    """Saves the notification, then tells the person if they are connected. One that is missed is in their inbox."""
     try:
-        notif_data: Dict[str, Any] = {
+        data: Dict[str, Any] = {
             "title": title,
             "message": message,
             "userId": user_id,
-            "role": role,
             "type": type,
             "category": category,
             "link": link,
-            "isRead": False,
         }
         if is_real_tenant(tenant_id):
-            notif_data["tenantId"] = tenant_id
-
-        notif = await db.notification.create(data=notif_data)
-
-        record = _record(notif)
-        await _push_to_clients(record, user_id, role, tenant_id)
-        return record
+            data["tenantId"] = tenant_id
+        record = _record(await db.notification.create(data=data))
     except Exception as err:
         logger.error("Failed to create in-app notification: %s", err, exc_info=True)
         return {}
-
-
-async def get_user_notifications(
-    user_id: str,
-    user_role: str,
-    tenant_id: Optional[str] = None,
-    unread_only: bool = False,
-    category: Optional[str] = None,
-    page: int = 1,
-    page_size: int = 10,
-) -> Dict[str, Any]:
-    recipient_filter = {"OR": [{"userId": user_id}, {"role": user_role}, {"role": None}]}
-    where_conditions: List[Dict[str, Any]] = [recipient_filter]
-
-    if is_real_tenant(tenant_id) and user_role != "SUPER_ADMIN":
-        where_conditions.append({"OR": [{"tenantId": tenant_id}, {"tenantId": None}]})
-
-    if unread_only:
-        where_conditions.append({"isRead": False})
-    if category and category != "all":
-        where_conditions.append({"category": category})
-
-    where_query = {"AND": where_conditions}
-
-    total_count = await db.notification.count(where=where_query)
-    unread_conditions = list(where_conditions)
-    if not unread_only:
-        unread_conditions.append({"isRead": False})
-    unread_count = await db.notification.count(where={"AND": unread_conditions})
-
-    skip = (max(1, page) - 1) * page_size
-    items = await db.notification.find_many(
-        where=where_query,
-        order={"createdAt": "desc"},
-        skip=skip,
-        take=page_size,
-    )
-
-    formatted_items = [
-        {
-            "id": item.id,
-            "user_id": item.userId,
-            "role": item.role,
-            "title": item.title,
-            "message": item.message,
-            "type": item.type,
-            "category": item.category,
-            "link": item.link,
-            "is_read": item.isRead,
-            "created_at": item.createdAt,
-        }
-        for item in items
-    ]
-
-    return {
-        "items": formatted_items,
-        "total_count": total_count,
-        "unread_count": unread_count,
-    }
-
-
-async def mark_notification_read(notification_id: str, user_id: str) -> bool:
     try:
-        await db.notification.update(
-            where={"id": notification_id},
-            data={"isRead": True},
+        await manager.send_personal_message(
+            {"event": "NOTIFICATION_RECEIVED", "data": {**record, "created_at": record["created_at"].isoformat()}}, user_id
         )
-        return True
-    except Exception as err:
-        logger.error("Failed to mark notification %s read: %s", notification_id, err)
-        return False
-
-
-async def mark_all_notifications_read(user_id: str, user_role: str) -> int:
-    try:
-        result = await db.notification.update_many(
-            where={
-                "AND": [
-                    {"OR": [{"userId": user_id}, {"role": user_role}, {"role": None}]},
-                    {"isRead": False},
-                ]
-            },
-            data={"isRead": True},
-        )
-        return result
-    except Exception as err:
-        logger.error("Failed to mark all notifications read: %s", err)
-        return 0
-
-
-async def delete_notification(notification_id: str, user_id: str) -> bool:
-    try:
-        await db.notification.delete(where={"id": notification_id})
-        return True
-    except Exception as err:
-        logger.error("Failed to delete notification %s: %s", notification_id, err)
-        return False
-
-
-async def delete_multiple_notifications(notification_ids: List[str], user_id: str) -> int:
-    try:
-        result = await db.notification.delete_many(where={"id": {"in": notification_ids}})
-        return result
-    except Exception as err:
-        logger.error("Failed to delete notifications: %s", err)
-        return 0
-
-
-async def delete_all_user_notifications(user_id: str, user_role: str) -> int:
-    try:
-        result = await db.notification.delete_many(
-            where={"OR": [{"userId": user_id}, {"role": user_role}, {"role": None}]}
-        )
-        return result
-    except Exception as err:
-        logger.error("Failed to delete all notifications for user %s: %s", user_id, err)
-        return 0
-
-
-async def broadcast_announcement(
-    title: str,
-    message: str,
-    target_role: Optional[str] = "ALL",
-    tenant_id: Optional[str] = None,
-    type: str = "info",
-    category: str = "system",
-    link: Optional[str] = None,
-) -> Dict[str, Any]:
-    role_enum = target_role if target_role and target_role != "ALL" else None
-    notif = await create_in_app_notification(
-        title=title,
-        message=message,
-        role=role_enum,
-        tenant_id=tenant_id,
-        type=type,
-        category=category,
-        link=link,
-    )
-    return notif
+    except Exception as exc:
+        logger.debug("Live notification skipped: %s", exc)
+    return record

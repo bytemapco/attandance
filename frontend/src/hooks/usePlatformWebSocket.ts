@@ -1,132 +1,109 @@
 "use client";
 
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import useSWR from "swr";
 import { useAuthStore } from "@/store/authStore";
 import { WS_URL } from "@/lib/config";
+import { isFirstSighting, liveNotification, toastText } from "@/lib/notifications/live";
 import { HEARTBEAT_MS } from "@/lib/polling";
 
 type WsMessage = {
   type?: string;
   event?: string;
   message?: string;
-  title?: string;
   data?: Record<string, unknown>;
-  [key: string]: unknown;
 };
 
 const RECONNECT_DELAY_MS = 5000;
 const MAX_RECONNECT_ATTEMPTS = 5;
 
 /**
- * Enterprise-grade real-time platform listener:
- * 1. WebSocket Push: Instant server-push on tenant suspension (4403) and broadcasts.
- * 2. Focus & Visibility Sync: re-verifies institutional status when the user returns to the tab.
- * 3. Periodic Pulse: a slow background check while the tab is visible, as a fallback for a missed push.
+ * The live link to the server, one WebSocket for as long as the person is signed in:
+ * 1. Push: a suspension or sign-out at once, and each new notification or announcement as it is created.
+ * 2. Focus and visibility sync: re-verifies the institution when the user returns to the tab.
+ * 3. A slow pulse while the tab is visible, as a fallback for a push that was missed.
  */
 export function usePlatformWebSocket(): void {
-  const { token, isAuthenticated, setSuspended, logout } = useAuthStore();
+  const { token, isAuthenticated, user, setSuspended, logout } = useAuthStore();
   const router = useRouter();
-  const wsRef = useRef<WebSocket | null>(null);
-  const reconnectCount = useRef(0);
-  const reconnectTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const connectRef = useRef<() => void>(() => {});
 
-  const handleMessage = useCallback(
-    (raw: string): void => {
-      let msg: WsMessage;
-      try {
-        msg = JSON.parse(raw) as WsMessage;
-      } catch {
-        return;
-      }
-
-      if (msg.type === "tenant_suspended") {
-        setSuspended(true, msg.message || "Your institution account has been temporarily suspended.");
-        wsRef.current?.close(1000, "tenant_suspended");
-        wsRef.current = null;
-        router.replace("/suspended");
-        return;
-      }
-
-      if (msg.type === "force_logout") {
-        logout();
-        router.replace("/login");
-        return;
-      }
-
-      if (msg.event === "NOTIFICATION_RECEIVED" || msg.type === "notification" || msg.type === "broadcast") {
-        const notifData = msg.data || msg;
-        const title = (notifData.title as string) || "System Announcement";
-        const message = (notifData.message as string) || "";
-        if (title || message) {
-          toast(message ? `${title}: ${message}` : title, { duration: 6000 });
-        }
-        if (typeof window !== "undefined") {
-          window.dispatchEvent(
-            new CustomEvent("app:notification_received", { detail: notifData })
-          );
-        }
-      }
-    },
-    [setSuspended, logout, router]
-  );
-
-  const connect = useCallback((): void => {
-    if (!token || !isAuthenticated) return;
-    if (wsRef.current?.readyState === WebSocket.OPEN) return;
-
-    try {
-      const ws = new WebSocket(WS_URL);
-      wsRef.current = ws;
-
-      ws.onopen = (): void => {
-        reconnectCount.current = 0;
-        ws.send(JSON.stringify({ type: "auth", token }));
-      };
-
-      ws.onmessage = (event: MessageEvent): void => {
-        handleMessage(event.data as string);
-      };
-
-      ws.onclose = (event: CloseEvent): void => {
-        if (event.code === 4403) {
-          setSuspended(true, event.reason || "Your institution account has been temporarily suspended.");
-          router.replace("/suspended");
-          return;
-        }
-        if (reconnectCount.current < MAX_RECONNECT_ATTEMPTS && isAuthenticated) {
-          reconnectCount.current += 1;
-          reconnectTimer.current = setTimeout(() => {
-            connectRef.current();
-          }, RECONNECT_DELAY_MS);
-        }
-      };
-
-      ws.onerror = (): void => {
-        ws.close();
-      };
-    } catch {
-      // Graceful fallback for offline dev environments
-    }
-  }, [token, isAuthenticated, handleMessage, setSuspended, router]);
-
+  // The socket's handlers outlive a render, so they read what they need from here rather than from stale closures.
+  const latest = useRef({ router, setSuspended, logout, userId: user?.id });
   useEffect(() => {
-    connectRef.current = connect;
-  }, [connect]);
+    latest.current = { router, setSuspended, logout, userId: user?.id };
+  });
 
   useEffect(() => {
     if (!isAuthenticated || !token) return;
-    connect();
 
-    return (): void => {
-      if (reconnectTimer.current) clearTimeout(reconnectTimer.current);
-      wsRef.current?.close(1000, "component_unmount");
-      wsRef.current = null;
+    let socket: WebSocket | null = null;
+    let retry: ReturnType<typeof setTimeout> | undefined;
+    let attempts = 0;
+    let stopped = false;
+
+    const handle = (raw: string, current: WebSocket): void => {
+      let message: WsMessage;
+      try {
+        message = JSON.parse(raw) as WsMessage;
+      } catch {
+        return;
+      }
+      const { router: nav, setSuspended: suspend, logout: signOut, userId } = latest.current;
+
+      if (message.type === "tenant_suspended") {
+        suspend(true, message.message || "Your institution account has been temporarily suspended.");
+        stopped = true;
+        current.close(1000, "tenant_suspended");
+        nav.replace("/suspended");
+        return;
+      }
+      if (message.type === "force_logout") {
+        signOut();
+        nav.replace("/login");
+        return;
+      }
+
+      const notification = liveNotification(message);
+      if (!notification) return;
+      if (isFirstSighting(notification.id) && notification.sender_id !== userId) {
+        toast(toastText(notification), { duration: 6000 });
+      }
+      window.dispatchEvent(new CustomEvent("app:notification_received", { detail: notification }));
     };
-  }, [isAuthenticated, token, connect]);
+
+    const open = (): void => {
+      const ws = new WebSocket(WS_URL);
+      socket = ws;
+      ws.onopen = () => {
+        attempts = 0;
+        ws.send(JSON.stringify({ type: "auth", token }));
+      };
+      ws.onmessage = (event: MessageEvent) => handle(event.data as string, ws);
+      ws.onclose = (event: CloseEvent) => {
+        if (stopped || socket !== ws) return; // closed on purpose, or already replaced
+        if (event.code === 4403) {
+          latest.current.setSuspended(true, event.reason || "Your institution account has been temporarily suspended.");
+          latest.current.router.replace("/suspended");
+          return;
+        }
+        if (attempts < MAX_RECONNECT_ATTEMPTS) {
+          attempts += 1;
+          retry = setTimeout(open, RECONNECT_DELAY_MS);
+        }
+      };
+      ws.onerror = () => ws.close();
+    };
+
+    open();
+
+    return () => {
+      stopped = true;
+      clearTimeout(retry);
+      socket?.close(1000, "component_unmount");
+    };
+  }, [isAuthenticated, token]);
 
   // Fallback check for a suspension or sign-out the WebSocket did not deliver. SWR runs it on return to the tab
   // and every couple of minutes, and not at all while the tab is hidden. A 403 or 401 is handled by the API client.

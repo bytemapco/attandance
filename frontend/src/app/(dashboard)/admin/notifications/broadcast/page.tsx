@@ -34,16 +34,17 @@ export default function BroadcastNotificationPage(): React.JSX.Element {
 
     setSubmitting(true);
     try {
-      await api.post("/notifications/broadcast", {
+      const { data } = await api.post<{ message: string }>("/notifications/broadcast", {
         title: formData.title.trim(),
         message: formData.message.trim(),
         target_role: formData.target_role,
         type: formData.type,
         category: formData.category,
         link: formData.link?.trim() || null,
+        publish_at: formData.publish_at,
       });
 
-      toast.success("Announcement sent successfully");
+      toast.success(data.message);
       router.push("/admin/notifications");
     } catch (err: unknown) {
       toast.error(getApiErrorMessage(err, "Failed to send announcement"));

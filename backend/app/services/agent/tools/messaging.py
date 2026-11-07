@@ -1,5 +1,6 @@
 """Read the person's notifications, and send an in-app message to students or teachers. The assistant drafts it; the person edits and confirms on the card."""
 from dataclasses import dataclass
+from datetime import datetime
 from typing import Literal
 
 from fastapi import HTTPException, status
@@ -10,7 +11,8 @@ from app.repositories.student_repository import taught_by
 from app.core.datetime_utils import IST
 from app.services.agent.tools.common import BOTH, table
 from app.services.agent.types import Preview, Principal, Tool, ToolResult
-from app.services.notification_service import create_in_app_notification, get_user_notifications
+from app.services.announcements.inbox import list_inbox
+from app.services.notification_service import create_in_app_notification
 
 INBOX_SIZE = 10
 RECIPIENT_CAP = 500
@@ -109,7 +111,7 @@ async def send_message(principal: Principal, args: SendMessageArgs) -> ToolResul
     people = await recipients(principal, args)
     for person in people:
         await create_in_app_notification(
-            title=args.title, message=args.message, user_id=person.user_id, role=person.role,
+            title=args.title, message=args.message, user_id=person.user_id,
             tenant_id=principal.tenant_id, category="message",
         )
     return ToolResult({"message": f"Sent to {len(people)} {'person' if len(people) == 1 else 'people'}", "sent": len(people)})
@@ -120,8 +122,8 @@ class InboxArgs(BaseModel):
 
 
 async def my_notifications(principal: Principal, args: InboxArgs) -> ToolResult:
-    inbox = await get_user_notifications(principal.user.id, principal.user.role, principal.tenant_id, unread_only=args.unread_only, page_size=INBOX_SIZE)
-    rows = [{"title": n["title"], "message": n["message"], "read": n["is_read"], "when": n["created_at"].astimezone(IST).strftime("%d %b %H:%M")} for n in inbox["items"]]
+    inbox = await list_inbox(principal.user, unread_only=args.unread_only, page_size=INBOX_SIZE)
+    rows = [{"title": n["title"], "message": n["message"], "read": n["is_read"], "when": datetime.fromisoformat(n["created_at"]).astimezone(IST).strftime("%d %b %H:%M")} for n in inbox["items"]]
     ui = [table("Notifications", ["When", "Title", "Message"], [[r["when"], r["title"], r["message"]] for r in rows])] if rows else []
     return ToolResult({"unread_total": inbox["unread_count"], "latest": rows}, ui)
 

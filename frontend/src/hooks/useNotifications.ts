@@ -30,29 +30,11 @@ interface UseNotificationsReturn {
   refetch: () => Promise<void>;
 }
 
-const VALID_TYPES: NotificationItem["type"][] = ["info", "success", "warning", "danger", "critical"];
-
 function queryFor(tab: NotificationFilterTab, page: number, pageSize: number): Record<string, string | boolean | number> {
   const params: Record<string, string | boolean | number> = { page, page_size: pageSize };
   if (tab === "unread") params.unread_only = true;
   else if (tab !== "all") params.category = tab;
   return params;
-}
-
-function itemFromRealtime(detail: Record<string, unknown>): NotificationItem {
-  const rawType = (detail.type || detail.severity) as NotificationItem["type"] | undefined;
-  return {
-    id: (detail.id as string) || `rt-${Date.now()}`,
-    user_id: (detail.user_id as string | null) || null,
-    role: (detail.role as string | null) || null,
-    title: (detail.title as string) || "System Announcement",
-    message: (detail.message as string) || "",
-    type: VALID_TYPES.includes(rawType as NotificationItem["type"]) ? rawType! : "info",
-    category: (detail.category as NotificationItem["category"]) || "system",
-    link: (detail.link as string | null) || null,
-    is_read: false,
-    created_at: (detail.created_at as string) || new Date().toISOString(),
-  };
 }
 
 type Change = (list: NotificationListResponse) => NotificationListResponse;
@@ -95,23 +77,14 @@ export function useNotifications(pollIntervalMs = NOTIFICATIONS_POLL_MS): UseNot
     }
   };
 
+  // A pushed notification is only a signal. The server's list is the truth, so it is read again, which also keeps
+  // the counts and the page right and can never show the same notification twice.
   useEffect(() => {
-    const handleRealtime = (event: Event): void => {
-      const detail = (event as CustomEvent<Record<string, unknown>>).detail;
-      if (!detail) return;
-      const incoming = itemFromRealtime(detail);
-      void mutate(
-        (current) => current && {
-          ...current,
-          items: [incoming, ...current.items.filter((n) => n.id !== incoming.id)],
-          unread_count: current.unread_count + 1,
-          total_count: current.total_count + 1,
-        },
-        { revalidate: false },
-      );
+    const refresh = (): void => {
+      void mutate();
     };
-    window.addEventListener("app:notification_received", handleRealtime);
-    return () => window.removeEventListener("app:notification_received", handleRealtime);
+    window.addEventListener("app:notification_received", refresh);
+    return () => window.removeEventListener("app:notification_received", refresh);
   }, [mutate]);
 
   const markAsRead = async (id: string): Promise<void> => {

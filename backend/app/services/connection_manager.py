@@ -1,6 +1,6 @@
 """Open WebSocket connections, grouped by user, role, profile and institution, and how messages reach them."""
 import asyncio
-from typing import Dict, Optional, Set
+from typing import AbstractSet, Dict, Optional, Set
 
 from fastapi import WebSocket
 
@@ -101,15 +101,17 @@ class ConnectionManager:
                 logger.debug("Personal message delivery failed, discarded stale socket for %s: %s", target_id, exc)
                 self._forget(connection)
 
-    async def deliver_broadcast(self, message: dict, target_role: Optional[str] = None, tenant_id: Optional[str] = None) -> None:
+    async def deliver_broadcast(
+        self, message: dict, target_roles: Optional[AbstractSet[str]] = None, tenant_id: Optional[str] = None
+    ) -> None:
+        """Sends to the connected people of the given roles (everyone when none are given) in one institution (all
+        of them when none is given). An institution nobody has connected to gets nothing, and never everyone else."""
         targets: Set[WebSocket] = set()
-        if target_role and target_role in self.role_connections:
-            targets.update(self.role_connections[target_role])
-        else:
-            for sockets in self.role_connections.values():
-                targets.update(sockets)
-        if tenant_id and tenant_id in self.tenant_connections:
-            targets &= self.tenant_connections[tenant_id]
+        for role, sockets in self.role_connections.items():
+            if target_roles is None or role in target_roles:
+                targets |= sockets
+        if tenant_id is not None:
+            targets &= self.tenant_connections.get(tenant_id, set())
         for connection in list(targets):
             try:
                 await connection.send_json(message)
@@ -124,12 +126,14 @@ class ConnectionManager:
         await self.deliver_personal_message(message, recipient)
         asyncio.create_task(realtime_bus.publish("personal", message, target_id=recipient))
 
-    async def broadcast(self, message: dict, target_role: Optional[str] = None, tenant_id: Optional[str] = None) -> None:
-        await self.deliver_broadcast(message, target_role, tenant_id=tenant_id)
-        asyncio.create_task(realtime_bus.publish("broadcast", message, target_role=target_role, tenant_id=tenant_id))
+    async def broadcast(
+        self, message: dict, target_roles: Optional[AbstractSet[str]] = None, tenant_id: Optional[str] = None
+    ) -> None:
+        await self.deliver_broadcast(message, target_roles, tenant_id=tenant_id)
+        asyncio.create_task(realtime_bus.publish("broadcast", message, target_roles=target_roles, tenant_id=tenant_id))
 
     async def broadcast_to_teachers(self, message: dict, tenant_id: Optional[str] = None) -> None:
-        await self.broadcast(message, target_role="TEACHER", tenant_id=tenant_id)
+        await self.broadcast(message, target_roles=frozenset({"TEACHER"}), tenant_id=tenant_id)
 
     async def _heartbeat_loop(self) -> None:
         while True:

@@ -5,6 +5,8 @@ Delegates domain logic to focused super_admin services.
 
 from typing import Any, Dict, Optional
 
+from prisma.models import User
+
 from app.schemas.super_admin import (
     SuperAdminStatsResponse,
     TenantDetailResponse,
@@ -123,8 +125,8 @@ class SuperAdminService:
         return await PlatformAuditService.get_distinct_event_types()
 
     @staticmethod
-    async def create_global_broadcast(data: Dict[str, Any], actor: str = "super_admin") -> Dict[str, Any]:
-        return await GlobalBroadcastService.create_global_broadcast(data, actor=actor)
+    async def create_global_broadcast(data: Dict[str, Any], sender: User) -> Dict[str, Any]:
+        return await GlobalBroadcastService.create_global_broadcast(data, sender)
 
     @staticmethod
     async def get_broadcast_history(page: int = 1, page_size: int = 20) -> Dict[str, Any]:
