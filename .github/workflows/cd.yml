@@ -96,7 +96,10 @@ jobs:
              fi
              pip install --upgrade pip
              pip install -r backend/requirements.txt
-             (cd backend && prisma generate && prisma db push)
+             # Database. Changes that db push refuses (dropping a column that holds values) run first and changes that
+             # need its new tables run after. A backup is taken before either if anything is pending, and a failed
+             # backup or change stops the deploy before the API is restarted. db push itself never accepts data loss.
+             (cd backend && prisma generate && python scripts/apply_sql_changes.py before_push --backup-dir ../backups && prisma db push && python scripts/apply_sql_changes.py after_push --backup-dir ../backups)
 
              # Start or reload the API via PM2
              pm2 startOrReload ecosystem.config.cjs --update-env
@@ -155,8 +158,12 @@ jobs:
           NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: ${{ vars.GOOGLE_MAPS_API_KEY }}
         run: vercel build --prod --token "$VERCEL_TOKEN"
 
+      # A build is several hundred files, and the Free plan allows 5,000 upload requests a day. Uploading each file
+      # on every deploy used that up in a few runs. An archive uploads the same build in a few requests.
       - name: Deploy to production
-        run: vercel deploy --prebuilt --prod --token "$VERCEL_TOKEN"
+        run: |
+          echo "Build output: $(find .vercel/output -type f | wc -l) files"
+          vercel deploy --prebuilt --prod --archive=tgz --token "$VERCEL_TOKEN"
 
       - name: Check the site serves SAHAJ
         run: curl --retry 8 --retry-delay 5 --retry-all-errors -fsS "$WEB_URL/login" | grep -q "SAHAJ"

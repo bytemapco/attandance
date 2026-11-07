@@ -447,6 +447,15 @@ model Notification {
   @@map("notifications")
 }
 
+/// Which of the one-off SQL changes in prisma/sql_changes have run. Written by scripts/apply_sql_changes.py, never
+/// by the application. It is declared here so `prisma db push` knows the table and leaves it alone.
+model SqlChange {
+  name      String   @id
+  appliedAt DateTime @default(now()) @map("applied_at")
+
+  @@map("sql_changes")
+}
+
 enum AnnouncementAudience {
   ALL
   STUDENT

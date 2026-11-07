@@ -67,7 +67,9 @@ From the repository root, `./run.sh` is a menu for a local or hosted target: it 
 
 ## Database
 
-`prisma/migrations/` holds the SQL for reference. Dev databases are changed by hand. Do not run `prisma migrate dev`: it would drop the triggers and CHECK constraints that live only in SQL.
+`prisma/migrations/` holds the SQL for reference. Do not run `prisma migrate dev`: it would drop the triggers and CHECK constraints that live only in SQL.
+
+The schema comes from `prisma db push`. A change it refuses, such as dropping a column that holds values, or that moves data, is a file in `prisma/sql_changes/before_push/` or `after_push/`. `python scripts/apply_sql_changes.py before_push` (then `prisma db push`, then `after_push`) applies each file once and records it. The production deploy does this for you, after a backup. Run it against a dev database the same way when you pull a change that adds one.
 
 `scripts/reset_database.py --force-destructive-wipe --confirm-target-db=<name>` wipes a local database and creates a clean schema with a default super admin.
 

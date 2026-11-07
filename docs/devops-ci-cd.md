@@ -15,7 +15,7 @@ flowchart TD
     CI --> Gate{"CI green on a push to main?"}
     Gate -->|No| Stop["No deploy"]
     Gate -->|Yes| CD["CD (.github/workflows/cd.yml)"]
-    CD --> API["backend job<br/>Tailscale + SSH, prisma db push,<br/>PM2 reload, /health check"]
+    CD --> API["backend job<br/>Tailscale + SSH, SQL changes + db push,<br/>PM2 reload, /health check"]
     CD --> Web["frontend job<br/>vercel pull, build, deploy --prod,<br/>site check"]
 ```
 
@@ -29,8 +29,10 @@ flowchart TD
 
 ### CD (`cd.yml`)
 - Triggers: when CI finishes on `main` (only a green push run deploys), and manual run. One deploy at a time (`production-deploy`, no cancelling).
-- **`backend` job:** packages the API, copies it and `PRODUCTION_BACKEND_ENV` to the server over Tailscale and SSH, runs `prisma db push`, reloads PM2 (the API and the e-mail worker), and requires `http://127.0.0.1:8011/health` to return 200 and `sahaj-worker` to be online. On failure it prints the last PM2 log lines.
-- **`frontend` job:** installs the Vercel CLI, runs `vercel pull`, `vercel build --prod` and `vercel deploy --prebuilt --prod`, then requires `$WEB_URL/login` to answer with the SAHAJ page. The public web address is `https://sahaj-web-ashy.vercel.app` unless the variable `WEB_URL` says otherwise.
+- **`backend` job:** packages the API, copies it and `PRODUCTION_BACKEND_ENV` to the server over Tailscale and SSH, backs up the database and runs the pending SQL changes around `prisma db push` (`backend/prisma/sql_changes`, see CLAUDE.md), reloads PM2 (the API and the e-mail worker), and requires `http://127.0.0.1:8011/health` to return 200 and `sahaj-worker` to be online. On failure it prints the last PM2 log lines.
+- **`frontend` job:** installs the Vercel CLI, runs `vercel pull`, `vercel build --prod` and `vercel deploy --prebuilt --prod --archive=tgz`, then requires `$WEB_URL/login` to answer with the SAHAJ page. The public web address is `https://sahaj-web-ashy.vercel.app` unless the variable `WEB_URL` says otherwise.
+
+**Vercel Free plan limits** ([limits](https://vercel.com/docs/limits)): 100 deployments a day, 5,000 upload requests a day (`api-upload-free`) and 100 MB of uploaded files. One build is about 700 files, so uploading them one by one used the 5,000 in a handful of deploys and every later one failed with `Too many requests - try again in 24 hours`. `--archive=tgz` sends the build as an archive instead. The job prints the file count of each build. If that error ever returns, the window is rolling: wait for it to pass, then re-run the failed job.
 
 ---
 
