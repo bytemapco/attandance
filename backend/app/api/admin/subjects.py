@@ -59,9 +59,7 @@ async def create_subject(
 ):
     if data.department_id:
         await require_department_in_tenant(data.department_id, tenant_id)
-    return await admin_service.create_subject(
-        data.name, data.code, data.description, department_id=data.department_id, tenant_id=tenant_id
-    )
+    return await admin_service.create_subject(data.name, data.code, department_id=data.department_id, tenant_id=tenant_id)
 
 
 @router.put("/subjects/{id}", response_model=SubjectResponse)

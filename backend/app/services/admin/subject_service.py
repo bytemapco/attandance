@@ -1,5 +1,6 @@
 from typing import List, Optional
 from prisma.models import Subject
+from app.core.db_errors import DuplicateRecord
 from app.db.client import db
 
 
@@ -20,11 +21,12 @@ class SubjectService:
     async def create_subject(
         name: str,
         code: str,
-        description: Optional[str] = None,
         department_id: Optional[str] = None,
         tenant_id: Optional[str] = None,
     ) -> Subject:
-        resolved_dept_id = None
+        if await db.subject.find_first(where={"tenantId": tenant_id, "code": {"equals": code, "mode": "insensitive"}}):
+            raise DuplicateRecord(f"Subject code '{code}' already exists.")
+        data = {"name": name, "code": code}
         if department_id:
             dept_where = {
                 "OR": [
@@ -35,17 +37,12 @@ class SubjectService:
             }
             if tenant_id:
                 dept_where["tenantId"] = tenant_id
-            found_dept = await db.department.find_first(where=dept_where)
-            if found_dept:
-                resolved_dept_id = found_dept.id
-
-        data = {"name": name, "code": code, "description": description}
-        if resolved_dept_id:
-            data["departmentId"] = resolved_dept_id
+            department = await db.department.find_first(where=dept_where)
+            if not department:
+                raise ValueError(f"Department '{department_id}' not found.")
+            data["departmentId"] = department.id
         if tenant_id:
             data["tenantId"] = tenant_id
-        if await db.subject.find_first(where={"tenantId": tenant_id, "code": code}):
-            raise ValueError(f"Subject code '{code}' already exists.")
         return await db.subject.create(data=data)
 
     @staticmethod
@@ -59,8 +56,6 @@ class SubjectService:
             update_data["name"] = data["name"]
         if "code" in data:
             update_data["code"] = data["code"]
-        if "description" in data:
-            update_data["description"] = data["description"]
         if "department_id" in data:
             update_data["departmentId"] = data["department_id"]
         return await db.subject.update(where={"id": id}, data=update_data)

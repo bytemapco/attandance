@@ -6,12 +6,12 @@ The setup checklist lists what must exist before attendance can run: departments
 ## Add departments, subjects, classrooms and designations
 Role: admin
 Page: /admin/master-data
-Open Master data and pick the tab. Add one at a time, or import many from a CSV. Departments come first, because subjects, teachers and students belong to one.
+Open Master data and pick the tab. Add one at a time, or import many from a CSV. Departments come first, because subjects, teachers and students belong to one. In an import, "Download Sample CSV" shows the columns; they are matched by header name, in any order. Rows with a problem are skipped and listed with the reason, the rest are imported, and "Download Error Report" gives a CSV to fix and upload again.
 
 ## Add students or teachers
 Role: admin
 Page: /admin/users/students
-Open Users, then Students or Teachers. Add one person with the form, or import a CSV. New people get an invitation e-mail to set a password. A student does not choose a semester: it comes from their class.
+Open Users, then Students or Teachers. Add one person with the form, or import a CSV (the same sample file, error report and skipped-row rules apply). A student row can also carry a batch, gender, phone and date of birth; a teacher row a department, designation, initials and phone. New people get an invitation e-mail to set a password. A student does not choose a semester: it comes from their class.
 
 ## Create a class and add subjects
 Role: admin

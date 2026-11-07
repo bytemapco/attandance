@@ -12,7 +12,7 @@ from app.services.class_management import class_service
 KINDS = {
     "department": (db.department, ("name", "code")),
     "subject": (db.subject, ("name", "code")),
-    "classroom": (db.classroom, ("name", "building")),
+    "classroom": (db.classroom, ("name",)),
     "designation": (db.designation, ("name", "code")),
 }
 LIMIT = 40

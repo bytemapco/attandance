@@ -4,6 +4,8 @@ import React from "react";
 import { CheckCircle2, AlertTriangle, XCircle, Download, Mail, RefreshCw } from "lucide-react";
 import Button from "@/components/ui/Button";
 import { BulkImportSummary, BulkImportEntityType } from "./bulkTypes";
+import { BULK_ENTITIES } from "./bulkColumns";
+import { toCsv } from "./csv";
 
 interface BulkImportResultsProps {
   summary: BulkImportSummary;
@@ -21,38 +23,12 @@ export default function BulkImportResults({
   const isAllSuccess = summary.totalFailed === 0 && summary.totalImported > 0;
   const isPartial = summary.totalFailed > 0 && summary.totalImported > 0;
 
+  // Every column is kept, so the report can be fixed and uploaded again; the extra reason column is ignored on import.
   const handleDownloadFailedCsv = (): void => {
     if (summary.failedRecords.length === 0) return;
-    let header = "";
-    if (entityType === "students") {
-      header = "email,enrollment_number,first_name,last_name,error_reason\n";
-    } else if (entityType === "teachers") {
-      header = "email,employee_id,first_name,last_name,error_reason\n";
-    } else if (entityType === "departments") {
-      header = "name,code,head,description,error_reason\n";
-    } else if (entityType === "subjects" || entityType === "designations") {
-      header = "name,code,description,error_reason\n";
-    } else if (entityType === "classrooms") {
-      header = "name,building,error_reason\n";
-    }
-
-    const rows = summary.failedRecords
-      .map((r) => {
-        const err = `"${r.validationError || "Import error"}"`;
-        if (entityType === "departments") {
-          return `${r.first_name},${r.identifier},${r.last_name},${r.email},${err}`;
-        }
-        if (entityType === "subjects" || entityType === "designations") {
-          return `${r.first_name},${r.identifier},${r.email},${err}`;
-        }
-        if (entityType === "classrooms") {
-          return `${r.first_name},${r.identifier},${err}`;
-        }
-        return `${r.email},${r.identifier},${r.first_name},${r.last_name},${err}`;
-      })
-      .join("\n");
-
-    const blob = new Blob([header + rows], { type: "text/csv;charset=utf-8;" });
+    const keys = BULK_ENTITIES[entityType].columns.map((column) => column.key);
+    const rows = summary.failedRecords.map(({ row, reason }) => [...keys.map((key) => row.values[key] ?? ""), reason]);
+    const blob = new Blob([toCsv([[...keys, "error_reason"], ...rows])], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;

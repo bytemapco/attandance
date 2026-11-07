@@ -85,7 +85,6 @@ async def create_subjects(principal: Principal, args: SubjectsArgs) -> ToolResul
 
 class ClassroomItem(BaseModel):
     name: str = Field(min_length=1, max_length=100)
-    building: Optional[str] = Field(None, max_length=100)
 
 
 class ClassroomsArgs(BaseModel):
@@ -97,12 +96,12 @@ async def preview_classrooms(principal: Principal, args: ClassroomsArgs) -> Prev
     clash = await db.classroom.find_many(where={"tenantId": principal.tenant_id, "name": {"in": [i.name for i in args.items], "mode": "insensitive"}})
     if clash:
         raise _taken("classrooms", [c.name for c in clash])
-    rows = [[i.name, i.building or "-"] for i in args.items]
-    return Preview(f"Create {len(rows)} classroom{'s' if len(rows) != 1 else ''}", {"table": {"title": "Classrooms", "columns": ["Name", "Building"], "rows": rows}})
+    rows = [[i.name] for i in args.items]
+    return Preview(f"Create {len(rows)} classroom{'s' if len(rows) != 1 else ''}", {"table": {"title": "Classrooms", "columns": ["Name"], "rows": rows}})
 
 
 async def create_classrooms(principal: Principal, args: ClassroomsArgs) -> ToolResult:
-    items = [ClassroomBulkItem(name=i.name, building=i.building) for i in args.items]
+    items = [ClassroomBulkItem(name=i.name) for i in args.items]
     return _outcome("classrooms", await AdminBulkService.bulk_create_classrooms(items, principal.user.email, None, principal.tenant_id))
 
 
@@ -136,6 +135,6 @@ TOOLS = [
          DepartmentsArgs, ADMIN_ONLY, create_departments, preview=preview_departments),
     Tool("create_subjects", "Prepare new subjects (name, unique code, optional department_id). Nothing is saved until the admin confirms.",
          SubjectsArgs, ADMIN_ONLY, create_subjects, preview=preview_subjects),
-    Tool("create_classrooms", "Prepare new classrooms (room name, optional building). Nothing is saved until the admin confirms.",
+    Tool("create_classrooms", "Prepare new classrooms (room name). Nothing is saved until the admin confirms.",
          ClassroomsArgs, ADMIN_ONLY, create_classrooms, preview=preview_classrooms),
 ]

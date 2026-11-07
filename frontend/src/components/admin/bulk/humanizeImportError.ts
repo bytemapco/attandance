@@ -23,7 +23,6 @@ export function humanizeImportError(errorMsg: string): string {
       classroom_name: "Classroom",
       name: "Name",
       code: "Code",
-      building: "Building",
       capacity: "Capacity",
     };
 

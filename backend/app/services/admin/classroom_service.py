@@ -1,5 +1,6 @@
 from typing import List, Optional
 from prisma.models import Classroom
+from app.core.db_errors import DuplicateRecord
 from app.db.client import db
 
 
@@ -17,8 +18,10 @@ class ClassroomService:
         return await db.classroom.find_first(where=where)
 
     @staticmethod
-    async def create_classroom(name: str, building: Optional[str] = None, tenant_id: Optional[str] = None) -> Classroom:
-        data = {"name": name, "building": building}
+    async def create_classroom(name: str, tenant_id: Optional[str] = None) -> Classroom:
+        if await db.classroom.find_first(where={"tenantId": tenant_id, "name": {"equals": name, "mode": "insensitive"}}):
+            raise DuplicateRecord(f"Classroom '{name}' already exists.")
+        data = {"name": name}
         if tenant_id:
             data["tenantId"] = tenant_id
         return await db.classroom.create(data=data)

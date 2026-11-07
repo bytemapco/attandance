@@ -209,4 +209,9 @@ Admin page for creating and managing classes across departments and batches. A c
 - Database reset: `backend/scripts/reset_database.py --force-destructive-wipe --confirm-target-db=<db>` wipes the local DB and initializes a clean schema with a default superadmin account.
 - Not built (needs a policy decision, PRD §13): per-programme thresholds, condonation workflow, guardians.
 
+**Nov 8 (unused master data fields):**
+- ❌ `departments.head`, `departments.description`, `designations.description`, `subjects.description`, `classrooms.building`, and every schema, form, import column, assistant tool and test that carried them
+- ✅ A classroom is now identified by its name (any case). `classrooms.capacity` is still in the schema and nothing reads it.
+- ✅ Migration: `prisma/migrations/20261108000000_remove_unused_master_data_fields/`. `db push` cannot drop populated columns, so run that SQL by hand (after a backup) before the deploy that carries this change.
+
 ---

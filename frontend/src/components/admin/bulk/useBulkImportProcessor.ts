@@ -2,13 +2,23 @@
 
 import { useState, useRef } from "react";
 import api, { getApiErrorMessage } from "@/lib/api";
-import { ParsedBulkRecord, ImportStage, BatchProgressItem, BulkImportSummary, BulkImportEntityType } from "./bulkTypes";
+import {
+  BatchProgressItem,
+  BulkImportEntityType,
+  BulkImportResponse,
+  BulkImportSummary,
+  BulkRow,
+  FailedRow,
+  ImportStage,
+} from "./bulkTypes";
 import { buildBatches, buildBulkPayload } from "./bulkPayloadBuilder";
+import { fileRowErrors } from "./fileRowErrors";
 import { humanizeImportError } from "./humanizeImportError";
 
 export function useBulkImportProcessor(entityType: BulkImportEntityType, onSuccess: () => void) {
   const [stage, setStage] = useState<ImportStage>("upload");
-  const [records, setRecords] = useState<ParsedBulkRecord[]>([]);
+  const [records, setRecords] = useState<BulkRow[]>([]);
+  const [ignoredColumns, setIgnoredColumns] = useState<string[]>([]);
   const [fileName, setFileName] = useState<string>("");
   const [sendInvite, setSendInvite] = useState<boolean>(true);
   const [batches, setBatches] = useState<BatchProgressItem[]>([]);
@@ -24,6 +34,7 @@ export function useBulkImportProcessor(entityType: BulkImportEntityType, onSucce
   const handleReset = (): void => {
     setStage("upload");
     setRecords([]);
+    setIgnoredColumns([]);
     setFileName("");
     setBatches([]);
     setSummary(null);
@@ -31,8 +42,9 @@ export function useBulkImportProcessor(entityType: BulkImportEntityType, onSucce
     setIsAborting(false);
   };
 
-  const handleRecordsParsed = (parsed: ParsedBulkRecord[], name: string): void => {
+  const handleRecordsParsed = (parsed: BulkRow[], name: string, ignored: string[]): void => {
     setRecords(parsed);
+    setIgnoredColumns(ignored);
     setFileName(name);
     setStage("preview");
   };
@@ -44,62 +56,44 @@ export function useBulkImportProcessor(entityType: BulkImportEntityType, onSucce
   };
 
   const executeBulkImport = async (): Promise<void> => {
-    const initialBatches = buildBatches(records);
+    // Rows that failed the checks never leave the browser; they are reported with the others at the end.
+    const ready = records.filter((r) => !r.error);
+    const skipped = records.filter((r) => r.error);
+    const initialBatches = buildBatches(ready);
     setBatches(initialBatches);
     setStage("importing");
     abortRef.current = false;
     setIsAborting(false);
 
     let runningImported = 0;
-    let runningFailed = 0;
+    let runningFailed = skipped.length;
     let runningInvites = 0;
-    let runningProcessed = 0;
-    const allCollectedErrors: string[] = [];
-    const failedItems: ParsedBulkRecord[] = [];
+    let runningProcessed = skipped.length;
+    const allCollectedErrors = skipped.map((row) => `Row ${row.number}: ${row.error}`);
+    const failedItems: FailedRow[] = skipped.map((row) => ({ row, reason: row.error ?? "Needs fixing" }));
 
     for (let i = 0; i < initialBatches.length; i++) {
       if (abortRef.current) break;
       setCurrentBatchIdx(i);
       const batchItem = initialBatches[i];
-      const slice = records.slice(batchItem.startIndex, batchItem.endIndex);
+      const slice = ready.slice(batchItem.startIndex, batchItem.endIndex);
 
-      setBatches((prev) =>
-        prev.map((b, idx) => (idx === i ? { ...b, status: "processing" } : b))
-      );
+      setBatches((prev) => prev.map((b, idx) => (idx === i ? { ...b, status: "processing" } : b)));
 
       try {
         const { endpoint, payload } = buildBulkPayload(entityType, slice, sendInvite);
+        const { data } = await api.post<BulkImportResponse>(endpoint, payload);
+        const lines = fileRowErrors(slice, data.errors);
 
-        const { data } = await api.post<{
-          imported_count: number;
-          failed_count: number;
-          invitations_sent: number;
-          errors: string[];
-        }>(endpoint, payload);
-
-        runningImported += data.imported_count || 0;
-        runningFailed += data.failed_count || 0;
-        runningInvites += data.invitations_sent || 0;
+        runningImported += data.imported_count;
+        runningFailed += data.failed_count;
+        runningInvites += data.invitations_sent;
         runningProcessed += slice.length;
-
-        if (data.errors && data.errors.length > 0) {
-          const cleanErrors = data.errors.map(humanizeImportError);
-          allCollectedErrors.push(...cleanErrors);
-          slice.forEach((s, itemIdx) => {
-            const rowPrefix = `Row ${itemIdx + 1}`;
-            const matchedErr = cleanErrors.find(
-              (errStr) =>
-                errStr.startsWith(rowPrefix) ||
-                (s.email && errStr.includes(s.email)) ||
-                (s.identifier && errStr.includes(s.identifier))
-            );
-            if (matchedErr) {
-              failedItems.push({ ...s, validationError: matchedErr });
-            } else if (data.failed_count === slice.length) {
-              failedItems.push({ ...s, validationError: cleanErrors[0] });
-            }
-          });
-        }
+        allCollectedErrors.push(...lines);
+        data.failures.forEach((failure) => {
+          const row = slice[failure.row - 1];
+          if (row) failedItems.push({ row, reason: failure.message });
+        });
 
         setBatches((prev) =>
           prev.map((b, idx) =>
@@ -107,21 +101,20 @@ export function useBulkImportProcessor(entityType: BulkImportEntityType, onSucce
               ? {
                   ...b,
                   status: data.failed_count > 0 ? "warning" : "success",
-                  importedCount: data.imported_count || 0,
-                  failedCount: data.failed_count || 0,
-                  invitationsSent: data.invitations_sent || 0,
-                  errorMessages: (data.errors || []).map(humanizeImportError),
+                  importedCount: data.imported_count,
+                  failedCount: data.failed_count,
+                  invitationsSent: data.invitations_sent,
+                  errorMessages: lines,
                 }
               : b
           )
         );
       } catch (err: unknown) {
-        const rawMsg = getApiErrorMessage(err, `Batch ${i + 1} encountered an issue`);
-        const msg = humanizeImportError(rawMsg);
+        const msg = humanizeImportError(getApiErrorMessage(err, `Batch ${i + 1} encountered an issue`));
         allCollectedErrors.push(msg);
         runningFailed += slice.length;
         runningProcessed += slice.length;
-        slice.forEach((s) => failedItems.push({ ...s, validationError: msg }));
+        slice.forEach((row) => failedItems.push({ row, reason: msg }));
 
         setBatches((prev) =>
           prev.map((b, idx) => (idx === i ? { ...b, status: "failed", errorMessages: [msg] } : b))
@@ -154,6 +147,7 @@ export function useBulkImportProcessor(entityType: BulkImportEntityType, onSucce
   return {
     stage,
     records,
+    ignoredColumns,
     fileName,
     sendInvite,
     batches,

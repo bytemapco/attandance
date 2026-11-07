@@ -150,6 +150,14 @@ def client(database_url):
         yield test_client
 
 
+@pytest.fixture
+def school(seed, client):
+    """An institution with a signed-in administrator, one department, one designation and one active batch."""
+    from tests.integration.bulk_import_world import School
+
+    return School(seed, client)
+
+
 @pytest.fixture(autouse=True)
 def fresh_rate_limits():
     url = os.environ.get("TEST_REDIS_URL")

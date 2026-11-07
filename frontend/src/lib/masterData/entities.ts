@@ -14,7 +14,6 @@ export interface MasterDataRecord {
   id: string;
   name: string;
   code?: string;
-  building?: string | null;
 }
 
 export interface MasterDataFormValues {
@@ -113,10 +112,10 @@ export const CLASSROOMS: MasterDataEntity = {
   schema: classroomSchema,
   list: {
     title: "Classrooms",
-    description: "Rooms and buildings where classes are held.",
+    description: "Rooms where classes are held.",
     nameHeader: "Classroom Name",
     nameOpensDetail: false,
-    searchText: (record) => [record.name, record.building],
+    searchText: (record) => [record.name],
   },
   form: {
     name: { label: "Classroom Name / Room Number", placeholder: "e.g. Room 301, Lab B" },

@@ -57,7 +57,7 @@ async def create_designation(
     tenant_id: str = Depends(get_tenant_context),
     admin_service: AdminService = Depends(),
 ):
-    return await admin_service.create_designation(data.name, data.code, data.description, tenant_id=tenant_id)
+    return await admin_service.create_designation(data.name, data.code, tenant_id=tenant_id)
 
 
 @router.put("/designations/{id}", response_model=DesignationResponse)

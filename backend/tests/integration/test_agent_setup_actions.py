@@ -45,7 +45,7 @@ class TestMasterData:
     def test_subjects_and_classrooms_are_created_on_confirm(self, client, seed, conn):
         world = World(seed, conn)
         subjects, _ = propose(client, world, world.admin, "create_subjects", items=[{"name": "Physics", "code": "PH101", "department_id": world.department_id}])
-        rooms, _ = propose(client, world, world.admin, "create_classrooms", items=[{"name": "B-204", "building": "Block B"}])
+        rooms, _ = propose(client, world, world.admin, "create_classrooms", items=[{"name": "B-204"}])
         confirm(client, world.admin, subjects)
         confirm(client, world.admin, rooms)
         assert count(world, "subjects", "tenant_id = %s AND code = 'PH101'") == 1

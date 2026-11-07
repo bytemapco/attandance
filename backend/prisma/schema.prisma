@@ -255,8 +255,6 @@ model Department {
   tenantId    String   @map("tenant_id")
   code        String
   name        String
-  head        String?
-  description String?
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
@@ -278,7 +276,6 @@ model Designation {
   tenantId    String   @map("tenant_id")
   code        String
   name        String
-  description String?
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
@@ -296,7 +293,6 @@ model Subject {
   departmentId String?  @map("department_id")
   code         String
   name         String
-  description  String?
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")
 
@@ -314,7 +310,6 @@ model Classroom {
   id        String   @id @default(uuid())
   tenantId  String   @map("tenant_id")
   name      String
-  building  String?
   capacity  Int?
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
