@@ -17,10 +17,7 @@ export default function TeacherDashboardPage(): React.ReactElement {
   return (
     <div className="space-y-6">
       <TeacherDashboardHeader todayStr={todayStr} onRefresh={() => setRefreshKey((key) => key + 1)} />
-      <div className="space-y-2.5">
-        <h2 className="text-xs font-semibold text-foreground">Your classes</h2>
-        <MyClasses refreshKey={refreshKey} />
-      </div>
+      <MyClasses refreshKey={refreshKey} />
     </div>
   );
 }

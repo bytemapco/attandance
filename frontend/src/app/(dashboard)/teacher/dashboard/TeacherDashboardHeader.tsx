@@ -22,7 +22,6 @@ export default function TeacherDashboardHeader({
       <div className="space-y-1.5">
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-xs font-medium text-muted-foreground">{todayStr}</span>
-          <span className="text-border text-xs">•</span>
           {user?.tenant_name && (
             <span className="text-xs font-semibold text-muted-foreground">
               {user.tenant_name}
@@ -36,7 +35,7 @@ export default function TeacherDashboardHeader({
         </div>
 
         <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-primary">
-          Dashboard
+          My classes
         </h1>
       </div>
 

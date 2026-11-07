@@ -75,7 +75,7 @@ export default function LeavesPage(): React.JSX.Element {
         <button
           type="button"
           onClick={() => router.push(`/teacher/leaves/${row.id}`)}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-card hover:bg-secondary text-foreground transition-all text-xs font-semibold cursor-pointer"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-card hover:bg-secondary text-foreground transition-colors text-xs font-semibold cursor-pointer"
           title="Review leave application"
         >
           <Eye size={13} className="text-primary" />
@@ -122,7 +122,7 @@ export default function LeavesPage(): React.JSX.Element {
       </Card>
 
       {leaves.length === 0 ? (
-        <EmptyState title="All clear" message="No pending leave requests found." />
+        <EmptyState title="No pending requests" message="Leave requests from your students appear here until you decide on them." />
       ) : (
         <div className="rounded-lg border border-border bg-card overflow-hidden">
           <DataTable

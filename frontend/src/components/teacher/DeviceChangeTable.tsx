@@ -104,7 +104,7 @@ export default function DeviceChangeTable({ requests, onActionComplete }: Device
               type="button"
               onClick={() => void handleAction(req.id, "REJECTED")}
               disabled={isProcessing}
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border border-destructive/20 bg-destructive/10 text-destructive hover:bg-destructive/20 disabled:opacity-50 transition-all text-xs font-medium cursor-pointer"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border border-destructive/20 bg-destructive/10 text-destructive hover:bg-destructive/20 disabled:opacity-50 transition-colors text-xs font-medium cursor-pointer"
             >
               {isProcessing && processing?.action === "REJECTED" ? <Loader2 size={13} className="animate-spin" /> : <XCircle size={13} />}
               <span>Reject</span>
@@ -113,7 +113,7 @@ export default function DeviceChangeTable({ requests, onActionComplete }: Device
               type="button"
               onClick={() => void handleAction(req.id, "APPROVED")}
               disabled={isProcessing}
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border border-success/20 bg-success/10 text-success hover:bg-success/20 disabled:opacity-50 transition-all text-xs font-medium cursor-pointer"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border border-success/20 bg-success/10 text-success hover:bg-success/20 disabled:opacity-50 transition-colors text-xs font-medium cursor-pointer"
             >
               {isProcessing && processing?.action === "APPROVED" ? <Loader2 size={13} className="animate-spin" /> : <CheckCircle2 size={13} />}
               <span>Approve</span>
@@ -130,7 +130,7 @@ export default function DeviceChangeTable({ requests, onActionComplete }: Device
         <div className="w-12 h-12 rounded-full bg-secondary text-muted-foreground flex items-center justify-center mb-3">
           <Smartphone size={24} />
         </div>
-        <h3 className="text-base font-semibold text-foreground mb-1">No Pending Requests</h3>
+        <h3 className="text-base font-semibold text-foreground mb-1">No pending requests</h3>
         <p className="text-xs text-muted-foreground max-w-sm">
           All device change requests have been processed. Students can request device changes from their mobile app.
         </p>
