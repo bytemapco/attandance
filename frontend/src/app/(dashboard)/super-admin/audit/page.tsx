@@ -21,7 +21,6 @@ export default function SecurityAuditPage(): React.JSX.Element {
   const [pageSize, setPageSize] = useState(20);
   const [actorSearch, setActorSearch] = useState("");
   const debouncedActor = useDebounce(actorSearch, 350);
-  const [severityFilter, setSeverityFilter] = useState("ALL");
   const [eventTypeFilter, setEventTypeFilter] = useState("ALL");
   const [eventTypes, setEventTypes] = useState<string[]>([]);
   const [selectedLog, setSelectedLog] = useState<SuperAdminAuditLog | null>(null);
@@ -33,7 +32,6 @@ export default function SecurityAuditPage(): React.JSX.Element {
         page,
         page_size: pageSize,
         actor: debouncedActor.trim() || undefined,
-        severity: severityFilter !== "ALL" ? severityFilter : undefined,
         event_type: eventTypeFilter !== "ALL" ? eventTypeFilter : undefined,
       });
       setLogs(data.items);
@@ -43,7 +41,7 @@ export default function SecurityAuditPage(): React.JSX.Element {
     } finally {
       setLoading(false);
     }
-  }, [page, pageSize, debouncedActor, severityFilter, eventTypeFilter]);
+  }, [page, pageSize, debouncedActor, eventTypeFilter]);
 
   const fetchEventTypes = useCallback(async (): Promise<void> => {
     try {
@@ -64,7 +62,6 @@ export default function SecurityAuditPage(): React.JSX.Element {
 
   const handleResetFilters = (): void => {
     setActorSearch("");
-    setSeverityFilter("ALL");
     setEventTypeFilter("ALL");
     setPage(1);
   };
@@ -86,11 +83,6 @@ export default function SecurityAuditPage(): React.JSX.Element {
         actorSearch={actorSearch}
         onActorSearchChange={(val) => {
           setActorSearch(val);
-          setPage(1);
-        }}
-        severityFilter={severityFilter}
-        onSeverityFilterChange={(val) => {
-          setSeverityFilter(val);
           setPage(1);
         }}
         eventTypeFilter={eventTypeFilter}

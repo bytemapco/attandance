@@ -41,6 +41,11 @@ export default function PlatformHealthPage(): React.ReactElement {
   }, [fetchHealth]);
 
   const isHealthy = health?.status === "healthy";
+  const headline = {
+    healthy: "All services operational",
+    degraded: "Some services need attention",
+    unhealthy: "The database is unreachable",
+  }[health?.status ?? "unhealthy"];
 
   return (
     <div className="space-y-5 max-w-5xl">
@@ -97,7 +102,7 @@ export default function PlatformHealthPage(): React.ReactElement {
               />
               <div>
                 <h2 className="text-sm font-semibold text-foreground">
-                  {isHealthy ? "All services operational" : "Service degradation detected"}
+                  {headline}
                 </h2>
                 <p className="text-xs text-muted-foreground">
                   Updated at{" "}

@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Database, Zap, HardDrive, Cpu } from "lucide-react";
+import { Database, Zap, HardDrive, Mail, Cpu } from "lucide-react";
 import Card from "@/components/ui/Card";
 import type { PlatformHealth, ServiceHealthItem } from "@/types/tenant";
 
@@ -9,134 +9,91 @@ interface SystemServicesGridProps {
   health: PlatformHealth;
 }
 
-interface ServiceItem {
-  id: string;
-  name: string;
-  detail: string;
-  latency?: number | null;
-  status: ServiceHealthItem["status"];
-  icon: React.ReactNode;
-  iconBg: string;
-  iconColor: string;
+type ServiceKey = keyof PlatformHealth["services"];
+
+const SERVICES: { key: ServiceKey; name: string; icon: React.ReactNode; describe: (details: Record<string, unknown> | null) => string }[] = [
+  {
+    key: "postgresql",
+    name: "PostgreSQL database",
+    icon: <Database size={17} />,
+    describe: (d) => (d?.version ? `Version ${String(d.version)}` : ""),
+  },
+  {
+    key: "redis_cache",
+    name: "Redis cache",
+    icon: <Zap size={17} />,
+    describe: (d) => (d?.clients !== undefined ? `${String(d.clients)} connected clients` : ""),
+  },
+  {
+    key: "object_storage",
+    name: "File storage (S3)",
+    icon: <HardDrive size={17} />,
+    describe: (d) => (d?.bucket ? `Bucket ${String(d.bucket)}` : d?.note ? String(d.note) : ""),
+  },
+  {
+    key: "email_worker",
+    name: "E-mail worker",
+    icon: <Mail size={17} />,
+    describe: (d) => (d?.jobs_waiting !== undefined ? `${String(d.jobs_waiting)} waiting` : ""),
+  },
+  {
+    key: "ai_hardware",
+    name: "AI compute",
+    icon: <Cpu size={17} />,
+    describe: (d) => (d?.device ? String(d.device).replace(/^\/device:/, "") : ""),
+  },
+];
+
+function StatusBadge({ status }: { status: ServiceHealthItem["status"] }): React.ReactElement {
+  const styles = {
+    healthy: { label: "Operational", classes: "text-success bg-success-soft border-success-border", dot: "bg-success" },
+    warning: { label: "Degraded", classes: "text-warning bg-warning-soft border-warning-border", dot: "bg-warning" },
+    down: { label: "Offline", classes: "text-destructive bg-destructive-soft border-destructive-border", dot: "bg-destructive" },
+    not_configured: { label: "Not configured", classes: "text-muted-foreground bg-secondary border-border", dot: "bg-muted-foreground" },
+  } as const;
+  const style = styles[status];
+  return (
+    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border ${style.classes}`}>
+      <span className={`h-1.5 w-1.5 rounded-full ${style.dot}`} />
+      <span>{style.label}</span>
+    </span>
+  );
 }
 
 export default function SystemServicesGrid({ health }: SystemServicesGridProps): React.ReactElement {
-  const pgService = health.services.postgresql;
-  const redisService = health.services.redis_cache;
-  const storageService = health.services.object_storage ?? {
-    status: "healthy",
-    latency_ms: 1.2,
-    details: { provider: "Local Media Storage" },
-  };
-  const hwService = health.services.biometric_runtime ?? {
-    status: "healthy",
-    latency_ms: 0.8,
-    details: { device: "CPU" },
-  };
-
-  const services: ServiceItem[] = [
-    {
-      id: "postgresql",
-      name: "PostgreSQL Database",
-      detail: "",
-      latency: pgService.latency_ms,
-      status: pgService.status,
-      icon: <Database size={17} />,
-      iconBg: "bg-secondary border border-border",
-      iconColor: "text-primary",
-    },
-    {
-      id: "redis",
-      name: "Redis Cache",
-      detail: "",
-      latency: redisService.latency_ms,
-      status: redisService.status,
-      icon: <Zap size={17} />,
-      iconBg: "bg-success-soft border border-success-border",
-      iconColor: "text-success",
-    },
-    {
-      id: "storage",
-      name: "Object Storage",
-      detail: "",
-      latency: storageService.latency_ms,
-      status: storageService.status,
-      icon: <HardDrive size={17} />,
-      iconBg: "bg-secondary border border-border",
-      iconColor: "text-muted-foreground",
-    },
-    {
-      id: "biometric",
-      name: "Biometric AI Engine",
-      detail: "",
-      latency: hwService.latency_ms,
-      status: hwService.status,
-      icon: <Cpu size={17} />,
-      iconBg: "bg-accent-soft border border-accent-border",
-      iconColor: "text-accent-strong",
-    },
-  ];
-
-  const renderStatus = (status: ServiceHealthItem["status"]): React.ReactElement => {
-    if (status === "healthy") {
-      return (
-        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-success bg-success-soft border border-success-border">
-          <span className="h-1.5 w-1.5 rounded-full bg-success" />
-          <span>Operational</span>
-        </span>
-      );
-    }
-    if (status === "warning" || status === "degraded") {
-      return (
-        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-warning bg-warning-soft border border-warning-border">
-          <span className="h-1.5 w-1.5 rounded-full bg-warning" />
-          <span>Degraded</span>
-        </span>
-      );
-    }
-    return (
-      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-destructive bg-destructive-soft border border-destructive-border">
-        <span className="h-1.5 w-1.5 rounded-full bg-destructive" />
-        <span>Offline</span>
-      </span>
-    );
-  };
+  const healthy = SERVICES.filter(({ key }) => health.services[key].status === "healthy").length;
 
   return (
     <Card padding="none" className="overflow-hidden">
       <div className="px-5 py-3 border-b border-border/60 bg-muted/20 flex items-center justify-between">
-        <h3 className="text-xs font-semibold text-muted-foreground">
-          Infrastructure Services
-        </h3>
+        <h3 className="text-xs font-semibold text-muted-foreground">Infrastructure services</h3>
         <span className="text-xs text-muted-foreground">
-          {services.filter((s) => s.status === "healthy").length} of {services.length} Operational
+          {healthy} of {SERVICES.length} operational
         </span>
       </div>
 
       <div className="divide-y divide-border/40">
-        {services.map((item) => (
-          <div
-            key={item.id}
-            className="px-5 py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-muted/10 transition-colors"
-          >
-            <div className="flex items-center gap-3 min-w-0">
-              <div className={`p-2 rounded-lg ${item.iconBg} ${item.iconColor} shrink-0`}>
-                {item.icon}
+        {SERVICES.map((service) => {
+          const item = health.services[service.key];
+          const note = service.describe(item.details);
+          return (
+            <div key={service.key} className="px-5 py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="p-2 rounded-lg bg-secondary border border-border text-muted-foreground shrink-0">{service.icon}</div>
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold text-foreground truncate">{service.name}</p>
+                  {note ? <p className="text-xs text-muted-foreground truncate">{note}</p> : null}
+                </div>
               </div>
-              <div className="min-w-0">
-                <p className="text-sm font-semibold text-foreground truncate">{item.name}</p>
-                {item.detail ? <p className="text-xs text-muted-foreground truncate">{item.detail}</p> : null}
+              <div className="flex items-center justify-between sm:justify-end gap-5 shrink-0 pl-11 sm:pl-0">
+                <span className="text-xs font-mono tabular-nums text-muted-foreground">
+                  {item.latency_ms != null ? `${item.latency_ms} ms` : "—"}
+                </span>
+                <StatusBadge status={item.status} />
               </div>
             </div>
-
-            <div className="flex items-center justify-between sm:justify-end gap-5 shrink-0 pl-11 sm:pl-0">
-              <span className="text-xs font-mono tabular-nums text-muted-foreground">
-                {item.latency != null ? `${item.latency} ms` : "—"}
-              </span>
-              {renderStatus(item.status)}
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </Card>
   );

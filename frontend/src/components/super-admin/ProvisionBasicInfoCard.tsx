@@ -27,7 +27,7 @@ export default function ProvisionBasicInfoCard({
         <div>
           <h2 className="text-sm font-semibold text-foreground">Institution Information</h2>
           <p className="text-xs text-muted-foreground">
-            Name, URL identifier, and license allocation
+            Name and license allocation
           </p>
         </div>
       </div>
@@ -38,22 +38,10 @@ export default function ProvisionBasicInfoCard({
           placeholder="e.g. Oxford Public School or City Engineering College"
           {...register("name")}
           onChange={(e) => onNameChange(e.target.value)}
-          error={errors.name?.message}
+          error={errors.name?.message ?? errors.slug?.message}
         />
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <Input
-              label="URL Slug"
-              placeholder="e.g. oxford or city-college"
-              {...register("slug")}
-              error={errors.slug?.message}
-            />
-            <span className="text-xs text-muted-foreground mt-1 block">
-              Used in the login URL (e.g. /login?tenant=oxford)
-            </span>
-          </div>
-
           <Input
             label="Institution Type"
             value="College / University"

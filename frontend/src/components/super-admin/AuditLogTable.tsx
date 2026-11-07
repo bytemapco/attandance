@@ -1,9 +1,8 @@
 "use client";
 
 import React from "react";
-import { Eye, AlertTriangle, AlertCircle, Info, Building2 } from "lucide-react";
+import { Eye, Building2 } from "lucide-react";
 import type { SuperAdminAuditLog } from "@/types/tenant";
-import Badge from "@/components/ui/Badge";
 import EmptyState from "@/components/ui/EmptyState";
 import { Skeleton } from "@/components/ui/Skeleton";
 
@@ -85,31 +84,6 @@ export default function AuditLogTable({
     );
   }
 
-  const getSeverityBadge = (sev: string): React.ReactElement => {
-    switch (sev) {
-      case "CRITICAL":
-      case "ERROR":
-        return (
-          <Badge variant="danger" className="gap-1 text-xs">
-            <AlertCircle size={11} /> {sev}
-          </Badge>
-        );
-      case "WARNING":
-        return (
-          <Badge variant="warning" className="gap-1 text-xs">
-            <AlertTriangle size={11} /> {sev}
-          </Badge>
-        );
-      case "INFO":
-      default:
-        return (
-          <Badge variant="info" className="gap-1 text-xs">
-            <Info size={11} /> {sev}
-          </Badge>
-        );
-    }
-  };
-
   return (
     <div className="bg-card border border-border rounded-lg overflow-hidden">
       <div className="overflow-x-auto">
@@ -117,7 +91,6 @@ export default function AuditLogTable({
           <thead className="bg-muted/50 border-b border-border text-xs font-semibold text-muted-foreground">
             <tr>
               <th className="px-4 py-3">Timestamp</th>
-              <th className="px-4 py-3">Severity</th>
               <th className="px-4 py-3">Event</th>
               <th className="px-4 py-3">Actor</th>
               <th className="px-4 py-3">Description</th>
@@ -139,10 +112,6 @@ export default function AuditLogTable({
                     })}
                   </td>
 
-                  <td className="px-4 py-3.5 whitespace-nowrap">
-                    {getSeverityBadge(log.severity)}
-                  </td>
-
                   <td className="px-4 py-3.5 min-w-[180px]">
                     <div className="font-semibold text-foreground text-xs">
                       {formatEventType(log.event_type)}
@@ -161,8 +130,8 @@ export default function AuditLogTable({
                     </span>
                   </td>
 
-                  <td className="px-4 py-3.5 max-w-sm">
-                    <p className="text-foreground truncate font-medium">{log.description}</p>
+                  <td className="px-4 py-3.5 min-w-[240px]">
+                    <p className="whitespace-pre-wrap break-words font-medium text-foreground">{log.description}</p>
                   </td>
 
                   <td className="px-4 py-3.5 text-right whitespace-nowrap">

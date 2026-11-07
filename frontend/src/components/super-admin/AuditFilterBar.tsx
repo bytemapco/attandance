@@ -15,22 +15,12 @@ import {
 interface AuditFilterBarProps {
   actorSearch: string;
   onActorSearchChange: (val: string) => void;
-  severityFilter: string;
-  onSeverityFilterChange: (val: string) => void;
   eventTypeFilter: string;
   eventTypes?: string[];
   onEventTypeFilterChange: (val: string) => void;
   onReset: () => void;
   onRefresh: () => void;
 }
-
-const SEVERITY_OPTIONS = [
-  { value: "ALL", label: "All Severities" },
-  { value: "INFO", label: "Info" },
-  { value: "WARNING", label: "Warning" },
-  { value: "CRITICAL", label: "Critical" },
-  { value: "ERROR", label: "Error" },
-];
 
 function formatEventTypeName(type: string): string {
   return type
@@ -42,8 +32,6 @@ function formatEventTypeName(type: string): string {
 export default function AuditFilterBar({
   actorSearch,
   onActorSearchChange,
-  severityFilter,
-  onSeverityFilterChange,
   eventTypeFilter,
   eventTypes = [],
   onEventTypeFilterChange,
@@ -82,19 +70,6 @@ export default function AuditFilterBar({
           <Filter size={13} />
           <span>Filters:</span>
         </div>
-
-        <Select value={severityFilter} onValueChange={onSeverityFilterChange}>
-          <SelectTrigger aria-label="Filter by severity" className="h-9 px-3 text-xs w-[130px] bg-background border-border">
-            <SelectValue placeholder="Severity" />
-          </SelectTrigger>
-          <SelectContent>
-            {SEVERITY_OPTIONS.map((opt) => (
-              <SelectItem key={opt.value} value={opt.value}>
-                {opt.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
 
         <Select value={eventTypeFilter} onValueChange={onEventTypeFilterChange}>
           <SelectTrigger aria-label="Filter by event type" className="h-9 px-3 text-xs w-[160px] sm:w-[180px] bg-background border-border">

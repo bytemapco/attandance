@@ -22,9 +22,9 @@ export const tenantProvisionSchema = z.object({
   slug: z
     .string()
     .trim()
-    .min(2, "Short web name must be at least 2 characters")
-    .max(50, "Short web name cannot exceed 50 characters")
-    .regex(/^[a-z0-9-]+$/, "Short name must only contain lowercase letters, numbers, and hyphens"),
+    .min(2, "Institution name must include at least 2 letters or numbers")
+    .max(50, "Institution name is too long for its login address")
+    .regex(/^[a-z0-9-]+$/, "Institution name must include letters or numbers"),
   license_count: z.coerce
     .number()
     .int("License count must be a whole number")
