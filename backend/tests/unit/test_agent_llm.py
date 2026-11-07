@@ -1,10 +1,12 @@
+import asyncio
+import random
 from types import SimpleNamespace
 
 import pytest
 from google.genai import types
 
-from app.services.agent import llm as llm_module, registry
-from app.services.agent.key_pool import AllKeysBusy
+from app.services.agent import key_pool, llm as llm_module, registry
+from app.services.agent.key_pool import AllKeysBusy, AllKeysSlow, KeyPool
 from app.services.agent.llm import GeminiLlm, _schema
 
 
@@ -60,6 +62,32 @@ class Limited(Exception):
     code = 429
 
 
+class InOrder(random.Random):
+    """Keeps the keys in the order given, so a test knows which key is asked first."""
+
+    def shuffle(self, x):
+        return None
+
+
+class NoMemory:
+    async def resting(self, keys):
+        return {}
+
+    async def rest(self, key, seconds):
+        return None
+
+
+def in_order(llm):
+    """The same keys, asked in the order given and with nothing remembered between requests."""
+    llm._pool = KeyPool(list(llm._clients), store=NoMemory(), rng=InOrder())
+    return llm
+
+
+@pytest.fixture(autouse=True)
+def no_redis(monkeypatch):
+    monkeypatch.setattr(key_pool, "safe_redis", lambda: None)
+
+
 def chunk(*parts, tokens=0):
     return types.GenerateContentResponse(
         candidates=[types.Candidate(content=types.Content(role="model", parts=list(parts)))],
@@ -112,7 +140,7 @@ async def test_a_tool_call_is_returned_with_the_provider_data_it_came_in():
 
 
 async def test_a_key_at_its_limit_hands_the_stream_to_the_next_key_before_any_text_is_sent():
-    llm = GeminiLlm("first,second", "m")
+    llm = in_order(GeminiLlm("first,second", "m"))
     llm._clients["first"] = serving(fail=Limited("quota"))
     llm._clients["second"] = serving(chunk(types.Part.from_text(text="Hello")))
 
@@ -150,7 +178,7 @@ async def test_a_chunk_with_no_candidates_is_skipped():
 
 
 async def test_an_error_that_is_not_a_limit_is_raised_and_no_other_key_is_tried():
-    llm = GeminiLlm("first,second", "m")
+    llm = in_order(GeminiLlm("first,second", "m"))
     llm._clients["first"] = serving(fail=ValueError("bad request"))
     llm._clients["second"] = serving(chunk(types.Part.from_text(text="never")))
 
@@ -159,13 +187,47 @@ async def test_an_error_that_is_not_a_limit_is_raised_and_no_other_key_is_tried(
 
 
 async def test_every_key_at_its_limit_ends_with_the_busy_signal():
-    llm = GeminiLlm("first,second", "m")
+    llm = in_order(GeminiLlm("first,second", "m"))
     llm._clients["first"] = serving(fail=Limited("quota"))
     llm._clients["second"] = serving(fail=Limited("quota"))
 
     with pytest.raises(AllKeysBusy) as caught:
         await collect(llm)
     assert caught.value.code == 429
+
+
+def silent():
+    """A key that accepts the request and then says nothing."""
+
+    async def generate_content_stream(**_):
+        async def send():
+            await asyncio.sleep(5)
+            yield None
+
+        return send()
+
+    return SimpleNamespace(aio=SimpleNamespace(models=SimpleNamespace(generate_content_stream=generate_content_stream)))
+
+
+async def test_a_key_with_no_first_word_in_time_hands_the_stream_to_the_next_key(monkeypatch):
+    monkeypatch.setattr(llm_module, "FIRST_WORD_SECONDS", 0.05)
+    llm = in_order(GeminiLlm("first,second", "m"))
+    llm._clients["first"] = silent()
+    llm._clients["second"] = serving(chunk(types.Part.from_text(text="Hello")))
+
+    *pieces, turn = await collect(llm)
+
+    assert pieces == ["Hello"] and turn.text == "Hello"
+
+
+async def test_when_every_key_stays_silent_the_request_ends_as_too_slow(monkeypatch):
+    monkeypatch.setattr(llm_module, "FIRST_WORD_SECONDS", 0.05)
+    llm = in_order(GeminiLlm("first,second", "m"))
+    llm._clients["first"] = silent()
+    llm._clients["second"] = silent()
+
+    with pytest.raises(AllKeysSlow):
+        await collect(llm)
 
 
 def test_the_request_turns_thinking_off_and_never_calls_tools_by_itself():
