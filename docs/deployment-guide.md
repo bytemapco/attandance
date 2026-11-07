@@ -78,7 +78,7 @@ export PATH="/home/jarvis/SharedDrive/bytemap/attendance/backend/venv/bin:$PATH"
 cd /home/jarvis/SharedDrive/bytemap/attendance/backend
 prisma db push
 ```
-`db push` refuses changes that would delete data. Do not add `--accept-data-loss` without a backup.
+`db push` refuses changes that would delete data. Do not add `--accept-data-loss`. A change that must delete or move data is a file in `backend/prisma/sql_changes/` that the deploy runs once after a backup (see CLAUDE.md, "SQL changes"). To run them by hand, in the same folder: `python scripts/apply_sql_changes.py before_push --backup-dir ../backups`, then `prisma db push`, then `python scripts/apply_sql_changes.py after_push --backup-dir ../backups`.
 
 ### Redis
 If Redis is unreachable the API starts in degraded mode and the database and storage keep working. `curl -sS http://127.0.0.1:8011/health` shows each part.

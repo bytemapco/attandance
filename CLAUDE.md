@@ -212,6 +212,8 @@ Admin page for creating and managing classes across departments and batches. A c
 **Nov 8 (unused master data fields):**
 - ❌ `departments.head`, `departments.description`, `designations.description`, `subjects.description`, `classrooms.building`, and every schema, form, import column, assistant tool and test that carried them
 - ✅ A classroom is now identified by its name (any case). `classrooms.capacity` is still in the schema and nothing reads it.
-- ✅ Migration: `prisma/migrations/20261108000000_remove_unused_master_data_fields/`. `db push` cannot drop populated columns, so run that SQL by hand (after a backup) before the deploy that carries this change.
+- ✅ `prisma/sql_changes/before_push/20261108000000_remove_unused_master_data_fields.sql`. `db push` cannot drop populated columns, so the deploy runs this file first (see "SQL changes" below). Nothing to run by hand.
+
+**SQL changes (deploys):** `db push` builds the schema but refuses to drop a column that holds values and cannot move data. Such a change is a `.sql` file in `backend/prisma/sql_changes/before_push/` (runs before the push) or `after_push/` (needs a table the push builds). `scripts/apply_sql_changes.py` runs each file once, in one transaction, records it in `sql_changes`, and takes a `pg_dump` backup first (kept in `attendance/backups` on the server, last 5). The CD workflow calls it around `db push`. Write files so a second run is harmless (`DROP COLUMN IF EXISTS`, scope data moves to the rows they move). Dropping a column the running API still reads breaks that API until the deploy restarts it, a few seconds. For a column that matters, stop using it in one release and drop it in the next.
 
 ---

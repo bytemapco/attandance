@@ -38,7 +38,7 @@ A person who is offline, or whose push is lost, finds the announcement in their 
 
 ## Moving old data
 
-`prisma/migrations/20261107000000_announcements/migration.sql` ends with a data move, run by hand once: the old shared rows (a notification with no user) become announcements and are marked read for the people they reach. The one-row-per-person copies keep their user and stay as personal notifications; the list now shows each person only their own.
+`prisma/sql_changes/after_push/20261107000000_move_announcements.sql` is a data move the deploy runs once: the old shared rows (a notification with no user) become announcements and are marked read for the people they reach. The one-row-per-person copies keep their user and stay as personal notifications; the list now shows each person only their own.
 
 The `role` column on `notifications` is no longer used. It stays because `prisma db push` cannot drop a column that holds data without approval.
 
