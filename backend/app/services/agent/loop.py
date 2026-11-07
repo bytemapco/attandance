@@ -1,10 +1,12 @@
 """One chat turn: the model asks for tools, the gateway runs them, until the model has an answer."""
+import math
 from typing import Any, AsyncIterator
 
 from fastapi import HTTPException
 
 from app.core.logging_config import get_logger
 from app.services.agent import budget, conversation, gateway, prompts, registry
+from app.services.agent.key_pool import AllKeysBusy, AllKeysSlow
 from app.services.agent.labels import label
 from app.services.agent.llm import Llm, LlmTurn
 from app.services.agent.types import Principal
@@ -13,9 +15,15 @@ logger = get_logger("app.agent.loop")
 MAX_STEPS = 6
 STEP_BREAK = "\n\n"  # between what the model says before and after its tool calls
 UNAVAILABLE = "The assistant is unavailable right now. Please try again in a moment."
-BUSY = "The assistant is busy right now. Please try again in a minute."
-QUOTA_EXCEEDED = 429  # the model provider's own rate limit, not ours
+SLOW = "The assistant took too long to answer. Please try again."
 TOO_LONG = "I could not finish that in a few steps. Try asking for one thing at a time."
+
+
+def busy_message(seconds: float) -> str:
+    """Every model key is at its limit; says when the first one is free."""
+    minutes = max(1, math.ceil(seconds / 60))
+    wait = f"{minutes} minute{'s' if minutes != 1 else ''}" if minutes < 120 else f"{math.ceil(minutes / 60)} hours"
+    return f"The assistant is busy right now. Please try again in about {wait}."
 
 
 async def run_turn(
@@ -45,9 +53,15 @@ async def run_turn(
         except HTTPException as exc:
             yield {"type": "error", "message": str(exc.detail)}
             return
-        except Exception as exc:
+        except AllKeysBusy as exc:
+            yield {"type": "error", "message": busy_message(exc.retry_after)}
+            return
+        except AllKeysSlow:
+            yield {"type": "error", "message": SLOW}
+            return
+        except Exception:
             logger.exception("The model call failed")
-            yield {"type": "error", "message": BUSY if getattr(exc, "code", None) == QUOTA_EXCEEDED else UNAVAILABLE}
+            yield {"type": "error", "message": UNAVAILABLE}
             return
         await budget.record_tokens(principal, turn.tokens)
         step_text = streamed or ("" if turn.calls else turn.text)
