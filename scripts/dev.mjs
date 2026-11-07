@@ -44,7 +44,7 @@ function pipeOutput(childProcess, prefix, color) {
 
 const pythonExec = getPythonExecutable();
 
-process.stdout.write(`\n${colors.green}${colors.bold}Starting Backend (FastAPI :8000) & Frontend (Next.js :3000)...${colors.reset}\n\n`);
+process.stdout.write(`\n${colors.green}${colors.bold}Starting Backend (FastAPI :8000), E-mail worker & Frontend (Next.js :3000)...${colors.reset}\n\n`);
 
 const backendProcess = spawn(
   pythonExec,
@@ -57,6 +57,19 @@ const backendProcess = spawn(
 );
 
 pipeOutput(backendProcess, "BACKEND", colors.cyan);
+
+// The API only queues e-mail (invitations, device-change notices). Without this worker nothing is ever sent.
+const workerProcess = spawn(
+  pythonExec,
+  ["-m", "arq", "app.worker.WorkerSettings", "--watch", "app"],
+  {
+    cwd: backendDir,
+    env: { ...process.env, PYTHONUNBUFFERED: "1" },
+    stdio: ["ignore", "pipe", "pipe"],
+  }
+);
+
+pipeOutput(workerProcess, "WORKER", colors.green);
 
 const npmCmd = process.platform === "win32" ? "npm.cmd" : "npm";
 
@@ -78,6 +91,9 @@ function shutdown() {
     backendProcess.kill("SIGTERM");
   } catch {}
   try {
+    workerProcess.kill("SIGTERM");
+  } catch {}
+  try {
     frontendProcess.kill("SIGTERM");
   } catch {}
   process.exit(0);
@@ -89,6 +105,12 @@ process.on("SIGTERM", shutdown);
 backendProcess.on("close", (code) => {
   if (code !== 0 && code !== null) {
     process.stdout.write(`${colors.red}[BACKEND] Process exited with code ${code}${colors.reset}\n`);
+  }
+});
+
+workerProcess.on("close", (code) => {
+  if (code !== 0 && code !== null) {
+    process.stdout.write(`${colors.red}[WORKER] Process exited with code ${code}${colors.reset}\n`);
   }
 });
 

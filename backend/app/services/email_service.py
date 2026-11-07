@@ -119,7 +119,7 @@ class EmailService:
     ) -> bool:
         base_url = frontend_url or resolve_frontend_url()
         invite_url = f"{base_url}/onboarding?token={invite_token}" if invite_token else f"{base_url}/login"
-        role_display = "Student" if role == "STUDENT" else ("Teacher" if role == "TEACHER" else "Administrator")
+        role_display = {"STUDENT": "Student", "TEACHER": "Teacher"}.get(role, "Administrator")
 
         return await self.send_email(
             to_email=to_email,
@@ -129,6 +129,7 @@ class EmailService:
             context={
                 "recipient_name": recipient_name,
                 "role_title": role_display,
+                "role_article": "an" if role_display == "Administrator" else "a",
                 "email": to_email,
                 "invite_url": invite_url,
                 "temp_password": temp_password,

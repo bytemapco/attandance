@@ -134,7 +134,14 @@ reset() {
   say "${GREEN}Database emptied.${OFF} Create the super admin to log in again."
 }
 
+# The API only queues e-mail (invitations, device-change notices); this worker is what sends it.
+start_local_worker() {
+  pgrep -f "arq app.worker.WorkerSettings" >/dev/null 2>&1 && return
+  (cd "$BACKEND" && nohup "$PY" -m arq app.worker.WorkerSettings >"$BACKEND/worker.log" 2>&1 &)
+}
+
 start_local_backend() {
+  start_local_worker
   curl -fs "$URL/health" >/dev/null 2>&1 && { say "Already running."; return; }
   (cd "$BACKEND" && nohup "$PY" -m uvicorn main:app --host 127.0.0.1 --port 8000 >"$BACKEND/server.log" 2>&1 &)
   for _ in $(seq 1 60); do curl -fs "$URL/health" >/dev/null 2>&1 && { say "${GREEN}Started.${OFF}"; return; }; sleep 1; done

@@ -97,11 +97,13 @@ npm run setup
 ### 3. Running Development Servers
 
 ```bash
-# Run backend and frontend concurrently
+# Run backend, e-mail worker and frontend concurrently
 npm run dev
 
 # Or run individual services:
 npm run dev:backend    # FastAPI server on http://localhost:8000
+# The API only queues e-mail (invitations, device-change notices). Start the worker that sends it:
+#   cd backend && python -m arq app.worker.WorkerSettings --watch app
 npm run dev:frontend   # Next.js dashboard on http://localhost:3000
 npm run dev:mobile     # Flutter app runner
 ```
