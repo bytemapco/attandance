@@ -26,7 +26,7 @@ Open the class and edit the semester number. There is no promotion step. Student
 ## Set the campus location and attendance rules
 Role: admin
 Page: /admin/settings
-Settings holds the campus map point and radius used for location checks, the minimum attendance percentage, how long the attendance window stays open, and whether Saturday is a class day. These rules apply to the whole institution. Only the admin screen changes them. The assistant cannot.
+Settings holds the campus map point and radius used for location checks, the minimum attendance percentage, how long the attendance window stays open, and whether Saturday is a class day. These rules apply to the whole institution. You can change them on this page, or ask the assistant to change them and confirm its card. Each change is kept in the audit log.
 
 ## See attendance reports and download them
 Role: admin

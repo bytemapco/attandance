@@ -116,7 +116,7 @@ A chat agent over the existing services. Design in [docs/assistant.md](docs/assi
 - A tool is a thin wrapper over an existing service. No tool takes a tenant, user or role argument; they come from the signed-in `Principal`.
 - A tool that changes data has a `preview` and runs only from `proposals.confirm`. Never run a write from the model loop.
 - Every call goes through `gateway.call_tool`. Tests use a scripted model; never call the real model in tests.
-- Nothing biometric, no passwords or tokens, and no attendance policy settings are exposed to the assistant.
+- Nothing biometric, no passwords or tokens are exposed to the assistant. Attendance policy settings (minimum %, window, Saturday, location) change only through `update_institution_settings`, a write tool that waits for Confirm and writes an audit row. Face and AI check settings are never exposed.
 
 ## 8. Class Management Feature (Implemented Oct 2026)
 

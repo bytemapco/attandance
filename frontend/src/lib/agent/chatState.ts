@@ -10,6 +10,7 @@ export type ChatAction =
   | { type: "send"; userId: string; replyId: string; text: string }
   | { type: "event"; event: AgentStreamEvent }
   | { type: "fail"; message: string }
+  | { type: "stopped" }
   | { type: "done" }
   | { type: "load"; conversationId: string; saved: SavedMessage[] }
   | { type: "reset" };
@@ -17,7 +18,7 @@ export type ChatAction =
 export const emptyChat: ChatState = { conversationId: null, messages: [], busy: false };
 
 function blank(id: string, role: ChatMessage["role"], text = ""): ChatMessage {
-  return { id, role, text, blocks: [], working: null, failed: false };
+  return { id, role, text, blocks: [], steps: [], failed: false };
 }
 
 function updateReply(state: ChatState, change: (reply: ChatMessage) => ChatMessage): ChatState {
@@ -31,13 +32,15 @@ function applyEvent(state: ChatState, event: AgentStreamEvent): ChatState {
     case "conversation":
       return { ...state, conversationId: event.id };
     case "tool":
-      return updateReply(state, (reply) => ({ ...reply, working: event.label }));
+      return updateReply(state, (reply) => ({ ...reply, steps: [...reply.steps, event.label] }));
+    case "delta":
+      return updateReply(state, (reply) => ({ ...reply, text: reply.text + event.text }));
     case "text":
-      return updateReply(state, (reply) => ({ ...reply, text: event.text, working: null }));
+      return updateReply(state, (reply) => ({ ...reply, text: event.text }));
     case "error":
-      return updateReply(state, (reply) => ({ ...reply, text: event.message, working: null, failed: true }));
+      return updateReply(state, (reply) => ({ ...reply, text: event.message, failed: true }));
     default:
-      return updateReply(state, (reply) => ({ ...reply, blocks: [...reply.blocks, event], working: null }));
+      return updateReply(state, (reply) => ({ ...reply, blocks: [...reply.blocks, event] }));
   }
 }
 
@@ -59,9 +62,11 @@ export function chatReducer(state: ChatState, action: ChatAction): ChatState {
     case "event":
       return applyEvent(state, action.event);
     case "fail":
-      return updateReply(state, (reply) => ({ ...reply, text: action.message, working: null, failed: true }));
+      return updateReply(state, (reply) => ({ ...reply, text: action.message, failed: true }));
+    case "stopped":
+      return updateReply(state, (reply) => (reply.text || reply.blocks.length > 0 ? reply : { ...reply, text: "Stopped." }));
     case "done":
-      return updateReply({ ...state, busy: false }, (reply) => ({ ...reply, working: null }));
+      return { ...state, busy: false };
     case "load":
       return { conversationId: action.conversationId, messages: fromSaved(action.saved), busy: false };
     case "reset":

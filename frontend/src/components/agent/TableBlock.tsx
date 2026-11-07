@@ -38,7 +38,7 @@ export default function TableBlock({ title, columns, rows, download }: TableBloc
   }
 
   return (
-    <section className="mt-2 rounded-md border border-border bg-card" aria-label={title}>
+    <section className="overflow-hidden rounded-lg border border-border bg-card" aria-label={title}>
       <header className="flex items-center justify-between gap-2 border-b border-border px-3 py-2">
         <h4 className="text-xs font-semibold text-foreground">
           {title} <span className="font-normal text-muted-foreground">({rows.length})</span>

@@ -1,7 +1,7 @@
 """The model behind the assistant. The loop talks to `Llm`; only `GeminiLlm` knows about Gemini."""
 from dataclasses import dataclass, field
 from functools import lru_cache
-from typing import Any, Optional, Protocol
+from typing import Any, AsyncIterator, Optional, Protocol, Union
 
 from app.core.config import settings
 from app.services.agent.key_pool import KeyPool, parse_keys
@@ -28,7 +28,9 @@ class LlmTurn:
 
 
 class Llm(Protocol):
-    async def generate(self, system: str, history: list[dict[str, Any]], tools: list[Tool]) -> LlmTurn: ...
+    def stream(self, system: str, history: list[dict[str, Any]], tools: list[Tool]) -> AsyncIterator[Union[str, LlmTurn]]:
+        """Yields the answer's text as it is written, then one `LlmTurn` that ends the answer."""
+        ...
 
 
 def _schema(tool: Tool) -> dict[str, Any]:
@@ -70,32 +72,56 @@ class GeminiLlm:
                 contents.append(types.Content(role="user", parts=parts))
         return contents
 
-    async def generate(self, system: str, history: list[dict[str, Any]], tools: list[Tool]) -> LlmTurn:
+    @staticmethod
+    def _config(system: str, tools: list[Tool]) -> Any:
         from google.genai import types
 
         declarations = [
             types.FunctionDeclaration(name=t.name, description=t.description, parameters_json_schema=_schema(t))
             for t in tools
         ]
-        config = types.GenerateContentConfig(
+        return types.GenerateContentConfig(
             system_instruction=system,
             tools=[types.Tool(function_declarations=declarations)],
             automatic_function_calling=types.AutomaticFunctionCallingConfig(disable=True),
             temperature=0.2,
+            # The model's own thinking delayed the first word by about 30 s. The tools do the reasoning-heavy work.
+            thinking_config=types.ThinkingConfig(thinking_budget=0),
         )
-        contents = self._contents(history)
-        response = await self._pool.run(
-            lambda key: self._clients[key].aio.models.generate_content(model=self._model, contents=contents, config=config)
-        )
-        calls = [ToolCall(call.name, dict(call.args or {})) for call in (response.function_calls or [])]
-        usage = response.usage_metadata
-        content = response.candidates[0].content if response.candidates else None
-        return LlmTurn(
-            text=(response.text or "") if not calls else "",
-            calls=calls,
-            tokens=int(getattr(usage, "total_token_count", 0) or 0),
-            raw=content,
-        )
+
+    async def _open(self, key: str, contents: list[Any], config: Any) -> AsyncIterator[Any]:
+        """Starts the stream and waits for its first chunk, so a key at its limit fails here and the pool moves on."""
+        chunks = await self._clients[key].aio.models.generate_content_stream(model=self._model, contents=contents, config=config)
+        first = await anext(chunks, None)
+
+        async def replay() -> AsyncIterator[Any]:
+            if first is not None:
+                yield first
+            async for chunk in chunks:
+                yield chunk
+
+        return replay()
+
+    async def stream(self, system: str, history: list[dict[str, Any]], tools: list[Tool]) -> AsyncIterator[Union[str, LlmTurn]]:
+        from google.genai import types
+
+        config, contents = self._config(system, tools), self._contents(history)
+        chunks = await self._pool.run(lambda key: self._open(key, contents, config))
+        parts: list[Any] = []
+        texts: list[str] = []
+        calls: list[ToolCall] = []
+        tokens = 0
+        async for chunk in chunks:
+            tokens = int(getattr(chunk.usage_metadata, "total_token_count", 0) or 0) or tokens
+            content = chunk.candidates[0].content if chunk.candidates else None
+            for part in (content.parts or []) if content else []:
+                parts.append(part)
+                if part.function_call:
+                    calls.append(ToolCall(part.function_call.name, dict(part.function_call.args or {})))
+                elif part.text and not part.thought:
+                    texts.append(part.text)
+                    yield part.text
+        yield LlmTurn(text="".join(texts), calls=calls, tokens=tokens, raw=types.Content(role="model", parts=parts))
 
 
 _override: Optional[Llm] = None

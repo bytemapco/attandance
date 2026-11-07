@@ -76,21 +76,25 @@ export default function ProposalCard({ proposal }: { proposal: ProposalData }): 
 
   if (phase === "confirmed") {
     return (
-      <p className="mt-2 flex items-center gap-2 rounded-md border border-border bg-success-soft px-3 py-2 text-sm text-success" role="status">
-        <CheckCircle2 size={16} aria-hidden /> {outcome ?? "Done."}
+      <p className="flex items-center gap-2 rounded-lg border border-success-border bg-success-soft px-3 py-2 text-sm text-success" role="status">
+        <CheckCircle2 size={16} strokeWidth={1.5} aria-hidden /> {outcome ?? "Done"}
       </p>
     );
   }
   if (phase === "cancelled") {
-    return <p className="mt-2 rounded-md border border-border bg-secondary px-3 py-2 text-sm text-muted-foreground">Cancelled. Nothing was changed.</p>;
+    return <p className="rounded-lg border border-border bg-secondary px-3 py-2 text-sm text-muted-foreground">Cancelled. Nothing was changed.</p>;
   }
 
   return (
-    <section className="mt-2 rounded-md border border-primary/40 bg-card p-3" aria-label="Confirm this change">
+    <section className="rounded-lg border border-accent-border bg-card p-4" aria-label="Confirm this change">
       <h4 className="text-sm font-semibold text-foreground">{proposal.summary}</h4>
       {recipients.length > 0 && <p className="mt-1 text-xs text-muted-foreground">To: {recipients.join(", ")}</p>}
       {typeof proposal.details.note === "string" && <p className="mt-2 text-xs text-muted-foreground">{proposal.details.note}</p>}
-      {table && <TableBlock {...table} />}
+      {table && (
+        <div className="mt-2">
+          <TableBlock {...table} />
+        </div>
+      )}
       <div className="mt-3 space-y-2">
         {Object.entries(edits).map(([name, value]) => (
           <Field key={name} name={name} value={value} onChange={(next) => setEdits((current) => ({ ...current, [name]: next }))} />

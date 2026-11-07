@@ -1,11 +1,11 @@
-"""Create departments, subjects and classrooms in bulk. Existing names and codes are refused before anything is saved."""
+"""Create departments, subjects, classrooms and designations in bulk. Existing names and codes are refused before anything is saved."""
 from typing import Optional
 
 from fastapi import HTTPException, status
 from pydantic import BaseModel, Field
 
 from app.db.client import db
-from app.schemas.admin.bulk import ClassroomBulkItem, DepartmentBulkItem, SubjectBulkItem
+from app.schemas.admin.bulk import ClassroomBulkItem, DepartmentBulkItem, DesignationBulkItem, SubjectBulkItem
 from app.services.admin.admin_bulk_service import AdminBulkService
 from app.services.agent.tools.common import ADMIN_ONLY
 from app.services.agent.types import Preview, Principal, Tool, ToolResult
@@ -106,7 +106,32 @@ async def create_classrooms(principal: Principal, args: ClassroomsArgs) -> ToolR
     return _outcome("classrooms", await AdminBulkService.bulk_create_classrooms(items, principal.user.email, None, principal.tenant_id))
 
 
+class DesignationItem(BaseModel):
+    name: str = Field(min_length=2, max_length=100)
+    code: str = Field(min_length=2, max_length=20, description="Short code, for example PROF.")
+
+
+class DesignationsArgs(BaseModel):
+    items: list[DesignationItem] = Field(min_length=1, max_length=MAX_ITEMS)
+
+
+async def preview_designations(principal: Principal, args: DesignationsArgs) -> Preview:
+    _distinct([i.code for i in args.items], "code")
+    clash = await db.designation.find_many(where={"tenantId": principal.tenant_id, "code": {"in": [i.code for i in args.items], "mode": "insensitive"}})
+    if clash:
+        raise _taken("designations (code)", [d.code for d in clash])
+    rows = [[i.name, i.code] for i in args.items]
+    return Preview(f"Create {len(rows)} designation{'s' if len(rows) != 1 else ''}", {"table": {"title": "Designations", "columns": ["Name", "Code"], "rows": rows}})
+
+
+async def create_designations(principal: Principal, args: DesignationsArgs) -> ToolResult:
+    items = [DesignationBulkItem(name=i.name, code=i.code) for i in args.items]
+    return _outcome("designations", await AdminBulkService.bulk_create_designations(items, principal.user.email, None, principal.tenant_id))
+
+
 TOOLS = [
+    Tool("create_designations", "Prepare new teacher designations (name and short code), such as Professor. Needs confirmation.",
+         DesignationsArgs, ADMIN_ONLY, create_designations, preview=preview_designations),
     Tool("create_departments", "Prepare new departments (name and short code). Nothing is saved until the admin confirms.",
          DepartmentsArgs, ADMIN_ONLY, create_departments, preview=preview_departments),
     Tool("create_subjects", "Prepare new subjects (name, unique code, optional department_id). Nothing is saved until the admin confirms.",

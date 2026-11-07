@@ -1,13 +1,15 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import AgentLauncher from "@/components/agent/AgentLauncher";
 import SwrProvider from "@/components/providers/SwrProvider";
+import { rememberConversation, savedConversation } from "@/lib/agent/savedChat";
 import { useAuthStore } from "@/store/authStore";
 import type { AgentStatus, AgentStreamEvent } from "@/types/agent";
 import { makeUser } from "../helpers";
 
-const { apiGet, streamChat, acceptNotice, confirmProposal, cancelProposal } = vi.hoisted(() => ({
+const { apiGet, streamChat, acceptNotice, confirmProposal, cancelProposal, loadConversation } = vi.hoisted(() => ({
   apiGet: vi.fn(),
+  loadConversation: vi.fn(),
   streamChat: vi.fn(),
   acceptNotice: vi.fn(),
   confirmProposal: vi.fn(),
@@ -17,7 +19,7 @@ const { apiGet, streamChat, acceptNotice, confirmProposal, cancelProposal } = vi
 vi.mock("@/lib/api/client", () => ({ default: { get: apiGet, post: vi.fn() }, sessionHeaders: () => ({}) }));
 vi.mock("@/services/agent", () => ({
   AgentRequestError: class extends Error {},
-  streamChat, acceptNotice, confirmProposal, cancelProposal, downloadLinked: vi.fn(),
+  streamChat, acceptNotice, confirmProposal, cancelProposal, loadConversation, downloadLinked: vi.fn(),
 }));
 vi.mock("react-hot-toast", () => ({ default: { error: vi.fn() } }));
 
@@ -53,7 +55,8 @@ function reply(...events: AgentStreamEvent[]): void {
 }
 
 beforeEach(() => {
-  [apiGet, streamChat, acceptNotice, confirmProposal, cancelProposal].forEach((mock) => mock.mockReset());
+  [apiGet, streamChat, acceptNotice, confirmProposal, cancelProposal, loadConversation].forEach((mock) => mock.mockReset());
+  localStorage.clear();
   answerWith(READY);
 });
 
@@ -108,6 +111,58 @@ describe("chatting", () => {
     expect(await screen.findByRole("region", { name: "Absent" })).toHaveTextContent("Asha");
   });
 
+  it("shows what it is looking up while it works, then writes the answer with its formatting", async () => {
+    let release = (): void => undefined;
+    streamChat.mockImplementation(async (_text: string, _id: string | null, onEvent: (e: AgentStreamEvent) => void) => {
+      onEvent({ type: "tool", name: "my_schedule", label: "my schedule" });
+      await new Promise<void>((resolve) => { release = resolve; });
+      onEvent({ type: "delta", text: "You have **two** classes:\n- Maths\n- Physics" });
+      onEvent({ type: "text", text: "You have **two** classes:\n- Maths\n- Physics" });
+    });
+    await open();
+    await ask("schedule");
+
+    expect(await screen.findByText("My schedule")).toBeInTheDocument();
+    expect(screen.queryByRole("progressbar")).toBeNull();
+    release();
+
+    expect((await screen.findByText("two")).tagName).toBe("STRONG");
+    expect(await screen.findByText("Physics")).toBeInTheDocument();
+    expect(screen.getAllByRole("listitem").some((item) => item.textContent === "Maths")).toBe(true);
+  });
+
+  it("lets the person stop an answer that is coming, and keeps what was written", async () => {
+    streamChat.mockImplementation(async (_text: string, _id: string | null, onEvent: (e: AgentStreamEvent) => void, signal: AbortSignal) => {
+      onEvent({ type: "delta", text: "Partial answer" });
+      await new Promise<void>((_, reject) => signal.addEventListener("abort", () => reject(new DOMException("Aborted", "AbortError"))));
+    });
+    await open();
+    await ask("go");
+    await screen.findByText("Partial answer");
+    expect(screen.queryByRole("button", { name: "Send" })).toBeNull();
+
+    fireEvent.click(screen.getByRole("button", { name: "Stop" }));
+
+    expect(await screen.findByRole("button", { name: "Send" })).toBeInTheDocument();
+    expect(screen.getByText("Partial answer")).toBeInTheDocument();
+  });
+
+  it("says Stopped when it is stopped before anything was written", async () => {
+    streamChat.mockImplementation(async (_text: string, _id: string | null, _on: unknown, signal: AbortSignal) => {
+      await new Promise<void>((_, reject) => signal.addEventListener("abort", () => reject(new DOMException("Aborted", "AbortError"))));
+    });
+    await open();
+    await ask("go");
+    fireEvent.click(await screen.findByRole("button", { name: "Stop" }));
+    expect(await screen.findByText("Stopped.")).toBeInTheDocument();
+  });
+
+  it("shows no loading text before the status arrives", async () => {
+    apiGet.mockImplementation(() => new Promise(() => undefined));
+    await open();
+    expect(screen.queryByText(/loading/i)).toBeNull();
+  });
+
   it("continues the same conversation on the next message", async () => {
     reply({ type: "conversation", id: "c1" }, { type: "text", text: "First." });
     await open();
@@ -122,6 +177,50 @@ describe("chatting", () => {
     await open();
     await ask("   ");
     expect(streamChat).not.toHaveBeenCalled();
+  });
+});
+
+describe("the assistant window", () => {
+  it("keeps the conversation when it is closed and opened again", async () => {
+    reply({ type: "conversation", id: "c1" }, { type: "text", text: "First." });
+    await open();
+    await ask("one");
+    await screen.findByText("First.");
+
+    fireEvent.keyDown(document, { key: "Escape" });
+    expect(screen.queryByRole("dialog")).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: "Open the assistant" }));
+
+    expect(screen.getByText("First.")).toBeVisible();
+    expect(streamChat).toHaveBeenCalledTimes(1);
+  });
+
+  it("brings back the saved conversation after a reload", async () => {
+    mount("TEACHER");
+    rememberConversation(useAuthStore.getState().user?.id ?? "", "c9");
+    loadConversation.mockResolvedValue([
+      { role: "user", content: "who is absent", events: [] },
+      { role: "assistant", content: "Two students.", events: [] },
+    ]);
+    cleanup();
+    await open();
+
+    expect(await screen.findByText("Two students.")).toBeInTheDocument();
+    expect(loadConversation).toHaveBeenCalledWith("c9");
+  });
+
+  it("forgets the saved conversation on a new chat", async () => {
+    reply({ type: "conversation", id: "c1" }, { type: "text", text: "First." });
+    await open();
+    await ask("one");
+    await screen.findByText("First.");
+    const userId = useAuthStore.getState().user?.id ?? "";
+    expect(savedConversation(userId)).toBe("c1");
+
+    fireEvent.click(screen.getByRole("button", { name: "New chat" }));
+
+    expect(savedConversation(userId)).toBeNull();
+    expect(screen.queryByText("First.")).toBeNull();
   });
 });
 

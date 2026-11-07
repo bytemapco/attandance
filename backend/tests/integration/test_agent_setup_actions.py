@@ -3,7 +3,7 @@ import pytest
 
 from app.core.config import settings
 from app.services.agent.llm import set_llm
-from tests.integration.agent_world import World, ScriptedModel, calls, confirm, events, propose, says, ACCEPT, CHAT
+from tests.integration.agent_world import World, ask, batch, confirm, count, make_primary, propose
 
 
 @pytest.fixture(autouse=True)
@@ -11,31 +11,6 @@ def assistant_on(monkeypatch):
     monkeypatch.setattr(settings, "GEMINI_API_KEY", "test-key")
     yield
     set_llm(None)
-
-
-def count(world, table, where="tenant_id = %s", *params):
-    return world.scalar(f"SELECT count(*) FROM {table} WHERE {where}", *(params or (world.tenant_id,)))
-
-
-def ask(client, world, headers, tool, **args):
-    """Has the model call one read tool; returns what the model was told."""
-    client.post(ACCEPT, headers=world.admin)
-    model = ScriptedModel(calls(tool, **args), says("done"))
-    set_llm(model)
-    events(client.post(CHAT, json={"message": "go"}, headers=headers))
-    return model.tool_results[0]
-
-
-def batch(seed, world, code="A-1"):
-    """Batch codes carry the department code, like CE-A-1."""
-    prefix = world.scalar("SELECT code FROM departments WHERE id = %s", world.department_id)
-    return seed.insert("batches", tenant_id=world.tenant_id, department_id=world.department_id, section=code[0],
-                       number=int(code[-1]), code=f"{prefix}-{code}", status="ACTIVE")
-
-
-def make_primary(conn, world):
-    with conn.cursor() as cursor:
-        cursor.execute("UPDATE course_faculties SET is_primary = true WHERE course_section_id = %s", (world.section_id,))
 
 
 class TestMasterData:
