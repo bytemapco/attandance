@@ -1,139 +1,58 @@
-import { ParsedBulkRecord, BulkImportEntityType } from "./bulkTypes";
+import { BULK_ENTITIES, BulkColumn } from "./bulkColumns";
+import { parseCsv } from "./csv";
+import { BulkImportEntityType, BulkRow } from "./bulkTypes";
+import { firstProblem, flagRepeats } from "./validateBulkRow";
 
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+export type ParseResult = { rows: BulkRow[]; ignoredColumns: string[] } | { error: string };
 
-export function parseBulkCsvContent(
-  content: string,
-  entityType: BulkImportEntityType,
-  onError: (msg: string) => void
-): ParsedBulkRecord[] | null {
-  const rawLines = content.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
-  if (rawLines.length < 2) {
-    onError("The CSV file must contain a header row and at least 1 record row.");
-    return null;
+interface HeaderLayout {
+  positions: Map<string, number>;
+  ignored: string[];
+}
+
+function headerName(header: string): string {
+  return header.trim().toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "");
+}
+
+function findColumn(columns: BulkColumn[], header: string): BulkColumn | undefined {
+  const name = headerName(header);
+  return columns.find((column) => column.key === name || column.field === name || column.aliases.includes(name));
+}
+
+/** Where each known column sits in the file, by header name, whatever the order. Other headers are ignored. */
+function readHeader(headers: string[], columns: BulkColumn[]): HeaderLayout {
+  const positions = new Map<string, number>();
+  const ignored: string[] = [];
+  headers.forEach((header, index) => {
+    const column = findColumn(columns, header);
+    if (column && !positions.has(column.key)) positions.set(column.key, index);
+    else if (header.trim()) ignored.push(header.trim());
+  });
+  return { positions, ignored };
+}
+
+function readRow(columns: BulkColumn[], positions: Map<string, number>, cells: string[], number: number): BulkRow {
+  const values: Record<string, string> = {};
+  for (const column of columns) {
+    const index = positions.get(column.key);
+    const cell = index === undefined ? "" : (cells[index] ?? "").trim();
+    values[column.key] = cell && column.normalize ? column.normalize(cell) : cell;
+  }
+  return { id: `row-${number}`, number, values, error: firstProblem(columns, values) };
+}
+
+export function parseBulkCsvContent(content: string, entityType: BulkImportEntityType): ParseResult {
+  const table = parseCsv(content);
+  if (table.length < 2) return { error: "The CSV file must contain a header row and at least 1 record row." };
+
+  const entity = BULK_ENTITIES[entityType];
+  const { positions, ignored } = readHeader(table[0], entity.columns);
+  const missing = entity.columns.filter((column) => column.required && !positions.has(column.key));
+  if (missing.length > 0) {
+    const names = missing.map((column) => column.key).join(", ");
+    return { error: `Missing required column${missing.length > 1 ? "s" : ""}: ${names}. Download the sample file to see the format.` };
   }
 
-  const records: ParsedBulkRecord[] = [];
-
-  for (let i = 1; i < rawLines.length; i++) {
-    const parts = rawLines[i].split(",").map((p) => p.trim().replace(/^["']|["']$/g, ""));
-    if (parts.length < 2) continue;
-
-    if (entityType === "departments") {
-      const name = parts[0] || "";
-      const code = parts[1] || "";
-      const head = parts[2] || "";
-      const description = parts[3] || "";
-      const hasName = name.length >= 2;
-      const hasCode = code.length >= 2;
-      const isValid = hasName && hasCode;
-      let validationError: string | undefined;
-      if (!hasName) validationError = "Department name is required (min 2 characters)";
-      else if (!hasCode) validationError = "Department code is required (min 2 characters)";
-
-      records.push({
-        id: `row-${i}-${Date.now()}`,
-        email: description,
-        identifier: code,
-        first_name: name,
-        last_name: head,
-        isValid,
-        validationError,
-      });
-    } else if (entityType === "subjects") {
-      const name = parts[0] || "";
-      const code = parts[1] || "";
-      const description = parts[2] || "";
-      const hasName = name.length >= 2;
-      const hasCode = code.length >= 2;
-      const isValid = hasName && hasCode;
-      let validationError: string | undefined;
-      if (!hasName) validationError = "Subject name is required (min 2 characters)";
-      else if (!hasCode) validationError = "Subject code is required (min 2 characters)";
-
-      records.push({
-        id: `row-${i}-${Date.now()}`,
-        email: description,
-        identifier: code,
-        first_name: name,
-        last_name: "",
-        isValid,
-        validationError,
-      });
-    } else if (entityType === "classrooms") {
-      const name = parts[0] || "";
-      const building = parts[1] || "";
-      const hasName = name.length >= 1;
-      const isValid = hasName;
-      let validationError: string | undefined;
-      if (!hasName) validationError = "Classroom name / room number is required";
-
-      records.push({
-        id: `row-${i}-${Date.now()}`,
-        email: "",
-        identifier: building,
-        first_name: name,
-        last_name: "",
-        isValid,
-        validationError,
-      });
-    } else if (entityType === "designations") {
-      const name = parts[0] || "";
-      const code = parts[1] || "";
-      const description = parts[2] || "";
-      const hasName = name.length >= 2;
-      const hasCode = code.length >= 2;
-      const isValid = hasName && hasCode;
-      let validationError: string | undefined;
-      if (!hasName) validationError = "Designation title is required (min 2 characters)";
-      else if (!hasCode) validationError = "Designation code is required (min 2 characters)";
-
-      records.push({
-        id: `row-${i}-${Date.now()}`,
-        email: description,
-        identifier: code,
-        first_name: name,
-        last_name: "",
-        isValid,
-        validationError,
-      });
-    } else {
-      if (parts.length < 4) continue;
-      const email = parts[0] || "";
-      const identifier = parts[1] || "";
-      const firstName = parts[2] || "";
-      const lastName = parts[3] || "";
-      const departmentCode = parts[4] || "";
-      const batchCode = entityType === "students" ? parts[5] || "" : "";
-      const isValidEmail = emailRegex.test(email);
-      const hasIdentifier = identifier.length >= 3;
-      const hasDepartment = entityType !== "students" || departmentCode.length > 0;
-      const isValid = isValidEmail && hasIdentifier && firstName.length > 0 && hasDepartment;
-
-      let validationError: string | undefined;
-      if (!isValidEmail) validationError = "Invalid email format";
-      else if (!hasIdentifier) validationError = "ID too short (min 3 characters)";
-      else if (!firstName) validationError = "First name is required";
-      else if (!hasDepartment) validationError = "Department code is required";
-
-      records.push({
-        id: `row-${i}-${Date.now()}`,
-        email,
-        identifier,
-        first_name: firstName,
-        last_name: lastName,
-        departmentCode: departmentCode || undefined,
-        batchCode: batchCode || undefined,
-        isValid,
-        validationError,
-      });
-    }
-  }
-
-  if (records.length === 0) {
-    onError("No valid records found in the uploaded file. Please check your headers and column format.");
-    return null;
-  }
-
-  return records;
+  const rows = table.slice(1).map((cells, index) => readRow(entity.columns, positions, cells, index + 1));
+  return { rows: flagRepeats(rows, entity), ignoredColumns: ignored };
 }

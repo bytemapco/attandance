@@ -4,6 +4,7 @@ from typing import Any
 from fastapi import HTTPException, status
 from prisma.errors import PrismaError
 
+from app.core.db_errors import DuplicateRecord
 from app.core.logging_config import get_logger
 from app.db.client import db
 
@@ -11,7 +12,8 @@ logger = get_logger("app.api.admin")
 
 
 def handle_generic_err(func):
-    """Reports a service's ValueError as 404 (when it says "not found") or 400, and anything unexpected as 500."""
+    """Reports a service's ValueError as 404 (when it says "not found") or 400, a DuplicateRecord as 409, and anything
+    unexpected as 500."""
 
     @wraps(func)
     async def wrapper(*args, **kwargs):
@@ -19,6 +21,8 @@ def handle_generic_err(func):
             return await func(*args, **kwargs)
         except HTTPException:
             raise
+        except DuplicateRecord as err:
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(err)) from err
         except ValueError as err:
             code = status.HTTP_404_NOT_FOUND if "not found" in str(err).lower() else status.HTTP_400_BAD_REQUEST
             raise HTTPException(status_code=code, detail=str(err)) from err

@@ -1,5 +1,6 @@
 from typing import List, Optional
 from prisma.models import Designation
+from app.core.db_errors import DuplicateRecord
 from app.db.client import db
 
 
@@ -17,14 +18,12 @@ class DesignationService:
         return await db.designation.find_first(where=where)
 
     @staticmethod
-    async def create_designation(
-        name: str, code: str, description: Optional[str] = None, tenant_id: Optional[str] = None
-    ) -> Designation:
-        data = {"name": name, "code": code, "description": description}
+    async def create_designation(name: str, code: str, tenant_id: Optional[str] = None) -> Designation:
+        data = {"name": name, "code": code}
         if tenant_id:
             data["tenantId"] = tenant_id
-        if await db.designation.find_first(where={"tenantId": tenant_id, "code": code}):
-            raise ValueError(f"Designation code '{code}' already exists.")
+        if await db.designation.find_first(where={"tenantId": tenant_id, "code": {"equals": code, "mode": "insensitive"}}):
+            raise DuplicateRecord(f"Designation code '{code}' already exists.")
         return await db.designation.create(data=data)
 
     @staticmethod

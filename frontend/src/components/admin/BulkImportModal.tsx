@@ -28,6 +28,7 @@ export default function BulkImportModal({
   const {
     stage,
     records,
+    ignoredColumns,
     fileName,
     sendInvite,
     batches,
@@ -47,6 +48,8 @@ export default function BulkImportModal({
   } = useBulkImportProcessor(entityType, onSuccess);
 
   if (!isOpen) return null;
+
+  const readyCount = records.filter((r) => !r.error).length;
 
   const handleClose = (): void => {
     if (stage === "completed" && importedTotal > 0) onSuccess();
@@ -124,6 +127,7 @@ export default function BulkImportModal({
           <BulkImportPreviewTable
             records={records}
             entityType={entityType}
+            ignoredColumns={ignoredColumns}
             sendInvite={sendInvite}
             onSendInviteChange={setSendInvite}
             onRemoveRecord={handleRemoveRecord}
@@ -136,9 +140,9 @@ export default function BulkImportModal({
               type="button"
               size="sm"
               onClick={executeBulkImport}
-              disabled={records.length === 0}
+              disabled={readyCount === 0}
             >
-              Import {records.length} records
+              Import {readyCount} {readyCount === 1 ? "record" : "records"}
             </Button>
           </div>
         </>

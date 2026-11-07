@@ -1,5 +1,6 @@
 from typing import List, Optional
 from prisma.models import Department
+from app.core.db_errors import DuplicateRecord
 from app.db.client import db
 
 
@@ -17,14 +18,10 @@ class DepartmentService:
         return await db.department.find_first(where=where)
 
     @staticmethod
-    async def create_department(
-        name: str,
-        code: str,
-        head: Optional[str] = None,
-        description: Optional[str] = None,
-        tenant_id: Optional[str] = None,
-    ) -> Department:
-        data = {"name": name, "code": code, "head": head, "description": description}
+    async def create_department(name: str, code: str, tenant_id: Optional[str] = None) -> Department:
+        if await db.department.find_first(where={"tenantId": tenant_id, "code": {"equals": code, "mode": "insensitive"}}):
+            raise DuplicateRecord(f"Department code '{code}' already exists.")
+        data = {"name": name, "code": code}
         if tenant_id:
             data["tenantId"] = tenant_id
         return await db.department.create(data=data)

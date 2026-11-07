@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
 import {
-  changePasswordSchema,
   forgotPasswordSchema,
   loginSchema,
   onboardingSchema,
@@ -52,7 +51,6 @@ describe("forgot password", () => {
 describe.each([
   ["reset password", resetPasswordSchema, "password", "confirmPassword"],
   ["onboarding", onboardingSchema, "password", "confirmPassword"],
-  ["change password", changePasswordSchema, "new_password", "confirm_password"],
 ] as const)("%s", (_name, schema, passwordKey, confirmKey) => {
   it("accepts matching passwords", () => {
     const input = { [passwordKey]: "password-1", [confirmKey]: "password-1" };

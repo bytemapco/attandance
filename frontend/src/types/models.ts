@@ -77,23 +77,18 @@ export interface TeacherResponse {
 export interface DepartmentCreate {
   name: string;
   code: string;
-  head?: string;
-  description?: string;
 }
 
 export interface DepartmentResponse {
   id: string;
   name: string;
   code: string;
-  head?: string | null;
-  description?: string | null;
   classCount: number;
 }
 
 export interface SubjectCreate {
   name: string;
   code: string;
-  description?: string;
   department_id?: string;
 }
 
@@ -101,32 +96,27 @@ export interface SubjectResponse {
   id: string;
   name: string;
   code: string;
-  description?: string | null;
   department_id?: string | null;
 }
 
 export interface ClassroomCreate {
   name: string;
-  building?: string;
 }
 
 export interface ClassroomResponse {
   id: string;
   name: string;
-  building?: string | null;
 }
 
 export interface DesignationCreate {
   name: string;
   code: string;
-  description?: string;
 }
 
 export interface DesignationResponse {
   id: string;
   name: string;
   code: string;
-  description?: string | null;
 }
 
 export interface DeviceChangeRequest {

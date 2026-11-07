@@ -58,7 +58,10 @@ pip install -r requirements.txt -r requirements-dev.txt
 cp .env.example .env                    # then fill in the values
 env -i HOME=$HOME PATH=$PWD/.venv/bin:/usr/bin:/bin VIRTUAL_ENV=$PWD/.venv .venv/bin/prisma generate
 uvicorn main:app --reload --port 8000
+python -m arq app.worker.WorkerSettings --watch app   # in a second terminal
 ```
+
+The API only queues e-mail (invitations, device-change notices). The worker sends it, so without the worker an invitation waits in Redis and never arrives. `npm run dev` and `./run.sh` start the worker for you. Password-reset e-mail is sent by the API itself.
 
 From the repository root, `./run.sh` is a menu for a local or hosted target: it shows the target's status, creates the super admin (the first account), empties the database, and starts the local backend. It creates no sample data.
 

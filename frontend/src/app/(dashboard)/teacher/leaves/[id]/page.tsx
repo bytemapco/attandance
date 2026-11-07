@@ -72,7 +72,7 @@ export default function LeaveReviewDetailPage(): React.ReactElement {
     }
   };
 
-  if (loading) return <PageSkeleton text="Loading leave application & attached records..." />;
+  if (loading) return <PageSkeleton text="Loading leave request..." />;
   if (!leave) return <div className="text-center py-20 text-muted-foreground">Leave application not found.</div>;
 
   const fromDate = new Date(leave.start_date).toLocaleDateString(undefined, {

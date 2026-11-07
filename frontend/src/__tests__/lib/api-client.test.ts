@@ -47,6 +47,22 @@ describe("request headers", () => {
     expect(lastRequest?.headers.Authorization).toBe("Bearer jwt-1");
   });
 
+  it("keeps a token the caller sets, so a new login is not read with the previous session's token", async () => {
+    useAuthStore.getState().login("old-session-jwt", makeUser());
+
+    await api.get("/auth/me", { headers: { Authorization: "Bearer new-login-jwt" } });
+
+    expect(lastRequest?.headers.Authorization).toBe("Bearer new-login-jwt");
+  });
+
+  it("keeps an institution the caller names", async () => {
+    useAuthStore.getState().login("jwt-1", makeUser({ tenant_id: "tenant-9" }));
+
+    await api.get("/things", { headers: { "X-Tenant-ID": "tenant-explicit" } });
+
+    expect(lastRequest?.headers["X-Tenant-ID"]).toBe("tenant-explicit");
+  });
+
   it("sends no Authorization header when signed out", async () => {
     await call("/things");
     expect(lastRequest?.headers.Authorization).toBeUndefined();

@@ -1,53 +1,33 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import useSWR from "swr";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Building, Briefcase, Award, Shield, Lock } from "lucide-react";
+import { Building, Briefcase, Award, Shield, Mail } from "lucide-react";
 import toast from "react-hot-toast";
-import api, { getApiErrorMessage, applyValidationErrorsToForm } from "@/lib/api";
+import api, { getApiErrorMessage } from "@/lib/api";
 import PageHeader from "@/components/ui/PageHeader";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import Button from "@/components/ui/Button";
-import Input from "@/components/ui/Input";
 import PageSkeleton from "@/components/ui/PageSkeleton";
-import { changePasswordSchema, ChangePasswordFormData } from "@/lib/validations/auth";
 import type { UserProfile } from "@/types";
 
 export default function TeacherProfilePage(): React.ReactElement {
   const { data: profile, error, isLoading: loading } = useSWR<UserProfile>("/auth/me");
-
-  const {
-    register,
-    handleSubmit,
-    reset,
-    setError,
-    formState: { errors, isSubmitting },
-  } = useForm<ChangePasswordFormData>({
-    resolver: zodResolver(changePasswordSchema),
-    defaultValues: {
-      current_password: "",
-      new_password: "",
-      confirm_password: "",
-    },
-  });
+  const [sending, setSending] = useState(false);
 
   useEffect(() => {
     if (error) toast.error(getApiErrorMessage(error, "Failed to load profile"));
   }, [error]);
 
-  const handleChangePassword = async (formData: ChangePasswordFormData) => {
+  const sendResetEmail = async (email: string): Promise<void> => {
+    setSending(true);
     try {
-      await api.post("/auth/change-password", {
-        current_password: formData.current_password,
-        new_password: formData.new_password,
-      });
-      toast.success("Password updated successfully");
-      reset();
+      await api.post("/auth/forgot-password", { email });
+      toast.success("A password change link has been sent to your email");
     } catch (err: unknown) {
-      applyValidationErrorsToForm(err, setError);
-      toast.error(getApiErrorMessage(err, "Password update failed"));
+      toast.error(getApiErrorMessage(err, "Could not send the email. Try again shortly."));
+    } finally {
+      setSending(false);
     }
   };
 
@@ -68,7 +48,7 @@ export default function TeacherProfilePage(): React.ReactElement {
 
       <PageHeader
         title="Profile & security"
-        description="View your faculty details and update your account password."
+        description="View your faculty details and change your account password."
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
@@ -111,7 +91,7 @@ export default function TeacherProfilePage(): React.ReactElement {
           </div>
         </div>
 
-        {/* Security / Password Card */}
+        {/* Security Card */}
         <div className="lg:col-span-2 rounded-lg border border-border bg-card p-6 space-y-5">
           <div className="flex items-center gap-2.5 pb-4 border-b border-border">
             <div className="w-8 h-8 rounded-lg bg-secondary text-primary flex items-center justify-center border border-border">
@@ -119,39 +99,23 @@ export default function TeacherProfilePage(): React.ReactElement {
             </div>
             <div>
               <h3 className="text-base font-semibold text-foreground">Change Password</h3>
-              <p className="text-xs text-muted-foreground">Choose a strong password with at least 8 characters.</p>
+              <p className="text-xs text-muted-foreground">
+                We email you a secure link to choose a new password. The link is valid for a limited time.
+              </p>
             </div>
           </div>
 
-          <form onSubmit={handleSubmit(handleChangePassword)} className="space-y-4 max-w-md">
-            <Input
-              type="password"
-              label="Current Password"
-              placeholder="Enter current password"
-              {...register("current_password")}
-              error={errors.current_password?.message}
-            />
-            <Input
-              type="password"
-              label="New Password"
-              placeholder="Minimum 8 characters"
-              {...register("new_password")}
-              error={errors.new_password?.message}
-            />
-            <Input
-              type="password"
-              label="Confirm New Password"
-              placeholder="Re-enter new password"
-              {...register("confirm_password")}
-              error={errors.confirm_password?.message}
-            />
-
-            <div className="pt-2">
-              <Button type="submit" variant="primary" loading={isSubmitting} icon={<Lock size={14} />}>
-                Update Password
-              </Button>
-            </div>
-          </form>
+          <div className="pt-2">
+            <Button
+              type="button"
+              variant="primary"
+              loading={sending}
+              icon={<Mail size={14} />}
+              onClick={() => profile.email && sendResetEmail(profile.email)}
+            >
+              Email me a password change link
+            </Button>
+          </div>
         </div>
       </div>
     </div>

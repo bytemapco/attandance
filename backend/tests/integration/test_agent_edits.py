@@ -35,8 +35,8 @@ class TestMasterDataEdits:
 
     def test_a_field_the_kind_does_not_have_is_refused(self, client, seed, conn):
         world = World(seed, conn)
-        card, told = propose(client, world, world.admin, "update_master_item", kind="department", item_id=world.department_id, building="Block B")
-        assert card is None and "no building" in told["error"]
+        card, told = propose(client, world, world.admin, "update_master_item", kind="department", item_id=world.department_id, department_id=world.department_id)
+        assert card is None and "no department_id" in told["error"]
 
     def test_asking_for_what_is_already_true_is_refused(self, client, seed, conn):
         world = World(seed, conn)

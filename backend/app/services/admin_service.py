@@ -61,8 +61,8 @@ class AdminService:
     async def get_department_by_id(self, id: str, tenant_id: Optional[str] = None) -> Optional[Department]:
         return await DepartmentService.get_department_by_id(id, tenant_id=tenant_id)
 
-    async def create_department(self, name: str, code: str, head: Optional[str] = None, description: Optional[str] = None, tenant_id: Optional[str] = None) -> Department:
-        return await DepartmentService.create_department(name, code, head, description, tenant_id=tenant_id)
+    async def create_department(self, name: str, code: str, tenant_id: Optional[str] = None) -> Department:
+        return await DepartmentService.create_department(name, code, tenant_id=tenant_id)
 
     async def update_department(self, id: str, data: dict, tenant_id: Optional[str] = None) -> Department:
         return await DepartmentService.update_department(id, data, tenant_id=tenant_id)
@@ -78,8 +78,8 @@ class AdminService:
     async def get_subject_by_id(self, id: str, tenant_id: Optional[str] = None) -> Optional[Subject]:
         return await SubjectService.get_subject_by_id(id, tenant_id=tenant_id)
 
-    async def create_subject(self, name: str, code: str, description: Optional[str] = None, department_id: Optional[str] = None, tenant_id: Optional[str] = None) -> Subject:
-        return await SubjectService.create_subject(name, code, description, department_id=department_id, tenant_id=tenant_id)
+    async def create_subject(self, name: str, code: str, department_id: Optional[str] = None, tenant_id: Optional[str] = None) -> Subject:
+        return await SubjectService.create_subject(name, code, department_id=department_id, tenant_id=tenant_id)
 
     async def update_subject(self, id: str, data: dict, tenant_id: Optional[str] = None) -> Subject:
         return await SubjectService.update_subject(id, data, tenant_id=tenant_id)
@@ -95,8 +95,8 @@ class AdminService:
     async def get_classroom_by_id(self, id: str, tenant_id: Optional[str] = None) -> Optional[Classroom]:
         return await ClassroomService.get_classroom_by_id(id, tenant_id=tenant_id)
 
-    async def create_classroom(self, name: str, building: Optional[str] = None, tenant_id: Optional[str] = None) -> Classroom:
-        return await ClassroomService.create_classroom(name, building, tenant_id=tenant_id)
+    async def create_classroom(self, name: str, tenant_id: Optional[str] = None) -> Classroom:
+        return await ClassroomService.create_classroom(name, tenant_id=tenant_id)
 
     async def update_classroom(self, id: str, data: dict, tenant_id: Optional[str] = None) -> Classroom:
         return await ClassroomService.update_classroom(id, data, tenant_id=tenant_id)
@@ -112,8 +112,8 @@ class AdminService:
     async def get_designation_by_id(self, id: str, tenant_id: Optional[str] = None) -> Optional[Designation]:
         return await DesignationService.get_designation_by_id(id, tenant_id=tenant_id)
 
-    async def create_designation(self, name: str, code: str, description: Optional[str] = None, tenant_id: Optional[str] = None) -> Designation:
-        return await DesignationService.create_designation(name, code, description, tenant_id=tenant_id)
+    async def create_designation(self, name: str, code: str, tenant_id: Optional[str] = None) -> Designation:
+        return await DesignationService.create_designation(name, code, tenant_id=tenant_id)
 
     async def update_designation(self, id: str, data: dict, tenant_id: Optional[str] = None) -> Designation:
         return await DesignationService.update_designation(id, data, tenant_id=tenant_id)

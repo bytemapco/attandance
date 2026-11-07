@@ -57,7 +57,7 @@ async def create_classroom(
     tenant_id: str = Depends(get_tenant_context),
     admin_service: AdminService = Depends(),
 ):
-    return await admin_service.create_classroom(data.name, data.building, tenant_id=tenant_id)
+    return await admin_service.create_classroom(data.name, tenant_id=tenant_id)
 
 
 @router.put("/classrooms/{id}", response_model=ClassroomResponse)

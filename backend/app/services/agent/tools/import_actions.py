@@ -1,17 +1,17 @@
 """Import students or teachers the admin pasted from a spreadsheet. The model maps the columns; a dry run shows the problems."""
+from datetime import date
 from typing import Literal, Optional
 
 from fastapi import HTTPException, status
 from pydantic import BaseModel, EmailStr, Field
 
 from app.db.client import db
-from app.schemas.admin.bulk import StudentBulkItem, TeacherBulkItem
+from app.schemas.admin.bulk import MAX_BULK_ROWS
 from app.services.admin.admin_bulk_service import AdminBulkService
 from app.services.admin.bulk_import_common import check_license_capacity, find_by_reference
 from app.services.agent.tools.common import ADMIN_ONLY
 from app.services.agent.types import Preview, Principal, Tool, ToolResult
 
-MAX_ROWS = 200
 SHOWN_PROBLEMS = 15
 INVITE_NOTE = "Each imported person gets an invitation e-mail with their sign-in details."
 
@@ -25,6 +25,7 @@ class StudentRow(BaseModel):
     batch_code: Optional[str] = Field(None, description="For example CE-A-1.")
     phone: Optional[str] = Field(None, max_length=20)
     gender: Optional[Literal["M", "F", "O"]] = None
+    date_of_birth: Optional[date] = Field(None, description="YYYY-MM-DD.")
 
 
 class TeacherRow(BaseModel):
@@ -38,11 +39,11 @@ class TeacherRow(BaseModel):
 
 
 class StudentsArgs(BaseModel):
-    rows: list[StudentRow] = Field(min_length=1, max_length=MAX_ROWS)
+    rows: list[StudentRow] = Field(min_length=1, max_length=MAX_BULK_ROWS)
 
 
 class TeachersArgs(BaseModel):
-    rows: list[TeacherRow] = Field(min_length=1, max_length=MAX_ROWS)
+    rows: list[TeacherRow] = Field(min_length=1, max_length=MAX_BULK_ROWS)
 
 
 async def _problem_student(tenant_id: str, row: StudentRow) -> Optional[str]:
@@ -112,10 +113,15 @@ async def preview_students(principal: Principal, args: StudentsArgs) -> Preview:
     return await _preview(principal, args.rows, "enrollment_number", _problem_student, "student")
 
 
+def _bulk_rows(rows: list[BaseModel]) -> list[dict]:
+    """The rows as the import wants them: the sheet's department and designation are the import's `*_id` fields."""
+    renames = {"department": "department_id", "designation": "designation_id"}
+    return [{renames.get(key, key): value for key, value in row.model_dump(exclude_none=True).items()} for row in rows]
+
+
 async def import_students(principal: Principal, args: StudentsArgs) -> ToolResult:
-    items = [StudentBulkItem(email=r.email, enrollment_number=r.enrollment_number, first_name=r.first_name, last_name=r.last_name,
-                             department_id=r.department, batch_code=r.batch_code, phone=r.phone, gender=r.gender) for r in args.rows]
-    return _done("student", await AdminBulkService.bulk_create_students(items, True, principal.user.email, None, principal.tenant_id))
+    result = await AdminBulkService.bulk_create_students(_bulk_rows(args.rows), True, principal.user.email, None, principal.tenant_id)
+    return _done("student", result)
 
 
 async def preview_teachers(principal: Principal, args: TeachersArgs) -> Preview:
@@ -123,9 +129,8 @@ async def preview_teachers(principal: Principal, args: TeachersArgs) -> Preview:
 
 
 async def import_teachers(principal: Principal, args: TeachersArgs) -> ToolResult:
-    items = [TeacherBulkItem(email=r.email, employee_id=r.employee_id, first_name=r.first_name, last_name=r.last_name,
-                             department_id=r.department, designation_id=r.designation, phone=r.phone) for r in args.rows]
-    return _done("teacher", await AdminBulkService.bulk_create_teachers(items, True, principal.user.email, None, principal.tenant_id))
+    result = await AdminBulkService.bulk_create_teachers(_bulk_rows(args.rows), True, principal.user.email, None, principal.tenant_id)
+    return _done("teacher", result)
 
 
 TOOLS = [

@@ -24,7 +24,7 @@ export default function LeaveDocumentViewer({ url }: LeaveDocumentViewerProps): 
           <div>
             <h4 className="text-xs font-semibold text-primary">Attached Document Evidence</h4>
             <p className="text-xs text-muted-foreground">
-              {url ? (isPdf ? "Adobe PDF Document" : "Medical Certificate / Image Proof") : "No Document Attached"}
+              {url ? (isPdf ? "PDF document" : "Image document") : "No document attached"}
             </p>
           </div>
         </div>
@@ -72,7 +72,7 @@ export default function LeaveDocumentViewer({ url }: LeaveDocumentViewerProps): 
             <AlertCircle size={36} className="mx-auto text-destructive mb-1" />
             <p className="text-xs font-semibold text-primary">Preview cannot be rendered in frame</p>
             <p className="text-xs text-muted-foreground max-w-xs">
-              Please use the download or external tab links above to view this attached proof.
+              Use the download or open-in-tab link above to view this file.
             </p>
             <a
               href={url}

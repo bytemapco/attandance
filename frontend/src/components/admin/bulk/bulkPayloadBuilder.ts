@@ -1,8 +1,9 @@
-import { ParsedBulkRecord, BatchProgressItem, BulkImportEntityType } from "./bulkTypes";
+import { BULK_ENTITIES } from "./bulkColumns";
+import { BatchProgressItem, BulkImportEntityType, BulkRow } from "./bulkTypes";
 
 const BULK_BATCH_SIZE = 10;
 
-export function buildBatches(list: ParsedBulkRecord[], batchSize = BULK_BATCH_SIZE): BatchProgressItem[] {
+export function buildBatches(list: BulkRow[], batchSize = BULK_BATCH_SIZE): BatchProgressItem[] {
   const total = Math.ceil(list.length / batchSize);
   return Array.from({ length: total }, (_, i) => ({
     batchNumber: i + 1,
@@ -17,91 +18,20 @@ export function buildBatches(list: ParsedBulkRecord[], batchSize = BULK_BATCH_SI
   }));
 }
 
+/** The request for one batch of rows. A blank cell is left out, so the server sees it as not given. */
 export function buildBulkPayload(
   entityType: BulkImportEntityType,
-  slice: ParsedBulkRecord[],
+  slice: BulkRow[],
   sendInvite: boolean
 ): { endpoint: string; payload: Record<string, unknown> } {
-  if (entityType === "students") {
-    return {
-      endpoint: "/admin/users/students/bulk",
-      payload: {
-        students: slice.map((s) => ({
-          email: s.email,
-          enrollment_number: s.identifier,
-          first_name: s.first_name,
-          last_name: s.last_name,
-          department_id: s.departmentCode,
-          batch_code: s.batchCode || undefined,
-        })),
-        send_invite: sendInvite,
-      },
-    };
-  }
-
-  if (entityType === "teachers") {
-    return {
-      endpoint: "/admin/users/teachers/bulk",
-      payload: {
-        teachers: slice.map((t) => ({
-          email: t.email,
-          employee_id: t.identifier,
-          first_name: t.first_name,
-          last_name: t.last_name,
-          department_id: t.departmentCode,
-        })),
-        send_invite: sendInvite,
-      },
-    };
-  }
-
-  if (entityType === "departments") {
-    return {
-      endpoint: "/admin/departments/bulk",
-      payload: {
-        departments: slice.map((d) => ({
-          name: d.first_name,
-          code: d.identifier,
-          head: d.last_name || null,
-          description: d.email || null,
-        })),
-      },
-    };
-  }
-
-  if (entityType === "subjects") {
-    return {
-      endpoint: "/admin/subjects/bulk",
-      payload: {
-        subjects: slice.map((s) => ({
-          name: s.first_name,
-          code: s.identifier,
-          description: s.email || null,
-        })),
-      },
-    };
-  }
-
-  if (entityType === "classrooms") {
-    return {
-      endpoint: "/admin/classrooms/bulk",
-      payload: {
-        classrooms: slice.map((c) => ({
-          name: c.first_name,
-          building: c.identifier || null,
-        })),
-      },
-    };
-  }
-
+  const entity = BULK_ENTITIES[entityType];
+  const rows = slice.map((row) =>
+    Object.fromEntries(
+      entity.columns.filter((column) => row.values[column.key]).map((column) => [column.field, row.values[column.key]])
+    )
+  );
   return {
-    endpoint: "/admin/designations/bulk",
-    payload: {
-      designations: slice.map((d) => ({
-        name: d.first_name,
-        code: d.identifier,
-        description: d.email || null,
-      })),
-    },
+    endpoint: entity.endpoint,
+    payload: { [entity.rowsKey]: rows, ...(entity.invites ? { send_invite: sendInvite } : {}) },
   };
 }

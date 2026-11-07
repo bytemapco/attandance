@@ -123,7 +123,7 @@ export default function SessionPanel({
         <div className="flex flex-col items-center gap-3 rounded-lg border border-dashed border-border px-4 py-8 text-center">
           <QrCode size={28} className="text-muted-foreground" />
           <p className="text-sm font-semibold text-foreground">Attendance hasn&apos;t started</p>
-          <p className="text-xs text-muted-foreground">Start to show the QR code and let students mark themselves.</p>
+          <p className="text-xs text-muted-foreground">Start the session to show the QR code for students to scan.</p>
           <Button variant="primary" size="md" loading={starting} icon={<Play size={14} />} onClick={onStart}>
             Start attendance
           </Button>

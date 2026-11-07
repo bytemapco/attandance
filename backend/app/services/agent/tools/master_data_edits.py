@@ -12,14 +12,14 @@ from app.services.agent.types import Preview, Principal, Tool, ToolResult
 
 Kind = Literal["department", "subject", "classroom", "designation"]
 FIELDS = {
-    "department": ("name", "code", "head", "description"),
-    "subject": ("name", "code", "description", "department_id"),
-    "classroom": ("name", "building"),
-    "designation": ("name", "code", "description"),
+    "department": ("name", "code"),
+    "subject": ("name", "code", "department_id"),
+    "classroom": ("name",),
+    "designation": ("name", "code"),
 }
 DELEGATES = {"department": db.department, "subject": db.subject, "classroom": db.classroom, "designation": db.designation}
 UNIQUE = {"department": "code", "subject": "code", "classroom": "name", "designation": "code"}
-ALL_FIELDS = ("name", "code", "description", "head", "building", "department_id")
+ALL_FIELDS = ("name", "code", "department_id")
 BATCH_NOTES = {
     "archive": "Students keep their batch; an archived batch takes no new students.",
     "activate": "New students can join it again.",
@@ -48,9 +48,6 @@ class EditArgs(BaseModel):
     item_id: str = Field(description="From find_setup_items.")
     name: Optional[str] = Field(None, min_length=1, max_length=100)
     code: Optional[str] = Field(None, min_length=2, max_length=20)
-    description: Optional[str] = Field(None, max_length=255)
-    head: Optional[str] = Field(None, max_length=100, description="A department's head, by name.")
-    building: Optional[str] = Field(None, max_length=100, description="A classroom's building.")
     department_id: Optional[str] = Field(None, description="A subject's department, from find_setup_items.")
 
 
@@ -163,7 +160,7 @@ async def change_batch(principal: Principal, args: BatchArgs) -> ToolResult:
 
 
 TOOLS = [
-    Tool("update_master_item", "Prepare changing a department, subject, classroom or designation (name, code, description, head, building, "
+    Tool("update_master_item", "Prepare changing a department, subject, classroom or designation (name, code, "
          "or a subject's department). Needs confirmation.", EditArgs, ADMIN_ONLY, edit_item, preview=preview_edit),
     Tool("delete_master_item", "Prepare deleting an unused department, subject, classroom or designation. Refused while it is in use. "
          "Needs confirmation.", DeleteArgs, ADMIN_ONLY, delete_item, preview=preview_delete),

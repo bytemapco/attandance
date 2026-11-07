@@ -13,17 +13,7 @@ from app.schemas.admin.bulk import (
     TeacherBulkCreateRequest,
     TeacherBulkItem,
 )
-from app.schemas.admin.infrastructure import (
-    ClassroomCreate,
-    ClassroomUpdate,
-    DepartmentCreate,
-    DepartmentResponse,
-    DepartmentUpdate,
-    DesignationCreate,
-    DesignationUpdate,
-    SubjectCreate,
-    SubjectUpdate,
-)
+from app.schemas.admin.infrastructure import DepartmentCreate, DepartmentResponse, DepartmentUpdate
 from app.schemas.admin.system import (
     AbsenteeAnomalyItem,
     AdminStatsResponse,
@@ -36,12 +26,6 @@ __all__ = [
     "DepartmentCreate",
     "DepartmentUpdate",
     "DepartmentResponse",
-    "SubjectCreate",
-    "SubjectUpdate",
-    "ClassroomCreate",
-    "ClassroomUpdate",
-    "DesignationCreate",
-    "DesignationUpdate",
     "AuditLogResponse",
     "AbsenteeAnomalyItem",
     "AdminStatsResponse",

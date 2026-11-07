@@ -43,7 +43,7 @@ export default function LeaveDecisionCard({
           onChange={(e) => setApproverNote(e.target.value)}
           placeholder="Add contextual remarks or notes for the student's academic record..."
           maxLength={300}
-          className="w-full px-3.5 py-2.5 rounded-lg border border-border bg-card text-xs text-primary placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-accent/40 transition-all resize-y"
+          className="w-full px-3.5 py-2.5 rounded-lg border border-border bg-card text-xs text-primary placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-accent/40 transition-colors resize-y"
         />
         <div className="flex justify-end mt-1 text-xs text-muted-foreground font-mono">
           {approverNote.length}/300

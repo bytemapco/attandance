@@ -12,6 +12,11 @@ logger = get_logger("app.db_errors")
 _HIDDEN_FIELDS = {"tenant_id"}
 
 
+class DuplicateRecord(ValueError):
+    """The institution already has this record, found by a check before the insert. Reported as 409, like the
+    database's unique constraint, and as a refused row by a bulk import."""
+
+
 def _readable(name: str) -> str:
     return re.sub(r"_id$", "", name).replace("_", " ").strip()
 

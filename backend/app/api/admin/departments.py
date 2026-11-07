@@ -56,7 +56,7 @@ async def create_department(
     tenant_id: str = Depends(get_tenant_context),
     admin_service: AdminService = Depends(),
 ):
-    return await admin_service.create_department(data.name, data.code, data.head, data.description, tenant_id=tenant_id)
+    return await admin_service.create_department(data.name, data.code, tenant_id=tenant_id)
 
 
 @router.put("/departments/{id}", response_model=DepartmentResponse)
