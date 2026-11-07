@@ -1,11 +1,29 @@
+"""What the super admin sees about the platform's health. Every figure is measured now; a check that cannot run says so."""
+import asyncio
 import time
 from datetime import datetime, timezone
 from typing import Any, Dict
+
+from app.core.hardware import hardware_manager
 from app.core.logging_config import get_logger
 from app.db.client import db
+from app.db.redis import get_redis
 from app.schemas.super_admin import SuperAdminStatsResponse
+from app.services.s3_service import s3_service
 
 logger = get_logger("app.super_admin.health")
+STARTED_AT = time.time()  # when this API process started
+ARQ_QUEUE = "arq:queue"  # where the worker's jobs wait
+ARQ_HEARTBEAT = "arq:queue:health-check"  # the worker writes this key while it is alive
+
+
+def _elapsed_ms(started: float) -> float:
+    return round((time.perf_counter() - started) * 1000, 2)
+
+
+def _down(error: Exception) -> Dict[str, Any]:
+    logger.warning("Health check failed: %s", error)
+    return {"status": "down", "latency_ms": None, "details": {"error": str(error)}}
 
 
 class SystemHealthService:
@@ -30,125 +48,102 @@ class SystemHealthService:
 
     @staticmethod
     async def get_system_health() -> Dict[str, Any]:
-        # 1. Database check & pool stats
-        db_start = time.perf_counter()
-        db_ok = False
-        active_queries = 0
-        max_connections = 20
-        try:
-            await db.execute_raw("SELECT 1")
-            db_ok = True
-            try:
-                stat_res = await db.query_raw(
-                    "SELECT count(*)::int as count FROM pg_stat_activity WHERE state = 'active'"
-                )
-                if stat_res and len(stat_res) > 0 and "count" in stat_res[0]:
-                    active_queries = int(stat_res[0]["count"])
-                max_res = await db.query_raw("SHOW max_connections")
-                if max_res and len(max_res) > 0 and "max_connections" in max_res[0]:
-                    max_connections = int(max_res[0]["max_connections"])
-            except Exception as pool_err:
-                logger.debug("Could not query pg_stat_activity: %s", pool_err)
-                active_queries = 1
-        except Exception as db_err:
-            logger.warning("Database health check ping failed: %s", db_err)
-        db_latency = round((time.perf_counter() - db_start) * 1000, 2)
-
-        # 2. Redis check
-        redis_start = time.perf_counter()
-        redis_ok = False
-        redis_info = {}
-        try:
-            from app.db.redis import get_redis
-
-            r = get_redis()
-            pong = await r.ping()
-            redis_ok = bool(pong)
-            redis_info = {"connected": True}
-        except Exception as e:
-            redis_info = {"error": str(e)}
-        redis_latency = round((time.perf_counter() - redis_start) * 1000, 2)
-
-        # 3. Object / Media Storage check
-        storage_start = time.perf_counter()
-        storage_ok = True
-        storage_details: Dict[str, Any] = {}
-        try:
-            from app.services.s3_service import s3_service
-
-            bucket = s3_service.bucket_name
-            if bucket:
-                storage_details = {
-                    "provider": "S3 Object Storage",
-                    "bucket": bucket,
-                    "status": "ready",
-                }
-            else:
-                storage_details = {
-                    "provider": "Local Media Storage",
-                    "status": "ready",
-                }
-        except Exception as st_err:
-            storage_ok = False
-            storage_details = {"error": str(st_err), "status": "degraded"}
-        storage_latency = round((time.perf_counter() - storage_start) * 1000, 2)
-
-        # 4. Biometric Runtime & Hardware compute check
-        hw_start = time.perf_counter()
-        try:
-            from app.core.hardware import hardware_manager
-
-            hw_status = hardware_manager.get_status()
-        except Exception as hw_err:
-            hw_status = {"active_device": "CPU", "target_device": "auto", "error": str(hw_err)}
-        hw_latency = round((time.perf_counter() - hw_start) * 1000, 2)
-        hw_healthy = not (hw_status.get("fallback_occurred") and hw_status.get("target_device") == "cuda")
-
-        overall_status = "healthy"
-        if not db_ok or not redis_ok:
-            overall_status = "degraded"
-
-        return {
-            "status": overall_status,
-            "timestamp": datetime.now(timezone.utc),
-            "services": {
-                "postgresql": {
-                    "status": "healthy" if db_ok else "down",
-                    "latency_ms": db_latency,
-                    "details": {
-                        "engine": "PostgreSQL 15+",
-                        "status": "connected" if db_ok else "disconnected",
-                        "active_queries": active_queries,
-                        "max_connections": max_connections,
-                    },
-                },
-                "redis_cache": {
-                    "status": "healthy" if redis_ok else "down",
-                    "latency_ms": redis_latency,
-                    "details": {
-                        "mode": "In-Memory Cache & Session Store",
-                        "status": "connected" if redis_ok else "unreachable",
-                        **redis_info,
-                    },
-                },
-                "object_storage": {
-                    "status": "healthy" if storage_ok else "degraded",
-                    "latency_ms": storage_latency,
-                    "details": storage_details,
-                },
-                "biometric_runtime": {
-                    "status": "healthy" if hw_healthy else "degraded",
-                    "latency_ms": hw_latency,
-                    "details": {
-                        "device": hw_status.get("active_device", "CPU"),
-                        "target": hw_status.get("target_device", "auto"),
-                        "dynamic_memory": hw_status.get("memory_growth_enabled", True),
-                    },
-                },
-            },
-            "server_uptime_seconds": round(time.monotonic(), 1),
-            "database_pool": {"max_connections": max_connections, "active_queries": active_queries},
-            "redis_status": {"ping_success": redis_ok},
-            "hardware_status": hw_status,
-            "storage_status": storage_details,
+        services = {
+            "postgresql": await _check_postgres(),
+            "redis_cache": await _check_redis(),
+            "object_storage": await _check_storage(),
+            "email_worker": await _check_worker(),
+            "ai_hardware": _check_hardware(),
         }
+        return {
+            "status": _overall(services),
+            "timestamp": datetime.now(timezone.utc),
+            "services": services,
+            "server_uptime_seconds": round(time.time() - STARTED_AT, 1),
+        }
+
+
+async def _check_postgres() -> Dict[str, Any]:
+    started = time.perf_counter()
+    try:
+        version = await db.query_raw("SHOW server_version")
+        connections = await db.query_raw(
+            "SELECT count(*)::int AS total FROM pg_stat_activity WHERE datname = current_database()"
+        )
+        limit = await db.query_raw("SHOW max_connections")
+    except Exception as err:
+        return _down(err)
+    return {
+        "status": "healthy",
+        "latency_ms": _elapsed_ms(started),
+        "details": {
+            "version": version[0]["server_version"],
+            "connections": connections[0]["total"],
+            "max_connections": int(limit[0]["max_connections"]),
+        },
+    }
+
+
+async def _check_redis() -> Dict[str, Any]:
+    started = time.perf_counter()
+    try:
+        redis = get_redis()
+        await redis.ping()
+        memory = await redis.info("memory")
+        clients = await redis.info("clients")
+    except Exception as err:
+        return _down(err)
+    return {
+        "status": "healthy",
+        "latency_ms": _elapsed_ms(started),
+        "details": {
+            "memory_used": memory.get("used_memory_human"),
+            "clients": clients.get("connected_clients"),
+        },
+    }
+
+
+async def _check_storage() -> Dict[str, Any]:
+    bucket = s3_service.bucket_name
+    if not bucket:
+        return {"status": "not_configured", "latency_ms": None, "details": {"provider": "S3", "note": "No bucket is set"}}
+    started = time.perf_counter()
+    try:
+        await asyncio.to_thread(s3_service.client.head_bucket, Bucket=bucket)
+    except Exception as err:
+        return _down(err)
+    return {"status": "healthy", "latency_ms": _elapsed_ms(started), "details": {"provider": "S3", "bucket": bucket}}
+
+
+async def _check_worker() -> Dict[str, Any]:
+    started = time.perf_counter()
+    try:
+        redis = get_redis()
+        alive = bool(await redis.exists(ARQ_HEARTBEAT))
+        waiting = await redis.zcard(ARQ_QUEUE)
+    except Exception as err:
+        return _down(err)
+    status = "healthy" if alive else ("warning" if waiting else "down")
+    return {
+        "status": status,
+        "latency_ms": _elapsed_ms(started),
+        "details": {"online": alive, "jobs_waiting": waiting},
+    }
+
+
+def _check_hardware() -> Dict[str, Any]:
+    status = hardware_manager.get_status()
+    fell_back = bool(status.get("fallback_occurred")) and status.get("target_device") == "cuda"
+    return {
+        "status": "warning" if fell_back else "healthy",
+        "latency_ms": None,
+        "details": {"device": status.get("active_device"), "target": status.get("target_device")},
+    }
+
+
+def _overall(services: Dict[str, Dict[str, Any]]) -> str:
+    """The database is essential; everything else only lowers the status to degraded."""
+    if services["postgresql"]["status"] != "healthy":
+        return "unhealthy"
+    others = [item["status"] for name, item in services.items() if name != "postgresql"]
+    return "healthy" if all(s in ("healthy", "not_configured") for s in others) else "degraded"

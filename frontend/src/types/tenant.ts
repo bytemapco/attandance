@@ -134,9 +134,9 @@ export interface SuperAdminAuditLog {
 }
 
 export interface ServiceHealthItem {
-  status: "healthy" | "degraded" | "down" | "warning";
-  latency_ms?: number | null;
-  details?: Record<string, unknown>;
+  status: "healthy" | "warning" | "down" | "not_configured";
+  latency_ms: number | null;
+  details: Record<string, unknown> | null;
 }
 
 export interface PlatformHealth {
@@ -145,15 +145,12 @@ export interface PlatformHealth {
   services: {
     postgresql: ServiceHealthItem;
     redis_cache: ServiceHealthItem;
-    object_storage?: ServiceHealthItem;
-    biometric_runtime?: ServiceHealthItem;
-    [key: string]: ServiceHealthItem | undefined;
+    object_storage: ServiceHealthItem;
+    email_worker: ServiceHealthItem;
+    ai_hardware: ServiceHealthItem;
   };
+  /** How long the API process has been running. */
   server_uptime_seconds: number;
-  database_pool: Record<string, unknown>;
-  redis_status: Record<string, unknown>;
-  hardware_status?: Record<string, unknown>;
-  storage_status?: Record<string, unknown>;
 }
 
 export interface GlobalBroadcastRequest {

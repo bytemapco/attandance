@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import { X, Copy, Check, ShieldAlert, Clock, User, Globe } from "lucide-react";
 import type { SuperAdminAuditLog } from "@/types";
-import Badge, { type BadgeVariant } from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
 import ModalFrame from "@/components/ui/ModalFrame";
 import toast from "react-hot-toast";
@@ -59,19 +58,6 @@ export default function AuditDetailModal({
     }
   };
 
-  const getSeverityVariant = (sev: string): BadgeVariant => {
-    switch (sev) {
-      case "CRITICAL":
-      case "ERROR":
-        return "danger";
-      case "WARNING":
-        return "warning";
-      case "INFO":
-      default:
-        return "info";
-    }
-  };
-
   return (
     <ModalFrame label="Audit log details" onClose={onClose} size="lg" className="flex max-h-[90vh] flex-col overflow-hidden">
       {/* Modal Header */}
@@ -81,9 +67,6 @@ export default function AuditDetailModal({
           <div>
             <div className="flex items-center gap-2">
               <h3 className="text-base font-semibold text-foreground">{formatEventTitle(log.event_type)}</h3>
-              <Badge variant={getSeverityVariant(log.severity)}>
-                {log.severity}
-              </Badge>
             </div>
             <p className="text-xs text-muted-foreground mt-0.5">
               {log.tenant_name && log.tenant_name !== "Platform Global" ? log.tenant_name : "Global Platform"}
@@ -165,7 +148,6 @@ export default function AuditDetailModal({
               {
                 id: log.id,
                 event_type: log.event_type,
-                severity: log.severity,
                 actor: log.actor,
                 target: log.target,
                 tenant_id: log.tenant_id,

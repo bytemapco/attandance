@@ -119,20 +119,16 @@ class GlobalUserStatusUpdateRequest(BaseModel):
 
 
 class PlatformHealthService(BaseModel):
-    status: str  # "healthy", "degraded", "down", "warning"
+    status: str  # "healthy", "warning", "down", or "not_configured"
     latency_ms: Optional[float] = None
     details: Optional[Dict[str, Any]] = None
 
 
 class PlatformHealthResponse(BaseModel):
-    status: str
+    status: str  # "healthy", "degraded", or "unhealthy"
     timestamp: datetime
     services: Dict[str, PlatformHealthService]
-    server_uptime_seconds: float
-    database_pool: Dict[str, Any]
-    redis_status: Dict[str, Any]
-    hardware_status: Optional[Dict[str, Any]] = None
-    storage_status: Optional[Dict[str, Any]] = None
+    server_uptime_seconds: float  # how long this API process has been running
 
 
 class GlobalBroadcastRequest(BaseModel):

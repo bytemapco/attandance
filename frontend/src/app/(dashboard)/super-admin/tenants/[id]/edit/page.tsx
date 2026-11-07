@@ -30,7 +30,6 @@ export default function EditTenantPage(): React.ReactElement {
   const [saving, setSaving] = useState(false);
 
   const [name, setName] = useState("");
-  const [slug, setSlug] = useState("");
   const [status, setStatus] = useState<TenantStatus>("ACTIVE");
   const [licenseCount, setLicenseCount] = useState<number>(100);
 
@@ -41,7 +40,6 @@ export default function EditTenantPage(): React.ReactElement {
         const data = await superAdminService.getTenant(tenantId);
         setTenant(data);
         setName(data.name || "");
-        setSlug(data.slug || "");
         setStatus(data.status || "ACTIVE");
         setLicenseCount(data.license_count ?? 100);
       } catch {
@@ -57,15 +55,11 @@ export default function EditTenantPage(): React.ReactElement {
   const handleSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
     if (!name.trim()) return void toast.error("Institution name cannot be empty.");
-    if (!slug.trim() || !/^[a-z0-9-]+$/.test(slug)) {
-      return void toast.error("Slug must contain only lowercase letters, numbers, and hyphens.");
-    }
 
     try {
       setSaving(true);
       const updated = await superAdminService.updateTenant(tenantId, {
         name: name.trim(),
-        slug: slug.trim().toLowerCase(),
         status,
         license_count: Number(licenseCount),
       });
@@ -108,13 +102,6 @@ export default function EditTenantPage(): React.ReactElement {
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g. Stanford Academy"
-              required
-            />
-            <Input
-              label="URL Slug"
-              value={slug}
-              onChange={(e) => setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]+/g, ""))}
-              placeholder="e.g. stanford-academy"
               required
             />
             <Input

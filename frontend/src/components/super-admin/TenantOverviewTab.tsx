@@ -3,7 +3,6 @@
 import React from "react";
 import { Globe, UserCheck, CheckCircle2 } from "lucide-react";
 import Card from "@/components/ui/Card";
-import Badge from "@/components/ui/Badge";
 import TenantMetricsRow from "./TenantMetricsRow";
 import type { TenantDetail } from "@/types/tenant";
 
@@ -43,7 +42,6 @@ export default function TenantOverviewTab({ tenant }: TenantOverviewTabProps): R
               <Globe size={16} className="text-primary" />
               <span>Tenant Login</span>
             </h3>
-            <Badge variant="neutral">Slug-based</Badge>
           </div>
 
           <div className="p-3.5 bg-muted/40 rounded-lg border border-border space-y-2.5">
@@ -52,10 +50,6 @@ export default function TenantOverviewTab({ tenant }: TenantOverviewTabProps): R
               <span className="font-mono text-foreground font-semibold">
                 /login?tenant={tenant.slug}
               </span>
-            </div>
-            <div className="flex items-center justify-between text-xs">
-              <span className="text-muted-foreground font-medium">URL Slug:</span>
-              <span className="font-mono text-muted-foreground">{tenant.slug}</span>
             </div>
           </div>
         </Card>
