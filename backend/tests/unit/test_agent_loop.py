@@ -6,6 +6,7 @@ from fastapi import HTTPException
 from pydantic import BaseModel
 
 from app.services.agent import loop
+from app.services.agent.key_pool import AllKeysBusy, AllKeysSlow
 from app.services.agent.labels import label
 from app.services.agent.gateway import Outcome
 from app.services.agent.llm import LlmTurn, ToolCall
@@ -107,11 +108,21 @@ async def test_a_model_failure_becomes_an_error_event_and_no_answer_is_saved(par
     assert saved_roles(parts) == ["user"]
 
 
-async def test_the_model_providers_own_rate_limit_is_reported_as_busy(parts):
-    limited = RuntimeError("quota")
-    limited.code = 429
-    events = await play(ScriptedLlm(limited))
-    assert events == [{"type": "error", "message": loop.BUSY}]
+async def test_every_key_at_its_limit_is_reported_as_busy_with_the_wait(parts):
+    events = await play(ScriptedLlm(AllKeysBusy(40)))
+    assert events == [{"type": "error", "message": "The assistant is busy right now. Please try again in about 1 minute."}]
+    assert saved_roles(parts) == ["user"]
+
+
+async def test_keys_that_did_not_answer_in_time_are_reported_as_too_slow(parts):
+    events = await play(ScriptedLlm(AllKeysSlow()))
+    assert events == [{"type": "error", "message": loop.SLOW}]
+    assert saved_roles(parts) == ["user"]
+
+
+@pytest.mark.parametrize("seconds, wait", [(1, "1 minute"), (61, "2 minutes"), (600, "10 minutes"), (7000, "117 minutes"), (7199, "2 hours"), (7201, "3 hours"), (30000, "9 hours")])
+def test_the_busy_message_says_how_long_to_wait(seconds, wait):
+    assert loop.busy_message(seconds) == f"The assistant is busy right now. Please try again in about {wait}."
 
 
 async def test_an_exhausted_daily_budget_stops_the_turn_with_its_message(parts, monkeypatch):

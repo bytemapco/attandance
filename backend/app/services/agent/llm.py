@@ -1,4 +1,5 @@
 """The model behind the assistant. The loop talks to `Llm`; only `GeminiLlm` knows about Gemini."""
+import asyncio
 from dataclasses import dataclass, field
 from functools import lru_cache
 from typing import Any, AsyncIterator, Optional, Protocol, Union
@@ -8,7 +9,8 @@ from app.services.agent.key_pool import KeyPool, parse_keys
 from app.services.agent.types import Tool
 
 
-REQUEST_TIMEOUT_MS = 40_000
+REQUEST_TIMEOUT_MS = 40_000  # the whole answer; Google's server stops the request at this time too
+FIRST_WORD_SECONDS = 15  # a key that has said nothing by then is treated as stalled
 
 
 @dataclass
@@ -46,8 +48,8 @@ class GeminiLlm:
         from google import genai
         from google.genai import types
 
-        # Function calling is only available on the v1beta API. A slow or rate-limited call fails at once, so a
-        # person is told straight away instead of waiting on the SDK's retries.
+        # Function calling is only available on the v1beta API. The key pool, not the SDK, moves a slow or rate-limited
+        # call to another key, so the SDK does not retry on its own.
         options = types.HttpOptions(
             api_version="v1beta",
             timeout=REQUEST_TIMEOUT_MS,
@@ -90,9 +92,10 @@ class GeminiLlm:
         )
 
     async def _open(self, key: str, contents: list[Any], config: Any) -> AsyncIterator[Any]:
-        """Starts the stream and waits for its first chunk, so a key at its limit fails here and the pool moves on."""
-        chunks = await self._clients[key].aio.models.generate_content_stream(model=self._model, contents=contents, config=config)
-        first = await anext(chunks, None)
+        """Starts the stream and waits for its first chunk. A key at its limit, or one that is slow to start, fails here and the pool moves on."""
+        async with asyncio.timeout(FIRST_WORD_SECONDS):
+            chunks = await self._clients[key].aio.models.generate_content_stream(model=self._model, contents=contents, config=config)
+            first = await anext(chunks, None)
 
         async def replay() -> AsyncIterator[Any]:
             if first is not None:
