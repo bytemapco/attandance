@@ -16,8 +16,7 @@ from app.utils.geofencing import GPSCoordinate, calculate_haversine_distance, is
 
 logger = get_logger("app.attendance.occurrence")
 
-# Liveness 0.93 is the calibrated threshold shipped with liveness_mobilenetv2_final.keras (models/liveness_detection/liveness_inference_config.json).
-FACE_MIN, LIVENESS_MIN, BACKGROUND_MIN = 0.60, 0.93, 0.50
+FACE_MIN, LIVENESS_MIN, BACKGROUND_MIN = 0.60, 0.50, 0.50
 
 
 def reject(code: int, detail: str) -> HTTPException:

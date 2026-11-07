@@ -9,7 +9,7 @@ logger = get_logger("app.ai.models")
 BASE_MODELS_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../models"))
 LIVENESS_REPO = "prathamrajbhar/smart-attendance-liveness-detection"
 BACKGROUND_REPO = "prathamrajbhar/smart-attendance-background-validation"
-LIVENESS_FILENAME = "liveness_mobilenetv2_final.keras"
+LIVENESS_FILENAME = "liveness_mobilenet_v2.h5"
 BACKGROUND_FILENAME = "background_mobilenet_v1.h5"
 
 LIVENESS_MODEL_PATH = os.path.join(BASE_MODELS_DIR, "liveness_detection", LIVENESS_FILENAME)
@@ -40,11 +40,17 @@ def ensure_model_downloaded(repo_id: str, filename: str, local_path: str) -> str
 
 
 def load_liveness_model(model_path: str) -> Optional[object]:
-    # The .keras file is saved by Keras 3. tf.keras is Keras 2 here (TF_USE_LEGACY_KERAS is set for DeepFace), so use keras directly.
     try:
-        import keras
+        import tensorflow as tf
 
-        return keras.models.load_model(model_path, compile=False)
+        base = tf.keras.applications.MobileNetV2(input_shape=(224, 224, 3), include_top=False, weights=None)
+        output = base.output
+        output = tf.keras.layers.GlobalAveragePooling2D(name="global_average_pooling2d_3")(output)
+        output = tf.keras.layers.Dropout(0.001, name="dropout_3")(output)
+        predictions = tf.keras.layers.Dense(1, activation="sigmoid", name="dense_3")(output)
+        model = tf.keras.models.Model(inputs=base.input, outputs=predictions)
+        model.load_weights(model_path, by_name=True)
+        return model
     except Exception as exc:
         logger.warning("Could not load liveness model: %s", exc)
         return None
