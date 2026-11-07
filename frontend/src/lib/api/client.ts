@@ -23,9 +23,11 @@ export function sessionHeaders(): Record<string, string> {
   return headers;
 }
 
+/** Fills in the saved session's headers, but never replaces one the caller set. Signing in asks /auth/me about the
+ * new token; replacing it with the previous session's token would save that other account's profile. */
 function attachSession(config: InternalAxiosRequestConfig): InternalAxiosRequestConfig {
   Object.entries(sessionHeaders()).forEach(([name, value]) => {
-    config.headers[name] = value;
+    if (!config.headers.has(name)) config.headers.set(name, value);
   });
   return config;
 }
